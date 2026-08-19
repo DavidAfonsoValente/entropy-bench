@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lm-adapt-bench"
+version = "2.1.0"
+description = "Entropy-based evaluation of base language models on fresh target-domain data"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [
+  {name = "David Afonso Valente"}
+]
+keywords = [
+  "language-models",
+  "evaluation",
+  "entropy",
+  "bits-per-byte",
+  "contamination",
+  "domain-adaptation"
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
+dependencies = [
+  "torch>=2.0,<3.0",
+  "transformers>=5.0",
+  "peft>=0.10,<1.0",
+  "optuna>=3.6,<4.0",
+  "matplotlib>=3.8,<4.0",
+  "plotly>=5.20,<6.0",
+  "kaleido>=0.2.1",
+  "pandas>=2.0,<3.0",
+  "jinja2>=3.1,<4.0",
+  "weasyprint>=61.0",
+  "pyyaml>=6.0",
+  "rich>=13.0",
+  "numpy>=1.24",
+  "huggingface-hub>=0.22",
+  "datasets",
+  "scikit-learn",
+  "datasketch",
+  "protobuf",
+  "sentencepiece",
+  "tiktoken"
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.urls]
+Paper = "https://github.com/DavidAfonsoValente/entropy-bench/blob/main/paper_sota.pdf"
+Leaderboard = "https://github.com/DavidAfonsoValente/entropy-bench/blob/main/LEADERBOARD.md"
+Repository = "https://github.com/DavidAfonsoValente/entropy-bench"
+Issues = "https://github.com/DavidAfonsoValente/entropy-bench/issues"
+
+[project.scripts]
+entropy-bench = "lm_adapt_bench.cli:main"
+entropy-leaderboard = "lm_adapt_bench.leaderboard:main"
+
+[tool.setuptools.packages.find]
+include = ["lm_adapt_bench*"]
+
+[tool.setuptools.package-data]
+lm_adapt_bench = ["configs/*.yaml", "templates/*.j2"]
+
+[tool.pytest.ini_options]
+testpaths = ["lm_adapt_bench/tests"]
+markers = [
+  "gpu: requires a CUDA-capable GPU"
+]

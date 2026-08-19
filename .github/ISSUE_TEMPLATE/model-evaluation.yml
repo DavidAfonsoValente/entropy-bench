@@ -1,0 +1,56 @@
+name: Model evaluation request
+description: Request a new model run on an existing controlled benchmark
+title: "[Model request] "
+labels: ["leaderboard", "model-request"]
+body:
+  - type: input
+    id: benchmark
+    attributes:
+      label: Benchmark ID
+      value: primary-news-2026-06-08
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model ID
+      description: Hugging Face or equivalent repository ID
+      placeholder: organization/model-name
+    validations:
+      required: true
+  - type: input
+    id: model_revision
+    attributes:
+      label: Model revision
+      description: Immutable commit SHA, not a moving branch name
+    validations:
+      required: true
+  - type: input
+    id: tokenizer_revision
+    attributes:
+      label: Tokenizer revision
+      description: Immutable commit SHA
+    validations:
+      required: true
+  - type: input
+    id: parameters
+    attributes:
+      label: Parameter count
+      placeholder: 7B
+    validations:
+      required: true
+  - type: dropdown
+    id: access
+    attributes:
+      label: Model access
+      options:
+        - Public and ungated
+        - Public but gated
+        - Private (maintainer access must be arranged)
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Architecture or loading notes
+      description: Include required trust_remote_code, dtype, tensor parallelism, or license details.

@@ -1,0 +1,68 @@
+{
+  "gemma-4-31B": {
+    "adapted_bpb": 0.583,
+    "mmlu_pro": 0.578,
+    "hellaswag": 0.8791,
+    "gsm8k": 0.8415
+  },
+  "gemma-4-12B": {
+    "adapted_bpb": 0.618,
+    "mmlu_pro": 0.447,
+    "hellaswag": 0.8425,
+    "gsm8k": 0.6361
+  },
+  "Ministral-3-14B": {
+    "adapted_bpb": 0.651,
+    "mmlu_pro": 0.541,
+    "hellaswag": 0.829,
+    "gsm8k": 0.8074
+  },
+  "Qwen3.5-35B-MoE": {
+    "adapted_bpb": 0.663,
+    "mmlu_pro": 0.62,
+    "hellaswag": 0.855,
+    "gsm8k": 0.865
+  },
+  "Qwen3.5-9B": {
+    "adapted_bpb": 0.679,
+    "mmlu_pro": 0.562,
+    "hellaswag": 0.8159,
+    "gsm8k": 0.8597
+  },
+  "Qwen2.5-7B": {
+    "adapted_bpb": 0.728,
+    "mmlu_pro": 0.475,
+    "hellaswag": 0.8027,
+    "gsm8k": 0.8127
+  },
+  "Qwen3.5-4B": {
+    "adapted_bpb": 0.757,
+    "mmlu_pro": 0.525,
+    "hellaswag": 0.7721,
+    "gsm8k": 0.8044
+  },
+  "Llama-3.2-1B": {
+    "adapted_bpb": 0.773,
+    "mmlu_pro": 0.117,
+    "hellaswag": 0.6583,
+    "gsm8k": 0.0652
+  },
+  "Qwen2.5-1.5B": {
+    "adapted_bpb": 0.802,
+    "mmlu_pro": 0.25,
+    "hellaswag": 0.6784,
+    "gsm8k": 0.6111
+  },
+  "LFM2.5-1.2B": {
+    "adapted_bpb": 0.854,
+    "mmlu_pro": 0.155,
+    "hellaswag": 0.6094,
+    "gsm8k": 0.5504
+  },
+  "Qwen2.5-0.5B": {
+    "adapted_bpb": 0.921,
+    "mmlu_pro": 0.167,
+    "hellaswag": 0.5177,
+    "gsm8k": 0.3472
+  }
+}

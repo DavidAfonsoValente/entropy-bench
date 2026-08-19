@@ -1,0 +1,25 @@
+{
+  "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+  "dataset": "/opt/dt/corpora/hackernews_2026-08.jsonl",
+  "corpus": "hackernews_2026-08",
+  "avg_bytes_per_token": 4.3648081092026585,
+  "n_train_blocks": 16666,
+  "n_test_blocks_scored": 1994,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.6867283270733051,
+  "trainable_params": 11108352,
+  "total_params": 1181448960,
+  "trainable_pct": 0.9402312225151055,
+  "adapted_bpb": 1.05062272869808,
+  "reduction_pct": 37.712391981876046,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 185.4031045436859
+}

@@ -1,0 +1,25 @@
+{
+  "model_id": "google/gemma-4-31B",
+  "dataset": "/opt/dt/corpora/reddit_2026-08.jsonl",
+  "corpus": "reddit_2026-08",
+  "avg_bytes_per_token": 4.180413680261972,
+  "n_train_blocks": 56467,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.0620550048358566,
+  "trainable_params": 133616896,
+  "total_params": 31406703408,
+  "trainable_pct": 0.4254406910021787,
+  "adapted_bpb": 0.9129928080152356,
+  "reduction_pct": 14.035261464038664,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 3805.5602333545685
+}

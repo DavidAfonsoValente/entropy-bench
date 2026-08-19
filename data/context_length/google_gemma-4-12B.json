@@ -1,0 +1,90 @@
+{
+  "model_id": "google/gemma-4-12B",
+  "adapter": "results/google_gemma-4-12B/final_checkpoint",
+  "training_context_tokens": 512,
+  "target_tokens_per_window": 64,
+  "n_windows": 64,
+  "boundary_token_masked": true,
+  "by_context_length": {
+    "16": {
+      "base_bpb": 1.1801963206983435,
+      "adapted_bpb": 0.7017427669530564,
+      "gain_bpb": 0.4784535537452871,
+      "relative_reduction_pct": 40.54016652603844,
+      "base_nats_per_token": 3.8923399535293917,
+      "adapted_nats_per_token": 2.314378854609049,
+      "scored_tokens": 4088,
+      "decoded_bytes": 19451
+    },
+    "32": {
+      "base_bpb": 1.0265555325640208,
+      "adapted_bpb": 0.6567006506053801,
+      "gain_bpb": 0.3698548819586407,
+      "relative_reduction_pct": 36.02872618443317,
+      "base_nats_per_token": 3.3856258012660563,
+      "adapted_nats_per_token": 2.1658279516983874,
+      "scored_tokens": 4088,
+      "decoded_bytes": 19451
+    },
+    "64": {
+      "base_bpb": 0.8981543247528996,
+      "adapted_bpb": 0.6115199262235469,
+      "gain_bpb": 0.2866343985293527,
+      "relative_reduction_pct": 31.913713560106903,
+      "base_nats_per_token": 2.96215290740978,
+      "adapted_nats_per_token": 2.016819913326644,
+      "scored_tokens": 4088,
+      "decoded_bytes": 19451
+    },
+    "128": {
+      "base_bpb": 0.8011934205114775,
+      "adapted_bpb": 0.5796133414446522,
+      "gain_bpb": 0.2215800790668253,
+      "relative_reduction_pct": 27.656252958913445,
+      "base_nats_per_token": 2.6423715329975064,
+      "adapted_nats_per_token": 1.9115905777173967,
+      "scored_tokens": 4088,
+      "decoded_bytes": 19451
+    },
+    "256": {
+      "base_bpb": 0.7276854999491045,
+      "adapted_bpb": 0.5575263922210629,
+      "gain_bpb": 0.17015910772804155,
+      "relative_reduction_pct": 23.38360565655668,
+      "base_nats_per_token": 2.3999391418030585,
+      "adapted_nats_per_token": 1.8387468368864806,
+      "scored_tokens": 4088,
+      "decoded_bytes": 19451
+    },
+    "512": {
+      "base_bpb": 0.6465483001511492,
+      "adapted_bpb": 0.5472664820609928,
+      "gain_bpb": 0.09928181809015635,
+      "relative_reduction_pct": 15.355669184645043,
+      "base_nats_per_token": 2.13234504838629,
+      "adapted_nats_per_token": 1.804909196880932,
+      "scored_tokens": 4088,
+      "decoded_bytes": 19451
+    },
+    "1024": {
+      "base_bpb": 0.6188611624414683,
+      "adapted_bpb": 0.5483461093101264,
+      "gain_bpb": 0.07051505313134188,
+      "relative_reduction_pct": 11.394325158998997,
+      "base_nats_per_token": 2.041031636866338,
+      "adapted_nats_per_token": 1.808469855563748,
+      "scored_tokens": 4088,
+      "decoded_bytes": 19451
+    },
+    "2048": {
+      "base_bpb": 0.6054045531805837,
+      "adapted_bpb": 0.5474437834771485,
+      "gain_bpb": 0.05796076970343522,
+      "relative_reduction_pct": 9.573890615610605,
+      "base_nats_per_token": 1.996651141056809,
+      "adapted_nats_per_token": 1.8054939448366893,
+      "scored_tokens": 4088,
+      "decoded_bytes": 19451
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "model_id": "Qwen/Qwen2.5-0.5B",
+  "dataset": "/opt/dt/corpora/hackernews_2026-08.jsonl",
+  "corpus": "hackernews_2026-08",
+  "avg_bytes_per_token": 4.5456452407209165,
+  "n_train_blocks": 16079,
+  "n_test_blocks_scored": 1914,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.0986044496664964,
+  "trainable_params": 8798208,
+  "total_params": 502830976,
+  "trainable_pct": 1.7497346861940344,
+  "adapted_bpb": 1.064057192910865,
+  "reduction_pct": 3.1446492653583213,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 147.64877891540527
+}

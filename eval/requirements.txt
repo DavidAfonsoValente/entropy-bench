@@ -1,0 +1,18 @@
+# Isolated environment for the static-benchmark evaluation + figure generation.
+# Installed by setup_env.sh into ~/vllm_env.
+#
+# Kept SEPARATE from the repo's root requirements.txt (the LoRA training pipeline):
+# vLLM pins a specific torch build that would conflict with the training env, so the
+# eval harness gets its own venv.
+#
+# torch (2.11, cu13) and a version-matched torchaudio are pulled in transitively by
+# vLLM; setup_env.sh realigns torchaudio if its ABI mismatches transformers>=5.
+
+vllm==0.25.1
+lm-eval==0.4.12
+transformers>=5.0
+hf_transfer
+
+# analysis and figure generation
+matplotlib==3.11.1
+adjustText==1.4.0

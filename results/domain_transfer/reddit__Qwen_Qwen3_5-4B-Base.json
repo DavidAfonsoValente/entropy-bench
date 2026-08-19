@@ -1,0 +1,25 @@
+{
+  "model_id": "Qwen/Qwen3.5-4B-Base",
+  "dataset": "/opt/dt/corpora/reddit_2026-08.jsonl",
+  "corpus": "reddit_2026-08",
+  "avg_bytes_per_token": 4.261089691163298,
+  "n_train_blocks": 55350,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.0800793358457872,
+  "trainable_params": 32464896,
+  "total_params": 4238216192,
+  "trainable_pct": 0.7660037744483233,
+  "adapted_bpb": 1.0195992883386977,
+  "reduction_pct": 5.599593057645976,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1989.3478372097015
+}

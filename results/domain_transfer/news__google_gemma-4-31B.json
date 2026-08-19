@@ -1,0 +1,25 @@
+{
+  "model_id": "google/gemma-4-31B",
+  "dataset": "/opt/dt/corpora/google_news_from_2026-06-08_to_2026-06-08_cleaned.jsonl",
+  "corpus": "google_news_from_2026-06-08_to_2026-06-08_cleaned",
+  "avg_bytes_per_token": 4.7193449189746906,
+  "n_train_blocks": 39712,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.7518399917025791,
+  "trainable_params": 133616896,
+  "total_params": 31406703408,
+  "trainable_pct": 0.4254406910021787,
+  "adapted_bpb": 0.6239788990065634,
+  "reduction_pct": 17.0064234554041,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 3760.2978858947754
+}

@@ -1,0 +1,463 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx} % Times font for academic look
+\usepackage[margin=1.2in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,bm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{enumitem}
+
+\usetikzlibrary{calc, positioning, shapes.geometric, arrows.meta, fit, backgrounds}
+
+% Standardize Colors
+\definecolor{boxgray}{RGB}{240, 240, 240}
+\definecolor{boxblue}{RGB}{220, 235, 250}
+\definecolor{boxorange}{RGB}{255, 240, 220}
+\definecolor{boxgreen}{RGB}{220, 250, 220}
+\definecolor{cInFill}{HTML}{F2F2F2} \definecolor{cInLine}{HTML}{888888}
+\definecolor{cAuFill}{HTML}{E3EDF7} \definecolor{cAuLine}{HTML}{3B6FA0}
+\definecolor{cAdFill}{HTML}{FBEEDC} \definecolor{cAdLine}{HTML}{C07C33}
+\definecolor{cEvFill}{HTML}{E4F1E8} \definecolor{cEvLine}{HTML}{3F8457}
+
+% Custom commands
+\newcommand{\bpb}{\text{BPB}}
+\newcommand{\loss}{\mathcal{L}}
+\newcommand{\nats}{\text{nats}}
+
+\title{\LARGE \textbf{Beyond Perplexity: Entropy-Based Evaluation\\ of Base Language Models}}
+\author{David Afonso Valente\\\normalsize Bottlecap AI}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Perplexity once anchored language-model evaluation in predictive cross-entropy, but its token
+denominator prevents comparisons across tokenizers. Fixed task benchmarks provide common test
+sets, yet each observes only selected capabilities and can be distorted by benchmark-specific
+optimization or training-data overlap. We return base-model selection to the language-modeling
+objective with three adjustments: normalize cross-entropy by UTF-8 bytes, evaluate dynamically on
+fresh target-domain data before and after controlled adaptation, and filter contamination before
+scoring. Across 11 base models from 0.5B to 35B,
+adapted BPB tracks sentence-continuation quality closely ($r=-0.96$ against HellaSwag), while
+knowledge and arithmetic benchmarks reveal complementary strengths. Token-level analysis gives the
+reported quantities distinct roles: adapted BPB selects the model; zero-shot$\rightarrow$adapted
+reduction describes corpus calibration. A fixed-target check shows that 512-token adapters retain
+their gains through 2{,}048-token inference (a $9.6\%$ BPB reduction for Gemma-4-12B and $1.7\%$
+for Qwen-2.5-1.5B). Under one shared budget on news, Reddit, and Hacker News, adaptation materially
+reorders candidates within each corpus (zero-shot versus adapted Spearman $\rho=0.609$--$0.682$),
+while the adapted ranking is highly stable across corpora ($\rho=+0.991$, $+0.955$, and $+0.964$).
+The resulting rule is simple: rank models by adapted BPB on recent target-domain data and resolve
+near-ties within a tier using the target domain.
+\end{abstract}
+
+\section{Introduction}
+Language models were originally judged by how well their predictive distributions compressed text:
+cross-entropy and its exponentiated form, perplexity. As evaluation shifted toward fixed task suites,
+scores became easier to communicate but narrower in scope. MMLU, HellaSwag, and GSM8K each expose a
+useful slice of capability rather than the full quality of a base language model
+\cite{hendrycks2021mmlu,zellers2019hellaswag,cobbe2021gsm8k}. Once a fixed benchmark also becomes a
+development target, benchmark-specific optimization and training-data overlap further weaken its
+value as an independent measure \cite{xu2024survey}.
+
+We argue for going back to the language-modeling objective, but not to raw perplexity. Modern base
+models span dense Transformers \cite{vaswani2017attention}, sparse Mixture-of-Experts (MoE), Liquid
+Neural Networks, and incompatible tokenizers. A useful entropy-based comparison therefore needs
+three adjustments: a common unit, fresh and relevant evaluation data, and protection against
+memorized text.
+
+Our framework supplies those adjustments. First, \textbf{Bits-Per-Byte (BPB)} normalizes
+cross-entropy onto UTF-8 bytes, so each model is measured against the same physical amount of text
+rather than its own tokenization. Second, a dynamic target-domain protocol replaces a permanently
+fixed test with a recent corpus and records performance both before and after the same controlled
+LoRA adaptation. Third, contamination filtering removes suspected pre-training overlap before any
+sample can influence adaptation or scoring. The adapted BPB level is the primary selection score;
+the zero-shot$\rightarrow$adapted reduction diagnoses how much corpus calibration the model needed.
+
+Our contributions are: (1) an entropy-based evaluation protocol combining byte normalization,
+dynamic target-domain evaluation, controlled adaptation, and contamination filtering; (2) an
+11-model comparison spanning 0.5B--35B and three architecture families; (3) token- and context-level
+analyses explaining calibration and transfer to 2{,}048-token inference; and (4) a three-corpus
+equal-budget validation showing that adaptation reorders candidates while adapted performance tiers
+transfer. Code, reproducible commands, and the public leaderboard are available at
+\url{https://github.com/DavidAfonsoValente/entropy-bench}.
+
+\begin{figure*}[t]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}[
+    font=\small,
+    >={Stealth[length=2.4mm,width=1.9mm]},
+    stage/.style={draw, line width=0.7pt, rounded corners=3pt,
+                  minimum width=2.7cm, minimum height=1.55cm,
+                  align=center, inner sep=3pt},
+    phase/.style={font=\scriptsize\bfseries, text=black!45},
+    elbl/.style={font=\scriptsize\itshape, text=black!55,
+                 fill=white, inner sep=1.5pt},
+    flow/.style={->, line width=0.9pt, draw=black!55, shorten >=1pt, shorten <=1pt}
+]
+\node[stage, fill=cInFill, draw=cInLine] (data)
+    {\shortstack{\textbf{Raw News}\\\textbf{Corpus}\\[3pt]{\scriptsize Dynamic}\\{\scriptsize temporal slice}}};
+\node[stage, fill=cAuFill, draw=cAuLine, right=1.5cm of data] (audit)
+    {\shortstack{\textbf{Contamination}\\\textbf{Audit}\\[3pt]{\scriptsize SHA256 $\cdot$ MinHash}\\{\scriptsize Min-K++ $\cdot$ CoDeC}}};
+\node[stage, fill=cAdFill, draw=cAdLine, right=1.5cm of audit] (adapt)
+    {\shortstack{\textbf{Domain}\\\textbf{Adaptation}\\[3pt]{\scriptsize Sequence packing}\\{\scriptsize LoRA sweeps (HPO)}}};
+\node[stage, fill=cEvFill, draw=cEvLine, right=1.5cm of adapt] (eval)
+    {\shortstack{\textbf{BPB}\\\textbf{Evaluation}\\[3pt]{\scriptsize Tokenizer-agnostic}\\{\scriptsize 512-token blocks}}};
+
+\node[phase, above=1.8mm of audit] {PHASE 1};
+\node[phase, above=1.8mm of adapt] {PHASE 2};
+\node[phase, above=1.8mm of eval]  {PHASE 3};
+
+\draw[flow] (data)  -- (audit);
+\draw[flow] (audit) -- node[elbl, above=0.2mm]{\shortstack{clean\\data}}    (adapt);
+\draw[flow] (adapt) -- node[elbl, above=0.2mm]{\shortstack{adapted\\model}} (eval);
+\end{tikzpicture}
+}
+\caption{The Standardized Evaluation Pipeline Architecture. Contamination auditing (Phase~1) strictly precedes adaptation (Phase~2) and tokenizer-agnostic BPB evaluation (Phase~3).}
+\label{fig:pipeline}
+\end{figure*}
+
+\section{Related Work}
+
+\textbf{Entropy and task evaluation.} Language modeling was originally grounded in byte- and
+character-level entropy \cite{shannon1951prediction}, while token-level perplexity depends on each
+model's vocabulary and segmentation \cite{mielke2019perplexity, ahia2023languages}. Normalizing
+log-likelihood by the UTF-8 byte restores comparability: The Pile popularized BPB as a
+cross-tokenizer metric \cite{gao2020pile}, Paloma adopted it to measure LM fit
+\cite{magnusson2023paloma}, and byte-level architectures remove the tokenizer entirely
+\cite{xue2021byt5, pagnoni2024blt}. Community leaderboards measure complementary capabilities through
+MMLU \cite{hendrycks2021mmlu}, MMLU-Pro \cite{wang2024mmlupro}, HellaSwag
+\cite{zellers2019hellaswag}, and GSM8K \cite{cobbe2021gsm8k}, often using the
+\emph{lm-evaluation-harness} \cite{gao2024lmeval}. We treat these as complementary diagnostics rather
+than substitutes for the predictive objective. Our contribution is not BPB alone, but the protocol
+that makes entropy actionable for model selection: byte normalization, fresh target-domain data,
+controlled adaptation, a contamination gate, and cross-domain validation.
+
+\textbf{Contamination and adaptation.} Large models verbatim-memorize pre-training text, increasingly so with scale and duplication \cite{carlini2021extracting, carlini2022quantifying}, making deduplication \cite{lee2022deduplicating} and contamination auditing \cite{xu2024survey} prerequisites for honest evaluation. Our audit combines the reference-free detectors Min-K\% and Min-K++ \cite{shi2023mink, zhang2024minkpp} with behavioral completion- and quiz-based probes \cite{golchin2023timetravel, golchin2025dcq}. Finally, domain-adaptive training reliably improves in-domain modeling \cite{gururangan2020dapt}, and scaling laws for transfer cast adaptation gains as a measure of a model's generality \cite{hernandez2021transfer}; we operationalize this cheaply and comparably across architectures via LoRA \cite{hu2021lora}.
+
+\section{The Evaluation Pipeline}
+\label{sec:pipeline}
+The pipeline (Figure~\ref{fig:pipeline}) is a chronologically strict progression: no sample may influence adaptation or scoring before it clears the contamination gate.
+
+\subsection{Phase 1: Forensic Contamination Audit}
+We isolate data seen during pre-training with a hierarchical ``Scout-then-Verify'' framework:
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Min-K++ Normalization (Scout):} We isolate tokens in the bottom $K=20\%$ of probability and normalize them against the unconditional vocabulary distribution ($\mu, \sigma$) at each step. High normalized likelihoods in historically rare tokens indicate verbatim memorization.
+    \item \textbf{Contextual Confidence (CoDeC) (Scout):} We introduce CoDeC as an associative memory trigger. If a sequence $S$ was memorized, providing its immediate context $C$ causes a non-linear spike in predictive confidence ($\Delta_{\text{CoDeC}}$).
+    \item \textbf{Dynamic Choice Quiz (DCQ) (Gatekeeper):} Suspected samples are presented alongside synthetic distractors generated by adjacent word-swapping and random \texttt{[PAD]} insertion. If the model deterministically selects the original string, it is quarantined. The reported runs use two distractors per sample (a $1/3$ chance level), the pipeline default.
+\end{itemize}
+The audit is run \emph{per model}, and the \emph{union} of all models' verified leaks is quarantined globally, so every model is adapted and scored on one identical, forensically cleansed corpus. Because memorized samples are removed up front, the zero-shot$\rightarrow$adapted BPB reduction reflects adaptation to the domain rather than recall of pre-training artifacts.
+
+\subsection{Phase 2: Controlled Domain Adaptation}
+The cleansed corpus is packed into contiguous $L{=}512$-token blocks along EOS boundaries to maximize gradient density. For the news study, model-specific Optuna sweeps with \textbf{Successive Halving} explore LoRA rank $r\in\{8,16,32,64\}$, $\alpha$-multiplier $\in\{1,2,4\}$, dropout, learning rate ($10^{-6}$--$10^{-3}$, log-scale), and effective batch size via gradient accumulation. Adapters are restricted to each model's language backbone, and the selected configuration is trained under a cosine schedule (decay to $0.1\times$ peak LR, gradient clip 1.0). The cross-domain confirmation in Section~\ref{sec:domains} uses one fixed configuration and the same 250-step budget for every model--corpus cell.
+
+\subsection{Phase 3: Tokenizer-Agnostic BPB Evaluation}
+Cross-entropy loss ($\loss_{\text{nats}}$) aggregated over the held-out corpus is unified onto byte-space using the UTF-8 byte-length ($|B|$) of the source text:
+\begin{equation}
+\bpb = \frac{\loss_{\text{nats}}}{\ln(2)} \times \frac{|Tokens|}{|B|}
+\label{eq:bpb}
+\end{equation}
+Zero-shot and adapted BPB are both measured on the held-out test split, using a model-specific bytes-per-token factor estimated from the same test text, so scores are directly comparable within and across models. The packed test stream is evaluated as independent, non-overlapping 512-token blocks: losses are aggregated corpus-wide, while context resets at every block cut. Injected document-start markers remain available as context but are masked as prediction targets in the final cross-domain protocol. This makes the reported score an explicit 512-token-context comparison; Section~\ref{sec:tokengain} measures how performance changes within that window.
+
+\section{Experimental Setup}
+\paragraph{Models.} We evaluate 11 base models spanning dense Transformers, a sparse MoE, and a Liquid architecture (0.5B--35B parameters); the full cohort is listed in Table~\ref{tab:results}.
+
+\paragraph{Data.} All models adapt to a single, semantically deduplicated slice of Google News dated 8 June 2026 (119{,}054 articles, $\sim$361\,MB of text), split $80/10/10$ into train/validation/test (seed 42) with an enforced zero-intersection constraint between splits.
+
+\paragraph{Static benchmarks.} For the correlation study (Section~\ref{sec:corr}) we score every base model with the \emph{lm-evaluation-harness} (vLLM backend, bf16, greedy decoding, each tokenizer's native BOS) on MMLU-Pro (5-shot CoT, a fixed 1{,}000-question subset, exact-match), HellaSwag (10-shot, length-normalized accuracy), and GSM8K (5-shot, flexible-extract).
+
+\paragraph{Hardware.} Adaptation ran under Slurm on the Leonardo (CINECA) GPU partition, 3 nodes $\times$ 4 NVIDIA A100 64\,GB; the static-benchmark suite ran separately on A100 GPUs.
+
+\section{Results and Discussion}
+
+\subsection{Adapted BPB Ranking}
+Table~\ref{tab:results} and Figure~\ref{fig:adaptation} detail the performance across the 11-model cohort. 
+
+\begin{table*}[h]
+\centering
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{llrrrrrr}
+\toprule
+\textbf{Model} & \textbf{Architecture} & \textbf{Params} & \textbf{Zero-Shot BPB} & \textbf{Adapted BPB} & \textbf{Rel. Improvement} & \textbf{Final Rank} \\
+\midrule
+Gemma-4-31B \cite{gemma2026gemma4} & Dense Transformer & 31B & 0.753 & \textbf{0.583} & 22.6\% & 1 \\
+Gemma-4-12B & Dense Transformer & 12B & 0.867 & 0.618 & 28.7\% & 2 \\
+Ministral-3-14B \cite{liu2026ministral3} & Dense Transformer & 14B & 0.723 & 0.651 & 9.9\% & 3 \\
+Qwen-3.5-35B-MoE \cite{qwen2026qwen35} & Mixture of Experts & 35B & 0.700 & 0.663 & 5.4\% & 4 \\
+Qwen-3.5-9B & Dense Transformer & 9B & 0.733 & 0.679 & 7.4\% & 5 \\
+Qwen-2.5-7B \cite{yang2024qwen25} & Dense Transformer & 7B & 0.753 & 0.728 & 3.3\% & 6 \\
+Qwen-3.5-4B & Dense Transformer & 4B & 0.775 & 0.757 & 2.3\% & 7 \\
+Llama-3.2-1B \cite{dubey2024llama3} & Dense Transformer & 1.2B & 0.814 & 0.773 & 5.1\% & 8 \\
+Qwen-2.5-1.5B & Dense Transformer & 1.5B & 0.829 & 0.802 & 3.2\% & 9 \\
+LiquidAI-LFM2.5 & Liquid Neural Net & 1.2B & 1.346 & 0.854 & \textbf{36.5\%} & 10 \\
+Qwen-2.5-0.5B & Dense Transformer & 0.5B & 0.931 & 0.921 & 1.0\% & 11 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Model performance on the forensically cleansed news test set. Lower BPB indicates superior compression efficiency.}
+\label{tab:results}
+\end{table*}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\columnwidth]{figures/fig_adaptation.pdf}
+\caption{Zero-shot and adapted BPB for all 11 models. Lower adapted BPB is the selection criterion; the labeled reduction summarizes calibration to the news corpus.}
+\label{fig:adaptation}
+\end{figure}
+
+The two reported values have separate jobs. \textbf{Adapted BPB} ranks the models we would deploy; \textbf{relative reduction} describes how much their distributions moved toward the corpus. Gemma-4-31B reaches the lowest adapted BPB (0.583), followed by Gemma-4-12B (0.618) and Ministral-3-14B (0.651). The sparse Qwen-3.5-35B-MoE places alongside dense 12--14B models, while LiquidAI-LFM2.5 shows the largest calibration shift (36.5\%).
+
+\subsection{How to Read the Adaptation Reduction}
+\label{sec:tokengain}
+To interpret the reduction, we score held-out blocks under each base model and its LoRA adapter, then decompose the per-token log-probability gain. The three analyzed models span the observed range and make the source of the movement visible.
+
+\begin{table}[h]
+\centering
+\small
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{2}{c}{\textbf{Loss (nats/token)}} & & \multicolumn{3}{c}{\textbf{Share of the gain}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){5-7}
+\textbf{Model} & \textbf{base} & \textbf{adapted} & \textbf{Red.} & \textbf{marker} & \textbf{next 16} & \textbf{remainder} \\
+\midrule
+Gemma-4-12B     & 2.838 & 2.015 & 29.0\% & 3.6\% & 5.0\% & \textbf{91.3\%} \\
+LiquidAI-LFM2.5 & 4.298 & 2.728 & 36.5\% & 1.1\% & 1.9\% & \textbf{97.0\%} \\
+Qwen-2.5-1.5B   & 2.737 & 2.647 & \phantom{0}3.3\% & 0.0\% & 0.0\% & \textbf{100\%} \\
+\bottomrule
+\end{tabular}
+}
+\caption{Token-level decomposition of the adaptation gain over 4{,}000 test blocks. \emph{marker} is an injected document-start token, \emph{next 16} is the post-boundary window, and \emph{remainder} is every other scored position. These document boundaries may occur anywhere inside a packed block.}
+\label{tab:tokengain}
+\end{table}
+
+\paragraph{Adaptation calibrates surface form.} Gemma-4-12B's largest movers are \texttt{<bos>}, punctuation, paragraph breaks, and common function words; LFM-2.5 shows the same pattern. Across the top 200 gaining tokens, formatting, punctuation, and function words account for $83\%$ of the gain for both models, while content words account for $5.2\%$ for Gemma and $14.0\%$ for LFM. Qwen-2.5-1.5B begins closer to the corpus distribution and allocates more of its smaller gain to dates and figures. The reduction therefore gives a useful measure of corpus calibration. For Gemma, the marker and its next 16 tokens contribute $3.6\%+5.0\%=8.6\%$ of the measured gain. This is a post-document-boundary window, not the first 17 positions of every block; the marker itself is excluded from the final cross-domain BPB.
+
+\paragraph{Context reveals steady-state quality.} Figure~\ref{fig:blockpos} resolves loss and gain by position in the 512-token block and normalizes every bucket to UTF-8 bytes. Over the first eight positions, Gemma-4-12B averages $2.566$ bits/byte and Qwen-2.5-1.5B averages $1.490$; by positions $256$--$510$, Gemma reaches $0.717$ and Qwen $0.773$. The crossing therefore remains after byte normalization and is not explained by vocabulary size alone. Once context is available, the 12B model shows its stronger steady-state language modelling. The opening 32 positions account for $23.0\%$ of Gemma's total gain and $12.9\%$ of Qwen's, making context recovery a clear component of the calibration signal.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig_block_position.pdf}
+\caption{Base-model loss and adaptation gain by position in a packed 512-token block, measured in bits per UTF-8 byte. Positive gain is the average loss reduction from adaptation. The crossing persists after tokenizer normalization.}
+\label{fig:blockpos}
+\end{figure}
+
+\paragraph{The 512-token adaptation transfers to longer inference contexts.} We select 64 fixed held-out target windows and vary only the preceding context from 16 to 2{,}048 tokens, scoring the same target tokens at every length with exact byte normalization. Figure~\ref{fig:contextlength} shows that Gemma's base BPB continues to recover beyond the training window, from $0.6465$ at 512 tokens to $0.6054$ at 2{,}048. Its adapted BPB is effectively unchanged ($0.5473\rightarrow0.5474$), so the adapter trained on 512-token blocks retains a $9.6\%$ advantage at four times that context. Qwen's smaller adaptation advantage also remains positive at 2{,}048 tokens ($0.7400\rightarrow0.7271$, a $1.7\%$ reduction). Thus the base model continues to benefit from longer context, especially for Gemma, while the learned adaptation remains stable outside its training length.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\columnwidth]{figures/fig_context_length.pdf}
+\caption{Fixed-target context-length check. Each point scores the same 64 held-out target windows; only the amount of preceding context changes. Both 512-trained adapters retain their improvement through 2{,}048 inference tokens.}
+\label{fig:contextlength}
+\end{figure}
+
+\paragraph{Reporting rule.} Rank models by the \emph{adapted BPB level}. Use the zero-shot$\rightarrow$adapted reduction as a calibration diagnostic that summarizes surface-form adjustment and context recovery. This two-number view makes both outputs easy to explain and apply.
+
+\subsection{Contamination Statistics: Verification Logic}
+Table~\ref{tab:contam_stats} tracks forensic signals across all 11 models. We demonstrate that model size does not linearly correlate with memorization. 
+
+\begin{table}[h]
+\centering
+\small
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Model} & \textbf{Min-K++ Flags} & \textbf{CoDeC Flags} & \textbf{DCQ Candidates} & \textbf{DCQ Acc} & \textbf{Verified Leaks} \\
+\midrule
+google-gemma-4-31B & 12 & 6 & 20 & 100\% & 20 \\
+google-gemma-4-12B & 11 & 6 & 11 & 100\% & 11 \\
+mistralai-Ministral-3-14B & 12 & 8 & 13 & 100\% & 13 \\
+Qwen-Qwen3.5-35B-MoE & 6 & 8 & 11 & 100\% & 11 \\
+Qwen-Qwen3.5-9B & 12 & 6 & 17 & 100\% & 17 \\
+Qwen-Qwen2.5-7B & 10 & 6 & 14 & 100\% & 14 \\
+Qwen-Qwen3.5-4B & 9 & 6 & 12 & 100\% & 12 \\
+meta-llama-Llama-3.2-1B & 17 & 0 & 28 & 100\% & 28 \\
+Qwen-Qwen2.5-1.5B & 14 & 4 & 17 & 100\% & 17 \\
+LiquidAI-LFM2.5 & 12 & 8 & 23 & 96\% & 22 \\
+Qwen-Qwen2.5-0.5B & 8 & 2 & 13 & 100\% & 13 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Stage-by-Stage Forensic Breakdown, \emph{test split} ($N=1000$ sampled sequences per model per split; the audit itself runs on train, validation and test). Min-K++ and CoDeC ``Scouts'' flag anomalous candidates; DCQ acts as the final gatekeeper. Unique global leaks removed across all splits and models: 80 sequences.}
+\label{tab:contam_stats}
+\end{table}
+
+\subsection{Correlation with Static Benchmarks}
+\label{sec:corr}
+We compare adapted BPB with \textbf{MMLU-Pro}, \textbf{HellaSwag}, and \textbf{GSM8K}. Table~\ref{tab:bpb_static} uses the same nine-model subset for each rank comparison, while Figure~\ref{fig:corr} shows the full available scatter. The tasks agree most when they measure the same capability.
+
+\begin{table}[h]
+\centering
+\small
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Model} & \textbf{Adapted BPB} & \textbf{MMLU-Pro} & \textbf{HellaSwag} & \textbf{GSM8K} & \textbf{Macro} \\
+\midrule
+Gemma-4-31B & \textbf{0.583} & 0.612 & \textbf{0.865} & 0.817 & 0.764 \\
+Gemma-4-12B & 0.618 & 0.583 & 0.840 & 0.778 & 0.733 \\
+Ministral-3-14B & 0.651 & 0.541 & 0.829 & 0.807 & 0.726 \\
+Qwen-3.5-35B-MoE & 0.663 & \textbf{0.620} & 0.855 & \textbf{0.865} & \textbf{0.780} \\
+Qwen-3.5-9B & 0.679 & 0.562 & 0.816 & 0.860 & 0.746 \\
+Qwen-2.5-7B & 0.728 & 0.475 & 0.803 & 0.813 & 0.697 \\
+Llama-3.2-1B & 0.773 & 0.117 & 0.658 & 0.065 & 0.280 \\
+LiquidAI-LFM2.5 & 0.854 & 0.155 & 0.609 & 0.550 & 0.438 \\
+Qwen-2.5-0.5B & 0.921 & 0.167 & 0.518 & 0.347 & 0.344 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Adapted BPB vs.\ standard benchmarks. Best per column in bold. Rank comparisons use the nine-model common subset reported across BPB and all three static tasks; Figure~\ref{fig:corr} shows the full available scatter.}
+\label{tab:bpb_static}
+\end{table}
+
+Ranking the cohort by each task shows a smooth progression. Six of nine models keep the same rank under HellaSwag (sentence continuation), two under MMLU-Pro (knowledge), and none under GSM8K (arithmetic). The GSM8K shift is family-structured: every Qwen model moves up relative to its BPB position, while the Gemma, Mistral, and Llama models move down; Liquid rises by one place. This makes the metrics complementary. BPB measures general language modelling on the target corpus, while the task benchmarks add capability-specific information about knowledge and arithmetic.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\columnwidth]{figures/fig_correlation.pdf}
+\caption{Adapted BPB vs.\ HellaSwag ($r=-0.96$). The strong association confirms that BPB tracks sentence-continuation quality.}
+\label{fig:corr}
+\end{figure}
+
+\clearpage
+\section{A Reporting Standard for Entropy-Based Evaluation}
+\label{sec:reporting}
+The experiments support three conventions that make BPB comparisons easy to reproduce and explain.
+
+\paragraph{Rank by adapted BPB.} The adapted level measures the model after the same kind of domain intervention used in deployment. The reduction from zero-shot BPB remains useful as a separate calibration diagnostic.
+
+\paragraph{Handle document boundaries consistently.} Keep each model's document-start marker as context, exclude the injected marker from the scored target, and normalize BPB over the same scored positions. The cross-domain study applies this convention in all 33 model--corpus cells.
+
+\paragraph{Keep denominators fixed.} Cross-domain ranks use all 11 models. Static-benchmark rank comparisons use the nine-model common subset reported across adapted BPB, MMLU-Pro, HellaSwag, and GSM8K, so the identical-rank counts (6, 2, 0) remain directly comparable.
+
+\section{Domain Transfer: Stable Ordering Across Corpora}
+\label{sec:domains}
+Everything above rests on one domain. The claim under test is the one that would make BPB useful as a base-model selector rather than a news-specific instrument: \emph{newer and larger models from well-resourced labs should outperform older and smaller ones in adapted BPB, and that ordering should be stable across domains.} We prepared two further corpora to the same grouping and cleaning recipe --- exact deduplication on normalized text, Gopher quality heuristics, and MinHash/LSH near-duplicate filtering at a Jaccard threshold of $0.60$ --- then re-ran the cohort on all three.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Corpus} & \textbf{Raw records} & \textbf{Documents} & \textbf{Median words} & \textbf{Text} \\
+\midrule
+Google News, 8 Jun 2026     & \phantom{0,0}119{,}054 & 119{,}054 & 362 & 361\,MB \\
+Reddit, 6--10 Aug 2026$^{\dagger}$ & 3{,}054{,}623 & 141{,}527 & 624 & 533\,MB \\
+Hacker News, 6--10 Aug 2026 & \phantom{0,0}\phantom{0}60{,}814 & \phantom{00}6{,}086 & 690 & \phantom{0}46\,MB \\
+\bottomrule
+\end{tabular}
+\caption{Corpora for the domain-transfer study. Reddit and Hacker News comments are concatenated into document-length groups so all three corpora are evaluated at a comparable text scale. $^{\dagger}$The Reddit source contains four available days in the stated range.}
+\label{tab:corpora}
+\end{table}
+
+\paragraph{Protocol.} Every cell uses the same document-boundary convention, LoRA configuration (rank 16, $\alpha=32$, dropout $0.05$, learning rate $10^{-4}$, effective batch 32, \texttt{all-linear} targets), 250 training steps, and a 40{,}000-document cap. This fixed design makes the three-domain comparison direct: 11 models, three corpora, and 33 cells under one shared budget.
+
+\noindent\begin{minipage}{\textwidth}
+\paragraph{Adaptation changes the selection.} Within each corpus, the zero-shot and adapted
+rankings are only moderately aligned: Spearman $\rho=0.655$ on news, $0.609$ on Reddit, and
+$0.682$ on Hacker News, with maximum movements of seven, seven, and five places. Gemma-4-31B
+moves from fourth, fifth, and sixth zero-shot to first adapted on the three corpora; Gemma-4-12B
+moves from ninth on each zero-shot ranking to second, second, and fourth after adaptation. The
+adapted endpoint is therefore a materially different selection signal, not a rescaled zero-shot
+ranking.
+\end{minipage}
+
+\begin{table}[h]
+\centering
+\small
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{2}{c}{\textbf{News}} & \multicolumn{2}{c}{\textbf{Reddit}} & \multicolumn{2}{c}{\textbf{Hacker News}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+\textbf{Model} & zero-shot & adapted & zero-shot & adapted & zero-shot & adapted \\
+\midrule
+\input{dt_table.tex}
+\bottomrule
+\end{tabular}
+}
+\caption{BPB across three domains under identical settings. Lower is better. All eleven models were adapted and evaluated on all three corpora.}
+\label{tab:domain_transfer}
+\end{table}
+
+\paragraph{The ordering is stable.} Ranking all eleven models by adapted BPB within each corpus, news and Reddit agree on nine of eleven ranks (Spearman $\rho = +0.991$, maximum displacement one place). News against Hacker News gives $\rho = +0.955$ and Reddit against Hacker News $\rho = +0.964$, with a maximum displacement of two places. Gemma-4-31B ranks first on all three corpora.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig_cross_corpus.pdf}
+\caption{Pairwise adapted-BPB agreement across the three corpora. Pearson correlations are $r=0.992$, $0.977$, and $0.990$; rank correlations are $\rho=0.991$, $0.955$, and $0.964$. Domain difficulty shifts the absolute values while the model ordering remains highly stable.}
+\label{fig:crosscorpus}
+\end{figure}
+
+Every rank change occurs inside one of two near-tied clusters. The three mid-size models span $0.0259$ BPB on news and $0.0089$ on Hacker News; the two small models span $0.0258$ and $0.0088$. In both cases the spread narrows by roughly a factor of three. On Hacker News, Gemma-4-12B reaches $0.844$, only $0.009$ behind Ministral-3-14B and $0.008$ behind Qwen-3.5-35B-MoE. This leads to a practical rule: adapted BPB identifies the top model and stable performance tiers, while a target-domain run resolves choices inside a near-tied tier.
+
+\paragraph{The architecture results are easy to place.} Below Gemma-4-31B, the adapted ranking follows model scale closely: the 12B, 14B, and 35B-MoE cluster, then 9B, 7B, 4B, the 1--1.5B group, and the 0.5B model. The sparse MoE scores alongside dense 12--14B models on every corpus, naturally locating its quality between its active and total parameter counts. LiquidAI-LFM2.5 shows a consistent $35$--$38\%$ calibration gain across domains, illustrating why the adapted level and the reduction provide complementary information.
+
+\paragraph{Domain difficulty and model order separate cleanly.} All eleven models have their lowest BPB on news, highest on Reddit, and Hacker News between. Gemma-4-31B moves from $0.624$ on news to $0.913$ on Reddit, a $46\%$ increase, while the largest rank displacement is only two places. Absolute BPB therefore describes domain difficulty, and relative order identifies the model to choose.
+
+\section{Conclusion}
+Entropy-based evaluation provides a broad, direct signal of base-model quality, but it becomes a
+fair model-selection tool only with the right protocol. Byte normalization makes cross-entropy
+comparable across tokenizers; fresh target-domain corpora keep the measurement relevant;
+contamination screening protects it from memorized text; and controlled adaptation measures the
+model in the state in which it will be used.
+
+The 11-model study gives a clear interpretation of every output. Adapted BPB is the primary ranking;
+the reduction is a calibration diagnostic; the 512-token adaptation remains effective through
+2{,}048-token inference contexts; HellaSwag confirms the language-modelling signal; and MMLU-Pro
+and GSM8K add capability-specific views. Under one shared budget across news, Reddit, and Hacker
+News, adaptation substantially changes the zero-shot candidate ordering, yet the resulting adapted
+ranking remains highly stable and Gemma-4-31B ranks first on every corpus.
+
+The practical workflow is simple: collect recent target-domain text, clean and audit it, adapt every candidate under one budget, rank by adapted BPB, and resolve near-ties on the target domain. This produces a repeatable base-model decision from data the evaluator controls.
+
+\clearpage
+\bibliographystyle{plain}
+\begin{thebibliography}{99}
+\bibitem{shannon1951prediction} Shannon, C. E. (1951). Prediction and entropy of printed English. Bell System Technical Journal, 30:50--64.
+\bibitem{mielke2019perplexity} Mielke, S. J. (2019). Can you compare perplexity across different segmentations? Technical note.
+\bibitem{gao2020pile} Gao, L., et al. (2021). The Pile: An 800GB Dataset of Diverse Text for Language Modeling. arXiv:2101.00027.
+\bibitem{ahia2023languages} Ahia, O., et al. (2023). Do All Languages Cost the Same? Tokenization in the Era of Commercial Language Models. EMNLP. arXiv:2305.13707.
+\bibitem{magnusson2023paloma} Magnusson, I., et al. (2023). Paloma: A Benchmark for Evaluating Language Model Fit. arXiv:2312.10523.
+\bibitem{xue2021byt5} Xue, L., et al. (2022). ByT5: Towards a Token-Free Future with Pre-trained Byte-to-Byte Models. TACL. arXiv:2105.13626.
+\bibitem{pagnoni2024blt} Pagnoni, A., et al. (2024). Byte Latent Transformer: Patches Scale Better Than Tokens. arXiv:2412.09871.
+\bibitem{carlini2021extracting} Carlini, N., et al. (2021). Extracting Training Data from Large Language Models. USENIX Security.
+\bibitem{carlini2022quantifying} Carlini, N., et al. (2022). Quantifying Memorization Across Neural Language Models. ICLR 2023. arXiv:2202.07646.
+\bibitem{lee2022deduplicating} Lee, K., et al. (2022). Deduplicating Training Data Makes Language Models Better. ACL. arXiv:2107.06499.
+\bibitem{shi2023mink} Shi, W., et al. (2023). Detecting Pretraining Data from Large Language Models. ICLR 2024. arXiv:2310.16789.
+\bibitem{zhang2024minkpp} Zhang, J., et al. (2024). Min-K\%++: Improved Baseline for Detecting Pre-Training Data from Large Language Models. ICLR 2025. arXiv:2404.02936.
+\bibitem{golchin2023timetravel} Golchin, S., Surdeanu, M. (2023). Time Travel in LLMs: Tracing Data Contamination in Large Language Models. ICLR 2024. arXiv:2308.08493.
+\bibitem{golchin2025dcq} Golchin, S., Surdeanu, M. (2024). Data Contamination Quiz: A Tool to Detect and Estimate Contamination in Large Language Models. TACL. arXiv:2311.06233.
+\bibitem{xu2024survey} Xu, C., et al. (2024). Benchmark Data Contamination of Large Language Models: A Survey. arXiv:2406.04244.
+\bibitem{liang2022helm} Liang, P., et al. (2022). Holistic Evaluation of Language Models (HELM). arXiv:2211.09110.
+\bibitem{gao2024lmeval} Gao, L., Biderman, S., et al. (2024). A Framework for Few-Shot Language Model Evaluation (lm-evaluation-harness). EleutherAI.
+\bibitem{hendrycks2021mmlu} Hendrycks, D., et al. (2021). Measuring Massive Multitask Language Understanding. ICLR. arXiv:2009.03300.
+\bibitem{wang2024mmlupro} Wang, Y., et al. (2024). MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark. NeurIPS D\&B. arXiv:2406.01574.
+\bibitem{zellers2019hellaswag} Zellers, R., et al. (2019). HellaSwag: Can a Machine Really Finish Your Sentence? ACL. arXiv:1905.07830.
+\bibitem{cobbe2021gsm8k} Cobbe, K., et al. (2021). Training Verifiers to Solve Math Word Problems (GSM8K). arXiv:2110.14168.
+\bibitem{gururangan2020dapt} Gururangan, S., et al. (2020). Don't Stop Pretraining: Adapt Language Models to Domains and Tasks. ACL. arXiv:2004.10964.
+\bibitem{hu2021lora} Hu, E. J., et al. (2021). LoRA: Low-Rank Adaptation of Large Language Models. ICLR 2022. arXiv:2106.09685.
+\bibitem{hernandez2021transfer} Hernandez, D., et al. (2021). Scaling Laws for Transfer. arXiv:2102.01293.
+\bibitem{dubey2024llama3} Dubey, A., et al. (2024). The Llama 3 Herd of Models. arXiv:2407.21783.
+\bibitem{yang2024qwen25} Yang, A., et al. (2024). Qwen2.5 Technical Report. arXiv:2412.15115.
+\bibitem{gemma2026gemma4} Gemma Team (2026). Gemma 4 Technical Report. arXiv:2607.02770.
+\bibitem{liu2026ministral3} Liu, A. H., et al. (2026). Ministral 3. arXiv:2601.08584.
+\bibitem{qwen2026qwen35} Qwen Team (2026). Qwen3.5: Towards Native Multimodal Agents.
+Official release and model card. \url{https://qwen.ai/blog?id=qwen3.5}.
+\bibitem{vaswani2017attention} Vaswani, A., et al. (2017). Attention Is All You Need. NeurIPS.
+\end{thebibliography}
+
+\clearpage
+\end{document}

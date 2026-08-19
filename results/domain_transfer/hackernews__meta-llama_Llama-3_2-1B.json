@@ -1,0 +1,25 @@
+{
+  "model_id": "meta-llama/Llama-3.2-1B",
+  "dataset": "/opt/dt/corpora/hackernews_2026-08.jsonl",
+  "corpus": "hackernews_2026-08",
+  "avg_bytes_per_token": 4.608332756940296,
+  "n_train_blocks": 15809,
+  "n_test_blocks_scored": 1888,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.0112804042448575,
+  "trainable_params": 11272192,
+  "total_params": 1247086592,
+  "trainable_pct": 0.9038820617838861,
+  "adapted_bpb": 0.9755954414952523,
+  "reduction_pct": 3.5286912116379674,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 183.5760190486908
+}

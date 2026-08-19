@@ -1,0 +1,21 @@
+id,text,category
+1,The Earth is the third planet from the Sun.,category_A
+2,Jupiter is the largest planet in our solar system.,category_B
+3,Mars is often called the Red Planet.,category_A
+4,Saturn is famous for its beautiful rings.,category_B
+5,Venus is the hottest planet in the solar system.,category_A
+6,Mercury is the closest planet to the Sun.,category_B
+7,Neptune is known for its strong winds.,category_A
+8,Uranus orbits the Sun on its side.,category_B
+9,The Milky Way is our home galaxy.,category_A
+10,"A light-year is a measure of distance, not time.",category_B
+11,Black holes are regions of space where gravity is extremely strong.,category_A
+12,The Sun is a medium-sized star.,category_B
+13,Comets are made of ice, dust, and rocky material.,category_A
+14,Asteroids are small, rocky objects that orbit the Sun.,category_B
+15,The moon is Earth's only natural satellite.,category_A
+16,Gravity keeps the planets in orbit around the Sun.,category_B
+17,Space is a vacuum, meaning it contains very little matter.,category_A
+18,The universe is estimated to be about 13.8 billion years old.,category_B
+19,Galaxies contain billions of stars, gas, and dust.,category_A
+20,Stars are born in clouds of gas and dust called nebulae.,category_B

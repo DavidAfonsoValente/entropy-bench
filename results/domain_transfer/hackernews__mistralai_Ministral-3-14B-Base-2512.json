@@ -1,0 +1,25 @@
+{
+  "model_id": "mistralai/Ministral-3-14B-Base-2512",
+  "dataset": "/opt/dt/corpora/hackernews_2026-08.jsonl",
+  "corpus": "hackernews_2026-08",
+  "avg_bytes_per_token": 4.495357347462274,
+  "n_train_blocks": 16400,
+  "n_test_blocks_scored": 1942,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.8762337359386904,
+  "trainable_params": 70336512,
+  "total_params": 14015368192,
+  "trainable_pct": 0.5018527593170775,
+  "adapted_bpb": 0.8346435614075282,
+  "reduction_pct": 4.746470356634642,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1021.1466917991638
+}

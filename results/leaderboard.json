@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "metric": "adapted_bits_per_byte",
+  "direction": "lower_is_better",
+  "source": "reports/11-model-run/summary.json",
+  "dataset": {
+    "benchmark_id": "primary-news-2026-06-08",
+    "manifest": "benchmarks/primary-news-2026-06-08.json",
+    "name": "Google News",
+    "snapshot_date": "2026-06-08",
+    "articles": 119054,
+    "split": "80/10/10",
+    "seed": 42
+  },
+  "protocol": {
+    "adaptation": "LoRA with candidate-specific multi-fidelity hyperparameter search",
+    "evaluation": "held-out corpus-wide BPB over independent 512-token blocks",
+    "contamination": "global-unified audited test set"
+  },
+  "entries": [
+    {
+      "rank": 1,
+      "model_id": "google/gemma-4-31B",
+      "model_name": "Gemma-4-31B",
+      "parameters": "31B",
+      "zero_shot_bpb": 0.7533643109186661,
+      "adapted_bpb": 0.5830168256575434,
+      "reduction_pct": 22.61156824025787
+    },
+    {
+      "rank": 2,
+      "model_id": "google/gemma-4-12B",
+      "model_name": "Gemma-4-12B",
+      "parameters": "12B",
+      "zero_shot_bpb": 0.8667268715275657,
+      "adapted_bpb": 0.6180255656380201,
+      "reduction_pct": 28.694311213776157
+    },
+    {
+      "rank": 3,
+      "model_id": "mistralai/Ministral-3-14B-Base-2512",
+      "model_name": "Ministral-3-14B",
+      "parameters": "14B",
+      "zero_shot_bpb": 0.7230476282726411,
+      "adapted_bpb": 0.651196759598973,
+      "reduction_pct": 9.937224861012215
+    },
+    {
+      "rank": 4,
+      "model_id": "Qwen/Qwen3.5-35B-A3B-Base",
+      "model_name": "Qwen-3.5-35B-MoE",
+      "parameters": "35B total",
+      "zero_shot_bpb": 0.7002442284120747,
+      "adapted_bpb": 0.662501223172579,
+      "reduction_pct": 5.389977340489405
+    },
+    {
+      "rank": 5,
+      "model_id": "Qwen/Qwen3.5-9B-Base",
+      "model_name": "Qwen-3.5-9B",
+      "parameters": "9B",
+      "zero_shot_bpb": 0.7331729419492373,
+      "adapted_bpb": 0.6791460350704052,
+      "reduction_pct": 7.368917180057746
+    },
+    {
+      "rank": 6,
+      "model_id": "Qwen/Qwen2.5-7B",
+      "model_name": "Qwen-2.5-7B",
+      "parameters": "7B",
+      "zero_shot_bpb": 0.7533251501591681,
+      "adapted_bpb": 0.7284355251523936,
+      "reduction_pct": 3.303968412778417
+    },
+    {
+      "rank": 7,
+      "model_id": "Qwen/Qwen3.5-4B-Base",
+      "model_name": "Qwen-3.5-4B",
+      "parameters": "4B",
+      "zero_shot_bpb": 0.7746208820672882,
+      "adapted_bpb": 0.7565126512009616,
+      "reduction_pct": 2.337689479529631
+    },
+    {
+      "rank": 8,
+      "model_id": "meta-llama/Llama-3.2-1B",
+      "model_name": "Llama-3.2-1B",
+      "parameters": "1.2B",
+      "zero_shot_bpb": 0.8142322189854925,
+      "adapted_bpb": 0.7725141164215528,
+      "reduction_pct": 5.123612354215011
+    },
+    {
+      "rank": 9,
+      "model_id": "Qwen/Qwen2.5-1.5B",
+      "model_name": "Qwen-2.5-1.5B",
+      "parameters": "1.5B",
+      "zero_shot_bpb": 0.8291551231459682,
+      "adapted_bpb": 0.8024690980035466,
+      "reduction_pct": 3.218459899417838
+    },
+    {
+      "rank": 10,
+      "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+      "model_name": "LiquidAI-LFM2.5",
+      "parameters": "1.2B",
+      "zero_shot_bpb": 1.3461382751554676,
+      "adapted_bpb": 0.8542691902145586,
+      "reduction_pct": 36.53926896062013
+    },
+    {
+      "rank": 11,
+      "model_id": "Qwen/Qwen2.5-0.5B",
+      "model_name": "Qwen-2.5-0.5B",
+      "parameters": "0.5B",
+      "zero_shot_bpb": 0.9308002874346785,
+      "adapted_bpb": 0.9214941812545882,
+      "reduction_pct": 0.9997962297302573
+    }
+  ]
+}

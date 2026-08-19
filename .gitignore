@@ -1,0 +1,64 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv
+venv/
+venv_lm_adapt/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Project Results and Reports
+results/*
+!results/combined_bpb_vs_static.json
+!results/leaderboard.json
+!results/domain_transfer/
+!results/domain_transfer/*.json
+!results/token_gain/
+!results/token_gain/*.json
+!results/token_gain_bpb/
+!results/token_gain_bpb/*.json
+results_*/
+reports/*
+!reports/11-model-run/
+!reports/11-model-run/**
+logs/
+*.log
+
+# Data and Models
+data/*.zip
+data/*.json
+data/*.pt
+data/*.jsonl
+results/cache/
+results/**/final_checkpoint/
+results/**/best_checkpoint/
+
+# OS and IDE
+.DS_Store
+.vscode/
+.idea/
+.coverage
+htmlcov/
+
+# LaTeX build artifacts
+*.aux
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.tdo
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+
+# personal agent env — symlinks into ~/bottlecap/shared, never repo content
+.claude/
+scripts/ai

@@ -1,0 +1,25 @@
+{
+  "model_id": "meta-llama/Llama-3.2-1B",
+  "dataset": "/opt/dt/corpora/reddit_2026-08.jsonl",
+  "corpus": "reddit_2026-08",
+  "avg_bytes_per_token": 4.398545172488815,
+  "n_train_blocks": 53674,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.1092211795033706,
+  "trainable_params": 11272192,
+  "total_params": 1247086592,
+  "trainable_pct": 0.9038820617838861,
+  "adapted_bpb": 1.054504871437648,
+  "reduction_pct": 4.932858214104848,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 301.08132886886597
+}

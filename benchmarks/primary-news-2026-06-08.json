@@ -1,0 +1,37 @@
+{
+  "benchmark_id": "primary-news-2026-06-08",
+  "description": "Primary target-domain entropy evaluation reported in the paper",
+  "corpus": {
+    "source": "Google News",
+    "snapshot_date": "2026-06-08",
+    "raw_records": 119054,
+    "documents": 119054,
+    "text_size_mb_approx": 361,
+    "availability": "controlled",
+    "availability_note": "The source-text snapshot is not redistributed. This manifest defines the reported board; maintainers evaluate requested models against the controlled snapshot."
+  },
+  "split": {
+    "train_fraction": 0.8,
+    "validation_fraction": 0.1,
+    "test_fraction": 0.1,
+    "seed": 42,
+    "zero_intersection_required": true
+  },
+  "evaluation": {
+    "metric": "adapted_bits_per_byte",
+    "direction": "lower_is_better",
+    "max_sequence_length": 512,
+    "test_aggregation": "corpus-wide over independent non-overlapping blocks",
+    "mask_injected_special_tokens": true
+  },
+  "adaptation": {
+    "method": "LoRA",
+    "selection": "candidate-specific multi-fidelity hyperparameter search",
+    "equal_search_procedure": true
+  },
+  "contamination": {
+    "test_set_policy": "global_unified",
+    "required": true,
+    "methods": ["SHA256", "MinHash-LSH", "split-leakage", "Min-K++", "CoDeC", "DCQ"]
+  }
+}

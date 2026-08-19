@@ -1,0 +1,25 @@
+{
+  "model_id": "mistralai/Ministral-3-14B-Base-2512",
+  "dataset": "/opt/dt/corpora/reddit_2026-08.jsonl",
+  "corpus": "reddit_2026-08",
+  "avg_bytes_per_token": 4.238031005915003,
+  "n_train_blocks": 55778,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.0075234685677785,
+  "trainable_params": 70336512,
+  "total_params": 14015368192,
+  "trainable_pct": 0.5018527593170775,
+  "adapted_bpb": 0.9470137031832495,
+  "reduction_pct": 6.005792149987856,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1170.250079870224
+}

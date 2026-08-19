@@ -1,0 +1,20 @@
+{"text": "The Earth is the third planet from the Sun.", "id": 1, "label": "category_A"}
+{"text": "Jupiter is the largest planet in our solar system.", "id": 2, "label": "category_B"}
+{"text": "Mars is often called the Red Planet.", "id": 3, "label": "category_A"}
+{"text": "Saturn is famous for its beautiful rings.", "id": 4, "label": "category_B"}
+{"text": "Venus is the hottest planet in the solar system.", "id": 5, "label": "category_A"}
+{"text": "Mercury is the closest planet to the Sun.", "id": 6, "label": "category_B"}
+{"text": "Neptune is known for its strong winds.", "id": 7, "label": "category_A"}
+{"text": "Uranus orbits the Sun on its side.", "id": 8, "label": "category_B"}
+{"text": "The Milky Way is our home galaxy.", "id": 9, "label": "category_A"}
+{"text": "A light-year is a measure of distance, not time.", "id": 10, "label": "category_B"}
+{"text": "Black holes are regions of space where gravity is extremely strong.", "id": 11, "label": "category_A"}
+{"text": "The Sun is a medium-sized star.", "id": 12, "label": "category_B"}
+{"text": "Comets are made of ice, dust, and rocky material.", "id": 13, "label": "category_A"}
+{"text": "Asteroids are small, rocky objects that orbit the Sun.", "id": 14, "label": "category_B"}
+{"text": "The moon is Earth's only natural satellite.", "id": 15, "label": "category_A"}
+{"text": "Gravity keeps the planets in orbit around the Sun.", "id": 16, "label": "category_B"}
+{"text": "Space is a vacuum, meaning it contains very little matter.", "id": 17, "label": "category_A"}
+{"text": "The universe is estimated to be about 13.8 billion years old.", "id": 18, "label": "category_B"}
+{"text": "Galaxies contain billions of stars, gas, and dust.", "id": 19, "label": "category_A"}
+{"text": "Stars are born in clouds of gas and dust called nebulae.", "id": 20, "label": "category_B"}

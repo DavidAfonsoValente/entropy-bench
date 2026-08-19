@@ -1,0 +1,90 @@
+{
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "adapter": "results/Qwen_Qwen2_5-1_5B/final_checkpoint",
+  "training_context_tokens": 512,
+  "target_tokens_per_window": 64,
+  "n_windows": 64,
+  "boundary_token_masked": false,
+  "by_context_length": {
+    "16": {
+      "base_bpb": 0.8974315978349989,
+      "adapted_bpb": 0.8656797208412323,
+      "gain_bpb": 0.03175187699376658,
+      "relative_reduction_pct": 3.538083244490847,
+      "base_nats_per_token": 3.015343278646469,
+      "adapted_nats_per_token": 2.9086579233407974,
+      "scored_tokens": 4096,
+      "decoded_bytes": 19855
+    },
+    "32": {
+      "base_bpb": 0.8676159089565831,
+      "adapted_bpb": 0.8381863143817095,
+      "gain_bpb": 0.029429594574873597,
+      "relative_reduction_pct": 3.392007254715554,
+      "base_nats_per_token": 2.9151634573936462,
+      "adapted_nats_per_token": 2.8162809014320374,
+      "scored_tokens": 4096,
+      "decoded_bytes": 19855
+    },
+    "64": {
+      "base_bpb": 0.8210784402237792,
+      "adapted_bpb": 0.7949388074614872,
+      "gain_bpb": 0.02613963276229203,
+      "relative_reduction_pct": 3.18357314986469,
+      "base_nats_per_token": 2.7587989568710327,
+      "adapted_nats_per_token": 2.6709705740213394,
+      "scored_tokens": 4096,
+      "decoded_bytes": 19855
+    },
+    "128": {
+      "base_bpb": 0.7963171505543118,
+      "adapted_bpb": 0.772687037631957,
+      "gain_bpb": 0.02363011292235484,
+      "relative_reduction_pct": 2.967424838948408,
+      "base_nats_per_token": 2.67560176551342,
+      "adapted_nats_per_token": 2.5962052941322327,
+      "scored_tokens": 4096,
+      "decoded_bytes": 19855
+    },
+    "256": {
+      "base_bpb": 0.7696061817764619,
+      "adapted_bpb": 0.7460586912078826,
+      "gain_bpb": 0.0235474905685793,
+      "relative_reduction_pct": 3.0596805387172488,
+      "base_nats_per_token": 2.585853710770607,
+      "adapted_nats_per_token": 2.506734848022461,
+      "scored_tokens": 4096,
+      "decoded_bytes": 19855
+    },
+    "512": {
+      "base_bpb": 0.7501288865523876,
+      "adapted_bpb": 0.7316379771679612,
+      "gain_bpb": 0.018490909384426435,
+      "relative_reduction_pct": 2.4650309721321557,
+      "base_nats_per_token": 2.52041058242321,
+      "adapted_nats_per_token": 2.4582816809415817,
+      "scored_tokens": 4096,
+      "decoded_bytes": 19855
+    },
+    "1024": {
+      "base_bpb": 0.7433844322400148,
+      "adapted_bpb": 0.7270725754549681,
+      "gain_bpb": 0.016311856785046763,
+      "relative_reduction_pct": 2.1942693548067456,
+      "base_nats_per_token": 2.4977494180202484,
+      "adapted_nats_per_token": 2.4429420679807663,
+      "scored_tokens": 4096,
+      "decoded_bytes": 19855
+    },
+    "2048": {
+      "base_bpb": 0.7400156044415401,
+      "adapted_bpb": 0.7271432679036628,
+      "gain_bpb": 0.012872336537877338,
+      "relative_reduction_pct": 1.739468257239193,
+      "base_nats_per_token": 2.4864302575588226,
+      "adapted_nats_per_token": 2.4431795924901962,
+      "scored_tokens": 4096,
+      "decoded_bytes": 19855
+    }
+  }
+}

@@ -1,0 +1,1125 @@
+{
+  "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+  "adapter": "/opt/tokengain/stage/adapters/LiquidAI_LFM2_5-1_2B-Base",
+  "split": "test",
+  "n_blocks": 4000,
+  "n_scored_positions": 2044000,
+  "injects_special_tokens": 1,
+  "boundary_id": 1,
+  "boundary_str": "<|startoftext|>",
+  "mean_nats_per_token_base": 4.2983897482616324,
+  "mean_nats_per_token_adapted": 2.727906909681346,
+  "relative_nats_reduction_pct": 36.53653881003754,
+  "bits_per_token_base": 6.201265573625017,
+  "bits_per_token_adapted": 3.9355377706040158,
+  "total_gain_nats": 3210066.931748035,
+  "gain_by_class": {
+    "content": {
+      "nats": 3112375.583977154,
+      "positions": 1991455,
+      "share_of_total_gain_pct": 96.95671928816502,
+      "share_of_positions_pct": 97.42930528375734,
+      "mean_gain_per_position": 1.562865133270475
+    },
+    "boundary_token": {
+      "nats": 36048.894258499146,
+      "positions": 3143,
+      "share_of_total_gain_pct": 1.1229950971417533,
+      "share_of_positions_pct": 0.15376712328767123,
+      "mean_gain_per_position": 11.469581374005456
+    },
+    "recovery_tail": {
+      "nats": 61642.45351238192,
+      "positions": 49402,
+      "share_of_total_gain_pct": 1.920285614693232,
+      "share_of_positions_pct": 2.4169275929549903,
+      "mean_gain_per_position": 1.2477724284924077
+    }
+  },
+  "gain_by_offset": {
+    "0": {
+      "mean_gain": 11.469581374005456,
+      "positions": 3143
+    },
+    "1": {
+      "mean_gain": 4.820482901881741,
+      "positions": 3134
+    },
+    "2": {
+      "mean_gain": 1.1691067775054764,
+      "positions": 3133
+    },
+    "3": {
+      "mean_gain": 1.207092703128641,
+      "positions": 3128
+    },
+    "4": {
+      "mean_gain": 1.191046686566896,
+      "positions": 3122
+    },
+    "5": {
+      "mean_gain": 1.2740027644973468,
+      "positions": 3115
+    },
+    "6": {
+      "mean_gain": 1.1544638837967935,
+      "positions": 3112
+    },
+    "7": {
+      "mean_gain": 1.1276808490780077,
+      "positions": 3105
+    },
+    "8": {
+      "mean_gain": 1.1101795391635612,
+      "positions": 3088
+    },
+    "9": {
+      "mean_gain": 0.9889526484548767,
+      "positions": 3079
+    },
+    "10": {
+      "mean_gain": 0.8943495392729849,
+      "positions": 3072
+    },
+    "11": {
+      "mean_gain": 0.8598316809735294,
+      "positions": 3064
+    },
+    "12": {
+      "mean_gain": 0.8605924139559149,
+      "positions": 3059
+    },
+    "13": {
+      "mean_gain": 0.8607325432927975,
+      "positions": 3057
+    },
+    "14": {
+      "mean_gain": 0.8183883390780247,
+      "positions": 3049
+    },
+    "15": {
+      "mean_gain": 0.7625763257299832,
+      "positions": 3045
+    },
+    "16": {
+      "mean_gain": 0.7825813702060881,
+      "positions": 3040
+    }
+  },
+  "gain_by_block_position": {
+    "0-0": {
+      "mean_gain": 3.3815647921413183,
+      "mean_base_loss": 10.575641798526048,
+      "positions": 4000
+    },
+    "1-1": {
+      "mean_gain": 4.006799660786986,
+      "mean_base_loss": 9.37439160873252,
+      "positions": 4000
+    },
+    "2-3": {
+      "mean_gain": 3.9491822621291504,
+      "mean_base_loss": 8.692553428351413,
+      "positions": 8000
+    },
+    "4-7": {
+      "mean_gain": 3.947014267753984,
+      "mean_base_loss": 8.095926891055278,
+      "positions": 16000
+    },
+    "8-15": {
+      "mean_gain": 3.8235582984747287,
+      "mean_base_loss": 7.468876706902876,
+      "positions": 32000
+    },
+    "16-31": {
+      "mean_gain": 3.4905161560154583,
+      "mean_base_loss": 6.794118244403482,
+      "positions": 64000
+    },
+    "32-63": {
+      "mean_gain": 3.0973866636055973,
+      "mean_base_loss": 6.111079487145267,
+      "positions": 128000
+    },
+    "64-127": {
+      "mean_gain": 2.4511062534113255,
+      "mean_base_loss": 5.2461158583601435,
+      "positions": 256000
+    },
+    "128-255": {
+      "mean_gain": 1.6369091459326774,
+      "mean_base_loss": 4.302914380899431,
+      "positions": 512000
+    },
+    "256-510": {
+      "mean_gain": 0.8607595210653853,
+      "mean_base_loss": 3.4361663081866003,
+      "positions": 1020000
+    }
+  },
+  "top_tokens_gained": [
+    {
+      "token_id": 509,
+      "token": "\n\n",
+      "total_nats_gained": 49702.439652218716,
+      "occurrences": 42537,
+      "mean_gain": 1.1684519277856622,
+      "share_of_total_gain_pct": 1.5483303217342375
+    },
+    {
+      "token_id": 1,
+      "token": "<|startoftext|>",
+      "total_nats_gained": 36048.894258499146,
+      "occurrences": 3143,
+      "mean_gain": 11.469581374005456,
+      "share_of_total_gain_pct": 1.1229950971417533
+    },
+    {
+      "token_id": 730,
+      "token": " ",
+      "total_nats_gained": 26752.602428075064,
+      "occurrences": 25753,
+      "mean_gain": 1.0388149896351906,
+      "share_of_total_gain_pct": 0.8333970286877164
+    },
+    {
+      "token_id": 811,
+      "token": " to",
+      "total_nats_gained": 19625.98647080959,
+      "occurrences": 35727,
+      "mean_gain": 0.5493320589696753,
+      "share_of_total_gain_pct": 0.6113886996157523
+    },
+    {
+      "token_id": 779,
+      "token": " the",
+      "total_nats_gained": 18346.523359179497,
+      "occurrences": 70214,
+      "mean_gain": 0.2612943766083615,
+      "share_of_total_gain_pct": 0.571530866778187
+    },
+    {
+      "token_id": 768,
+      "token": " a",
+      "total_nats_gained": 17919.717714231083,
+      "occurrences": 30409,
+      "mean_gain": 0.5892899376576369,
+      "share_of_total_gain_pct": 0.5582350179992335
+    },
+    {
+      "token_id": 797,
+      "token": " in",
+      "total_nats_gained": 17724.3246914529,
+      "occurrences": 24880,
+      "mean_gain": 0.7123924715214188,
+      "share_of_total_gain_pct": 0.5521481348615108
+    },
+    {
+      "token_id": 810,
+      "token": " and",
+      "total_nats_gained": 17398.90480759178,
+      "occurrences": 41643,
+      "mean_gain": 0.41781103204840625,
+      "share_of_total_gain_pct": 0.5420106551522041
+    },
+    {
+      "token_id": 896,
+      "token": " that",
+      "total_nats_gained": 17011.13788000727,
+      "occurrences": 14221,
+      "mean_gain": 1.1961984304906315,
+      "share_of_total_gain_pct": 0.5299309404350611
+    },
+    {
+      "token_id": 803,
+      "token": " of",
+      "total_nats_gained": 15785.396956846831,
+      "occurrences": 32400,
+      "mean_gain": 0.48720360977922317,
+      "share_of_total_gain_pct": 0.49174666112805715
+    },
+    {
+      "token_id": 523,
+      "token": ".",
+      "total_nats_gained": 15052.190232890796,
+      "occurrences": 69402,
+      "mean_gain": 0.21688409891488425,
+      "share_of_total_gain_pct": 0.4689058064186269
+    },
+    {
+      "token_id": 521,
+      "token": ",",
+      "total_nats_gained": 13274.707713641721,
+      "occurrences": 81339,
+      "mean_gain": 0.1632022487815405,
+      "share_of_total_gain_pct": 0.4135336737795996
+    },
+    {
+      "token_id": 884,
+      "token": " on",
+      "total_nats_gained": 12627.265506426367,
+      "occurrences": 11750,
+      "mean_gain": 1.0746608941639462,
+      "share_of_total_gain_pct": 0.3933645551605435
+    },
+    {
+      "token_id": 875,
+      "token": " for",
+      "total_nats_gained": 11292.173171915492,
+      "occurrences": 13988,
+      "mean_gain": 0.8072757486356514,
+      "share_of_total_gain_pct": 0.3517737608594461
+    },
+    {
+      "token_id": 1172,
+      "token": "\u2019s",
+      "total_nats_gained": 9298.888333005249,
+      "occurrences": 10489,
+      "mean_gain": 0.8865371658885736,
+      "share_of_total_gain_pct": 0.28967895469835453
+    },
+    {
+      "token_id": 963,
+      "token": " at",
+      "total_nats_gained": 9047.336131023476,
+      "occurrences": 7149,
+      "mean_gain": 1.2655386950655303,
+      "share_of_total_gain_pct": 0.2818426008985666
+    },
+    {
+      "token_id": 916,
+      "token": " with",
+      "total_nats_gained": 8906.943211256963,
+      "occurrences": 11096,
+      "mean_gain": 0.8027165835667774,
+      "share_of_total_gain_pct": 0.2774690808832047
+    },
+    {
+      "token_id": 531,
+      "token": "6",
+      "total_nats_gained": 8774.2738128755,
+      "occurrences": 3163,
+      "mean_gain": 2.7740353502609865,
+      "share_of_total_gain_pct": 0.2733361639938607
+    },
+    {
+      "token_id": 988,
+      "token": " from",
+      "total_nats_gained": 7650.3543864923995,
+      "occurrences": 6290,
+      "mean_gain": 1.2162725574709696,
+      "share_of_total_gain_pct": 0.23832382779403344
+    },
+    {
+      "token_id": 936,
+      "token": " it",
+      "total_nats_gained": 7649.396932269447,
+      "occurrences": 6799,
+      "mean_gain": 1.1250767660346297,
+      "share_of_total_gain_pct": 0.23829400118158858
+    },
+    {
+      "token_id": 906,
+      "token": " as",
+      "total_nats_gained": 7062.727386765953,
+      "occurrences": 8119,
+      "mean_gain": 0.8699011438312543,
+      "share_of_total_gain_pct": 0.22001807242442636
+    },
+    {
+      "token_id": 1098,
+      "token": "The",
+      "total_nats_gained": 6472.868645065464,
+      "occurrences": 6969,
+      "mean_gain": 0.9288088169128231,
+      "share_of_total_gain_pct": 0.2016427938323603
+    },
+    {
+      "token_id": 1371,
+      "token": " \u201c",
+      "total_nats_gained": 6314.6804112475365,
+      "occurrences": 4373,
+      "mean_gain": 1.4440156440081264,
+      "share_of_total_gain_pct": 0.19671491422170725
+    },
+    {
+      "token_id": 535,
+      "token": ":",
+      "total_nats_gained": 6269.27754262153,
+      "occurrences": 6578,
+      "mean_gain": 0.9530674281881317,
+      "share_of_total_gain_pct": 0.19530052412980714
+    },
+    {
+      "token_id": 1845,
+      "token": " said",
+      "total_nats_gained": 6054.84146151226,
+      "occurrences": 4437,
+      "mean_gain": 1.3646250758422944,
+      "share_of_total_gain_pct": 0.18862041166895888
+    },
+    {
+      "token_id": 856,
+      "token": " is",
+      "total_nats_gained": 6035.26593425218,
+      "occurrences": 13585,
+      "mean_gain": 0.444259546135604,
+      "share_of_total_gain_pct": 0.18801059487459626
+    },
+    {
+      "token_id": 1033,
+      "token": " this",
+      "total_nats_gained": 5622.426465686411,
+      "occurrences": 4595,
+      "mean_gain": 1.2235966193006333,
+      "share_of_total_gain_pct": 0.17514982040030955
+    },
+    {
+      "token_id": 1235,
+      "token": " one",
+      "total_nats_gained": 5183.460849497351,
+      "occurrences": 2829,
+      "mean_gain": 1.8322590489562922,
+      "share_of_total_gain_pct": 0.16147516421642674
+    },
+    {
+      "token_id": 1010,
+      "token": " you",
+      "total_nats_gained": 5017.2436014837585,
+      "occurrences": 3910,
+      "mean_gain": 1.2831825067733398,
+      "share_of_total_gain_pct": 0.15629716476820094
+    },
+    {
+      "token_id": 1287,
+      "token": " up",
+      "total_nats_gained": 4927.269162866985,
+      "occurrences": 2286,
+      "mean_gain": 2.155410832400256,
+      "share_of_total_gain_pct": 0.15349428119817587
+    },
+    {
+      "token_id": 843,
+      "token": " (",
+      "total_nats_gained": 4918.072986349231,
+      "occurrences": 4801,
+      "mean_gain": 1.024385125254995,
+      "share_of_total_gain_pct": 0.15320780192178438
+    },
+    {
+      "token_id": 1178,
+      "token": " has",
+      "total_nats_gained": 4840.632105860859,
+      "occurrences": 5897,
+      "mean_gain": 0.8208635078617702,
+      "share_of_total_gain_pct": 0.1507953637348273
+    },
+    {
+      "token_id": 1718,
+      "token": "202",
+      "total_nats_gained": 4779.143504460371,
+      "occurrences": 3971,
+      "mean_gain": 1.203511333281383,
+      "share_of_total_gain_pct": 0.14887987092088137
+    },
+    {
+      "token_id": 522,
+      "token": "-",
+      "total_nats_gained": 4777.633255243767,
+      "occurrences": 3179,
+      "mean_gain": 1.5028729963019085,
+      "share_of_total_gain_pct": 0.14883282363966527
+    },
+    {
+      "token_id": 968,
+      "token": " by",
+      "total_nats_gained": 4495.7789266430045,
+      "occurrences": 5718,
+      "mean_gain": 0.7862502495003506,
+      "share_of_total_gain_pct": 0.14005249803918693
+    },
+    {
+      "token_id": 1352,
+      "token": " its",
+      "total_nats_gained": 4493.933236583136,
+      "occurrences": 3263,
+      "mean_gain": 1.377239729262377,
+      "share_of_total_gain_pct": 0.13999500110535
+    },
+    {
+      "token_id": 902,
+      "token": " an",
+      "total_nats_gained": 4483.192214921117,
+      "occurrences": 4693,
+      "mean_gain": 0.9552934615216528,
+      "share_of_total_gain_pct": 0.13966039681545844
+    },
+    {
+      "token_id": 1236,
+      "token": " also",
+      "total_nats_gained": 4329.429346879944,
+      "occurrences": 3316,
+      "mean_gain": 1.3056180177563161,
+      "share_of_total_gain_pct": 0.1348703761925102
+    },
+    {
+      "token_id": 1209,
+      "token": " more",
+      "total_nats_gained": 4306.837322392967,
+      "occurrences": 3456,
+      "mean_gain": 1.246191354859076,
+      "share_of_total_gain_pct": 0.1341665894812881
+    },
+    {
+      "token_id": 4963,
+      "token": " June",
+      "total_nats_gained": 4233.467682525516,
+      "occurrences": 1658,
+      "mean_gain": 2.553358071487042,
+      "share_of_total_gain_pct": 0.13188097857573924
+    },
+    {
+      "token_id": 3648,
+      "token": " across",
+      "total_nats_gained": 4003.529880300164,
+      "occurrences": 1563,
+      "mean_gain": 2.5614394627640205,
+      "share_of_total_gain_pct": 0.12471795652310748
+    },
+    {
+      "token_id": 1626,
+      "token": " through",
+      "total_nats_gained": 3922.1951152272522,
+      "occurrences": 1790,
+      "mean_gain": 2.1911704554342193,
+      "share_of_total_gain_pct": 0.12218421604970801
+    },
+    {
+      "token_id": 953,
+      "token": " was",
+      "total_nats_gained": 3918.8668105434626,
+      "occurrences": 6543,
+      "mean_gain": 0.5989403653589275,
+      "share_of_total_gain_pct": 0.12208053270744272
+    },
+    {
+      "token_id": 1113,
+      "token": " all",
+      "total_nats_gained": 3891.666030185763,
+      "occurrences": 2319,
+      "mean_gain": 1.678165601632498,
+      "share_of_total_gain_pct": 0.12123317404059748
+    },
+    {
+      "token_id": 1014,
+      "token": " not",
+      "total_nats_gained": 3874.03084228409,
+      "occurrences": 4285,
+      "mean_gain": 0.9040912117349101,
+      "share_of_total_gain_pct": 0.12068380269487075
+    },
+    {
+      "token_id": 1230,
+      "token": " out",
+      "total_nats_gained": 3849.848037096439,
+      "occurrences": 2231,
+      "mean_gain": 1.7256154357222944,
+      "share_of_total_gain_pct": 0.11993045998576773
+    },
+    {
+      "token_id": 1391,
+      "token": " over",
+      "total_nats_gained": 3780.0451595233753,
+      "occurrences": 2093,
+      "mean_gain": 1.8060416433460942,
+      "share_of_total_gain_pct": 0.11775596085359379
+    },
+    {
+      "token_id": 1058,
+      "token": " $",
+      "total_nats_gained": 3641.260732196737,
+      "occurrences": 2199,
+      "mean_gain": 1.6558711833545872,
+      "share_of_total_gain_pct": 0.11343254859218455
+    },
+    {
+      "token_id": 14009,
+      "token": " AI",
+      "total_nats_gained": 3618.2711228299886,
+      "occurrences": 1478,
+      "mean_gain": 2.4480860100338218,
+      "share_of_total_gain_pct": 0.11271637631741425
+    },
+    {
+      "token_id": 1403,
+      "token": " when",
+      "total_nats_gained": 3463.3514816723764,
+      "occurrences": 1808,
+      "mean_gain": 1.9155705097745446,
+      "share_of_total_gain_pct": 0.10789031990016532
+    },
+    {
+      "token_id": 1804,
+      "token": " just",
+      "total_nats_gained": 3450.163000419736,
+      "occurrences": 1708,
+      "mean_gain": 2.020001756686028,
+      "share_of_total_gain_pct": 0.10747947235296297
+    },
+    {
+      "token_id": 1419,
+      "token": " into",
+      "total_nats_gained": 3410.447949114139,
+      "occurrences": 2337,
+      "mean_gain": 1.459327320973102,
+      "share_of_total_gain_pct": 0.10624226913726648
+    },
+    {
+      "token_id": 933,
+      "token": " or",
+      "total_nats_gained": 3363.379199082032,
+      "occurrences": 3730,
+      "mean_gain": 0.9017102410407593,
+      "share_of_total_gain_pct": 0.10477598351042827
+    },
+    {
+      "token_id": 1210,
+      "token": " his",
+      "total_nats_gained": 3282.77798747411,
+      "occurrences": 3866,
+      "mean_gain": 0.8491407106761795,
+      "share_of_total_gain_pct": 0.1022650946934144
+    },
+    {
+      "token_id": 1188,
+      "token": " will",
+      "total_nats_gained": 3251.871467868332,
+      "occurrences": 4524,
+      "mean_gain": 0.7188044800769964,
+      "share_of_total_gain_pct": 0.10130229484335183
+    },
+    {
+      "token_id": 2158,
+      "token": " while",
+      "total_nats_gained": 3229.744197882712,
+      "occurrences": 1819,
+      "mean_gain": 1.7755603066974777,
+      "share_of_total_gain_pct": 0.10061298616362375
+    },
+    {
+      "token_id": 1011,
+      "token": " can",
+      "total_nats_gained": 3217.5018113371916,
+      "occurrences": 3226,
+      "mean_gain": 0.9973657195713551,
+      "share_of_total_gain_pct": 0.10023161135724694
+    },
+    {
+      "token_id": 526,
+      "token": "1",
+      "total_nats_gained": 3183.4444430492003,
+      "occurrences": 2808,
+      "mean_gain": 1.1337052859861825,
+      "share_of_total_gain_pct": 0.09917065627400058
+    },
+    {
+      "token_id": 941,
+      "token": " The",
+      "total_nats_gained": 3166.214665416628,
+      "occurrences": 5732,
+      "mean_gain": 0.5523752033176252,
+      "share_of_total_gain_pct": 0.0986339142683381
+    },
+    {
+      "token_id": 1337,
+      "token": " about",
+      "total_nats_gained": 3146.902213999885,
+      "occurrences": 2507,
+      "mean_gain": 1.2552461962504529,
+      "share_of_total_gain_pct": 0.09803229281223262
+    }
+  ],
+  "top_tokens_lost": [
+    {
+      "token_id": 40648,
+      "token": "Conclusion",
+      "total_nats_gained": -55.68107855319977,
+      "occurrences": 34,
+      "mean_gain": -1.6376787809764637,
+      "share_of_total_gain_pct": -0.0017345768713575938
+    },
+    {
+      "token_id": 50586,
+      "token": " [\u2026]",
+      "total_nats_gained": -41.215752601623535,
+      "occurrences": 13,
+      "mean_gain": -3.170442507817195,
+      "share_of_total_gain_pct": -0.0012839530601058088
+    },
+    {
+      "token_id": 22749,
+      "token": ".The",
+      "total_nats_gained": -33.552197217941284,
+      "occurrences": 44,
+      "mean_gain": -0.7625499367713928,
+      "share_of_total_gain_pct": -0.0010452179948681167
+    },
+    {
+      "token_id": 2977,
+      "token": "\u2026",
+      "total_nats_gained": -28.92411082983017,
+      "occurrences": 228,
+      "mean_gain": -0.12686013521855338,
+      "share_of_total_gain_pct": -0.0009010438549977402
+    },
+    {
+      "token_id": 7356,
+      "token": " \u2026",
+      "total_nats_gained": -26.421313881874084,
+      "occurrences": 87,
+      "mean_gain": -0.30369326301004695,
+      "share_of_total_gain_pct": -0.000823076728418445
+    },
+    {
+      "token_id": 59928,
+      "token": " Winnipeg",
+      "total_nats_gained": -25.29836267232895,
+      "occurrences": 11,
+      "mean_gain": -2.2998511520299045,
+      "share_of_total_gain_pct": -0.0007880945541080286
+    },
+    {
+      "token_id": 33831,
+      "token": " cigarette",
+      "total_nats_gained": -24.508061051368713,
+      "occurrences": 22,
+      "mean_gain": -1.1140027750622143,
+      "share_of_total_gain_pct": -0.0007634750792570828
+    },
+    {
+      "token_id": 17722,
+      "token": " apparently",
+      "total_nats_gained": -21.619625091552734,
+      "occurrences": 34,
+      "mean_gain": -0.6358713262221393,
+      "share_of_total_gain_pct": -0.000673494526787945
+    },
+    {
+      "token_id": 47249,
+      "token": " \ufffd",
+      "total_nats_gained": -17.891217350959778,
+      "occurrences": 14,
+      "mean_gain": -1.277944096497127,
+      "share_of_total_gain_pct": -0.0005573471747275112
+    },
+    {
+      "token_id": 55198,
+      "token": " Biel",
+      "total_nats_gained": -17.325719118118286,
+      "occurrences": 6,
+      "mean_gain": -2.8876198530197144,
+      "share_of_total_gain_pct": -0.0005397307746690379
+    },
+    {
+      "token_id": 59977,
+      "token": "\u200e",
+      "total_nats_gained": -17.228543519973755,
+      "occurrences": 11,
+      "mean_gain": -1.5662312290885232,
+      "share_of_total_gain_pct": -0.0005367035605887504
+    },
+    {
+      "token_id": 24582,
+      "token": "Final",
+      "total_nats_gained": -16.57698678970337,
+      "occurrences": 25,
+      "mean_gain": -0.6630794715881347,
+      "share_of_total_gain_pct": -0.0005164062663539668
+    },
+    {
+      "token_id": 29412,
+      "token": " Nancy",
+      "total_nats_gained": -16.28383469581604,
+      "occurrences": 18,
+      "mean_gain": -0.9046574831008911,
+      "share_of_total_gain_pct": -0.0005072739927870823
+    },
+    {
+      "token_id": 30999,
+      "token": " Bib",
+      "total_nats_gained": -15.3155837059021,
+      "occurrences": 10,
+      "mean_gain": -1.53155837059021,
+      "share_of_total_gain_pct": -0.0004771110394748695
+    },
+    {
+      "token_id": 29514,
+      "token": " Covid",
+      "total_nats_gained": -14.911501169204712,
+      "occurrences": 12,
+      "mean_gain": -1.242625097433726,
+      "share_of_total_gain_pct": -0.0004645230609283491
+    },
+    {
+      "token_id": 27344,
+      "token": " Notre",
+      "total_nats_gained": -14.210557460784912,
+      "occurrences": 14,
+      "mean_gain": -1.0150398186274938,
+      "share_of_total_gain_pct": -0.0004426872636280697
+    },
+    {
+      "token_id": 22823,
+      "token": " whilst",
+      "total_nats_gained": -13.11335039138794,
+      "occurrences": 15,
+      "mean_gain": -0.8742233594258626,
+      "share_of_total_gain_pct": -0.0004085070707309861
+    },
+    {
+      "token_id": 31855,
+      "token": " {{",
+      "total_nats_gained": -11.584497829899192,
+      "occurrences": 14,
+      "mean_gain": -0.8274641307070851,
+      "share_of_total_gain_pct": -0.00036088025814436455
+    },
+    {
+      "token_id": 32457,
+      "token": "\u2026.",
+      "total_nats_gained": -11.546165943145752,
+      "occurrences": 11,
+      "mean_gain": -1.0496514493768865,
+      "share_of_total_gain_pct": -0.0003596861432686175
+    },
+    {
+      "token_id": 46549,
+      "token": " horrible",
+      "total_nats_gained": -11.33371126651764,
+      "occurrences": 8,
+      "mean_gain": -1.416713908314705,
+      "share_of_total_gain_pct": -0.00035306775551704437
+    },
+    {
+      "token_id": 39500,
+      "token": " Inj",
+      "total_nats_gained": -11.256381660699844,
+      "occurrences": 7,
+      "mean_gain": -1.6080545229571206,
+      "share_of_total_gain_pct": -0.00035065878375844974
+    },
+    {
+      "token_id": 27052,
+      "token": " Brief",
+      "total_nats_gained": -11.030194751918316,
+      "occurrences": 18,
+      "mean_gain": -0.6127885973287953,
+      "share_of_total_gain_pct": -0.00034361260953247
+    },
+    {
+      "token_id": 50279,
+      "token": " puppy",
+      "total_nats_gained": -10.627741992473602,
+      "occurrences": 7,
+      "mean_gain": -1.5182488560676575,
+      "share_of_total_gain_pct": -0.00033107540180435705
+    },
+    {
+      "token_id": 35999,
+      "token": " Paolo",
+      "total_nats_gained": -10.210550308227539,
+      "occurrences": 3,
+      "mean_gain": -3.4035167694091797,
+      "share_of_total_gain_pct": -0.00031807904711405525
+    },
+    {
+      "token_id": 12252,
+      "token": " troops",
+      "total_nats_gained": -10.170657277107239,
+      "occurrences": 21,
+      "mean_gain": -0.4843170131955828,
+      "share_of_total_gain_pct": -0.0003168362994714515
+    },
+    {
+      "token_id": 47869,
+      "token": " Vera",
+      "total_nats_gained": -10.021961450576782,
+      "occurrences": 24,
+      "mean_gain": -0.4175817271073659,
+      "share_of_total_gain_pct": -0.0003122041273176614
+    },
+    {
+      "token_id": 57414,
+      "token": " Lorraine",
+      "total_nats_gained": -9.986760377883911,
+      "occurrences": 6,
+      "mean_gain": -1.6644600629806519,
+      "share_of_total_gain_pct": -0.00031110754355659625
+    },
+    {
+      "token_id": 49770,
+      "token": " Nottingham",
+      "total_nats_gained": -9.825520545244217,
+      "occurrences": 22,
+      "mean_gain": -0.4466145702383735,
+      "share_of_total_gain_pct": -0.0003060846005442557
+    },
+    {
+      "token_id": 46286,
+      "token": " neighbouring",
+      "total_nats_gained": -9.803257584571838,
+      "occurrences": 17,
+      "mean_gain": -0.576662210857167,
+      "share_of_total_gain_pct": -0.0003053910648284675
+    },
+    {
+      "token_id": 32652,
+      "token": " Schm",
+      "total_nats_gained": -9.609347462654114,
+      "occurrences": 11,
+      "mean_gain": -0.8735770420594648,
+      "share_of_total_gain_pct": -0.00029935037701601334
+    },
+    {
+      "token_id": 53604,
+      "token": " glorious",
+      "total_nats_gained": -9.548157691955566,
+      "occurrences": 5,
+      "mean_gain": -1.9096315383911133,
+      "share_of_total_gain_pct": -0.0002974441933756234
+    },
+    {
+      "token_id": 58423,
+      "token": "Reply",
+      "total_nats_gained": -9.514436483383179,
+      "occurrences": 5,
+      "mean_gain": -1.9028872966766357,
+      "share_of_total_gain_pct": -0.0002963937103393079
+    },
+    {
+      "token_id": 49008,
+      "token": " ugly",
+      "total_nats_gained": -9.40862250328064,
+      "occurrences": 10,
+      "mean_gain": -0.9408622503280639,
+      "share_of_total_gain_pct": -0.0002930973933978752
+    },
+    {
+      "token_id": 51096,
+      "token": " Warwick",
+      "total_nats_gained": -9.234826564788818,
+      "occurrences": 9,
+      "mean_gain": -1.026091840532091,
+      "share_of_total_gain_pct": -0.00028768330259581267
+    },
+    {
+      "token_id": 53893,
+      "token": " Maurit",
+      "total_nats_gained": -9.181492760777473,
+      "occurrences": 6,
+      "mean_gain": -1.5302487934629123,
+      "share_of_total_gain_pct": -0.00028602184801728456
+    },
+    {
+      "token_id": 15808,
+      "token": " conqu",
+      "total_nats_gained": -9.114306449890137,
+      "occurrences": 3,
+      "mean_gain": -3.038102149963379,
+      "share_of_total_gain_pct": -0.00028392886016638167
+    },
+    {
+      "token_id": 47761,
+      "token": " Concern",
+      "total_nats_gained": -8.995433449745178,
+      "occurrences": 8,
+      "mean_gain": -1.1244291812181473,
+      "share_of_total_gain_pct": -0.00028022572865316346
+    },
+    {
+      "token_id": 46228,
+      "token": " granite",
+      "total_nats_gained": -8.86608362197876,
+      "occurrences": 3,
+      "mean_gain": -2.9553612073262534,
+      "share_of_total_gain_pct": -0.00027619622302238895
+    },
+    {
+      "token_id": 52613,
+      "token": "Alpha",
+      "total_nats_gained": -8.823212265968323,
+      "occurrences": 8,
+      "mean_gain": -1.1029015332460403,
+      "share_of_total_gain_pct": -0.00027486069460750035
+    },
+    {
+      "token_id": 63236,
+      "token": "/articles",
+      "total_nats_gained": -8.767455577850342,
+      "occurrences": 2,
+      "mean_gain": -4.383727788925171,
+      "share_of_total_gain_pct": -0.00027312376234709984
+    },
+    {
+      "token_id": 606,
+      "token": "\ufffd",
+      "total_nats_gained": -8.67142147407867,
+      "occurrences": 42,
+      "mean_gain": -0.20646241604949214,
+      "share_of_total_gain_pct": -0.00027013210809771705
+    },
+    {
+      "token_id": 59523,
+      "token": " preaching",
+      "total_nats_gained": -8.666903376579285,
+      "occurrences": 3,
+      "mean_gain": -2.8889677921930947,
+      "share_of_total_gain_pct": -0.0002699913603315349
+    },
+    {
+      "token_id": 29770,
+      "token": " Coron",
+      "total_nats_gained": -8.4963858127594,
+      "occurrences": 7,
+      "mean_gain": -1.2137694018227714,
+      "share_of_total_gain_pct": -0.0002646793974520871
+    },
+    {
+      "token_id": 20569,
+      "token": "arz",
+      "total_nats_gained": -8.483311176300049,
+      "occurrences": 2,
+      "mean_gain": -4.241655588150024,
+      "share_of_total_gain_pct": -0.000264272096397706
+    },
+    {
+      "token_id": 8426,
+      "token": "Delta",
+      "total_nats_gained": -8.351393818855286,
+      "occurrences": 10,
+      "mean_gain": -0.8351393818855286,
+      "share_of_total_gain_pct": -0.00026016260708643704
+    },
+    {
+      "token_id": 47961,
+      "token": " Sinn",
+      "total_nats_gained": -8.33120346069336,
+      "occurrences": 3,
+      "mean_gain": -2.7770678202311196,
+      "share_of_total_gain_pct": -0.0002595336370807889
+    },
+    {
+      "token_id": 13432,
+      "token": " ).",
+      "total_nats_gained": -8.318052291870117,
+      "occurrences": 6,
+      "mean_gain": -1.3863420486450195,
+      "share_of_total_gain_pct": -0.0002591239518903283
+    },
+    {
+      "token_id": 44181,
+      "token": "Overview",
+      "total_nats_gained": -8.303502082824707,
+      "occurrences": 4,
+      "mean_gain": -2.0758755207061768,
+      "share_of_total_gain_pct": -0.0002586706838010712
+    },
+    {
+      "token_id": 53416,
+      "token": " Davidson",
+      "total_nats_gained": -8.252449989318848,
+      "occurrences": 4,
+      "mean_gain": -2.063112497329712,
+      "share_of_total_gain_pct": -0.00025708030906461486
+    },
+    {
+      "token_id": 53438,
+      "token": " labelled",
+      "total_nats_gained": -8.210574626922607,
+      "occurrences": 5,
+      "mean_gain": -1.6421149253845215,
+      "share_of_total_gain_pct": -0.00025577580784122645
+    },
+    {
+      "token_id": 37388,
+      "token": " exclude",
+      "total_nats_gained": -8.086378812789917,
+      "occurrences": 10,
+      "mean_gain": -0.8086378812789917,
+      "share_of_total_gain_pct": -0.0002519068600350491
+    },
+    {
+      "token_id": 41013,
+      "token": " Denis",
+      "total_nats_gained": -7.973564952611923,
+      "occurrences": 7,
+      "mean_gain": -1.139080707515989,
+      "share_of_total_gain_pct": -0.0002483924828405349
+    },
+    {
+      "token_id": 33056,
+      "token": ".Log",
+      "total_nats_gained": -7.939059257507324,
+      "occurrences": 2,
+      "mean_gain": -3.969529628753662,
+      "share_of_total_gain_pct": -0.000247317561481004
+    },
+    {
+      "token_id": 42748,
+      "token": " Paw",
+      "total_nats_gained": -7.922637164592743,
+      "occurrences": 10,
+      "mean_gain": -0.7922637164592743,
+      "share_of_total_gain_pct": -0.00024680598046840374
+    },
+    {
+      "token_id": 55179,
+      "token": " Regina",
+      "total_nats_gained": -7.746119499206543,
+      "occurrences": 6,
+      "mean_gain": -1.2910199165344238,
+      "share_of_total_gain_pct": -0.00024130710243441592
+    },
+    {
+      "token_id": 46706,
+      "token": " Helena",
+      "total_nats_gained": -7.647592544555664,
+      "occurrences": 3,
+      "mean_gain": -2.549197514851888,
+      "share_of_total_gain_pct": -0.00023823779089837183
+    },
+    {
+      "token_id": 49899,
+      "token": " poisonous",
+      "total_nats_gained": -7.624316215515137,
+      "occurrences": 2,
+      "mean_gain": -3.8121581077575684,
+      "share_of_total_gain_pct": -0.00023751268673277576
+    },
+    {
+      "token_id": 7997,
+      "token": "Index",
+      "total_nats_gained": -7.480949401855469,
+      "occurrences": 2,
+      "mean_gain": -3.7404747009277344,
+      "share_of_total_gain_pct": -0.00023304652397954003
+    },
+    {
+      "token_id": 50272,
+      "token": " poker",
+      "total_nats_gained": -7.327950358390808,
+      "occurrences": 8,
+      "mean_gain": -0.915993794798851,
+      "share_of_total_gain_pct": -0.0002282802980185958
+    },
+    {
+      "token_id": 47194,
+      "token": " newest",
+      "total_nats_gained": -7.2993528842926025,
+      "occurrences": 22,
+      "mean_gain": -0.3317887674678456,
+      "share_of_total_gain_pct": -0.00022738942955054697
+    }
+  ]
+}
