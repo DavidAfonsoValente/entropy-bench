@@ -1,1 +1,1 @@
-# Tests for LM Adapt Bench
+# Tests for Entropy Bench

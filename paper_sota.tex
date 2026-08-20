@@ -32,7 +32,7 @@
 \newcommand{\loss}{\mathcal{L}}
 \newcommand{\nats}{\text{nats}}
 
-\title{\LARGE \textbf{Beyond Perplexity: Entropy-Based Evaluation\\ of Base Language Models}}
+\title{\LARGE \textbf{Back to Entropy: Evaluating Base Language Models\\ Beyond Perplexity and Benchmarks}}
 \author{David Afonso Valente\\\normalsize Bottlecap AI}
 
 \date{}
@@ -42,13 +42,13 @@
 \maketitle
 
 \begin{abstract}
-Perplexity once anchored language-model evaluation in predictive cross-entropy, but its token
-denominator prevents comparisons across tokenizers. Fixed task benchmarks provide common test
-sets, yet each observes only selected capabilities and can be distorted by benchmark-specific
-optimization or training-data overlap. We return base-model selection to the language-modeling
-objective with three adjustments: normalize cross-entropy by UTF-8 bytes, evaluate dynamically on
-fresh target-domain data before and after controlled adaptation, and filter contamination before
-scoring. Across 11 base models from 0.5B to 35B,
+Language-model evaluation has drifted away from the objective that trains the model. Perplexity once
+made predictive cross-entropy central, but its token denominator prevents comparisons across
+tokenizers. Fixed task benchmarks provide common test sets, yet each observes only selected
+capabilities and can be distorted by benchmark-specific optimization or training-data overlap. We
+bring base-model selection back to entropy with three adjustments: normalize cross-entropy by UTF-8
+bytes, evaluate dynamically on fresh target-domain data before and after controlled adaptation, and
+filter contamination before scoring. Across 11 base models from 0.5B to 35B,
 adapted BPB tracks sentence-continuation quality closely ($r=-0.96$ against HellaSwag), while
 knowledge and arithmetic benchmarks reveal complementary strengths. Token-level analysis gives the
 reported quantities distinct roles: adapted BPB selects the model; zero-shot$\rightarrow$adapted

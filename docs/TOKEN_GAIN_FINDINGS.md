@@ -3,7 +3,8 @@
 Answering the question raised after the 3 August team talk. Measured, not argued: every
 number below comes from `tools/token_level_gain.py` scoring the held-out news test split
 under each base model and under its own LoRA adapter, on a single spot A100 in
-`gpu-llm-training`. Raw outputs: `gs://gpu-llm-training-gceval/token_gain/out/`.
+the published evaluation environment. Sanitized raw outputs are under `results/token_gain/` and
+`results/token_gain_bpb/`.
 
 ## Headline
 

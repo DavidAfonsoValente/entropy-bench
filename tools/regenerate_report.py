@@ -173,7 +173,7 @@ def clean_and_regenerate():
     report_builder = ReportBuilder(
         sorted_results, 
         output_dir, 
-        "LM Adapt Bench: LLM Continuous Adaptation & Forensic Contamination Audit", 
+        "Entropy Bench: Base-Model Evaluation on Target-Domain Data",
         metadata, 
         contamination_audit=contam_audit_data
     )

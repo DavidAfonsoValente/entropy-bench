@@ -70,7 +70,7 @@ class RunConfig:
     device: str = "auto"
     dtype: str = "auto"           # "auto","float32","float16","bfloat16"
     flash_attention: bool = False
-    report_title: str = "LM Adapt Bench"
+    report_title: str = "Entropy Bench"
     hf_token: Optional[str] = None
     force_rerun: bool = False
     baseline_only: bool = False

@@ -16,9 +16,7 @@ Open an issue with:
 
 ```bash
 python -m pip install -e '.[test]'
-pytest -q
-entropy-leaderboard validate
-entropy-leaderboard render --check
+make check
 ```
 
 GPU behavior should include a small smoke test or a reproducible SLURM script. Do not commit model weights, caches, secrets, private data, or generated Python bytecode.
@@ -47,3 +45,19 @@ The contribution must state:
 Maintainers reject results with a changed corpus, split, seed, context length, contamination policy, or adaptation procedure from the existing board. Such results can start a separate, clearly identified board.
 
 If you cannot access the controlled primary corpus, use the **Model evaluation request** issue template. The maintainers can run the candidate without distributing the source text.
+
+## Dataset contributions
+
+Do not open a pull request containing third-party source text unless its redistribution license is
+documented. A new public benchmark must include:
+
+- a stable benchmark ID and snapshot date;
+- source URLs or dataset identifier plus the exact upstream revision;
+- redistribution license and attribution requirements;
+- record count, byte count, text field, and file SHA-256;
+- a generated record-hash index; and
+- commands that rebuild or download the snapshot deterministically.
+
+Run `entropy-dataset fingerprint DATASET --write-index PATH` to create the identity fields and safe
+record index. A new corpus starts a new leaderboard; it does not replace the evidence behind an
+existing board.

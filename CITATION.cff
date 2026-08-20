@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this framework or leaderboard, please cite the paper and code."
-title: "LM Adapt Bench"
+title: "Entropy Bench"
 type: software
-version: "2.1.0"
+version: "2.2.0"
 date-released: "2026-08-19"
 license: "Apache-2.0"
 authors:
@@ -13,7 +13,7 @@ repository: "https://github.com/DavidAfonsoValente/entropy-bench"
 url: "https://github.com/DavidAfonsoValente/entropy-bench/blob/main/paper_sota.pdf"
 preferred-citation:
   type: article
-  title: "Beyond Perplexity: Entropy-Based Evaluation of Base Language Models"
+  title: "Back to Entropy: Evaluating Base Language Models Beyond Perplexity and Benchmarks"
   authors:
     - family-names: "Valente"
       given-names: "David Afonso"

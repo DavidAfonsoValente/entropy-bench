@@ -1,5 +1,5 @@
 #!/bin/bash
-# Stability Tester for LM Adapt Bench
+# Stability Tester for Entropy Bench
 # Usage: ./test_stability.sh <MODEL_ID> <DATASET>
 
 MODEL=$1

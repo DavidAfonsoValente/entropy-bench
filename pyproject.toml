@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lm-adapt-bench"
-version = "2.1.0"
-description = "Entropy-based evaluation of base language models on fresh target-domain data"
+version = "2.2.0"
+description = "Evaluate base language models with comparable entropy on data that matters"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
@@ -64,6 +64,7 @@ Issues = "https://github.com/DavidAfonsoValente/entropy-bench/issues"
 
 [project.scripts]
 entropy-bench = "lm_adapt_bench.cli:main"
+entropy-dataset = "lm_adapt_bench.dataset_manifest:main"
 entropy-leaderboard = "lm_adapt_bench.leaderboard:main"
 
 [tool.setuptools.packages.find]

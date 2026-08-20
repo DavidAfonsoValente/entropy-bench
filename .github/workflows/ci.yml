@@ -20,6 +20,11 @@ jobs:
         run: |
           python lm_adapt_bench/leaderboard.py validate
           python lm_adapt_bench/leaderboard.py render --check
+      - name: Validate dataset identity and paper evidence
+        run: |
+          python lm_adapt_bench/dataset_manifest.py validate-manifest
+          python tools/verify_paper_numbers.py
+          python tools/check_markdown_links.py
       - name: Validate citation metadata
         run: |
           python -m pip install pyyaml

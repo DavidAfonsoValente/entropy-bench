@@ -26,7 +26,7 @@ mkdir -p logs
 
 source slurm/setup_env.sh
 
-echo "Running LM Adapt Bench for model: $MODEL"
+echo "Running Entropy Bench for model: $MODEL"
 python -m lm_adapt_bench.cli \
     --models "$MODEL" \
     --dataset "$DATASET" \

@@ -1,40 +1,68 @@
-# Beyond Perplexity: Entropy-Based Evaluation of Base Language Models
+# Back to Entropy: Evaluating Base Language Models Beyond Perplexity and Benchmarks
 
 [![CI](https://github.com/DavidAfonsoValente/entropy-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/DavidAfonsoValente/entropy-bench/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/DavidAfonsoValente/entropy-bench)](https://github.com/DavidAfonsoValente/entropy-bench/releases/latest)
+[![License](https://img.shields.io/badge/code-Apache--2.0-blue.svg)](LICENSE)
 [![Paper](https://img.shields.io/badge/paper-PDF-b31b1b.svg)](paper_sota.pdf)
 
-**LM Adapt Bench** evaluates base language models using the objective they were trained on: predictive cross-entropy. It makes that signal useful across modern models by combining four pieces:
+**Choose the base language model that best predicts the text you actually care about.** Entropy
+Bench compares models in one tokenizer-independent unit, on recent target-domain data, before and
+after the same controlled adaptation procedure.
 
-1. **A common unit:** Bits Per Byte (BPB) removes tokenizer-dependent denominators.
-2. **Fresh target-domain data:** the evaluator controls what the model must predict.
-3. **Controlled adaptation:** every candidate receives the same kind of domain intervention before selection.
-4. **Contamination filtering:** suspected memorized text is removed before adaptation or scoring.
+**[Read the paper](paper_sota.pdf) · [Start in five minutes](docs/QUICKSTART.md) · [View the
+leaderboard](LEADERBOARD.md) · [Understand a result](docs/RESULTS.md) · [Check the
+dataset](docs/DATASET.md)**
 
-The result is not “just another BPB metric.” It is an auditable protocol for choosing a base model from data that matters to the deployment.
+## Why go back to entropy?
 
-**[Read the paper](paper_sota.pdf) · [View the leaderboard](LEADERBOARD.md) · [Inspect the full report](reports/11-model-run/report.pdf) · [Use the static benchmarks](eval/README.md)**
+Perplexity was the language-model quality metric for decades because it measures the model's whole
+predictive distribution. But token-level perplexity is not comparable across tokenizers. The field
+moved to fixed task benchmarks, which are easier to compare but observe selected capabilities and
+can become targets for benchmark-specific optimization or training-data contamination.
 
-## Why return to entropy?
+Entropy Bench keeps the breadth of the language-modeling objective while fixing the practical
+problems that made raw perplexity inadequate:
 
-Token-level perplexity cannot be compared directly across tokenizers because a token represents a different amount of text for each model. Fixed task benchmarks provide common questions, but each measures only a selected capability; repeated optimization on fixed tests also makes benchmark-specific tuning and contamination difficult to separate from general language-model quality.
+1. **Comparable units:** Bits Per Byte (BPB) divides by UTF-8 bytes, not model-specific tokens.
+2. **Relevant evidence:** evaluate on fresh text from the deployment domain, not only permanent test
+   questions.
+3. **Fair adaptation:** give every candidate the same controlled opportunity to fit the domain.
+4. **Contamination control:** detect and remove suspected memorized or leaking samples before they
+   influence adaptation or scoring.
 
-Entropy observes the model's complete predictive distribution. LM Adapt Bench returns to that broad signal while fixing the reasons raw perplexity is insufficient for cross-model selection.
+BPB is one component, not the entire claim. The contribution is the complete protocol that makes
+entropy useful for modern base-model selection.
 
-## What you get
+## What the evidence says
 
-- one command for zero-shot BPB, hyperparameter search, LoRA adaptation, and held-out BPB;
-- TXT, JSONL, CSV, Hugging Face, and ZIP dataset inputs;
-- exact and near deduplication, split-leakage checks, Min-K++, CoDeC, and DCQ contamination signals;
-- model-specific or globally unified clean test sets;
-- resumable multi-fidelity sweeps and adaptation runs;
-- JSON, HTML, PDF, and plot outputs;
-- a separate reproducible harness for MMLU-Pro, HellaSwag, and GSM8K; and
-- a validated, machine-readable leaderboard contribution workflow.
+The paper evaluates 11 base models from 0.5B to 35B across dense Transformers, a sparse MoE, and a
+Liquid architecture.
+
+- Adapted BPB closely tracks sentence-continuation quality (`r = -0.96` against HellaSwag).
+- Adaptation materially reorders candidates within each domain: zero-shot and adapted ranks have
+  Spearman `rho = 0.609–0.682`.
+- Adapted performance tiers remain highly stable across news, Reddit, and Hacker News
+  (`rho = 0.955–0.991`).
+- Knowledge and arithmetic benchmarks remain useful complementary diagnostics; they are not treated
+  as interchangeable with predictive quality.
+
+The practical rule is simple: **rank models by adapted BPB on recent target-domain data, then use the
+target domain and complementary tasks to resolve close calls.**
+
+## Pick your path
+
+| I want to… | Start here | Hardware |
+|---|---|---|
+| Inspect and verify the published evidence | [Quickstart: path 1](docs/QUICKSTART.md#1-inspect-the-published-results--no-gpu-required) | CPU only |
+| Evaluate a model on my own text | [Quickstart: path 2](docs/QUICKSTART.md#2-evaluate-a-base-model-on-your-corpus) | CUDA recommended |
+| Add or request a leaderboard model | [Quickstart: path 3](docs/QUICKSTART.md#3-add-a-model-to-the-leaderboard) | None for a request |
+| Verify an authorized copy of the paper corpus | [Dataset guide](docs/DATASET.md#verify-an-authorized-copy) | CPU only |
+| Understand every result field | [Results guide](docs/RESULTS.md) | None |
 
 ## Install
 
-Python 3.10 or newer is required. Install a PyTorch build appropriate for your CUDA environment first when necessary.
+Python 3.10 or newer is required. Install a PyTorch build suitable for your CUDA system first when
+necessary.
 
 ```bash
 git clone https://github.com/DavidAfonsoValente/entropy-bench.git
@@ -43,16 +71,28 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .
-
-entropy-bench --help
-entropy-leaderboard validate
 ```
 
-The original `requirements.txt` remains available for environments that do not use editable installs.
+Confirm the three public tools are available:
+
+```bash
+entropy-bench --help
+entropy-dataset --help
+entropy-leaderboard --help
+```
 
 ## Evaluate models on your data
 
-Prepare a corpus with one document per line or record; see [data/README.md](data/README.md) for supported formats.
+The recommended input is JSONL with one `{"text":"..."}` object per line. TXT, CSV, Hugging Face
+datasets saved to disk, and ZIP files are also supported.
+
+Inspect the corpus before allocating a GPU:
+
+```bash
+entropy-dataset describe /path/to/domain-corpus.jsonl
+```
+
+Start with a zero-shot baseline:
 
 ```bash
 entropy-bench \
@@ -61,87 +101,101 @@ entropy-bench \
   --dataset-text-field text \
   --output results/my-domain \
   --contam-check-level strict \
-  --contam-cleaning-mode global_unified
+  --contam-cleaning-mode global_unified \
+  --baseline-only \
+  --no-pdf
 ```
 
-Add `--baseline-only` to run contamination checks and zero-shot BPB without adaptation. Add `--no-pdf` if WeasyPrint's system libraries are unavailable. Model evaluation and adaptation require accelerator hardware in proportion to model size; do not run full benchmarks on an HPC login node.
+Remove `--baseline-only` for hyperparameter search and LoRA adaptation. Remove `--no-pdf` when
+WeasyPrint's system libraries are installed. Model evaluation and adaptation require accelerator
+hardware in proportion to model size; never launch a full run on an HPC login node.
 
-### Outputs
-
-Each run writes:
+Each run creates:
 
 ```text
 results/my-domain/
-├── <model>/result_<model>.json      # auditable per-model metrics and configuration
-├── contamination/                   # findings, quarantine, and clean split metadata
-├── summary.json                     # consolidated machine-readable results
-├── report.html                      # shareable report
-└── report.pdf                       # optional PDF report
+├── <model>/result_<model>.json   # metrics and exact run configuration
+├── contamination/               # findings, quarantine, clean split metadata
+├── summary.json                 # consolidated machine-readable results
+├── report.html                  # shareable report
+└── report.pdf                   # optional PDF
 ```
 
-## Leaderboard
+See [Understanding results](docs/RESULTS.md) before comparing scores.
 
-The [public leaderboard](LEADERBOARD.md) contains 11 base models from 0.5B to 35B. Its canonical source is [results/leaderboard.json](results/leaderboard.json), and every Markdown row is generated from that file.
+## Leaderboard and contributions
 
-Validate that the data and rendered table agree:
+The [public leaderboard](LEADERBOARD.md) contains 11 base models. Its canonical source is
+[`results/leaderboard.json`](results/leaderboard.json); the Markdown table is generated from that
+file.
+
+Check it locally:
 
 ```bash
 entropy-leaderboard validate
 entropy-leaderboard render --check
 ```
 
-### Add a model
-
-There are two easy paths:
-
-- **You do not have the controlled paper corpus:** open a **Model evaluation request** issue. Provide the immutable model and tokenizer revisions; the maintainers run it against the same snapshot and protocol.
-- **You have an authorized result:** convert the generated result JSON into a self-checking submission:
+To add a model, either open a [model evaluation
+request](https://github.com/DavidAfonsoValente/entropy-bench/issues/new?template=model-evaluation.yml)
+or turn an authorized run into a self-checking submission:
 
 ```bash
 entropy-leaderboard prepare-submission \
-  results/my-run/Qwen_Qwen2_5-7B/result_Qwen_Qwen2_5-7B.json \
-  --output submissions/qwen2.5-7b.json \
-  --model-name Qwen-2.5-7B \
+  results/my-run/model/result_model.json \
+  --output submission.json \
+  --model-name Model-Name \
   --model-revision <commit-sha> \
   --tokenizer-revision <commit-sha> \
   --parameters 7B
 
-entropy-leaderboard validate-submission submissions/qwen2.5-7b.json
+entropy-leaderboard validate-submission submission.json
 ```
 
-Open a pull request with the submission JSON and the audit summary. Maintainers merge it with:
+Open a pull request with the submission and contamination audit summary. CI checks the benchmark ID,
+model uniqueness, arithmetic, ordering, dataset manifest, and generated leaderboard. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for the evidence contract.
+
+## Dataset and reproducibility
+
+The exact paper corpus is identified by
+[`benchmarks/primary-news-2026-06-08.json`](benchmarks/primary-news-2026-06-08.json): 119,054
+documents, 366,564,042 file bytes, and SHA-256
+`279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162`.
+
+The repository also publishes a complete record-level hash index, all reported metrics, and every
+analysis artifact. The third-party news text itself is held pending redistribution permission; its
+absence is a rights constraint, not a missing or unidentified experiment file. The [dataset
+guide](docs/DATASET.md) explains the exact release condition and verification command.
+
+Verify a permitted local copy with:
 
 ```bash
-entropy-leaderboard add submissions/qwen2.5-7b.json
+entropy-dataset verify /path/to/google_news_from_2026-06-08_to_2026-06-08_cleaned.jsonl
 ```
 
-The command rejects wrong benchmark IDs, duplicate models, malformed metrics, inconsistent reductions, and unsorted ranks. See [CONTRIBUTING.md](CONTRIBUTING.md) for the evidence contract.
+Published evidence includes:
 
-## Reproduce the reported evidence
-
-The repository contains:
-
-- the full primary-run [summary](reports/11-model-run/summary.json), [HTML report](reports/11-model-run/report.html), [PDF report](reports/11-model-run/report.pdf), and plots;
-- the machine-readable [primary benchmark manifest](benchmarks/primary-news-2026-06-08.json);
-- context-length result files under `data/context_length/`;
-- all 33 cross-domain result cells under `results/domain_transfer/`;
-- token-gain and byte-normalized position analyses under `results/token_gain*/`;
+- the primary-run [summary](reports/11-model-run/summary.json), [HTML
+  report](reports/11-model-run/report.html), [PDF report](reports/11-model-run/report.pdf), and plots;
+- all 33 cross-domain result cells in `results/domain_transfer/`;
+- token-gain and byte-normalized position analyses in `results/token_gain*/`;
 - static benchmark scores in `results/combined_bpb_vs_static.json`;
-- analysis scripts under `tools/`; and
-- the complete paper and presentation sources.
+- context-length result files in `data/context_length/`; and
+- paper, slide, and speaker-script sources.
 
-The news snapshot itself is controlled rather than redistributed because the source text has no repository-compatible redistribution license. This is stated explicitly in the benchmark manifest. It avoids presenting a different or unlicensed archive as the paper corpus while keeping the model-selection protocol reusable on any authorized dataset.
-
-Build the paper and talk locally with:
+Run every lightweight release check with:
 
 ```bash
-make paper
-make slides
+python -m pip install -e '.[test]'
+make check
 ```
 
-For the MMLU-Pro, HellaSwag, and GSM8K protocol, pinned environment, model roster, and commands, see [eval/README.md](eval/README.md). Those evaluations are intentionally isolated from the adaptation environment because vLLM pins a different PyTorch stack.
+Build the paper and presentation with `make paper` and `make slides`. The MMLU-Pro, HellaSwag, and
+GSM8K environment is documented separately in [eval/README.md](eval/README.md) because vLLM pins a
+different PyTorch stack.
 
-## Method in one equation
+## The metric
 
 For corpus cross-entropy in nats,
 
@@ -149,27 +203,20 @@ For corpus cross-entropy in nats,
 BPB = (cross_entropy_nats / ln(2)) × (scored_tokens / source_utf8_bytes)
 ```
 
-Lower BPB means the model assigns more probability to the held-out text. The leaderboard ranks **adapted BPB**; the zero-shot-to-adapted reduction is reported separately as a corpus-calibration diagnostic.
-
-## Development
-
-CPU unit tests cover BPB, data loading, caching, special-token masking, contamination components, and leaderboard invariants. The end-to-end sweep smoke test is skipped when CUDA is unavailable.
-
-```bash
-python -m pip install -e '.[test]'
-pytest -q
-python tools/script_timing.py
-make all
-```
+Lower BPB means the model assigned more probability to held-out text. The leaderboard ranks
+**adapted BPB**. The zero-shot-to-adapted reduction is reported separately as a corpus-calibration
+diagnostic; a large reduction is not automatically a better final model.
 
 ## Project layout
 
 ```text
-lm_adapt_bench/       evaluation, adaptation, reporting, and contamination code
+lm_adapt_bench/       evaluation, adaptation, reporting, and verification code
+docs/                 quickstart, dataset policy, and result interpretation
 eval/                 MMLU-Pro, HellaSwag, and GSM8K harness
 benchmarks/           versioned benchmark contracts
+data/manifests/       source-free record fingerprint indexes
 results/              canonical machine-readable public results
-reports/              complete published primary-run artifacts
+reports/              complete primary-run artifacts
 tools/                paper analyses and reproducibility checks
 slurm/                HPC launch templates
 paper_sota.tex        manuscript source
@@ -178,11 +225,11 @@ LEADERBOARD.md        rendered public leaderboard
 
 ## Citation
 
-GitHub exposes citation metadata from [CITATION.cff](CITATION.cff). Until an archival identifier is available, cite:
+GitHub exposes [citation metadata](CITATION.cff). Until an archival identifier is available:
 
 ```bibtex
-@misc{valente2026beyondperplexity,
-  title        = {Beyond Perplexity: Entropy-Based Evaluation of Base Language Models},
+@misc{valente2026backtoentropy,
+  title        = {Back to Entropy: Evaluating Base Language Models Beyond Perplexity and Benchmarks},
   author       = {Valente, David Afonso},
   year         = {2026},
   howpublished = {\url{https://github.com/DavidAfonsoValente/entropy-bench}},
@@ -192,4 +239,5 @@ GitHub exposes citation metadata from [CITATION.cff](CITATION.cff). Until an arc
 
 ## License
 
-Code is released under the [Apache License 2.0](LICENSE). Model weights, external datasets, and generated benchmark samples remain subject to their original licenses and terms.
+Project code is released under [Apache-2.0](LICENSE). Model weights, external datasets, and benchmark
+text remain subject to their original licenses and terms.

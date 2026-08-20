@@ -1,5 +1,5 @@
 #!/bin/bash -l
-# Robust Environment Setup for LM Adapt Bench
+# Robust Environment Setup for Entropy Bench
 set -e
 
 # 1. Module Discovery

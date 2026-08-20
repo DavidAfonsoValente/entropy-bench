@@ -1,14 +1,33 @@
 {
+  "schema_version": 1,
   "benchmark_id": "primary-news-2026-06-08",
   "description": "Primary target-domain entropy evaluation reported in the paper",
   "corpus": {
-    "source": "Google News",
+    "source": "Third-party news text collected through Google News",
     "snapshot_date": "2026-06-08",
     "raw_records": 119054,
     "documents": 119054,
     "text_size_mb_approx": 361,
     "availability": "controlled",
-    "availability_note": "The source-text snapshot is not redistributed. This manifest defines the reported board; maintainers evaluate requested models against the controlled snapshot."
+    "availability_note": "The exact snapshot is verified and retained by the maintainers. Its full text is not redistributed until the underlying rights holders grant redistribution permission."
+  },
+  "distribution": {
+    "format": "jsonl",
+    "text_field": "text",
+    "records": 119054,
+    "size_bytes": 366564042,
+    "text_utf8_bytes": 361445123,
+    "sha256": "279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162",
+    "public_text_available": false,
+    "redistribution_status": "permission-required"
+  },
+  "record_index": {
+    "path": "data/manifests/primary-news-2026-06-08.records.jsonl.gz",
+    "format": "gzip-compressed JSON Lines",
+    "records": 119054,
+    "sha256": "2c12a98149d48b1834f79213a4e5877728f446ed3992b8bdbc73bb3829e95248",
+    "fields": ["index", "text_sha256", "utf8_bytes"],
+    "contains_source_text": false
   },
   "split": {
     "train_fraction": 0.8,

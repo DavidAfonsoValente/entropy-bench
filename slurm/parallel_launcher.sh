@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=0
 
-# Parallel Launcher for LM Adapt Bench
+# Parallel Launcher for Entropy Bench
 # This script is launched by run_bench.sh which provides dynamic GRES, node counts, and flags.
 
 if [ -z "$1" ] || [ -z "$2" ]; then

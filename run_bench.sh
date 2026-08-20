@@ -45,7 +45,7 @@ fi
 VENV_DIR="./venv_lm_adapt"
 
 echo "===================================================="
-echo "   LM Adapt Bench: Automated Comparison Pipeline"
+echo "   Entropy Bench: Automated Comparison Pipeline"
 echo "===================================================="
 
 # Discover the fallback GPU for models with no explicit mapping

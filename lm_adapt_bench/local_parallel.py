@@ -7,7 +7,7 @@ import logging
 from typing import List
 
 def main():
-    parser = argparse.ArgumentParser(description="LM Adapt Bench Local Parallel Launcher")
+    parser = argparse.ArgumentParser(description="Entropy Bench Local Parallel Launcher")
     parser.add_argument("--gpus", required=True, help="Comma-separated list of GPU IDs (e.g., 0,1,2,3)")
     parser.add_argument("--cli-module", default="lm_adapt_bench.cli", help="Module to run")
     

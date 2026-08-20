@@ -1,4 +1,4 @@
-"""Validate, render, and extend LM Adapt Bench leaderboards.
+"""Validate, render, and extend Entropy Bench leaderboards.
 
 The tool intentionally uses only the Python standard library so leaderboard checks can run
 without installing the GPU evaluation stack.
@@ -212,7 +212,7 @@ def add_submission(board: dict[str, Any], submission: dict[str, Any]) -> None:
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Manage an auditable LM Adapt Bench leaderboard")
+    parser = argparse.ArgumentParser(description="Manage an auditable Entropy Bench leaderboard")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     validate = subparsers.add_parser("validate", help="validate a canonical leaderboard")

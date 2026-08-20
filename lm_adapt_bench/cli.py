@@ -37,7 +37,7 @@ from .compat import apply_compatibility_patches
 
 def main():
     apply_compatibility_patches()
-    parser = argparse.ArgumentParser(description="LM Adapt Bench")
+    parser = argparse.ArgumentParser(description="Entropy Bench")
     parser.add_argument("--models", nargs="+", help="HuggingFace model IDs")
     parser.add_argument("--models-file", help="File with model IDs")
     parser.add_argument("--dataset", required=True, help="Path to local dataset or zip")
@@ -83,7 +83,7 @@ def main():
     parser.add_argument("--flash-attention", action="store_true")
     parser.add_argument("--eval-batch-size", type=int, default=4)
     parser.add_argument("--hf-token", help="HuggingFace token")
-    parser.add_argument("--report-title", default="LM Adapt Bench")
+    parser.add_argument("--report-title", default="Entropy Bench")
     parser.add_argument("--no-pdf", action="store_true")
     parser.add_argument("--force-rerun", action="store_true")
     parser.add_argument("--baseline-only", action="store_true")
@@ -259,7 +259,7 @@ def main():
     results = []
     summary_path = os.path.join(args.output, f"summary_rank_{rank}.json")
     
-    logger.info(f"Starting LM Adapt Bench run on rank {rank}/{world_size}")
+    logger.info(f"Starting Entropy Bench run on rank {rank}/{world_size}")
     logger.info(f"Assigned models: {my_models}")
 
     # Load sweep config
