@@ -149,7 +149,7 @@ def clean_and_regenerate():
     # Prepare report metadata & contamination audit
     metadata = {
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "dataset_path": "controlled corpus: primary-news-2026-06-08",
+        "dataset_path": "controlled corpus: primary-news-2026-06-08-fixed-lora-v1",
         "hardware": hardware_info(),
         "library_versions": library_versions()
     }

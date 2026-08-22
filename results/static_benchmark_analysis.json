@@ -1,0 +1,467 @@
+{
+  "schema_version": 1,
+  "bpb_source": "results/domain_transfer/news__*.json",
+  "bpb_protocol": {
+    "adaptation": "fixed LoRA configuration, 250 update steps",
+    "injected_special_token_targets_masked": true,
+    "direction": "lower_is_better"
+  },
+  "accuracy_source": "results/combined_bpb_vs_static.json",
+  "accuracy_note": "Directly observed lm-evaluation-harness point estimates. Correct counts are nearest integers reconstructed from committed rounded accuracies; Wilson intervals therefore describe test-set sampling uncertainty, not run-to-run or prompt uncertainty.",
+  "benchmarks": {
+    "mmlu_pro": {
+      "label": "MMLU-Pro",
+      "n": 1000
+    },
+    "hellaswag": {
+      "label": "HellaSwag",
+      "n": 10042
+    },
+    "gsm8k": {
+      "label": "GSM8K",
+      "n": 1319
+    }
+  },
+  "rows": [
+    {
+      "model": "Gemma-4-31B",
+      "source_label": "gemma-4-31B",
+      "model_id": "google/gemma-4-31B",
+      "adapted_bpb": 0.6239788990065634,
+      "bpb_rank": 1.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.578,
+          "correct_nearest_integer": 578,
+          "n": 1000,
+          "wilson_95_low": 0.5471483343234702,
+          "wilson_95_high": 0.6082546913527831,
+          "rank": 2.0,
+          "rank_shift_vs_bpb": 1.0
+        },
+        "hellaswag": {
+          "accuracy": 0.8791,
+          "correct_nearest_integer": 8828,
+          "n": 10042,
+          "wilson_95_low": 0.8725862041816274,
+          "wilson_95_high": 0.8853393544896745,
+          "rank": 1.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "gsm8k": {
+          "accuracy": 0.8415,
+          "correct_nearest_integer": 1110,
+          "n": 1319,
+          "wilson_95_low": 0.8208516746868793,
+          "wilson_95_high": 0.860257912552121,
+          "rank": 3.0,
+          "rank_shift_vs_bpb": 2.0
+        }
+      }
+    },
+    {
+      "model": "Gemma-4-12B",
+      "source_label": "gemma-4-12B",
+      "model_id": "google/gemma-4-12B",
+      "adapted_bpb": 0.6531732218371196,
+      "bpb_rank": 2.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.447,
+          "correct_nearest_integer": 447,
+          "n": 1000,
+          "wilson_95_low": 0.4164460077014887,
+          "wilson_95_high": 0.4779596286979802,
+          "rank": 7.0,
+          "rank_shift_vs_bpb": 5.0
+        },
+        "hellaswag": {
+          "accuracy": 0.8425,
+          "correct_nearest_integer": 8460,
+          "n": 10042,
+          "wilson_95_low": 0.8352055153058199,
+          "wilson_95_high": 0.8494558969008014,
+          "rank": 3.0,
+          "rank_shift_vs_bpb": 1.0
+        },
+        "gsm8k": {
+          "accuracy": 0.6361,
+          "correct_nearest_integer": 839,
+          "n": 1319,
+          "wilson_95_low": 0.6097628177497825,
+          "wilson_95_high": 0.6616226892633152,
+          "rank": 7.0,
+          "rank_shift_vs_bpb": 5.0
+        }
+      }
+    },
+    {
+      "model": "Qwen-3.5-35B-MoE",
+      "source_label": "Qwen3.5-35B-MoE",
+      "model_id": "Qwen/Qwen3.5-35B-A3B-Base",
+      "adapted_bpb": 0.6783287960741681,
+      "bpb_rank": 3.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.62,
+          "correct_nearest_integer": 620,
+          "n": 1000,
+          "wilson_95_low": 0.5895108843206113,
+          "wilson_95_high": 0.6495706936428555,
+          "rank": 1.0,
+          "rank_shift_vs_bpb": -2.0
+        },
+        "hellaswag": {
+          "accuracy": 0.855,
+          "correct_nearest_integer": 8586,
+          "n": 10042,
+          "wilson_95_low": 0.8479867618834533,
+          "wilson_95_high": 0.86175965699314,
+          "rank": 2.0,
+          "rank_shift_vs_bpb": -1.0
+        },
+        "gsm8k": {
+          "accuracy": 0.865,
+          "correct_nearest_integer": 1141,
+          "n": 1319,
+          "wilson_95_low": 0.8455466514233625,
+          "wilson_95_high": 0.882431742040741,
+          "rank": 1.0,
+          "rank_shift_vs_bpb": -2.0
+        }
+      }
+    },
+    {
+      "model": "Ministral-3-14B",
+      "source_label": "Ministral-3-14B",
+      "model_id": "mistralai/Ministral-3-14B-Base-2512",
+      "adapted_bpb": 0.6791170800821243,
+      "bpb_rank": 4.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.541,
+          "correct_nearest_integer": 541,
+          "n": 1000,
+          "wilson_95_low": 0.5100164673887266,
+          "wilson_95_high": 0.5716697384154579,
+          "rank": 4.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "hellaswag": {
+          "accuracy": 0.829,
+          "correct_nearest_integer": 8325,
+          "n": 10042,
+          "wilson_95_low": 0.8215289606236532,
+          "wilson_95_high": 0.8362556587222835,
+          "rank": 4.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "gsm8k": {
+          "accuracy": 0.8074,
+          "correct_nearest_integer": 1065,
+          "n": 1319,
+          "wilson_95_low": 0.7852692404098967,
+          "wilson_95_high": 0.8278049829539535,
+          "rank": 5.0,
+          "rank_shift_vs_bpb": 1.0
+        }
+      }
+    },
+    {
+      "model": "Qwen-3.5-9B",
+      "source_label": "Qwen3.5-9B",
+      "model_id": "Qwen/Qwen3.5-9B-Base",
+      "adapted_bpb": 0.7081885961905576,
+      "bpb_rank": 5.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.562,
+          "correct_nearest_integer": 562,
+          "n": 1000,
+          "wilson_95_low": 0.5310701383860444,
+          "wilson_95_high": 0.5924553435617469,
+          "rank": 3.0,
+          "rank_shift_vs_bpb": -2.0
+        },
+        "hellaswag": {
+          "accuracy": 0.8159,
+          "correct_nearest_integer": 8193,
+          "n": 10042,
+          "wilson_95_low": 0.8081723595251517,
+          "wilson_95_high": 0.8233327290236713,
+          "rank": 5.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "gsm8k": {
+          "accuracy": 0.8597,
+          "correct_nearest_integer": 1134,
+          "n": 1319,
+          "wilson_95_low": 0.839955490191997,
+          "wilson_95_high": 0.8774396244470832,
+          "rank": 2.0,
+          "rank_shift_vs_bpb": -3.0
+        }
+      }
+    },
+    {
+      "model": "Qwen-2.5-7B",
+      "source_label": "Qwen2.5-7B",
+      "model_id": "Qwen/Qwen2.5-7B",
+      "adapted_bpb": 0.7170081839948478,
+      "bpb_rank": 6.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.475,
+          "correct_nearest_integer": 475,
+          "n": 1000,
+          "wilson_95_low": 0.44420380838551404,
+          "wilson_95_high": 0.5059875295387637,
+          "rank": 6.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "hellaswag": {
+          "accuracy": 0.8027,
+          "correct_nearest_integer": 8061,
+          "n": 10042,
+          "wilson_95_low": 0.7948302729154213,
+          "wilson_95_high": 0.8103952848362881,
+          "rank": 6.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "gsm8k": {
+          "accuracy": 0.8127,
+          "correct_nearest_integer": 1072,
+          "n": 1319,
+          "wilson_95_low": 0.7907861163981685,
+          "wilson_95_high": 0.8328713857907052,
+          "rank": 4.0,
+          "rank_shift_vs_bpb": -2.0
+        }
+      }
+    },
+    {
+      "model": "Qwen-3.5-4B",
+      "source_label": "Qwen3.5-4B",
+      "model_id": "Qwen/Qwen3.5-4B-Base",
+      "adapted_bpb": 0.7494521956241705,
+      "bpb_rank": 7.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.525,
+          "correct_nearest_integer": 525,
+          "n": 1000,
+          "wilson_95_low": 0.49401247046123636,
+          "wilson_95_high": 0.555796191614486,
+          "rank": 5.0,
+          "rank_shift_vs_bpb": -2.0
+        },
+        "hellaswag": {
+          "accuracy": 0.7721,
+          "correct_nearest_integer": 7753,
+          "n": 10042,
+          "wilson_95_low": 0.7637492928298304,
+          "wilson_95_high": 0.7801573597286138,
+          "rank": 7.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "gsm8k": {
+          "accuracy": 0.8044,
+          "correct_nearest_integer": 1061,
+          "n": 1319,
+          "wilson_95_low": 0.7821195158133877,
+          "wilson_95_high": 0.8249071196504493,
+          "rank": 6.0,
+          "rank_shift_vs_bpb": -1.0
+        }
+      }
+    },
+    {
+      "model": "Llama-3.2-1B",
+      "source_label": "Llama-3.2-1B",
+      "model_id": "meta-llama/Llama-3.2-1B",
+      "adapted_bpb": 0.7713249879152001,
+      "bpb_rank": 8.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.117,
+          "correct_nearest_integer": 117,
+          "n": 1000,
+          "wilson_95_low": 0.09852838761922869,
+          "wilson_95_high": 0.13840290938070654,
+          "rank": 11.0,
+          "rank_shift_vs_bpb": 3.0
+        },
+        "hellaswag": {
+          "accuracy": 0.6583,
+          "correct_nearest_integer": 6611,
+          "n": 10042,
+          "wilson_95_low": 0.649000002354068,
+          "wilson_95_high": 0.6675488913384379,
+          "rank": 9.0,
+          "rank_shift_vs_bpb": 1.0
+        },
+        "gsm8k": {
+          "accuracy": 0.0652,
+          "correct_nearest_integer": 86,
+          "n": 1319,
+          "wilson_95_low": 0.05309982417144818,
+          "wilson_95_high": 0.07982726066414189,
+          "rank": 11.0,
+          "rank_shift_vs_bpb": 3.0
+        }
+      }
+    },
+    {
+      "model": "Qwen-2.5-1.5B",
+      "source_label": "Qwen2.5-1.5B",
+      "model_id": "Qwen/Qwen2.5-1.5B",
+      "adapted_bpb": 0.7971627775763226,
+      "bpb_rank": 9.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.25,
+          "correct_nearest_integer": 250,
+          "n": 1000,
+          "wilson_95_low": 0.2241530989836914,
+          "wilson_95_high": 0.27776028025908617,
+          "rank": 8.0,
+          "rank_shift_vs_bpb": -1.0
+        },
+        "hellaswag": {
+          "accuracy": 0.6784,
+          "correct_nearest_integer": 6812,
+          "n": 10042,
+          "wilson_95_low": 0.6691482129411559,
+          "wilson_95_high": 0.6874172390105913,
+          "rank": 8.0,
+          "rank_shift_vs_bpb": -1.0
+        },
+        "gsm8k": {
+          "accuracy": 0.6111,
+          "correct_nearest_integer": 806,
+          "n": 1319,
+          "wilson_95_low": 0.5844735342815272,
+          "wilson_95_high": 0.6370193725564607,
+          "rank": 8.0,
+          "rank_shift_vs_bpb": -1.0
+        }
+      }
+    },
+    {
+      "model": "LiquidAI-LFM2.5",
+      "source_label": "LFM2.5-1.2B",
+      "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+      "adapted_bpb": 0.8518314793413718,
+      "bpb_rank": 10.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.155,
+          "correct_nearest_integer": 155,
+          "n": 1000,
+          "wilson_95_low": 0.13389362461519208,
+          "wilson_95_high": 0.17874683873984096,
+          "rank": 10.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "hellaswag": {
+          "accuracy": 0.6094,
+          "correct_nearest_integer": 6120,
+          "n": 10042,
+          "wilson_95_low": 0.5998580614551928,
+          "wilson_95_high": 0.618938941166231,
+          "rank": 10.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "gsm8k": {
+          "accuracy": 0.5504,
+          "correct_nearest_integer": 726,
+          "n": 1319,
+          "wilson_95_low": 0.5234633696999202,
+          "wilson_95_high": 0.5770777791378012,
+          "rank": 9.0,
+          "rank_shift_vs_bpb": -1.0
+        }
+      }
+    },
+    {
+      "model": "Qwen-2.5-0.5B",
+      "source_label": "Qwen2.5-0.5B",
+      "model_id": "Qwen/Qwen2.5-0.5B",
+      "adapted_bpb": 0.9012947480019642,
+      "bpb_rank": 11.0,
+      "benchmarks": {
+        "mmlu_pro": {
+          "accuracy": 0.167,
+          "correct_nearest_integer": 167,
+          "n": 1000,
+          "wilson_95_low": 0.14516656150470994,
+          "wilson_95_high": 0.1913820596466698,
+          "rank": 9.0,
+          "rank_shift_vs_bpb": -2.0
+        },
+        "hellaswag": {
+          "accuracy": 0.5177,
+          "correct_nearest_integer": 5199,
+          "n": 10042,
+          "wilson_95_low": 0.5079474832266653,
+          "wilson_95_high": 0.5274900658785333,
+          "rank": 11.0,
+          "rank_shift_vs_bpb": 0.0
+        },
+        "gsm8k": {
+          "accuracy": 0.3472,
+          "correct_nearest_integer": 458,
+          "n": 1319,
+          "wilson_95_low": 0.3220168538269636,
+          "wilson_95_high": 0.37333590570986525,
+          "rank": 10.0,
+          "rank_shift_vs_bpb": -1.0
+        }
+      }
+    }
+  ],
+  "alignment": {
+    "mmlu_pro": {
+      "label": "MMLU-Pro",
+      "pearson_bpb_vs_accuracy": -0.8257692292391212,
+      "spearman_rank_alignment": 0.7636363636363637,
+      "kendall_tau_bpb_vs_error": 0.5636363636363636,
+      "pairwise_order_agreement": 0.7818181818181817,
+      "identical_ranks": 3,
+      "mean_absolute_rank_shift": 1.6363636363636365,
+      "max_absolute_rank_shift": 5.0,
+      "observed_leader": "Qwen-3.5-35B-MoE",
+      "observed_runner_up": "Gemma-4-31B",
+      "leader_gap_percentage_points": 4.200000000000004,
+      "leader_gap_independent_binomial_z": 1.9179961848962734
+    },
+    "hellaswag": {
+      "label": "HellaSwag",
+      "pearson_bpb_vs_accuracy": -0.9747684955811696,
+      "spearman_rank_alignment": 0.9818181818181818,
+      "kendall_tau_bpb_vs_error": 0.9272727272727272,
+      "pairwise_order_agreement": 0.9636363636363636,
+      "identical_ranks": 7,
+      "mean_absolute_rank_shift": 0.36363636363636365,
+      "max_absolute_rank_shift": 1.0,
+      "observed_leader": "Gemma-4-31B",
+      "observed_runner_up": "Qwen-3.5-35B-MoE",
+      "leader_gap_percentage_points": 2.410000000000001,
+      "leader_gap_independent_binomial_z": 5.032915140515092
+    },
+    "gsm8k": {
+      "label": "GSM8K",
+      "pearson_bpb_vs_accuracy": -0.6136831240408759,
+      "spearman_rank_alignment": 0.7272727272727273,
+      "kendall_tau_bpb_vs_error": 0.5636363636363636,
+      "pairwise_order_agreement": 0.7818181818181817,
+      "identical_ranks": 0,
+      "mean_absolute_rank_shift": 2.0,
+      "max_absolute_rank_shift": 5.0,
+      "observed_leader": "Qwen-3.5-35B-MoE",
+      "observed_runner_up": "Qwen-3.5-9B",
+      "leader_gap_percentage_points": 0.5299999999999971,
+      "leader_gap_independent_binomial_z": 0.3950628794012784
+    }
+  }
+}

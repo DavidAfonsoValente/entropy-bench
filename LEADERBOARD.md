@@ -4,29 +4,30 @@ Models are ranked by **adapted Bits Per Byte (BPB)** on clean target-domain text
 
 ## Primary news benchmark
 
-- **Benchmark ID:** `primary-news-2026-06-08`
+- **Benchmark ID:** `primary-news-2026-06-08-fixed-lora-v1`
 - **Corpus:** 119,054 Google News articles captured 8 June 2026
 - **Split:** 80/10/10, seed 42, with zero intersection
 - **Context:** independent, non-overlapping 512-token blocks with corpus-wide aggregation
-- **Adaptation:** LoRA with the same candidate-specific multi-fidelity search procedure
-- **Contamination:** globally unified audited test set
-- **Evidence:** [benchmark manifest](benchmarks/primary-news-2026-06-08.json), [full run summary](reports/11-model-run/summary.json), and [paper](paper_sota.pdf)
+- **Adaptation:** fixed LoRA for every candidate (r=16, alpha=32, dropout=0.05, learning rate 1e-4, effective batch 32, 250 steps)
+- **Evaluation:** injected document-start marker targets excluded from loss and scored-token count
+- **Contamination:** globally unified risk-screened held-out set
+- **Evidence:** [benchmark manifest](benchmarks/primary-news-2026-06-08-fixed-lora-v1.json), [machine-readable leaderboard](results/leaderboard.json), per-model files in `results/domain_transfer/`, and [paper](paper_sota.pdf)
 
 <!-- leaderboard:start -->
 
 | Rank | Model | Parameters | Zero-shot BPB | Adapted BPB | Reduction |
 |---:|---|---:|---:|---:|---:|
-| 1 | Gemma-4-31B | 31B | 0.753 | **0.583** | 22.6% |
-| 2 | Gemma-4-12B | 12B | 0.867 | **0.618** | 28.7% |
-| 3 | Ministral-3-14B | 14B | 0.723 | **0.651** | 9.9% |
-| 4 | Qwen-3.5-35B-MoE | 35B total | 0.700 | **0.663** | 5.4% |
-| 5 | Qwen-3.5-9B | 9B | 0.733 | **0.679** | 7.4% |
-| 6 | Qwen-2.5-7B | 7B | 0.753 | **0.728** | 3.3% |
-| 7 | Qwen-3.5-4B | 4B | 0.775 | **0.757** | 2.3% |
-| 8 | Llama-3.2-1B | 1.2B | 0.814 | **0.773** | 5.1% |
-| 9 | Qwen-2.5-1.5B | 1.5B | 0.829 | **0.802** | 3.2% |
-| 10 | LiquidAI-LFM2.5 | 1.2B | 1.346 | **0.854** | 36.5% |
-| 11 | Qwen-2.5-0.5B | 0.5B | 0.931 | **0.921** | 1.0% |
+| 1 | Gemma-4-31B | 31B | 0.752 | **0.624** | 17.0% |
+| 2 | Gemma-4-12B | 12B | 0.866 | **0.653** | 24.5% |
+| 3 | Qwen-3.5-35B-MoE | 35B total | 0.707 | **0.678** | 4.1% |
+| 4 | Ministral-3-14B | 14B | 0.718 | **0.679** | 5.4% |
+| 5 | Qwen-3.5-9B | 9B | 0.740 | **0.708** | 4.4% |
+| 6 | Qwen-2.5-7B | 7B | 0.758 | **0.717** | 5.4% |
+| 7 | Qwen-3.5-4B | 4B | 0.782 | **0.749** | 4.2% |
+| 8 | Llama-3.2-1B | 1.2B | 0.811 | **0.771** | 4.9% |
+| 9 | Qwen-2.5-1.5B | 1.5B | 0.833 | **0.797** | 4.3% |
+| 10 | LiquidAI-LFM2.5 | 1.2B | 1.340 | **0.852** | 36.4% |
+| 11 | Qwen-2.5-0.5B | 0.5B | 0.935 | **0.901** | 3.6% |
 
 <!-- leaderboard:end -->
 

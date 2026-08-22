@@ -93,7 +93,7 @@ cut, not the must-land points. Re-check after any edit with
   controlled adaptation, and contamination filtering.
   \item \textbf{Adapted BPB selects the model}; adaptation moves candidates by as many as seven
   rank positions, while relative reduction explains corpus calibration.
-  \item BPB matches sentence continuation ($r=-0.96$ vs.\ HellaSwag), while knowledge and
+  \item BPB matches sentence continuation ($r=-0.975$, $\rho=0.982$ vs.\ HellaSwag), while knowledge and
   arithmetic benchmarks add complementary capability views.
   \item \textbf{The adapted ordering is domain-stable} (slide 13). All eleven models on three
   corpora: Spearman $\rho$ between $+0.955$ and $+0.991$, Gemma-4-31B first on all three, and
@@ -191,13 +191,15 @@ only the first and last paragraphs.}
 \begin{say}
 A word on the contamination audit, because it is what makes the headline result mean anything.
 
-Scout-then-verify: cheap detectors propose suspects, an expensive test convicts them. Two scouts ---
+Scout-then-screen: cheap detectors propose suspects, an expensive perturbation test adds evidence. Two scouts ---
 Min-K++, which flags odd confidence on a passage's rarest tokens, and CoDeC, which is ours: feed the
 model the text immediately preceding a passage and watch for a sharp jump in confidence. Then the
-gatekeeper, a quiz that hides the real passage among sixteen synthetic near-duplicates. If a model
-reliably picks the original, we quarantine it --- the union across all models, eighty sequences.
+gatekeeper, a quiz that hides the real passage among sixteen synthetic near-duplicates. Preference
+for the original is a risk signal, not proof of memorization; we conservatively quarantine the union
+across all models, eighty sequences.
 
-Without this, an adaptation gain could just be memory. With it, memory cannot explain the gain.
+This reduces a plausible leakage pathway while keeping the limitation explicit: only exact overlap
+is direct evidence, and no finite screen can rule out all pre-training exposure.
 \end{say}
 
 % ================================================================ 7
@@ -210,10 +212,10 @@ table is in backup if anyone wants digits.}
 Results. Eleven models, one ruler. One row per model, grey dot as released, blue dot after
 adaptation, further left is better; the label is the reduction.
 
-Three readings. Gemma-4-31B ends furthest left at 0.583, the best adapted result. The
+Three readings. Gemma-4-31B ends furthest left at 0.624, the best adapted result. The
 thirty-five-billion Mixture-of-Experts lands with dense models in the twelve-to-fourteen-billion
 range, which gives us a useful quality measurement between its active and total parameter counts.
-And the Liquid model shows the largest calibration shift, 36.5 percent.
+And the Liquid model shows the largest calibration shift, 36.4 percent.
 
 The endpoint chooses the model. The line length explains how much its base distribution moved toward
 the corpus. Keeping those roles separate makes the chart straightforward.
@@ -270,7 +272,7 @@ form.
 \begin{say}
 We compare adapted BPB with MMLU-Pro, HellaSwag, and GSM8K using the standard harness.
 
-Against HellaSwag the correlation is minus 0.96 --- and HellaSwag is the right first test, because it
+Against HellaSwag Pearson correlation is minus 0.975 and rank agreement is 0.982 --- and HellaSwag is the right first test, because it
 is sentence continuation, the closest of the three to plain language modelling. So BPB reproduces a
 trusted continuation benchmark almost exactly, from one corpus we control and one unit shared by
 every model.
@@ -288,20 +290,19 @@ you talk over it.}
 \begin{say}
 This is the table I find most useful in the whole project.
 
-Nine models. Left column is their BPB order; then each benchmark's own ordering of the same nine,
+Eleven models. Left column is their BPB order; then each benchmark's own ordering of the same eleven,
 with a marker for how far each model moves.
 
-The bottom two rows are the result. HellaSwag: six of nine in exactly the same position, nothing
-moving more than two places. MMLU-Pro, knowledge, drops to two of nine. GSM8K, arithmetic, is zero of
-nine --- not one model keeps its place, and the biggest mover is Gemma-4-12B, second on BPB and sixth
-on GSM8K.
+The bottom two rows are the result. HellaSwag: seven of eleven in exactly the same position, and no
+model moves more than one place. MMLU-Pro, knowledge, drops to three of eleven. GSM8K, arithmetic,
+is zero of eleven --- not one model keeps its place, and Gemma-4-12B moves five places.
 
-Agreement changes smoothly as the task moves from language continuation to knowledge and then
-arithmetic. The columns are complementary: BPB isolates target-domain language modelling, while the
-benchmarks add task-specific capability information.
+The columns are complementary: BPB isolates target-domain language modelling, while the benchmarks
+add task-specific capability information. The trend is clear, but we do not claim task complexity
+forms a one-dimensional causal ladder.
 \end{say}
 
-\cue{The 6/9, 2/9, 0/9 progression is the sentence to land before advancing.}
+\cue{The 7/11, 3/11, 0/11 progression is the sentence to land before advancing.}
 
 % ================================================================ 12
 \slide{12}{The family pattern explains the shift}{5:47--6:26}
@@ -309,14 +310,12 @@ benchmarks add task-specific capability information.
 \cue{The two-model box on the right is the memorable example --- point at it.}
 
 \begin{say}
-The GSM8K shift follows model family with zero exceptions. Every Qwen moves up relative to its BPB
-position, while every Gemma, Mistral, and Llama model moves the other way. That pattern reflects a
-clear difference in pre-training emphasis: GSM8K rewards arithmetic experience, while BPB measures
-target-domain language modelling.
+The GSM8K shift follows a strong model-family pattern. Every Qwen is unchanged or moves up relative
+to its BPB position, while both Gemmas and Llama move down. This is consistent with different
+math/reasoning emphasis, although this observational comparison cannot isolate a causal training ingredient.
 
-The box on the right is the sharpest version. Qwen-2.5-0.5B against Llama-3.2-1B: Llama is better on
-both BPB and HellaSwag, while on GSM8K the little Qwen scores 0.347 against Llama's 0.065 --- five
-times higher.
+The box on the right is the sharpest version. Qwen-2.5-1.5B and Llama-3.2-1B are adjacent in BPB,
+and differ by only two points on HellaSwag. On GSM8K they score 0.611 and 0.065: a 54.6-point gap.
 
 Same two models, two capabilities. The preferred model follows the capability the product needs.
 \end{say}
@@ -409,16 +408,17 @@ Yes in our fixed-target check. Gemma's base BPB continues improving from 0.6465 
 9.6 percent advantage at four times its training context. Qwen's smaller gain also remains positive.
 
 \textbf{``How does the contamination audit work?''}\\
-Min-K++ and CoDeC propose suspicious passages; the Dynamic Choice Quiz verifies them. We quarantine
-the union of verified passages across models so every candidate sees one identical cleansed corpus.
+Min-K++ and CoDeC propose suspicious passages; the Dynamic Choice Quiz tests preference for the
+original over perturbations. We quarantine the union of risk-flagged passages across models so every
+candidate sees one identical screened corpus. This is conservative filtering, not proof of memorization.
 
 \textbf{``How do the static benchmarks complement BPB?''}\\
-HellaSwag confirms the sentence-continuation signal ($r=-0.96$). MMLU-Pro and GSM8K add knowledge and
-arithmetic views, which helps explain capability-specific model-family strengths.
+HellaSwag confirms the sentence-continuation signal ($r=-0.975$, $\rho=0.982$). MMLU-Pro and GSM8K
+add knowledge and arithmetic views; their rank agreements with BPB are 0.764 and 0.727.
 
-\textbf{``Why does the rank table use nine models?''}\\
-It uses the nine-model subset reported across BPB and all three static tasks, keeping one denominator
-for the 6, 2, and 0 identical-rank counts. The domain-transfer study uses all eleven models.
+\textbf{``Why does the rank table use eleven models?''}\\
+The corrected analysis uses the complete cohort across BPB and all three static tasks, avoiding the
+stale nine-model subset that appeared in an earlier draft.
 
 \textbf{``How stable is the result across domains?''}\\
 Pairwise Spearman correlations range from $+0.955$ to $+0.991$ across news, Reddit, and Hacker News.

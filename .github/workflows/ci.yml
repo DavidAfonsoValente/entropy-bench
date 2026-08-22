@@ -22,6 +22,8 @@ jobs:
           python lm_adapt_bench/leaderboard.py render --check
       - name: Validate dataset identity and paper evidence
         run: |
+          python tools/analyze_static_benchmarks.py --check
+          python tools/regenerate_leaderboard.py --check
           python lm_adapt_bench/dataset_manifest.py validate-manifest
           python tools/verify_paper_numbers.py
           python tools/check_markdown_links.py

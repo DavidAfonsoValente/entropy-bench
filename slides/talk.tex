@@ -284,8 +284,8 @@
     \setlength{\fboxsep}{9pt}
     \colorbox{wash}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
       \small\nohyph
-      Run \textbf{per model}; we quarantine the \textbf{union} of every model's verified
-      leaks.\\[0.7em]
+      Run \textbf{per model}; we conservatively quarantine the \textbf{union} of every model's
+      risk-flagged passages.\\[0.7em]
       $\Rightarrow$ all 11 models are adapted and scored on \goodw{one identical,
       cleansed corpus}.\\[0.7em]
       \textbf{80} sequences removed globally.
@@ -297,25 +297,43 @@
 % ==================================================================== 7
 \begin{frame}
   \frametitle{Results: 11 models, one ruler}
-  \framesubtitle{Grey $=$ as released, blue $=$ after adaptation. Left is better.}
+  \framesubtitle{Corrected fixed protocol; injected marker targets are not scored}
 
   \vspace{0.2em}
   \begin{columns}[c]
   \begin{column}{0.62\textwidth}
-    \includegraphics[width=\textwidth]{fig_adaptation.pdf}
+    \centering\scriptsize
+    \renewcommand{\arraystretch}{1.03}
+    \begin{tabular}{lrr}
+      \toprule
+      \textbf{Model} & \textbf{Zero-shot} & \textbf{Adapted} \\
+      \midrule
+      Gemma-4-31B & 0.752 & \textbf{0.624} \\
+      Gemma-4-12B & 0.866 & 0.653 \\
+      Qwen-3.5-35B-MoE & 0.707 & 0.678 \\
+      Ministral-3-14B & 0.718 & 0.679 \\
+      Qwen-3.5-9B & 0.740 & 0.708 \\
+      Qwen-2.5-7B & 0.758 & 0.717 \\
+      Qwen-3.5-4B & 0.782 & 0.749 \\
+      Llama-3.2-1B & 0.811 & 0.771 \\
+      Qwen-2.5-1.5B & 0.833 & 0.797 \\
+      LiquidAI-LFM2.5 & 1.340 & 0.852 \\
+      Qwen-2.5-0.5B & 0.935 & 0.901 \\
+      \bottomrule
+    \end{tabular}
   \end{column}
   \begin{column}{0.35\textwidth}
     \small
-    \keyw{Gemma-4-31B} reaches the best adapted \bpb{}: \textbf{0.583}.\\[0.6em]
+    \keyw{Gemma-4-31B} reaches the best adapted \bpb{}: \textbf{0.624}.\\[0.6em]
     The \keyw{35B MoE} lands with dense 12--14B models, giving a direct quality measurement
     between its active and total parameter counts.
     \vspace{0.9em}
 
-    \keyw{LFM-2.5} shows the largest calibration shift: \textbf{36.5\%}.
+    \keyw{LFM-2.5} shows the largest calibration shift: \textbf{36.4\%}.
     \vspace{0.7em}
 
-    \textbf{Selection uses the blue endpoint.} Line length explains how much each base
-    distribution moved toward the corpus.
+    \textbf{Selection uses adapted BPB.} Reduction explains how much each base distribution
+    moved toward the corpus; it is not the ranking metric.
   \end{column}
   \end{columns}
 \end{frame}
@@ -390,11 +408,12 @@
   \vspace{0.2em}
   \begin{columns}[c]
   \begin{column}{0.56\textwidth}
-    \includegraphics[width=\textwidth]{fig_correlation.pdf}
+    \resizebox{\textwidth}{!}{\input{../figures/fig_benchmark_alignment.tex}}
   \end{column}
   \begin{column}{0.41\textwidth}
     \small
-    Adapted \bpb{} vs.\ HellaSwag: \goodw{$r=-0.96$}.
+    Adapted \bpb{} vs.\ HellaSwag: \goodw{$r=-0.975$}; rank agreement
+    \goodw{$\rho=0.982$}.
     \vspace{0.7em}
 
     HellaSwag is sentence \emph{continuation} --- the benchmark closest to plain language
@@ -425,52 +444,53 @@
     \textbf{Model} & \textit{continuation} & \textit{continuation} & \textit{knowledge} & \textit{arithmetic} \\
     \midrule
     Gemma-4-31B        & 1 & 1\same    & 2\dn{1} & 3\dn{2} \\
-    Gemma-4-12B        & 2 & 3\dn{1}   & 3\dn{1} & 6\dn{4} \\
-    Ministral-3-14B    & 3 & 4\dn{1}   & 5\dn{2} & 5\dn{2} \\
-    \rowcolor{wash} Qwen-3.5-35B-MoE   & 4 & 2\up{2}   & 1\up{3} & 1\up{3} \\
-    \rowcolor{wash} Qwen-3.5-9B        & 5 & 5\same    & 4\up{1} & 2\up{3} \\
+    Gemma-4-12B        & 2 & 3\dn{1}   & 7\dn{5} & 7\dn{5} \\
+    \rowcolor{wash} Qwen-3.5-35B-MoE   & 3 & 2\up{1}   & 1\up{2} & 1\up{2} \\
+    Ministral-3-14B    & 4 & 4\same    & 4\same  & 5\dn{1} \\
+    \rowcolor{wash} Qwen-3.5-9B        & 5 & 5\same    & 3\up{2} & 2\up{3} \\
     \rowcolor{wash} Qwen-2.5-7B        & 6 & 6\same    & 6\same  & 4\up{2} \\
-    Llama-3.2-1B       & 7 & 7\same    & 9\dn{2} & 9\dn{2} \\
-    LiquidAI-LFM2.5    & 8 & 8\same    & 8\same  & 7\up{1} \\
-    \rowcolor{wash} Qwen-2.5-0.5B      & 9 & 9\same    & 7\up{2} & 8\up{1} \\
+    \rowcolor{wash} Qwen-3.5-4B        & 7 & 7\same    & 5\up{2} & 6\up{1} \\
+    Llama-3.2-1B       & 8 & 9\dn{1}   & 11\dn{3} & 11\dn{3} \\
+    \rowcolor{wash} Qwen-2.5-1.5B      & 9 & 8\up{1}   & 8\up{1} & 8\up{1} \\
+    LiquidAI-LFM2.5    & 10 & 10\same  & 10\same & 9\up{1} \\
+    \rowcolor{wash} Qwen-2.5-0.5B      & 11 & 11\same  & 9\up{2} & 10\up{1} \\
     \midrule
-    \textbf{Ranks identical to \bpb{}} & --- & \goodw{6 / 9} & 2 / 9 & \warmw{0 / 9} \\
-    \textbf{Largest displacement}      & --- & \goodw{2}     & 3     & \warmw{4} \\
+    \textbf{Ranks identical to \bpb{}} & --- & \goodw{7 / 11} & 3 / 11 & \warmw{0 / 11} \\
+    \textbf{Largest displacement}      & --- & \goodw{1}      & 5      & \warmw{5} \\
     \bottomrule
   \end{tabular}
   \end{center}
 
   \vspace{0.3em}
-  \footnotesize
-  Agreement changes \keyw{monotonically} as the task moves from continuation to knowledge
-  to arithmetic. Each column measures a different capability.
+  \scriptsize
+  HellaSwag preserves the entropy order; MMLU-Pro and GSM8K expose task-specific residuals.
 \end{frame}
 
 % ==================================================================== 12
 \begin{frame}
   \frametitle{The family pattern explains the shift}
-  \framesubtitle{GSM8K emphasizes arithmetic strengths learned during pre-training}
+  \framesubtitle{GSM8K exposes math-specific ranking differences}
 
   \vspace{0.5em}
   \begin{columns}[t]
   \begin{column}{0.45\textwidth}
     \small
-    Every \keyw{Qwen} model ranks \goodw{higher} on GSM8K than in the \bpb{} ordering
-    --- $+3, +3, +2, +1$.
+    Every \keyw{Qwen} model is unchanged or ranks \goodw{higher} on GSM8K than in the
+    \bpb{} ordering.
     \vspace{0.4em}
 
-    Every \keyw{Gemma / Mistral / Llama} model moves the other way --- $-2, -4, -2, -2$.
+    Both \keyw{Gemma} models and Llama move lower; Ministral moves one place lower.
     \vspace{0.7em}
 
-    With \keyw{zero exceptions}, the pattern reflects a clear difference in pre-training
-    emphasis: GSM8K rewards arithmetic experience.
+    This is consistent with family-specific math/reasoning emphasis, but the observational
+    comparison does not identify a causal training ingredient.
     \vspace{0.6em}
 
     \bpb{} keeps \keyw{language modelling} separate from \keyw{arithmetic skill}, so the two
     measurements can be used together.
     \vspace{0.5em}
 
-    {\scriptsize\color{mute} The ninth model, LFM-2.5, also rises one place.}
+    {\scriptsize\color{mute} The top-two GSM8K gap is only 0.53 points and is not decisive.}
   \end{column}
   \begin{column}{0.50\textwidth}
     \setlength{\fboxsep}{10pt}
@@ -484,18 +504,18 @@
       \setlength{\tabcolsep}{5pt}
       \begin{tabular}{lcc}
         \toprule
-         & \textbf{Qwen-2.5-0.5B} & \textbf{Llama-3.2-1B} \\
+         & \textbf{Qwen-2.5-1.5B} & \textbf{Llama-3.2-1B} \\
         \midrule
-        Adapted \bpb{} $\downarrow$ & 0.921 & \textbf{0.773} \\
-        HellaSwag $\uparrow$        & 0.518 & \textbf{0.658} \\
+        Adapted \bpb{} $\downarrow$ & 0.797 & \textbf{0.771} \\
+        HellaSwag $\uparrow$        & \textbf{0.678} & 0.658 \\
         \midrule
-        GSM8K $\uparrow$            & \textbf{0.347} & 0.065 \\
+        GSM8K $\uparrow$            & \textbf{0.611} & 0.065 \\
         \bottomrule
       \end{tabular}
       \vspace{0.6em}
 
-      Llama is the better language model on both \bpb{} and HellaSwag. On GSM8K the
-      0.5B Qwen scores \textbf{5$\times$ higher}.
+      Adjacent BPB ranks conceal a \textbf{54.6-point} GSM8K gap. HellaSwag differs by only
+      2.0 points in the other direction.
       \vspace{0.5em}
 
       The preferred model follows the capability the product needs.
@@ -592,56 +612,59 @@
     \textbf{Model} & \textbf{Architecture} & \textbf{Params} &
     \textbf{Zero-shot} & \textbf{Adapted} & \textbf{Reduction} \\
     \midrule
-    Gemma-4-31B        & Dense Transformer  & 31B   & 0.753 & \textbf{0.583} & 22.6\% \\
-    Gemma-4-12B        & Dense Transformer  & 12B   & 0.867 & 0.618 & 28.7\% \\
-    Ministral-3-14B    & Dense Transformer  & 14B   & 0.723 & 0.651 & \phantom{0}9.9\% \\
-    \rowcolor{wash} Qwen-3.5-35B-MoE   & Mixture of Experts & 35B   & 0.700 & 0.663 & \phantom{0}5.4\% \\
-    Qwen-3.5-9B        & Dense Transformer  & 9B    & 0.733 & 0.679 & \phantom{0}7.4\% \\
-    Qwen-2.5-7B        & Dense Transformer  & 7B    & 0.753 & 0.728 & \phantom{0}3.3\% \\
-    Qwen-3.5-4B        & Dense Transformer  & 4B    & 0.775 & 0.757 & \phantom{0}2.3\% \\
-    Llama-3.2-1B       & Dense Transformer  & 1.2B  & 0.814 & 0.773 & \phantom{0}5.1\% \\
-    Qwen-2.5-1.5B      & Dense Transformer  & 1.5B  & 0.829 & 0.802 & \phantom{0}3.2\% \\
-    \rowcolor{wash} LiquidAI-LFM2.5    & Liquid Neural Net  & 1.2B  & 1.346 & 0.854 & \textbf{36.5\%} \\
-    Qwen-2.5-0.5B      & Dense Transformer  & 0.5B  & 0.931 & 0.921 & \phantom{0}1.0\% \\
+    Gemma-4-31B        & Dense Transformer  & 31B   & 0.752 & \textbf{0.624} & 17.0\% \\
+    Gemma-4-12B        & Dense Transformer  & 12B   & 0.866 & 0.653 & 24.5\% \\
+    \rowcolor{wash} Qwen-3.5-35B-MoE   & Mixture of Experts & 35B   & 0.707 & 0.678 & \phantom{0}4.1\% \\
+    Ministral-3-14B    & Dense Transformer  & 14B   & 0.718 & 0.679 & \phantom{0}5.4\% \\
+    Qwen-3.5-9B        & Dense Transformer  & 9B    & 0.740 & 0.708 & \phantom{0}4.4\% \\
+    Qwen-2.5-7B        & Dense Transformer  & 7B    & 0.758 & 0.717 & \phantom{0}5.4\% \\
+    Qwen-3.5-4B        & Dense Transformer  & 4B    & 0.782 & 0.749 & \phantom{0}4.2\% \\
+    Llama-3.2-1B       & Dense Transformer  & 1.2B  & 0.811 & 0.771 & \phantom{0}4.9\% \\
+    Qwen-2.5-1.5B      & Dense Transformer  & 1.5B  & 0.833 & 0.797 & \phantom{0}4.3\% \\
+    \rowcolor{wash} LiquidAI-LFM2.5    & Liquid Neural Net  & 1.2B  & 1.340 & 0.852 & \textbf{36.4\%} \\
+    Qwen-2.5-0.5B      & Dense Transformer  & 0.5B  & 0.935 & 0.901 & \phantom{0}3.6\% \\
     \bottomrule
   \end{tabular}
   \end{center}
 
   \vspace{0.5em}
   \footnotesize
-  Every value here reproduces from \texttt{results/summary.json} at full precision.
+  Every value reproduces from the marker-masked fixed-protocol files in
+  \texttt{results/domain\_transfer/news\_\_*.json}.
 \end{frame}
 
 % ==================================================================== 17
 \begin{frame}
-  \frametitle{Backup: the full numbers behind slides 11--12}
+  \frametitle{Backup: full benchmark scores}
   \framesubtitle{The ranks and displacements on slide 11 are derived from this table}
 
   \vspace{0.3em}
   \begin{center}
   \renewcommand{\arraystretch}{1.08}
   \scriptsize
-  \begin{tabular}{lrrrrr}
+  \begin{tabular}{lrrrr}
     \toprule
     \textbf{Model} & \textbf{Adapted \bpb{}} & \textbf{MMLU-Pro} &
-    \textbf{HellaSwag} & \textbf{GSM8K} & \textbf{Macro} \\
+    \textbf{HellaSwag} & \textbf{GSM8K} \\
     \midrule
-    Gemma-4-31B      & \textbf{0.583} & 0.612 & \textbf{0.865} & 0.817 & 0.764 \\
-    Gemma-4-12B      & 0.618 & 0.583 & 0.840 & 0.778 & 0.733 \\
-    Ministral-3-14B  & 0.651 & 0.541 & 0.829 & 0.807 & 0.726 \\
-    Qwen-3.5-35B-MoE & 0.663 & \textbf{0.620} & 0.855 & \textbf{0.865} & \textbf{0.780} \\
-    Qwen-3.5-9B      & 0.679 & 0.562 & 0.816 & 0.860 & 0.746 \\
-    Qwen-2.5-7B      & 0.728 & 0.475 & 0.803 & 0.813 & 0.697 \\
-    Llama-3.2-1B     & 0.773 & 0.117 & 0.658 & 0.065 & 0.280 \\
-    LiquidAI-LFM2.5  & 0.854 & 0.155 & 0.609 & 0.550 & 0.438 \\
-    Qwen-2.5-0.5B    & 0.921 & 0.167 & 0.518 & 0.347 & 0.344 \\
+    Gemma-4-31B      & \textbf{0.624} & 0.578 & \textbf{0.879} & 0.842 \\
+    Gemma-4-12B      & 0.653 & 0.447 & 0.843 & 0.636 \\
+    Qwen-3.5-35B-MoE & 0.678 & \textbf{0.620} & 0.855 & \textbf{0.865} \\
+    Ministral-3-14B  & 0.679 & 0.541 & 0.829 & 0.807 \\
+    Qwen-3.5-9B      & 0.708 & 0.562 & 0.816 & 0.860 \\
+    Qwen-2.5-7B      & 0.717 & 0.475 & 0.803 & 0.813 \\
+    Qwen-3.5-4B      & 0.749 & 0.525 & 0.772 & 0.804 \\
+    Llama-3.2-1B     & 0.771 & 0.117 & 0.658 & 0.065 \\
+    Qwen-2.5-1.5B    & 0.797 & 0.250 & 0.678 & 0.611 \\
+    LiquidAI-LFM2.5  & 0.852 & 0.155 & 0.609 & 0.550 \\
+    Qwen-2.5-0.5B    & 0.901 & 0.167 & 0.518 & 0.347 \\
     \bottomrule
   \end{tabular}
   \end{center}
 
   \vspace{0.5em}
   \footnotesize
-  Rank analysis uses the nine-model common subset reported across \bpb{} and all three tasks. Harness:
+  Rank analysis uses the complete 11-model cohort. Harness:
   \emph{lm-evaluation-harness}, vLLM backend, bf16, greedy decoding, each tokenizer's
   native BOS. MMLU-Pro 5-shot CoT on a fixed 1{,}000-question subset; HellaSwag 10-shot
   length-normalized; GSM8K 5-shot flexible-extract.
@@ -650,7 +673,7 @@
 % ==================================================================== 18
 \begin{frame}
   \frametitle{Backup: contamination breakdown}
-  \framesubtitle{$N=1000$ sampled sequences per model; 80 unique global leaks removed}
+  \framesubtitle{$N=1000$ sampled sequences per model; 80 unique risk-flagged sequences removed}
 
   \vspace{0.3em}
   \begin{center}
@@ -659,7 +682,7 @@
   \begin{tabular}{lrrrrr}
     \toprule
     \textbf{Model} & \textbf{Min-K++ flags} & \textbf{CoDeC flags} &
-    \textbf{DCQ candidates} & \textbf{DCQ acc.} & \textbf{Verified leaks} \\
+    \textbf{DCQ candidates} & \textbf{Preference} & \textbf{Risk flags} \\
     \midrule
     google-gemma-4-31B        & 12 & 6 & 20 & 100\% & 20 \\
     google-gemma-4-12B        & 11 & 6 & 11 & 100\% & 11 \\
@@ -677,8 +700,8 @@
   \end{center}
 
   \vspace{0.5em}
-  \small Model size does \emph{not} linearly predict memorization --- Llama-3.2-1B
-  leaks most in this cohort.
+  \small These are conservative quarantine signals on a preselected subset, not verified
+  memorization rates. Exact overlap and model-likelihood signals must be interpreted separately.
 \end{frame}
 
 % ==================================================================== 19

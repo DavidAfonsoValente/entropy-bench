@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Benchmark ID | `primary-news-2026-06-08` |
+| Benchmark ID | `primary-news-2026-06-08-fixed-lora-v1` |
 | Snapshot date | 8 June 2026 |
 | Format | JSON Lines, one object per document |
 | Text field | `text` |
@@ -60,5 +60,5 @@ or SHA-256 differs from the paper benchmark.
 
 If exact public replication is the priority, choose a corpus with explicit redistribution terms,
 store its source/license metadata, create a new benchmark manifest, and run every model under that
-new benchmark ID. Do not silently substitute it for `primary-news-2026-06-08`; doing so would make
+new benchmark ID. Do not silently substitute it for `primary-news-2026-06-08-fixed-lora-v1`; doing so would make
 old and new leaderboard rows incomparable.

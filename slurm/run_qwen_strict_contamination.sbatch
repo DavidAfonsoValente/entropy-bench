@@ -10,7 +10,7 @@
 # Strict-Mode Contamination Benchmark
 # This script runs a full adaptation benchmark on comparable Qwen models
 # while enforcing STRICT contamination hygiene. Min-K outliers are swept 
-# into the DCQ forensic quiz. Confirmed memorized examples are quarantined 
+# into the DCQ perturbation quiz. Risk-flagged examples are conservatively quarantined
 # up to the soft-evidence cap.
 
 # How to submit:

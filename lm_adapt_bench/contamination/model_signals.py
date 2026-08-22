@@ -128,7 +128,10 @@ class ModelSignalOrchestrator:
         if dcq and dcq.num_scored > 0:
             if dcq.risk_label == "HIGH":
                 risk_score += 0.4
-                notes.append(f"DCQ accuracy ({dcq.dcq_accuracy:.2f}) confirmed memorization on suspicious samples.")
+                notes.append(
+                    f"DCQ preference rate ({dcq.dcq_accuracy:.2f}) flagged perturbation-sensitive "
+                    "samples; this is a conservative risk signal, not proof of memorization."
+                )
 
         risk_label = "LOW"
         if risk_score > self.config.risk_high_threshold: risk_label = "HIGH"

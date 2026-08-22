@@ -24,6 +24,8 @@ all: paper_sota.pdf slides
 
 # CPU-only release checks. Requires `python -m pip install -e '.[test]'` first.
 check:
+	python tools/analyze_static_benchmarks.py --check
+	python tools/regenerate_leaderboard.py --check
 	python -m lm_adapt_bench.leaderboard validate
 	python -m lm_adapt_bench.leaderboard render --check
 	python -m lm_adapt_bench.dataset_manifest validate-manifest
@@ -38,7 +40,7 @@ slides: slides/talk.tex slides/script.tex figures/fig_block_position_slide.pdf f
 	cd slides && $(PDFLATEX) script.tex && $(PDFLATEX) script.tex
 	cd slides && rm -f *.aux *.log *.nav *.out *.snm *.toc
 
-paper_sota.pdf: paper_sota.tex dt_table.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf
+paper_sota.pdf: paper_sota.tex dt_table.tex static_benchmark_table.tex figures/fig_benchmark_alignment.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf
 	@if command -v latexmk >/dev/null 2>&1; then \
 		$(LATEXMK) $<; \
 	else \

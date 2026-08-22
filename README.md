@@ -11,7 +11,7 @@ after the same controlled adaptation procedure.
 
 **[Read the paper](paper_sota.pdf) · [Start in five minutes](docs/QUICKSTART.md) · [View the
 leaderboard](LEADERBOARD.md) · [Understand a result](docs/RESULTS.md) · [Check the
-dataset](docs/DATASET.md)**
+dataset](docs/DATASET.md) · [Review title options](docs/TITLE_OPTIONS.md)**
 
 ## Why go back to entropy?
 
@@ -27,8 +27,8 @@ problems that made raw perplexity inadequate:
 2. **Relevant evidence:** evaluate on fresh text from the deployment domain, not only permanent test
    questions.
 3. **Fair adaptation:** give every candidate the same controlled opportunity to fit the domain.
-4. **Contamination control:** detect and remove suspected memorized or leaking samples before they
-   influence adaptation or scoring.
+4. **Contamination-risk control:** quarantine exact/near duplicates and likelihood outliers before
+   they influence adaptation or scoring; perturbation tests are risk signals, not proof of memorization.
 
 BPB is one component, not the entire claim. The contribution is the complete protocol that makes
 entropy useful for modern base-model selection.
@@ -38,13 +38,14 @@ entropy useful for modern base-model selection.
 The paper evaluates 11 base models from 0.5B to 35B across dense Transformers, a sparse MoE, and a
 Liquid architecture.
 
-- Adapted BPB closely tracks sentence-continuation quality (`r = -0.96` against HellaSwag).
+- Adapted BPB closely tracks sentence-continuation quality (Pearson `r = -0.975` and rank
+  agreement `rho = 0.982` against HellaSwag across all 11 models).
 - Adaptation materially reorders candidates within each domain: zero-shot and adapted ranks have
   Spearman `rho = 0.609–0.682`.
 - Adapted performance tiers remain highly stable across news, Reddit, and Hacker News
   (`rho = 0.955–0.991`).
-- Knowledge and arithmetic benchmarks remain useful complementary diagnostics; they are not treated
-  as interchangeable with predictive quality.
+- MMLU-Pro and GSM8K agree less strongly with the BPB order (`rho = 0.764` and `0.727`): knowledge,
+  prompting, solution format, and arithmetic-specific training change those rankings.
 
 The practical rule is simple: **rank models by adapted BPB on recent target-domain data, then use the
 target domain and complementary tasks to resolve close calls.**
@@ -106,7 +107,9 @@ entropy-bench \
   --no-pdf
 ```
 
-Remove `--baseline-only` for hyperparameter search and LoRA adaptation. Remove `--no-pdf` when
+Remove `--baseline-only` for LoRA adaptation. For a leaderboard-comparable run, use the fixed
+configuration in the benchmark manifest; optional hyperparameter search is exploratory and creates
+a different protocol. Remove `--no-pdf` when
 WeasyPrint's system libraries are installed. Model evaluation and adaptation require accelerator
 hardware in proportion to model size; never launch a full run on an HPC login node.
 
@@ -159,7 +162,7 @@ model uniqueness, arithmetic, ordering, dataset manifest, and generated leaderbo
 ## Dataset and reproducibility
 
 The exact paper corpus is identified by
-[`benchmarks/primary-news-2026-06-08.json`](benchmarks/primary-news-2026-06-08.json): 119,054
+[`benchmarks/primary-news-2026-06-08-fixed-lora-v1.json`](benchmarks/primary-news-2026-06-08-fixed-lora-v1.json): 119,054
 documents, 366,564,042 file bytes, and SHA-256
 `279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162`.
 
@@ -176,11 +179,14 @@ entropy-dataset verify /path/to/google_news_from_2026-06-08_to_2026-06-08_cleane
 
 Published evidence includes:
 
-- the primary-run [summary](reports/11-model-run/summary.json), [HTML
-  report](reports/11-model-run/report.html), [PDF report](reports/11-model-run/report.pdf), and plots;
+- the corrected fixed-protocol leaderboard cells in `results/domain_transfer/news__*.json`;
+- the legacy exploratory-run [summary](reports/11-model-run/summary.json), [HTML
+  report](reports/11-model-run/report.html), [PDF report](reports/11-model-run/report.pdf), and plots,
+  clearly separated from the headline ranking;
 - all 33 cross-domain result cells in `results/domain_transfer/`;
 - token-gain and byte-normalized position analyses in `results/token_gain*/`;
-- static benchmark scores in `results/combined_bpb_vs_static.json`;
+- static benchmark scores in `results/combined_bpb_vs_static.json` and the reproducible uncertainty
+  and rank analysis in `results/static_benchmark_analysis.json`;
 - context-length result files in `data/context_length/`; and
 - paper, slide, and speaker-script sources.
 

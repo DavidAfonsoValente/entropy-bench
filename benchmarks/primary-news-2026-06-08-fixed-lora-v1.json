@@ -1,9 +1,8 @@
 {
   "schema_version": 1,
-  "benchmark_id": "primary-news-2026-06-08",
-  "description": "Legacy exploratory HPO protocol; retained for provenance and not used by the current leaderboard",
-  "status": "superseded",
-  "superseded_by": "primary-news-2026-06-08-fixed-lora-v1",
+  "benchmark_id": "primary-news-2026-06-08-fixed-lora-v1",
+  "description": "Primary target-domain entropy evaluation reported in the paper: corrected marker-masked fixed-LoRA protocol",
+  "supersedes": "primary-news-2026-06-08",
   "corpus": {
     "source": "Third-party news text collected through Google News",
     "snapshot_date": "2026-06-08",
@@ -43,16 +42,23 @@
     "direction": "lower_is_better",
     "max_sequence_length": 512,
     "test_aggregation": "corpus-wide over independent non-overlapping blocks",
-    "mask_injected_special_tokens": false,
-    "known_issue": "The historical exploratory evaluation scored injected document-start marker targets."
+    "mask_injected_special_tokens": true,
+    "test_blocks_scored": 2500
   },
   "adaptation": {
     "method": "LoRA",
-    "selection": "candidate-specific multi-fidelity hyperparameter search",
-    "equal_search_procedure": true
+    "selection": "fixed configuration shared by every model",
+    "rank": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "learning_rate": 0.0001,
+    "effective_batch_size": 32,
+    "update_steps": 250,
+    "equal_protocol": true
   },
   "contamination": {
     "test_set_policy": "global_unified",
+    "interpretation": "conservative risk screening; perturbation preferences are not proof of memorization",
     "required": true,
     "methods": ["SHA256", "MinHash-LSH", "split-leakage", "Min-K++", "CoDeC", "DCQ"]
   }

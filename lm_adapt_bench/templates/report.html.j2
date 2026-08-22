@@ -185,7 +185,7 @@
 
     <div class="page-break"></div>
     <h2>Data Contamination Risk Assessment</h2>
-    <p>This assessment provides a multi-signal audit of the benchmark dataset's integrity, designed to detect and mitigate pre-training data memorization. Our framework combines lexical hygiene (SHA256/MinHash) with model-specific forensics (Min-K++/CoDeC), utilizing statistical outlier detection to ensure performance gains represent genuine learning rather than rote recall. This integrated approach provides a defensible evaluation of model adaptation validity by cross-referencing hard leakage with deep likelihood analysis.</p>
+    <p>This assessment provides a multi-signal screen for benchmark-integrity risks. It combines lexical hygiene (SHA256/MinHash) with model-specific likelihood signals (Min-K++/CoDeC). Exact duplicates are direct evidence of overlap; likelihood and perturbation signals identify samples for conservative quarantine but do not by themselves prove memorization.</p>
 
     {% if contamination_audit %}
         <div style="background-color: #f7fafc; border: 1pt solid #e2e8f0; padding: 15pt; border-radius: 8pt; margin: 15pt 0;">
@@ -319,7 +319,7 @@
             <strong>Min-K-style</strong> is a fallback that averages raw next-token log probabilities.
             <strong>CoDeC</strong> is a split-level signal that detects if adding context makes the model suspiciously more confident. 
             <strong>DCQ</strong> (when run) is a confirmation check using perturbed alternatives.<br>
-            <strong style="color: #2b6cb0;">*DCQ Confirmation Rate:</strong> This represents the percentage of highly-suspicious outliers (Min-K++ candidates) that failed the forced-choice quiz, confirming they are memorized leaks. It is a measure of forensic accuracy on a filtered subset, <strong>not</strong> the global contamination rate of the entire dataset.
+            <strong style="color: #2b6cb0;">*DCQ Preference Rate:</strong> This is the percentage of preselected likelihood outliers for which the model prefers the original over a perturbed passage. It is a conservative risk signal on a filtered subset, <strong>not</strong> proof of memorization or the global contamination rate.
         </div>
 
     {% else %}

@@ -2,10 +2,9 @@
   "schema_version": 1,
   "metric": "adapted_bits_per_byte",
   "direction": "lower_is_better",
-  "source": "reports/11-model-run/summary.json",
   "dataset": {
-    "benchmark_id": "primary-news-2026-06-08",
-    "manifest": "benchmarks/primary-news-2026-06-08.json",
+    "benchmark_id": "primary-news-2026-06-08-fixed-lora-v1",
+    "manifest": "benchmarks/primary-news-2026-06-08-fixed-lora-v1.json",
     "name": "Google News",
     "snapshot_date": "2026-06-08",
     "articles": 119054,
@@ -13,9 +12,9 @@
     "seed": 42
   },
   "protocol": {
-    "adaptation": "LoRA with candidate-specific multi-fidelity hyperparameter search",
-    "evaluation": "held-out corpus-wide BPB over independent 512-token blocks",
-    "contamination": "global-unified audited test set"
+    "adaptation": "fixed LoRA: r=16, alpha=32, dropout=0.05, learning rate=1e-4, effective batch=32, 250 update steps",
+    "evaluation": "held-out corpus-wide BPB over independent 512-token blocks; injected document-start marker targets excluded",
+    "contamination": "risk-screened global-unified held-out set"
   },
   "entries": [
     {
@@ -23,99 +22,110 @@
       "model_id": "google/gemma-4-31B",
       "model_name": "Gemma-4-31B",
       "parameters": "31B",
-      "zero_shot_bpb": 0.7533643109186661,
-      "adapted_bpb": 0.5830168256575434,
-      "reduction_pct": 22.61156824025787
+      "zero_shot_bpb": 0.7518399917025791,
+      "adapted_bpb": 0.6239788990065634,
+      "reduction_pct": 17.0064234554041,
+      "evidence": "results/domain_transfer/news__google_gemma-4-31B.json"
     },
     {
       "rank": 2,
       "model_id": "google/gemma-4-12B",
       "model_name": "Gemma-4-12B",
       "parameters": "12B",
-      "zero_shot_bpb": 0.8667268715275657,
-      "adapted_bpb": 0.6180255656380201,
-      "reduction_pct": 28.694311213776157
+      "zero_shot_bpb": 0.8655081080406716,
+      "adapted_bpb": 0.6531732218371196,
+      "reduction_pct": 24.532974819176857,
+      "evidence": "results/domain_transfer/news__google_gemma-4-12B.json"
     },
     {
       "rank": 3,
-      "model_id": "mistralai/Ministral-3-14B-Base-2512",
-      "model_name": "Ministral-3-14B",
-      "parameters": "14B",
-      "zero_shot_bpb": 0.7230476282726411,
-      "adapted_bpb": 0.651196759598973,
-      "reduction_pct": 9.937224861012215
-    },
-    {
-      "rank": 4,
       "model_id": "Qwen/Qwen3.5-35B-A3B-Base",
       "model_name": "Qwen-3.5-35B-MoE",
       "parameters": "35B total",
-      "zero_shot_bpb": 0.7002442284120747,
-      "adapted_bpb": 0.662501223172579,
-      "reduction_pct": 5.389977340489405
+      "zero_shot_bpb": 0.7074128813678242,
+      "adapted_bpb": 0.6783287960741681,
+      "reduction_pct": 4.111331028835714,
+      "evidence": "results/domain_transfer/news__Qwen_Qwen3_5-35B-A3B-Base.json"
+    },
+    {
+      "rank": 4,
+      "model_id": "mistralai/Ministral-3-14B-Base-2512",
+      "model_name": "Ministral-3-14B",
+      "parameters": "14B",
+      "zero_shot_bpb": 0.7180745290733163,
+      "adapted_bpb": 0.6791170800821243,
+      "reduction_pct": 5.425265402668852,
+      "evidence": "results/domain_transfer/news__mistralai_Ministral-3-14B-Base-2512.json"
     },
     {
       "rank": 5,
       "model_id": "Qwen/Qwen3.5-9B-Base",
       "model_name": "Qwen-3.5-9B",
       "parameters": "9B",
-      "zero_shot_bpb": 0.7331729419492373,
-      "adapted_bpb": 0.6791460350704052,
-      "reduction_pct": 7.368917180057746
+      "zero_shot_bpb": 0.7404934039199289,
+      "adapted_bpb": 0.7081885961905576,
+      "reduction_pct": 4.362605738060627,
+      "evidence": "results/domain_transfer/news__Qwen_Qwen3_5-9B-Base.json"
     },
     {
       "rank": 6,
       "model_id": "Qwen/Qwen2.5-7B",
       "model_name": "Qwen-2.5-7B",
       "parameters": "7B",
-      "zero_shot_bpb": 0.7533251501591681,
-      "adapted_bpb": 0.7284355251523936,
-      "reduction_pct": 3.303968412778417
+      "zero_shot_bpb": 0.7577238292039596,
+      "adapted_bpb": 0.7170081839948478,
+      "reduction_pct": 5.373414909213878,
+      "evidence": "results/domain_transfer/news__Qwen_Qwen2_5-7B.json"
     },
     {
       "rank": 7,
       "model_id": "Qwen/Qwen3.5-4B-Base",
       "model_name": "Qwen-3.5-4B",
       "parameters": "4B",
-      "zero_shot_bpb": 0.7746208820672882,
-      "adapted_bpb": 0.7565126512009616,
-      "reduction_pct": 2.337689479529631
+      "zero_shot_bpb": 0.7821723980547718,
+      "adapted_bpb": 0.7494521956241705,
+      "reduction_pct": 4.183246879073584,
+      "evidence": "results/domain_transfer/news__Qwen_Qwen3_5-4B-Base.json"
     },
     {
       "rank": 8,
       "model_id": "meta-llama/Llama-3.2-1B",
       "model_name": "Llama-3.2-1B",
       "parameters": "1.2B",
-      "zero_shot_bpb": 0.8142322189854925,
-      "adapted_bpb": 0.7725141164215528,
-      "reduction_pct": 5.123612354215011
+      "zero_shot_bpb": 0.8107292200295345,
+      "adapted_bpb": 0.7713249879152001,
+      "reduction_pct": 4.860344383899094,
+      "evidence": "results/domain_transfer/news__meta-llama_Llama-3_2-1B.json"
     },
     {
       "rank": 9,
       "model_id": "Qwen/Qwen2.5-1.5B",
       "model_name": "Qwen-2.5-1.5B",
       "parameters": "1.5B",
-      "zero_shot_bpb": 0.8291551231459682,
-      "adapted_bpb": 0.8024690980035466,
-      "reduction_pct": 3.218459899417838
+      "zero_shot_bpb": 0.833052136172734,
+      "adapted_bpb": 0.7971627775763226,
+      "reduction_pct": 4.308176768058814,
+      "evidence": "results/domain_transfer/news__Qwen_Qwen2_5-1_5B.json"
     },
     {
       "rank": 10,
       "model_id": "LiquidAI/LFM2.5-1.2B-Base",
       "model_name": "LiquidAI-LFM2.5",
       "parameters": "1.2B",
-      "zero_shot_bpb": 1.3461382751554676,
-      "adapted_bpb": 0.8542691902145586,
-      "reduction_pct": 36.53926896062013
+      "zero_shot_bpb": 1.3397692252588325,
+      "adapted_bpb": 0.8518314793413718,
+      "reduction_pct": 36.4195367917333,
+      "evidence": "results/domain_transfer/news__LiquidAI_LFM2_5-1_2B-Base.json"
     },
     {
       "rank": 11,
       "model_id": "Qwen/Qwen2.5-0.5B",
       "model_name": "Qwen-2.5-0.5B",
       "parameters": "0.5B",
-      "zero_shot_bpb": 0.9308002874346785,
-      "adapted_bpb": 0.9214941812545882,
-      "reduction_pct": 0.9997962297302573
+      "zero_shot_bpb": 0.9348790867766463,
+      "adapted_bpb": 0.9012947480019642,
+      "reduction_pct": 3.5923724521934717,
+      "evidence": "results/domain_transfer/news__Qwen_Qwen2_5-0_5B.json"
     }
   ]
 }

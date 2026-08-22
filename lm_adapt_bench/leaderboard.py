@@ -226,7 +226,7 @@ def _parser() -> argparse.ArgumentParser:
     prepare = subparsers.add_parser("prepare-submission", help="convert a run result into a submission")
     prepare.add_argument("result")
     prepare.add_argument("--output", required=True)
-    prepare.add_argument("--benchmark-id", default="primary-news-2026-06-08")
+    prepare.add_argument("--benchmark-id", default="primary-news-2026-06-08-fixed-lora-v1")
     prepare.add_argument("--model-name")
     prepare.add_argument("--model-revision", required=True)
     prepare.add_argument("--tokenizer-revision", required=True)

@@ -12,12 +12,12 @@ TXT, CSV, Hugging Face datasets saved to disk, and ZIP archives are also support
 
 ## Primary paper corpus
 
-The paper's exact benchmark is `primary-news-2026-06-08`: 119,054 third-party news documents
+The paper's exact benchmark is `primary-news-2026-06-08-fixed-lora-v1`: 119,054 third-party news documents
 collected through Google News on 8 June 2026. The maintainers retain the verified JSONL snapshot.
 
 What is public:
 
-- the complete [benchmark contract](../benchmarks/primary-news-2026-06-08.json);
+- the complete [benchmark contract](../benchmarks/primary-news-2026-06-08-fixed-lora-v1.json);
 - the exact file SHA-256, byte count, record count, and text-field definition;
 - a 119,054-row [record fingerprint index](manifests/primary-news-2026-06-08.records.jsonl.gz)
   containing only row numbers, text SHA-256 hashes, and byte lengths; and

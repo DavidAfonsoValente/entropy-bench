@@ -12,6 +12,7 @@ DT = os.environ.get("LMAB_DOMAIN_TRANSFER_DIR", "results/domain_transfer")
 TG = os.environ.get("LMAB_TOKEN_GAIN_DIR", "results/token_gain")
 TG_BPB = os.environ.get("LMAB_TOKEN_GAIN_BPB_DIR", "results/token_gain_bpb")
 CTX = "data/context_length"
+STATIC_ANALYSIS = "results/static_benchmark_analysis.json"
 CORPORA = ("news", "reddit", "hackernews")
 MODELS = (
     "google/gemma-4-31B", "google/gemma-4-12B",
@@ -51,6 +52,10 @@ for f in glob.glob(TG + "/*.json"):
 tex = open("paper_sota.tex").read()
 try:
     tex += open("dt_table.tex").read()
+except FileNotFoundError:
+    pass
+try:
+    tex += open("static_benchmark_table.tex").read()
 except FileNotFoundError:
     pass
 
@@ -117,6 +122,27 @@ if not missing:
 actual_table = open("dt_table.tex").read().strip().splitlines()
 require("generated LaTeX table", not missing and actual_table == expected_rows,
         "%d rows" % len(actual_table))
+
+print("Static-benchmark alignment:")
+static = json.load(open(STATIC_ANALYSIS))
+require("static benchmark cohort", len(static.get("rows", [])) == 11,
+        "%d/11 models" % len(static.get("rows", [])))
+require("static BPB source is corrected rerun",
+        static.get("bpb_protocol", {}).get("injected_special_token_targets_masked") is True and
+        static.get("bpb_source") == "results/domain_transfer/news__*.json")
+for task, claimed in {
+    "mmlu_pro": (-0.826, 0.764, 0.564, 3, 1.64, 5),
+    "hellaswag": (-0.975, 0.982, 0.927, 7, 0.36, 1),
+    "gsm8k": (-0.614, 0.727, 0.564, 0, 2.00, 5),
+}.items():
+    row = static["alignment"][task]
+    check(task + " Pearson", claimed[0], row["pearson_bpb_vs_accuracy"], 5e-4)
+    check(task + " Spearman", claimed[1], row["spearman_rank_alignment"], 5e-4)
+    check(task + " Kendall", claimed[2], row["kendall_tau_bpb_vs_error"], 5e-4)
+    require(task + " exact ranks", row["identical_ranks"] == claimed[3], str(row["identical_ranks"]))
+    check(task + " mean rank shift", claimed[4], row["mean_absolute_rank_shift"], 0.006)
+    require(task + " max rank shift", row["max_absolute_rank_shift"] == claimed[5],
+            str(row["max_absolute_rank_shift"]))
 
 print("Domain-transfer claims:")
 g = cells.get("google/gemma-4-31B", {})
@@ -271,12 +297,14 @@ for mid, expected in {
                   row["adapted_bpb"], 5e-5)
 
 print("Literals present in the .tex:")
-for lit in ["+0.991", "+0.955", "+0.964", "0.0259", "0.0089",
-            "40{,}000", "250-step", "119{,}054", "141{,}527", "6{,}086",
+for lit in ["0.991", "0.955", "0.964", "0.0259", "0.0089",
+            "119{,}054", "141{,}527", "6{,}086",
             "0.992", "0.977", "0.990", "2.566", "1.490", "0.717", "0.773",
             "0.655", "0.609", "0.682", "8.6\\%", "0.844", "0.6465", "0.6054",
             "0.5473", "0.5474", "9.6\\%", "gemma2026gemma4", "liu2026ministral3",
-            "qwen2026qwen35"]:
+            "qwen2026qwen35", "0.982", "0.764", "0.727", "7/11", "3/11", "0/11",
+            "2.41", "5.03", "1.92", "0.40", "zhang2025trainbeforetest",
+            "heineman2025signal"]:
     if lit not in tex:
         print("  MISSING:", lit)
         bad += 1
@@ -284,7 +312,7 @@ for lit in ["+0.991", "+0.955", "+0.964", "0.0259", "0.0089",
         print("  ok:", lit)
 
 for figure in ("figures/fig_block_position.pdf", "figures/fig_cross_corpus.pdf",
-               "figures/fig_context_length.pdf"):
+               "figures/fig_context_length.pdf", "figures/fig_benchmark_alignment.tex"):
     require("figure " + os.path.basename(figure), os.path.isfile(figure) and os.path.getsize(figure) > 1000)
 
 print("\nPROBLEMS:", bad)

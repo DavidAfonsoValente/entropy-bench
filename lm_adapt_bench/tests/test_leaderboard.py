@@ -45,7 +45,7 @@ def test_prepare_and_add_submission(tmp_path):
     result_path.write_bytes(raw)
     args = argparse.Namespace(
         result=str(result_path),
-        benchmark_id="primary-news-2026-06-08",
+        benchmark_id="primary-news-2026-06-08-fixed-lora-v1",
         model_name="Example-1B",
         model_revision="abc123",
         tokenizer_revision="def456",

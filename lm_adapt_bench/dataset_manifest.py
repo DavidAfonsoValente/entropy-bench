@@ -198,11 +198,11 @@ def _parser() -> argparse.ArgumentParser:
     fingerprint.add_argument("--write-index")
 
     check = subparsers.add_parser("validate-manifest", help="validate a public benchmark manifest")
-    check.add_argument("manifest", nargs="?", default="benchmarks/primary-news-2026-06-08.json")
+    check.add_argument("manifest", nargs="?", default="benchmarks/primary-news-2026-06-08-fixed-lora-v1.json")
 
     verify = subparsers.add_parser("verify", help="prove that a local corpus is the exact benchmark")
     verify.add_argument("dataset")
-    verify.add_argument("--manifest", default="benchmarks/primary-news-2026-06-08.json")
+    verify.add_argument("--manifest", default="benchmarks/primary-news-2026-06-08-fixed-lora-v1.json")
     return parser
 
 
