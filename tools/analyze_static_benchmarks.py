@@ -385,7 +385,17 @@ def main() -> None:
     parser.add_argument("--check", action="store_true", help="fail if generated files are stale")
     args = parser.parse_args()
 
-    analysis = build_analysis()
+    def canonicalize(value):
+        """Remove platform-level libm drift from generated public artifacts."""
+        if isinstance(value, float):
+            return round(value, 12)
+        if isinstance(value, list):
+            return [canonicalize(item) for item in value]
+        if isinstance(value, dict):
+            return {key: canonicalize(item) for key, item in value.items()}
+        return value
+
+    analysis = canonicalize(build_analysis())
     rendered = {
         OUTPUT_JSON: json.dumps(analysis, indent=2) + "\n",
         OUTPUT_TEX: render_tex(analysis),
