@@ -42,8 +42,10 @@
 \maketitle
 
 \begin{abstract}
-Fixed task benchmarks expose important capabilities, but their rankings conflict and their accuracy
-scores discard most token-level evidence. Predictive cross-entropy uses every target token, yet
+Fixed task benchmarks expose important capabilities, but their rankings conflict, their accuracy
+scores discard most token-level evidence, and a single score cannot separate a stronger model from
+one trained on more of the benchmark's subject matter: two models in our cohort sit $3.4\%$ apart in
+adapted bits per byte and $2.0$ points apart on HellaSwag, yet $54.6$ points apart on GSM8K. Predictive cross-entropy uses every target token, yet
 ordinary perplexity cannot compare models with different tokenizers. Bits per byte (BPB) fixes the
 denominator; the open question is what to measure it on. We study that question directly, evaluating
 11 base models (0.5B--35B parameters) on four fresh corpora---news, Reddit, Hacker News, and
@@ -65,11 +67,18 @@ Reported as selection accuracy over model pairs, with intervals from a cluster b
 eleven models, the selection claim holds in $23$ of the $24$ (corpus, tier, benchmark) cells. The
 contrast \emph{between} corpora does not separate from zero at this cohort size on any single pair
 of them, which is why the steering claim rests on the four-corpus pattern rather than on one
-comparison.
+comparison. Because the mechanism we propose is a family-level one, we also resample by publisher
+rather than by model: the direction of the steering effect survives that stricter clustering---not
+one of $20{,}000$ resamples reverses it---while its magnitude does not, and a leave-one-family-out
+jackknife shows the magnitude concentrated in a single family.
 
 We therefore describe base-model selection as a cost--fidelity frontier rather than a single score:
 zero-shot BPB is free and a strong general-purpose selector, while adaptation costs compute and buys
-alignment with whichever capability the adaptation corpus exercises. We report selection regret and
+alignment with whichever capability the adaptation corpus exercises. We position the result as a
+second, unpreparable axis to read \emph{alongside} a benchmark scorecard rather than as a
+replacement for it, and we bound its value honestly: over a cohort spanning $70\times$ in parameters
+model size selects as well, and the metric earns its cost only among candidates of comparable size,
+where size is a coin flip ($0.545$) and domain-matched adapted BPB reaches $0.818$. We report selection regret and
 pairwise accuracy alongside rank correlation, and we release code, a versioned protocol, dataset
 fingerprints, raw harness output, and every intermediate artifact.
 \end{abstract}
@@ -732,6 +741,12 @@ news-adaptation damage being undone rather than domain matching creating signal.
 the do-nothing baseline the improvement is $+0.100$, and against every general-text corpus we tried
 it is between $+0.145$ and $+0.245$.
 
+A reader may reasonably ask why the do-nothing baseline for a \emph{math} corpus is zero-shot
+\emph{news} BPB. It is because that is the harder test: zero-shot news BPB reaches $0.836$ on GSM8K
+while zero-shot math BPB reaches only $0.800$, so scoring the intervention against the news baseline
+subtracts more from it, not less. Using the corpus-matched zero-shot number would have reported
+$+0.136$ rather than $+0.100$. We report the more conservative of the two.
+
 \paragraph{The residual narrows, and HellaSwag pays for it.} What survives that correction is still
 the strongest selection result in the study. Math-adapted BPB reaches $\rho=0.936$ on GSM8K with 6 of
 11 exact ranks and 50 of 55 model pairs ordered correctly---the best pairwise accuracy of any variant
@@ -844,18 +859,31 @@ publisher family           & 5  & $80.9\%$ & $19.1\%$ & $0.0\%$ & $0.095$ \\
 \end{tabular}
 \end{center}
 
-Two things follow, and they point in opposite directions. The \emph{direction} is more robust than
-the model-level figure suggests: clustering by publisher, not one of $20{,}000$ resamples is
-negative. The \emph{magnitude} is less resolved: under family clustering the effect no longer clears
-$0.05$ on any tie convention ($p=0.087$ and $p=0.095$), where the model-level statistic did. The
-mass at exactly zero is discreteness at five or six clusters, not degenerate draws.
+Two things follow, and they point in opposite directions; we state both rather than the convenient
+one. The \emph{sign} is stable under the stricter clustering---not one of $20{,}000$ publisher-level
+resamples is negative. The \emph{magnitude} is less resolved than the model-level figure implied:
+under family clustering the effect no longer clears $0.05$ on any tie convention ($p=0.087$ and
+$p=0.095$), where the model-level statistic did. These are not in tension, and neither rescues the
+other: a sign that never flips across $20{,}000$ draws is evidence about direction only, and we do
+not describe the result as more robust overall on the strength of it. The mass at exactly zero is
+discreteness at five or six clusters, not degenerate draws.
 
 A leave-one-family-out jackknife shows where the magnitude lives. Dropping the two Gemma models
 takes the pooled difference in differences from $+0.242$ to $+0.056$; dropping all six Qwen models
 takes it to $+0.133$, and dropping any of the three singleton families leaves it between $+0.222$
 and $+0.296$. The steering effect is therefore concentrated in the family the paper already names
 as the one whose GSM8K rank falls under general-text adaptation, which is coherent with the
-mechanism but means the effect rests on two models. We report the direction as well supported and
+mechanism but means the effect rests on two models.
+
+That invites a fair charge of a double standard: Section~\ref{sec:domains} declines to report a
+gap-size correlation \emph{because} one model's deletion moves it, while this section reports a
+statistic that one family's deletion moves by a comparable fraction. The asymmetry is deliberate and
+narrower than it looks. The correlation was a post-hoc addition with no pre-specified role, and a
+single coefficient is the only form it could take---so publishing it would have meant publishing a
+point estimate we could not defend. The difference in differences is the pre-specified primary
+statistic, and we report it with its full jackknife attached and make \emph{no} significance claim
+for its magnitude. Neither is offered as a resolved number; the difference is that one is reported
+with its fragility in the same breath and the other could not have been. We report the direction as well supported and
 the magnitude as unresolved, and note that this is the same $n$ problem as everywhere else in the
 study: the remedy is more \emph{families}, not more models.
 
@@ -873,11 +901,17 @@ HellaSwag $0.836$ becomes $0.863$. The errors the metric makes are concentrated 
 benchmark itself cannot separate, which is the failure mode one would want.
 
 \paragraph{Against the obvious baseline: model size.} A selection metric has to beat ``pick the
-bigger model,'' and over the full cohort it does not. Parameter count orders $0.855$ of pairs
-correctly on GSM8K and MMLU-Pro and $0.964$ on HellaSwag, against $0.909$, $0.909$ and $0.836$ for
-math-adapted BPB. That comparison flatters size for a structural reason: this cohort spans $0.5$B
-to $35$B, a $70\times$ range, so ordering by parameters is close to ordering by capability and the
-question is not one a practitioner needs help with.
+bigger model.'' Over the full cohort the two tiers answer that differently, and the distinction
+matters. Parameter count orders $0.855$ of pairs correctly on GSM8K and MMLU-Pro and $0.964$ on
+HellaSwag. The free tier loses to it everywhere ($0.836$, $0.836$, $0.800$ for zero-shot news BPB).
+The paid tier beats it on both generative benchmarks ($0.909$ against $0.855$) and loses on
+HellaSwag ($0.836$ against $0.964$). So the honest headline is not that size wins, but that size is
+a strong and free baseline that only domain-matched adaptation improves on, and only on the
+benchmarks the adaptation corpus is matched to.
+
+Even that flatters size for a structural reason: this cohort spans $0.5$B to $35$B, a $70\times$
+range, so ordering by parameters is close to ordering by capability and the question is not one a
+practitioner needs help with.
 
 The decision that is actually hard is between candidates of comparable size, and there the picture
 reverses. Restricted to pairs within $2\times$ of each other in parameters, size is barely better
@@ -891,6 +925,56 @@ of the time, zero-shot BPB $0.636$, and math-adapted BPB $0.818$: adaptation buy
 over doing nothing exactly where the choice is hard, against $0.07$ over the whole cohort where size
 already answers the question. The value of the paid tier is concentrated in the close calls, which
 is also where a practitioner would be willing to pay for it.
+
+\paragraph{Against the alternatives a practitioner actually weighs.} Model size is the obvious
+baseline but not the only one. Table~\ref{tab:alternatives} sets out the options and what each
+one costs and tells you. The honest summary is that our method is not the best answer to every
+version of the question: when the deployment task is known and you can afford it,
+fine-tuning each candidate and measuring the task is strictly better evidence, and we say so. The
+protocol here is the right choice in the specific and common case where the deployment task is not
+yet a labelled benchmark, the candidates are close in size, and the corpus you care about is text
+you own.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{p{3.5cm}p{2.6cm}p{6.4cm}}
+\toprule
+\textbf{Approach} & \textbf{Cost per candidate} & \textbf{What it does and does not tell you} \\
+\midrule
+Read published benchmark scores & free &
+Fast, and the right first look. Cannot separate a stronger model from a more specialised one, and
+cannot be audited: pre-training mixtures are undisclosed and the suites predate the models. \\
+Run the suite yourself & hours of GPU &
+Removes cross-host and harness drift, which is worth up to $0.69$ accuracy points here. Does not
+change \emph{what} is measured, so it inherits every limitation above. \\
+Arena / human preference & none, but indirect &
+Measures instructed chat behaviour. Base models are not what is rated, so it answers a different
+question than base-model selection. \\
+Pick the larger model & free &
+As good as anything over a wide size range ($0.855$ here), and we recommend it there. Collapses to
+$0.545$ among candidates within $2\times$, which is where the decision is actually hard. \\
+Label a small in-house test set & human hours &
+The sharpest objection to this work, since Phase~1 already collects the data. Answers a task you
+must name in advance, which is the thing a new domain has not settled yet; and $500$ labelled items
+give a binomial half-width near $\pm4.4$ points, wider than most gaps in this cohort. The same text
+yields ${\sim}1.3$M scored token predictions with no labelling at all. Where the task \emph{is}
+nameable, this is the better instrument, and the automated form of it is our own next experiment. \\
+Fine-tune and test on the task & highest &
+The strongest evidence available, and preferable whenever the task is known and labelled. Requires
+a labelled target task, which is exactly what a new domain usually lacks. \\
+\midrule
+\textbf{This protocol} & minutes (free tier), $\sim$1 GPU-h (adapted) &
+Uses text the evaluator owns and that postdates every release, so it cannot have been prepared for.
+Reaches $0.818$ among comparable-size candidates. Does not replace task evaluation, and cannot be
+claimed to be \emph{more correct} than a benchmark where the two disagree. \\
+\bottomrule
+\end{tabular}
+\caption{Base-model selection options. The protocol is proposed as a second, unpreparable axis for
+the case where the deployment task is not yet a labelled benchmark and the candidates are of
+comparable size---not as a replacement for task evaluation.}
+\label{tab:alternatives}
+\end{table}
 
 These bands hold $7$ to $20$ pairs, so we report them as descriptive rather than tested; the
 claim they support is a scoping one. BPB earns its cost where size is uninformative, and the honest
@@ -969,7 +1053,11 @@ delta that spans a hardware or engine change is uninterpretable at this scale, a
 comparison is common practice. Second, cells whose base score could not be re-measured on the same
 host are excluded from every aggregate rather than mixed in.
 
-\paragraph{The ranking survives adaptation, and that is the claim the leaderboard makes.} The unit here is a
+\paragraph{The ranking survives adaptation in the five models we could test.} The claim in this
+subsection is scoped to that subset and should not be read as a property of the eleven-model
+leaderboard: the six excluded models are excluded by loader faults that correlate with architecture
+(a sparse MoE and multimodal-wrapped checkpoints), which is precisely the direction in which an
+adaptation-induced reordering would be most likely to appear. The unit here is a
 ranking, not a cell: four rankings of five models each---two corpora by two benchmarks---and
 \emph{all four came back in exactly the base order}, Spearman $\rho=1.00$ with not one inverted
 pair. A single such ranking arises by chance with probability $1/5!=0.0083$, so one ranking already

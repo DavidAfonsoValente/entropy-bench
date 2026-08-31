@@ -755,6 +755,44 @@
 
 % ==================================================================== 18
 \begin{frame}
+  \frametitle{Backup: why this and not the alternatives}
+  \framesubtitle{Including where each alternative is the better instrument}
+
+  \vspace{0.3em}
+  \renewcommand{\arraystretch}{1.25}
+  \scriptsize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{p{2.5cm}p{1.9cm}p{6.6cm}}
+    \toprule
+    \textbf{Option} & \textbf{Cost each} & \textbf{What it does and does not tell you} \\
+    \midrule
+    Read their scorecard & free &
+    Right first look. Cannot separate \keyw{stronger} from \keyw{more specialised}, and cannot be
+    audited. \\
+    Run the suite yourself & GPU-hours &
+    Removes host/harness drift (worth up to 0.7 pts here). Measures the same thing. \\
+    Arena / preference & indirect &
+    Rates instructed chat behaviour, not base models. Different question. \\
+    Pick the bigger model & free &
+    \goodw{As good as us over a 70$\times$ range} (0.855). Collapses to 0.545 within 2$\times$. \\
+    Label 500 in-house items & human hours &
+    \keyw{The sharpest objection.} But it answers a task you must name in advance, and $\pm$4.4 pts
+    at $n{=}500$ is wider than most gaps here. \\
+    Fine-tune \& test the task & highest &
+    \goodw{Strictly better evidence when the task is known.} Needs labels a new domain lacks. \\
+    \midrule
+    \textbf{This protocol} & \textbf{minutes} &
+    Text you own, dated after they shipped, so it cannot have been prepared for. \goodw{0.818}
+    among comparable-size candidates. \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.6em}
+  \punch{\footnotesize We are not the best answer to every version of the question. We are the right
+  one when the task is not yet a labelled benchmark and the candidates are close in size.}
+\end{frame}
+
+\begin{frame}
   \frametitle{Backup: the adaptation results as a table}
   \framesubtitle{Lower \bpb{} is better. The reduction is a calibration diagnostic, not plasticity --- see slide 9.}
 
