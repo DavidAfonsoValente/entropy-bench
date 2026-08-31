@@ -1,0 +1,26 @@
+{
+  "model_id": "Qwen/Qwen3.5-4B-Base",
+  "dataset": "/opt/dt/corpora/google_news_from_2026-06-08_to_2026-06-08_cleaned.jsonl",
+  "corpus": "google_news_from_2026-06-08_to_2026-06-08_cleaned",
+  "avg_bytes_per_token": 4.69882733684942,
+  "n_train_blocks": 39774,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.7821618102980856,
+  "trainable_params": 32464896,
+  "total_params": 4238216192,
+  "trainable_pct": 0.7660037744483233,
+  "adapted_bpb": 0.7493144761386236,
+  "reduction_pct": 4.199557396818413,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "adapter_dir": "/opt/dt/adapters/news__Qwen_Qwen3_5-4B-Base",
+  "wall_seconds": 2044.7951092720032
+}

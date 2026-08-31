@@ -1,0 +1,36 @@
+{
+  "best_config": {
+    "learning_rate": 0.00011290133559092664,
+    "batch_size": 8,
+    "warmup_ratio": 0.10401360423556216,
+    "weight_decay": 0.0015375920235481753,
+    "gradient_accumulation_steps": 2,
+    "lora_r": 16,
+    "lora_alpha": 64,
+    "lora_dropout": 0.0176985004103839,
+    "final_epochs": 3,
+    "eval_batch_size": 4,
+    "gradient_clip": 1.0,
+    "max_train_seconds": null,
+    "target_train_steps": 8000,
+    "lr_floor_ratio": 0.1
+  },
+  "sweep_final_bpb": 0.6809622930700554,
+  "range_health": {
+    "learning_rate": "optimal",
+    "batch_size": "optimal",
+    "warmup_ratio": "optimal",
+    "weight_decay": "constrained",
+    "gradient_accumulation_steps": "optimal",
+    "lora_r": "optimal",
+    "lora_alpha": "fixed",
+    "lora_dropout": "optimal",
+    "final_epochs": "fixed",
+    "eval_batch_size": "fixed",
+    "gradient_clip": "fixed",
+    "max_train_seconds": "fixed",
+    "target_train_steps": "fixed",
+    "lr_floor_ratio": "fixed"
+  },
+  "zero_shot_bpb": 0.7326525720098627
+}

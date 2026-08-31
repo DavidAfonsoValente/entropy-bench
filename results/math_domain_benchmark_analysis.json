@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "bpb_source": "results/domain_transfer/math__*.json",
+  "accuracy_source": "results/combined_bpb_vs_static.json",
+  "news_baseline": {
+    "mmlu_pro": {
+      "spearman": 0.763636363636,
+      "kendall_tau": 0.563636363636,
+      "exact_ranks": 3
+    },
+    "hellaswag": {
+      "spearman": 0.981818181818,
+      "kendall_tau": 0.927272727273,
+      "exact_ranks": 7
+    },
+    "gsm8k": {
+      "spearman": 0.727272727273,
+      "kendall_tau": 0.563636363636,
+      "exact_ranks": 0
+    }
+  },
+  "alignment": {
+    "mmlu_pro": {
+      "label": "MMLU-Pro",
+      "pearson_bpb_vs_accuracy": -0.9487176645827538,
+      "spearman_rank_alignment": 0.9363636363636364,
+      "kendall_tau_bpb_vs_error": 0.8181818181818182,
+      "identical_ranks": 3,
+      "mean_absolute_rank_shift": 0.9090909090909091,
+      "max_absolute_rank_shift": 2.0,
+      "news_baseline_spearman": 0.763636363636,
+      "spearman_delta_vs_news": 0.17272727272763644
+    },
+    "hellaswag": {
+      "label": "HellaSwag",
+      "pearson_bpb_vs_accuracy": -0.9084752477930277,
+      "spearman_rank_alignment": 0.8181818181818182,
+      "kendall_tau_bpb_vs_error": 0.6727272727272727,
+      "identical_ranks": 2,
+      "mean_absolute_rank_shift": 1.4545454545454546,
+      "max_absolute_rank_shift": 4.0,
+      "news_baseline_spearman": 0.981818181818,
+      "spearman_delta_vs_news": -0.16363636363618173
+    },
+    "gsm8k": {
+      "label": "GSM8K",
+      "pearson_bpb_vs_accuracy": -0.7899957145497609,
+      "spearman_rank_alignment": 0.9363636363636364,
+      "kendall_tau_bpb_vs_error": 0.8181818181818182,
+      "identical_ranks": 6,
+      "mean_absolute_rank_shift": 0.7272727272727273,
+      "max_absolute_rank_shift": 2.0,
+      "news_baseline_spearman": 0.727272727273,
+      "spearman_delta_vs_news": 0.20909090909063643
+    }
+  },
+  "adapted_bpb": {
+    "gemma-4-31B": 0.6305857079229615,
+    "gemma-4-12B": 0.66638650911146,
+    "Ministral-3-14B": 0.6221448792383489,
+    "Qwen3.5-35B-MoE": 0.5893143637363748,
+    "Qwen3.5-9B": 0.6141648411518748,
+    "Qwen2.5-7B": 0.6336252990365805,
+    "Qwen3.5-4B": 0.643347138979455,
+    "Llama-3.2-1B": 0.7498891544245568,
+    "Qwen2.5-1.5B": 0.7006286498853386,
+    "LFM2.5-1.2B": 0.8168085487453594,
+    "Qwen2.5-0.5B": 0.7799877205100874
+  }
+}

@@ -1,6 +1,6 @@
 {
   "model_id": "google/gemma-4-12B",
-  "adapter": "results/google_gemma-4-12B/final_checkpoint",
+  "adapter": "results/legacy_sweep/google_gemma-4-12B/final_checkpoint",
   "training_context_tokens": 512,
   "target_tokens_per_window": 64,
   "n_windows": 64,
@@ -86,5 +86,6 @@
       "scored_tokens": 4088,
       "decoded_bytes": 19451
     }
-  }
+  },
+  "adapter_note": "moved to results/legacy_sweep/ when the superseded HPO run was separated from the headline artifacts; weights are local-only"
 }

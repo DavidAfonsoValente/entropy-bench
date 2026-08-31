@@ -1,0 +1,26 @@
+{
+  "model_id": "mistralai/Ministral-3-14B-Base-2512",
+  "dataset": "/opt/dt/corpora/math_arxiv.jsonl",
+  "corpus": "math_arxiv",
+  "avg_bytes_per_token": 4.781291736855963,
+  "n_train_blocks": 5011,
+  "n_test_blocks_scored": 616,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.6718344976851429,
+  "trainable_params": 70336512,
+  "total_params": 14015368192,
+  "trainable_pct": 0.5018527593170775,
+  "adapted_bpb": 0.6220550429622879,
+  "reduction_pct": 7.409481783738996,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "adapter_dir": "/opt/dt/adapters/math__mistralai_Ministral-3-14B-Base-2512",
+  "wall_seconds": 908.9976499080658
+}

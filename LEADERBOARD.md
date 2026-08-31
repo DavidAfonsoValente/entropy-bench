@@ -31,7 +31,15 @@ Models are ranked by **adapted Bits Per Byte (BPB)** on clean target-domain text
 
 <!-- leaderboard:end -->
 
-Adapted BPB is the selection score. The reduction answers a different question: how much did the model's predictive distribution need to move toward this corpus?
+Adapted BPB is the selection score **for a model you intend to fine-tune on domain text**. If you
+will ship the base model as released, rank by the zero-shot column instead: it costs one forward
+pass and, on this cohort, it selects the GSM8K and MMLU-Pro leader outright while the adapted column
+selects the HellaSwag leader. Neither is "the" ranking — see
+[`results/alignment_matrix.json`](results/alignment_matrix.json) and the paper's Table 6 for what
+each one tracks.
+
+The reduction answers a third question: how much did the model's predictive distribution need to
+move toward this corpus? Do not rank by it.
 
 ## Add a model
 

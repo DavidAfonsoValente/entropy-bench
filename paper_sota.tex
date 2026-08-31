@@ -42,26 +42,40 @@
 \maketitle
 
 \begin{abstract}
-Fixed task benchmarks expose important capabilities, but their model rankings can conflict and their
-accuracy scores discard most token-level evidence. Predictive cross-entropy uses every target token,
-yet ordinary perplexity cannot compare models with different tokenizers. We turn the training
-objective into a practical base-model selection protocol: normalize held-out loss by UTF-8 bytes,
-refresh the target-domain corpus, conservatively quarantine contamination-risk candidates, and
-measure every model before and after the same controlled adaptation procedure. We apply the protocol
-to 11 base models (0.5B--35B parameters) on news, Reddit, and Hacker News. On the marker-masked news
-evaluation, adapted BPB and HellaSwag have near-identical rankings (Spearman $\rho=0.982$, seven of
-11 exact ranks, maximum displacement one), as expected for two conditional-continuation measures.
-MMLU-Pro and GSM8K agree less ($\rho=0.764$ and $0.727$): Qwen models move upward, while Gemma
-models move downward, exposing family-specific knowledge, arithmetic, prompting, and answer-format
-effects that general text likelihood should not erase. Within each corpus, adaptation materially
-changes the zero-shot ordering ($\rho=0.609$--$0.682$); after adaptation, rankings transfer strongly
-across corpora ($\rho=0.991$, $0.955$, and $0.964$). Diagnostic token- and context-level studies show
-that adaptation largely corrects surface-form calibration and retains its gain through 2{,}048-token
-inference. The release provides code, a versioned protocol, dataset fingerprints, auditable results,
-and a submission-ready leaderboard.
+Fixed task benchmarks expose important capabilities, but their rankings conflict and their accuracy
+scores discard most token-level evidence. Predictive cross-entropy uses every target token, yet
+ordinary perplexity cannot compare models with different tokenizers. Bits per byte (BPB) fixes the
+denominator; the open question is what to measure it on. We study that question directly, evaluating
+11 base models (0.5B--35B parameters) on four fresh corpora---news, Reddit, Hacker News, and
+arXiv mathematics---both zero-shot and after an identical LoRA adaptation, and comparing all 24
+resulting rankings against MMLU-Pro, HellaSwag, and GSM8K.
+
+The result is not that adaptation improves the ranking. It is that adaptation \emph{steers} it.
+Zero-shot news BPB already selects the GSM8K and MMLU-Pro leader outright, with zero selection
+regret. Adapting on general text moves the ranking toward conditional continuation---HellaSwag
+agreement rises from $\rho=0.718$ to $0.982$---and away from the generative tasks, where agreement
+falls to $\rho=0.727$ on GSM8K and $0.764$ on MMLU-Pro and the top pick now costs 2.3 and 4.2
+accuracy points against the oracle. The same pattern holds on Reddit and Hacker News. Adapting
+instead on contamination-screened mathematical prose---not on GSM8K questions---reverses it: GSM8K
+agreement reaches $\rho=0.936$, the best pairwise accuracy in the study (50 of 55 model pairs), and
+the top pick returns to the oracle, while HellaSwag agreement falls to $0.818$. Across four
+adaptation corpora, the only one that beats doing nothing on GSM8K is the topically matched one.
+
+Reported as selection accuracy over model pairs, with intervals from a cluster bootstrap over the
+eleven models, the selection claim holds in $23$ of the $24$ (corpus, tier, benchmark) cells. The
+contrast \emph{between} corpora does not separate from zero at this cohort size on any single pair
+of them, which is why the steering claim rests on the four-corpus pattern rather than on one
+comparison.
+
+We therefore describe base-model selection as a cost--fidelity frontier rather than a single score:
+zero-shot BPB is free and a strong general-purpose selector, while adaptation costs compute and buys
+alignment with whichever capability the adaptation corpus exercises. We report selection regret and
+pairwise accuracy alongside rank correlation, and we release code, a versioned protocol, dataset
+fingerprints, raw harness output, and every intermediate artifact.
 \end{abstract}
 
 \section{Introduction}
+\label{sec:intro}
 For decades, language models were compared by predictive cross-entropy and its exponentiated form,
 perplexity. The metric was broad and statistically efficient---every next token contributed
 evidence---but token-level normalization made scores incomparable across vocabularies. Evaluation
@@ -70,6 +84,18 @@ they isolate different capabilities \cite{wang2024mmlupro,zellers2019hellaswag,c
 same specialization also makes their rankings disagree. Once benchmark questions become development
 targets or enter pre-training corpora, a high score may additionally reflect task preparation or
 overlap rather than transferable base-model quality \cite{xu2024survey,zhang2025trainbeforetest}.
+
+The difficulty is concrete rather than rhetorical, and it is visible inside this cohort. Llama-3.2-1B
+and Qwen-2.5-1.5B sit at adjacent positions in our adapted news BPB ranking, $3.3\%$ apart, and
+$2.0$ points apart on HellaSwag. On GSM8K they are $54.6$ points apart. Qwen-3.5-4B and
+Llama-3.2-1B are $2.9\%$ apart on the same ranking and $73.9$ points apart on GSM8K. Two models can
+therefore model fresh English almost identically well and differ nine-fold on a benchmark, and no
+published score distinguishes ``this model is stronger'' from ``this model was trained on more of
+this''. Both are legitimate design choices; the point is that the score cannot tell a reader which
+one it is reporting, and the pre-training mixtures that would settle it are not disclosed. A metric
+computed on text the evaluator owns, dated after every candidate shipped, cannot have been prepared
+for---which is a different guarantee from being a better measure of quality, and we are careful
+throughout to claim only the former.
 
 Recent evidence makes the return to loss timely. Cross-entropy can have higher signal and lower noise
 than accuracy \cite{heineman2025signal}, and train-before-test evaluations show that light,
@@ -87,13 +113,26 @@ equal preparation?'' The reduction from zero-shot to adapted BPB answers a diffe
 ``how much calibration did this corpus require?'' Neither number is presented as a substitute for a
 task benchmark when the deployment task is already known.
 
+The finding that organizes this paper is what happens when both endpoints are measured against
+external benchmarks instead of only the adapted one. Adaptation does not move the ranking uniformly
+closer to any external notion of model quality; it rotates the ranking toward whatever the
+adaptation corpus exercises. That makes the choice of corpus the substantive decision in the
+protocol, and it makes the zero-shot ranking---which is free---a serious baseline rather than an
+intermediate quantity. We consequently report both tiers everywhere, and we judge each of them by
+what it costs a practitioner who acts on it.
+
 Our contributions are: (1) a tokenizer-agnostic, fresh-data protocol for comparing adaptable base
-models; (2) a complete 11-model accuracy and rank audit on MMLU-Pro, HellaSwag, and GSM8K that
-explains where entropy rankings agree and diverge; (3) a 33-cell, three-domain experiment separating
-within-domain adaptation effects from cross-domain rank transfer; (4) token- and context-level
-diagnostics of what the adapters learn; and (5) a public implementation with versioned benchmark
-manifests, dataset fingerprints, machine-readable results, and a validated leaderboard. Code and
-artifacts are available at \url{https://github.com/DavidAfonsoValente/entropy-bench}.
+models, with a versioned estimand and auditable artifacts; (2) the complete
+$4\times2\times3$ alignment matrix---four adaptation corpora, zero-shot and adapted, against three
+benchmarks---which makes the zero-shot baseline and the non-matched-corpus control explicit rather
+than assumed; (3) selection regret and pairwise accuracy as reporting statistics that a rank
+correlation over 11 models cannot support on its own; (4) evidence that the adaptation corpus steers
+which capability the ranking tracks, demonstrated by a math-domain intervention that is checked
+against three general-text controls rather than one; (5) token- and context-level diagnostics of what
+the adapters learn, including the finding that a fixed update budget measures calibration
+\emph{speed} rather than attainable fit; and (6) a public implementation with benchmark manifests,
+dataset fingerprints, raw harness output, and a validated leaderboard. Code and artifacts are
+available at \url{https://github.com/DavidAfonsoValente/entropy-bench}.
 
 \begin{figure*}[t]
 \centering
@@ -114,7 +153,7 @@ artifacts are available at \url{https://github.com/DavidAfonsoValente/entropy-be
 \node[stage, fill=cAuFill, draw=cAuLine, right=1.5cm of data] (audit)
     {\shortstack{\textbf{Contamination}\\\textbf{Risk Screen}\\[3pt]{\scriptsize SHA256 $\cdot$ MinHash}\\{\scriptsize Min-K++ $\cdot$ context signals}}};
 \node[stage, fill=cAdFill, draw=cAdLine, right=1.5cm of audit] (adapt)
-    {\shortstack{\textbf{Domain}\\\textbf{Adaptation}\\[3pt]{\scriptsize Sequence packing}\\{\scriptsize LoRA sweeps (HPO)}}};
+    {\shortstack{\textbf{Domain}\\\textbf{Adaptation}\\[3pt]{\scriptsize Sequence packing}\\{\scriptsize Fixed LoRA, equal budget}}};
 \node[stage, fill=cEvFill, draw=cEvLine, right=1.5cm of adapt] (eval)
     {\shortstack{\textbf{BPB}\\\textbf{Evaluation}\\[3pt]{\scriptsize Tokenizer-agnostic}\\{\scriptsize 512-token blocks}}};
 
@@ -153,6 +192,19 @@ finds that a low-dimensional capability structure explains much public-model per
 validation loss and average downstream error \cite{gadre2025scales}. We test that relationship across
 families and report both alignment and systematic residuals rather than collapsing the tasks into an
 uninterpreted macro-average.
+
+\textbf{Which corpus the loss is measured on.} That the agreement between predictive loss and
+benchmark performance depends on \emph{where} the loss is measured is not new. Thrush et al. show
+that per-domain perplexity correlates with benchmark performance to systematically different degrees
+across web domains, and turn that dependence into a pretraining-data selection rule
+\cite{thrush2024perplexity}. Their estimand is the complement of ours: they hold the benchmark suite
+fixed and choose data to \emph{train} one strong model, using a pool of existing models to estimate
+which domains carry signal. We hold the candidate pool fixed, adapt every member on the same corpus,
+and ask how the resulting \emph{selection ranking} moves against several benchmarks at once. The
+domain-dependence they document is the premise our steering result builds on; what we add is that
+the dependence can be actuated---the corpus is a control input for which capability the ranking
+tracks, with the matched corpus improving one benchmark's agreement while degrading another's, and
+three general-text controls failing to do either.
 
 \textbf{Equal preparation.} Dynamic evaluation updates a language model on recent test
 history to improve predictive likelihood \cite{krause2018dynamic,krause2019dynamictransformer};
@@ -196,13 +248,34 @@ The screen runs per model and the union of candidate indices is quarantined glob
 model receives the same retained corpus. This policy reduces overlap risk without making an
 unverifiable claim about membership in proprietary pre-training data.
 
+This screen is applied to the news corpus. The three later corpora are protected by a stronger and
+simpler property instead: every document in them was published after every model in the cohort was
+released, so no detector is needed to establish that they were not trained on
+(Table~\ref{tab:corpora}). We regard freshness, not the detector stack, as the load-bearing
+contamination defence in this work, and we recommend it over a screen wherever a target domain
+permits a recent snapshot.
+
 \subsection{Phase 2: Controlled Domain Adaptation}
 The retained corpus is packed into contiguous $L{=}512$-token blocks along document boundaries.
 Every headline model--corpus cell uses LoRA rank 16, $\alpha=32$, dropout $0.05$, learning rate
 $10^{-4}$, effective batch 32, \texttt{all-linear} targets, and 250 update steps. This fixes the data
 and update budget, although larger models still require more FLOPs and have more trainable LoRA
-parameters. Separately, the mechanistic diagnostics in Section~\ref{sec:tokengain} use three adapters
-selected by an exploratory multi-fidelity sweep; those runs explain the source of adaptation gains
+parameters.
+
+\paragraph{Why a fixed configuration rather than a per-model search.} An earlier version of this
+experiment selected each model's adapter by a multi-fidelity Optuna sweep. We abandoned that design
+because its search budget was confounded with model size: within a fixed wall-clock allocation the
+two largest models completed four trials each, while the 1B models completed 17 and 18
+(\texttt{results/legacy\_sweep/*/trials.csv}). A search that is systematically deeper for small
+models hands them a better-tuned adapter and biases adapted BPB by parameter count, by an amount
+that cannot be estimated after the fact. One shared configuration removes that confound outright;
+it is tuned to no model's advantage, and it is the reason the leaderboard is comparable at all. The
+cost is that a fixed configuration is not equally well suited to every architecture, which
+Section~\ref{sec:reporting} states as a limitation and Section~\ref{sec:convergence} proposes to
+resolve.
+
+Separately, the mechanistic diagnostics in Section~\ref{sec:tokengain} use three adapters
+selected by that exploratory sweep; those runs explain the source of adaptation gains
 but do not determine the public ranking.
 
 \subsection{Phase 3: Tokenizer-Agnostic BPB Evaluation}
@@ -234,7 +307,11 @@ MMLU-Pro uses 5-shot chain-of-thought and exact match on one stratified 1{,}000-
 (seed 42); HellaSwag uses 10-shot length-normalized multiple-choice accuracy on all 10{,}042
 validation examples; GSM8K uses 5-shot chain-of-thought and flexible numeric extraction on all
 1{,}319 test examples. These are directly observed scores under one harness, not vendor-reported
-model-card values.
+model-card values: the aggregate \texttt{results\_*.json} and per-example \texttt{samples\_*.jsonl}
+for all 11 models on all three benchmarks are published under \texttt{results/gsm8k/},
+\texttt{results/hellaswag/}, and \texttt{results/mmlu\_pro\_1k/}, so every number in
+Table~\ref{tab:bpb_static} recomputes directly from the raw harness output
+(\texttt{tools/verify\_paper\_numbers.py}).
 
 \paragraph{Descriptive uncertainty and ranks.} We orient every rank so 1 is best, compute Pearson
 correlation on score values, Spearman correlation on ranks, and Kendall agreement on pairwise order.
@@ -252,23 +329,34 @@ We first test the claim needed for practical model selection: after the same lig
 does the ordering identify broadly strong base models rather than one news-specific winner? We
 prepare three corpora with the same grouping and cleaning recipe---exact deduplication, Gopher
 quality heuristics, and MinHash/LSH near-duplicate filtering at Jaccard $0.60$---and run all 11
-models on every corpus.
+models on every corpus. Table~\ref{tab:corpora} also records how each corpus is protected against
+contamination, which is not uniform across the four and should not be read from
+Figure~\ref{fig:pipeline} as if it were.
 
 \begin{table}[ht]
 \centering
 \small
-\begin{tabular}{lrrrr}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrrrl}
 \toprule
-\textbf{Corpus} & \textbf{Raw records} & \textbf{Documents} & \textbf{Median words} & \textbf{Text} \\
+\textbf{Corpus} & \textbf{Raw records} & \textbf{Documents} & \textbf{Median words} & \textbf{Text} & \textbf{Contamination control} \\
 \midrule
-Google News, 8 Jun 2026     & \phantom{0,0}119{,}054 & 119{,}054 & 362 & 361\,MB \\
-Reddit, 6--10 Aug 2026$^{\dagger}$ & 3{,}054{,}623 & 141{,}527 & 624 & 533\,MB \\
-Hacker News, 6--10 Aug 2026 & \phantom{0,0}\phantom{0}60{,}814 & \phantom{00}6{,}086 & 690 & \phantom{0}46\,MB \\
+Google News, 8 Jun 2026     & \phantom{0,0}119{,}054 & 119{,}054 & 362 & 361\,MB & Min-K++ / context / perturbation union \\
+Reddit, 6--10 Aug 2026$^{\dagger}$ & 3{,}054{,}623 & 141{,}527 & 624 & 533\,MB & Post-release scrape \\
+Hacker News, 6--10 Aug 2026 & \phantom{0,0}\phantom{0}60{,}814 & \phantom{00}6{,}086 & 690 & \phantom{0}46\,MB & Post-release scrape \\
+arXiv \texttt{math.*}, 9 Jun--20 Aug 2026$^{\ddagger}$ & \phantom{0,00}\phantom{0}3{,}207 & \phantom{00}3{,}207 & --- & \phantom{0}15\,MB & Post-release scrape $+$ GSM8K shingle screen \\
 \bottomrule
 \end{tabular}
-\caption{Corpora in the 33-cell fixed-protocol experiment. Reddit and Hacker News comments are
-concatenated into document-length groups. $^{\dagger}$The Reddit source contains four available
-days in the stated range.}
+}
+\caption{Corpora. All four receive identical exact-deduplication, Gopher quality filtering, and
+MinHash/LSH near-duplicate removal at Jaccard $0.60$. They differ in \emph{contamination} control,
+and deliberately so: the reference-free screen of Section~\ref{sec:pipeline} was run on the news
+corpus, whose 8 June 2026 snapshot predates part of the cohort's release window, while the other
+three were scraped after every model in the cohort shipped and are protected by construction rather
+than by a detector. Reddit and Hacker News comments are concatenated into document-length groups.
+$^{\dagger}$The Reddit source contains four available days in the stated range.
+$^{\ddagger}$Used only for the intervention in Section~\ref{sec:math}, not for the 33-cell
+transfer experiment.}
 \label{tab:corpora}
 \end{table}
 
@@ -462,10 +550,48 @@ HellaSwag & $-0.975$ & $0.982$ & $0.927$ & 7/11 & 0.36 & 1 \\
 GSM8K     & $-0.614$ & $0.727$ & $0.564$ & 0/11 & 2.00 & 5 \\
 \bottomrule
 \end{tabular}
-\caption{Alignment with adapted BPB. Pearson correlates BPB with accuracy, hence negative is
+\caption{Alignment with adapted news BPB. Pearson correlates BPB with accuracy, hence negative is
 agreement. Spearman and Kendall compare best-to-worst order and are oriented positive. ``Shift'' is
-absolute rank displacement.}
+absolute rank displacement. Table~\ref{tab:alignment_matrix} places these three rows in the context
+of every other corpus and both cost tiers.}
 \label{tab:rank_alignment}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{llrrrr}
+\toprule
+\textbf{Corpus} & \textbf{Tier} & \textbf{GSM8K} & \textbf{MMLU-Pro} & \textbf{HellaSwag} & \textbf{GSM8K pairs} \\
+\midrule
+\input{alignment_matrix_table.tex}
+\bottomrule
+\end{tabular}
+\caption{Rank agreement (Spearman $\rho$) between every BPB variant and every benchmark. Four
+adaptation corpora $\times$ two cost tiers $\times$ three benchmarks; the two rows the earlier
+literature and our own previous draft reported are \emph{News adapted} and \emph{Math adapted}.
+``GSM8K pairs'' counts model pairs ordered correctly out of 55. Generated by
+\texttt{tools/analyze\_alignment\_matrix.py} into \texttt{results/alignment\_matrix.json}.}
+\label{tab:alignment_matrix}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{llrrr}
+\toprule
+& & \multicolumn{3}{c}{\textbf{Selection regret (accuracy points)}} \\
+\cmidrule(lr){3-5}
+\textbf{BPB variant} & \textbf{Top pick} & \textbf{GSM8K} & \textbf{MMLU-Pro} & \textbf{HellaSwag} \\
+\midrule
+\input{selection_regret_table.tex}
+\bottomrule
+\end{tabular}
+\caption{What it costs to act on each metric. Regret is the accuracy of the benchmark's own best
+model minus the accuracy of the model this BPB variant ranks first. The oracle is
+Qwen-3.5-35B-MoE for GSM8K and MMLU-Pro and Gemma-4-31B for HellaSwag, so a regret of $0.0$ means
+the metric selected the benchmark's leader outright.}
+\label{tab:regret}
 \end{table}
 
 \begin{figure}[t]
@@ -477,12 +603,30 @@ differences (G31/G12: Gemma; Q35/Q9: Qwen).}
 \label{fig:corr}
 \end{figure}
 
-\paragraph{HellaSwag and BPB measure the same local object.} HellaSwag selects a continuation by
-length-normalized conditional log-likelihood, whereas BPB aggregates conditional log-likelihood over
-every target token. Their rank agreement is consequently $0.982$: seven models keep their exact
-rank and none moves more than one place. Gemma-4-31B leads both (adapted BPB $0.624$, HellaSwag
-$87.9\%$). This is convergent validity for conditional language modeling, not a claim that either
-metric measures every capability.
+\paragraph{Adaptation does not improve the ranking; it rotates it.} Table~\ref{tab:alignment_matrix}
+contains the result that organizes the rest of this paper, and it is only visible once the zero-shot
+tier is reported alongside the adapted one. On news, adaptation raises HellaSwag agreement from
+$\rho=0.718$ to $0.982$ and simultaneously \emph{lowers} GSM8K agreement from $0.836$ to $0.727$ and
+MMLU-Pro from $0.855$ to $0.764$. The same three-way movement appears on Reddit
+($0.655\rightarrow0.964$, $0.791\rightarrow0.691$, $0.791\rightarrow0.736$) and on Hacker News
+($0.627\rightarrow0.973$, $0.827\rightarrow0.791$, $0.818\rightarrow0.845$). Three independent
+corpora, one direction.
+
+Table~\ref{tab:regret} states the same fact as a decision. Zero-shot news BPB selects
+Qwen-3.5-35B-MoE, which is the GSM8K and MMLU-Pro leader---zero regret on both---at the cost of
+$2.4$ points against Gemma-4-31B on HellaSwag. After adaptation the top pick becomes Gemma-4-31B:
+zero regret on HellaSwag, $2.3$ and $4.2$ points of regret on GSM8K and MMLU-Pro. Adaptation did not
+find a better model. It changed which question the ranking answers.
+
+\paragraph{HellaSwag and BPB measure the same local object.} The direction of that rotation is not
+mysterious. HellaSwag selects a continuation by length-normalized conditional log-likelihood, whereas
+BPB aggregates conditional log-likelihood over every target token; further language-model training on
+in-domain text should, and does, pull the two into near-identical order ($\rho=0.982$: seven models
+keep their exact rank and none moves more than one place; Gemma-4-31B leads both at adapted BPB
+$0.624$ and HellaSwag $87.9\%$). This is convergent validity between two measurements of the same
+local object, and it is the least surprising cell in Table~\ref{tab:alignment_matrix} rather than the
+protocol's strongest evidence. The generative benchmarks, which require producing and extracting an
+answer, move the other way.
 
 \paragraph{Knowledge and elicitation.} MMLU-Pro agreement remains substantial but
 weaker ($\rho=0.764$). The Qwen-3.5-35B-MoE leads at $62.0\%$ and moves from BPB rank 3 to MMLU rank
@@ -492,19 +636,266 @@ requires an extractable exact answer. The residual therefore mixes factual cover
 few-shot pattern continuation, and answer formatting.
 
 \paragraph{GSM8K exposes a family-specific residual.} No model keeps the same rank. Every Qwen
-model is unchanged or improves relative to BPB; both Gemma models decline, with Gemma-4-12B moving
-from rank 2 to 7. The contrast is large even among small models: Qwen-2.5-1.5B reaches $61.1\%$
-GSM8K at BPB rank 9, while Llama-3.2-1B reaches $6.5\%$ at BPB rank 8. This supports a narrow
-interpretation: arithmetic data, chain-of-thought preparation, and generation-format compatibility
-vary systematically by model family. Because architecture, data mixture, token budget, and release
-generation are confounded, the experiment does not identify which cause dominates.
+model is unchanged or improves relative to adapted news BPB; both Gemma models decline, with
+Gemma-4-12B moving from rank 2 to 7. The contrast is large even among small models: Qwen-2.5-1.5B
+reaches $61.1\%$ GSM8K at BPB rank 9, while Llama-3.2-1B reaches $6.5\%$ at BPB rank 8. This supports
+a narrow interpretation: arithmetic data, chain-of-thought preparation, and generation-format
+compatibility vary systematically by model family. Architecture, data mixture, token budget, and
+release generation are confounded here, so this correlational comparison alone cannot rank those
+causes---which is what Section~\ref{sec:math} probes with an intervention on the adaptation corpus.
+
+Two cautions belong with this residual. First, it is a residual against the \emph{adapted} ranking
+specifically: zero-shot news BPB places Qwen-3.5-35B-MoE, Ministral-3-14B, and Qwen-3.5-9B in its top
+three and orders 46 of 55 pairs correctly against GSM8K, so the family-specific disagreement is
+substantially something adaptation introduces rather than something it reveals. Second, the
+family claim rests on two Gemma models, which is an observation about this cohort and not yet a
+demonstrated family effect.
+
+\paragraph{The residual is a demonstration, not an estimate.} It is tempting to promote that
+observation into a statistic: correlate $|$BPB gap$|$ against $|$benchmark gap$|$ over all $55$
+pairs and report that BPB gaps predict HellaSwag gaps but not GSM8K gaps. The full-cohort
+coefficients invite it ($r=+0.909$ for HellaSwag against $r=+0.266$ for GSM8K). We do not report
+that contrast, because it does not survive deletion: dropping Llama-3.2-1B alone moves the GSM8K
+coefficient to $+0.667$ and dropping Qwen-2.5-0.5B moves it to $+0.118$, a swing larger than the
+coefficient's own distance from zero, while HellaSwag stays within $[0.859, 0.940]$ under every
+single-model deletion. Each model sits in ten of the fifty-five pairs, so one unusual model moves
+the fit a long way; this is the same leverage failure recorded for the BPB-movement correlation in
+Section~\ref{sec:adaptedacc}, and it is reported here rather than avoided.
+
+What survives is weaker in form and sufficient for the argument. Among the ten pairs within $5\%$
+of each other on adapted news BPB, the six cross-family pairs have a median GSM8K gap of $20.0$
+points and the four same-family pairs a median of $2.8$ points: when the metric says two models
+from the same publisher are tied, the benchmark agrees, and when it says that about two models from
+different publishers, it may not. Those are descriptive counts over single-digit cells. The named
+pairs quoted in Section~\ref{sec:intro} are existence proofs about specific released models, so the
+leverage argument does not apply to them, and they are all the motivation requires. All of it
+regenerates via \texttt{tools/analyze\_selection\_divergence.py}.
+
+\paragraph{Two benchmarks, not three.} MMLU-Pro and GSM8K are not independent evidence in this
+cohort: they agree on 51 of 55 model pairs (Kendall $\tau=0.855$). Wherever both move together in
+Tables~\ref{tab:alignment_matrix} and~\ref{tab:regret}---as they do in every row---that is one
+finding reported twice, not two corroborating findings. The study therefore resolves two capability
+axes, a generative one shared by MMLU-Pro and GSM8K and a likelihood one measured by HellaSwag.
 
 \paragraph{Point-estimate leaders are not equally resolved.} HellaSwag's leader exceeds the runner-up
 by $2.41$ percentage points (independent-binomial $z=5.03$), and their Wilson intervals do not
 overlap. MMLU-Pro's $4.2$-point top gap has $z=1.92$ and overlapping intervals; GSM8K's top two Qwen
 models differ by only $0.53$ points ($z=0.40$). Boldface therefore identifies the observed maximum,
 not a universal or necessarily significant winner. The repo publishes the numerators, denominators,
-intervals, ranks, and derivation script in \texttt{results/static\_benchmark\_analysis.json}.
+intervals, ranks, and derivation script in \texttt{results/static\_benchmark\_analysis.json}, and the
+raw harness output each of those numbers is computed from in \texttt{results/gsm8k/},
+\texttt{results/hellaswag/}, and \texttt{results/mmlu\_pro\_1k/}.
+
+\subsection{Math-Domain Adaptation Narrows the GSM8K Residual}
+\label{sec:math}
+Section~\ref{sec:corr} left the GSM8K residual unresolved: news-adapted BPB agrees with GSM8K rank
+only moderately ($\rho=0.727$, 0 of 11 exact ranks), and we attributed this to a confound of
+arithmetic data, chain-of-thought preparation, and answer-format compatibility that varies by model
+family. That framing predicts the residual should \emph{not} respond to more adaptation unless the
+adaptation corpus is itself math-domain text. We test this directly, outside the three-domain,
+33-cell design of Section~\ref{sec:domains}: we repeat the adapt-then-measure protocol, with the same
+fixed LoRA configuration as the other three domains, on a corpus of independent math-domain prose
+rather than GSM8K questions. The corpus is 3{,}207 arXiv \texttt{math.*} titles and abstracts
+submitted 9~June--20~August 2026---strictly after every model's release, the same freshness argument
+used for Reddit and Hacker News---built with \texttt{tools/prepare\_math\_corpus.py} and screened
+against the GSM8K test split by 10-word-shingle containment before any model saw it (0 hits), using
+the same forbidden-corpus overlap check as the paper's contamination audit.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Adaptation corpus} & \textbf{GSM8K $\rho$} & \textbf{Pairs correct} & \textbf{$\Delta\rho$ vs.\ no adaptation} \\
+\midrule
+\emph{None} (zero-shot news) & $0.836$ & 46/55 & --- \\
+\midrule
+News        & $0.727$ & 43/55 & $-0.109$ \\
+Reddit      & $0.691$ & 42/55 & $-0.145$ \\
+Hacker News & $0.791$ & 45/55 & $-0.045$ \\
+Math (arXiv) & $\mathbf{0.936}$ & \textbf{50/55} & $+0.100$ \\
+\bottomrule
+\end{tabular}
+\caption{The control that makes the math result interpretable: GSM8K rank agreement under each of
+the four adaptation corpora, all against the same do-nothing baseline. Three general-text corpora
+leave GSM8K agreement at or below the zero-shot level; only the topically matched corpus exceeds it.
+Derivation in \texttt{results/alignment\_matrix.json}
+(\texttt{tools/analyze\_alignment\_matrix.py}).}
+\label{tab:math_rank_alignment}
+\end{table}
+
+\paragraph{Judge it against doing nothing, not against news.} It is tempting to report this result
+as $\rho=0.727\rightarrow0.936$, and an earlier draft of this paper did. That contrast overstates
+the effect, because $0.727$ is not a neutral starting point---it is \emph{below} the $0.836$ that
+zero-shot news BPB achieves with no adaptation at all. Roughly half of the apparent gain is
+news-adaptation damage being undone rather than domain matching creating signal. Measured against
+the do-nothing baseline the improvement is $+0.100$, and against every general-text corpus we tried
+it is between $+0.145$ and $+0.245$.
+
+\paragraph{The residual narrows, and HellaSwag pays for it.} What survives that correction is still
+the strongest selection result in the study. Math-adapted BPB reaches $\rho=0.936$ on GSM8K with 6 of
+11 exact ranks and 50 of 55 model pairs ordered correctly---the best pairwise accuracy of any variant
+in Table~\ref{tab:alignment_matrix}---and it is the only adapted variant whose top pick is the GSM8K
+oracle (Table~\ref{tab:regret}). MMLU-Pro moves with it ($0.764\rightarrow0.936$), which given the
+$\tau=0.855$ redundancy between the two generative benchmarks is corroboration of the same axis
+rather than a second result. HellaSwag moves the other way ($0.982\rightarrow0.818$), and we report
+it with equal prominence: this is not a free improvement but a trade of general
+conditional-continuation calibration for domain-specific calibration, the textbook cost of narrowing
+what the adaptation data covers.
+
+\paragraph{The reordering is mechanistically legible.} Under news-adapted BPB, Gemma-4-31B and
+Gemma-4-12B rank first and second overall; under math-adapted BPB they fall to fourth and seventh,
+while Qwen-3.5-35B-MoE and Qwen-3.5-9B rise from third and fifth to first and second. This is exactly
+the correction GSM8K accuracy already called for: both Gemma models are the GSM8K-weak family
+identified in Section~\ref{sec:corr}, and math-domain adaptation demotes them specifically rather than
+reshuffling ranks arbitrarily.
+
+\paragraph{Three general-text controls, and what they do and do not establish.} The obvious
+alternative explanation is that any second corpus would have moved GSM8K. It would not:
+Table~\ref{tab:math_rank_alignment} shows Reddit at $0.691$ and Hacker News at $0.791$, both at or
+below the zero-shot baseline, against math's $0.936$. Two further checks address the remaining ways
+the result could be an artifact of the cohort. Math-adapted BPB is not simply a cleaner copy of the
+news-adapted ordering---the rank correlation between the two orderings is $\rho=0.755$, well below
+the $\sim\!0.90$ that would indicate a sharpened rather than reordered ranking, with individual models
+moving up to five ranks. And the improvement is not carried by one or two point movers: leave-one-out
+recomputation, dropping each of the 11 models in turn, stays in $[0.915, 0.952]$, including when
+either Gemma model is dropped (\texttt{tools/sanity\_check\_math\_domain.py}).
+
+\paragraph{What the cohort size does not let us claim.} None of these checks makes the difference
+statistically resolved, and we state that rather than let the leave-one-out result imply it. A paired
+bootstrap over the model cohort (20{,}000 resamples, seed and code in
+\texttt{tools/analyze\_alignment\_matrix.py}) puts the math-versus-news difference at
+$\Delta\rho=+0.209$ with a 95\% interval of $[-0.096, +0.704]$, and the math-versus-zero-shot
+difference at $+0.100$ with $[+0.000, +0.393]$. Both intervals include or touch zero, because a rank
+correlation over 11 models cannot do better. The evidence here is the \emph{pattern}---four
+adaptation corpora, one direction of effect, a reordering that demotes exactly the family GSM8K
+already penalizes---and the pattern is what we ask the reader to weigh, not any single interval.
+Resolving it properly requires a larger cohort, which Section~\ref{sec:reporting} names as the
+first thing we would add.
+
+\paragraph{Scope.} Two properties of the math corpus are worth stating precisely so the result is
+reproducible rather than oversold. First, the corpus is smaller than the other three domains
+($3{,}207$ documents, $15.1$\,MB, versus $119{,}054$ for news alone); the robustness checks above
+were run at this scale and hold at it, though they test sensitivity to which model is included, not
+to corpus size directly. Second, ``domain-matched'' here means topical match---arXiv research-paper
+prose---not GSM8K's register of elementary word problems. That reflects a deliberate choice: the
+corpus was built to avoid answer-format leakage (Section~\ref{sec:math}'s contamination screen), not
+to mimic GSM8K's surface form. Whether a closer-format corpus would push the effect further is the
+natural next experiment, not a gap in this one.
+
+\subsection{Selection Accuracy, with Uncertainty at the Model Level}
+\label{sec:pairwise}
+Rank correlation over eleven models is a low-information summary, and pairwise selection
+accuracy---given two candidates, does lower BPB pick the better one?---uses the comparisons a
+practitioner actually makes. Each ranking induces $55$ pairs. It is tempting to test those pairs as
+$55$ independent trials; that is invalid, because they are $55$ dependent comparisons among eleven
+models, and treating them as independent lets one model's idiosyncrasy count as up to ten separate
+pieces of evidence. We therefore resample \emph{models}: a cluster bootstrap over the eleven models,
+$20{,}000$ draws, percentile intervals, the same unit of analysis as the bootstrap reported earlier.
+
+\paragraph{The selection claim holds.} Selection accuracy exceeds chance in $23$ of the $24$
+(corpus, tier, benchmark) cells, the interval excluding $0.5$ in every case but one. The strongest
+cells are news- and Hacker-News-adapted BPB against HellaSwag ($0.964$, CI $[0.875,1.000]$ and
+$[0.840,1.000]$) and math-adapted BPB against GSM8K and MMLU-Pro ($0.909$, CI $[0.755,1.000]$ and
+$[0.784,1.000]$). The single exception is math-corpus \emph{zero-shot} BPB against HellaSwag
+($0.727$, CI $[0.478,0.980]$), the pairing with the least reason to work. This is the claim the
+leaderboard makes, and it survives testing at the unit the design randomises over.
+
+\paragraph{The contrasts do not separate at this cohort size, and we do not claim they do.} The
+difference in selection accuracy between math-adapted and news-adapted BPB is $+0.127$ on GSM8K
+(CI $[-0.080,+0.367]$), $+0.127$ on MMLU-Pro (CI $[-0.060,+0.347]$) and $-0.127$ on HellaSwag
+(CI $[-0.362,+0.062]$): the point estimates fall in the directions the matched-corpus hypothesis
+predicts, in opposite directions on the two benchmark families, and every interval contains zero.
+Adapting versus not adapting behaves the same way, $+0.109$ on GSM8K (CI $[+0.000,+0.286]$) and
+$+0.164$ on HellaSwag (CI $[+0.000,+0.380]$). Eleven models is not enough to separate two corpora on
+this statistic any more than on rank correlation, and switching statistics does not change that.
+What carries the steering claim is the pattern across \emph{four} corpora reported in
+Section~\ref{sec:math}---three general-text corpora all at or below the do-nothing baseline on
+GSM8K, and only the topically matched one above it---not a significance test on any single pair of
+them.
+
+\paragraph{Three robustness checks that need no additional compute.} First, the steering
+hypothesis predicts a \emph{joint} movement---toward the matched benchmark and away from the
+other---so the better-powered statistic is a difference in differences: (GSM8K minus HellaSwag
+selection accuracy under math adaptation) minus the same quantity under a general-text corpus. It is
+$+0.255$ against news, $+0.255$ against Reddit and $+0.218$ against Hacker News, and $+0.242$
+pooled.
+
+The unit that statistic is resampled over decides what it means, and the obvious choice is wrong
+here. Resampling the eleven \emph{models} gives strictly positive in $93.6\%$ of $20{,}000$ draws,
+exactly zero in $5.1\%$ and negative in $1.3\%$ (one-sided $p=0.064$ counting every tie against the
+hypothesis, $p=0.038$ under the mid-$p$ convention, $p=0.013$ counting none). But
+Section~\ref{sec:domains} argues that GSM8K rank movement is a \emph{family} property---every Qwen
+model holds or improves, both Gemma models fall---and a bootstrap that treats family members as
+exchangeable draws contradicts the mechanism it is being used to support. Eleven models drawn from
+five publishers is an effective $n$ well below eleven. We therefore report the family-clustered
+resampling as the primary reading:
+
+\begin{center}
+\small
+\begin{tabular}{lccccc}
+\toprule
+resampling unit & clusters & positive & zero & negative & mid-$p$ \\
+\midrule
+model (naive)              & 11 & $93.6\%$ & $5.1\%$  & $1.3\%$ & $0.038$ \\
+publisher $\times$ generation & 6  & $85.7\%$ & $11.2\%$ & $3.1\%$ & $0.087$ \\
+publisher family           & 5  & $80.9\%$ & $19.1\%$ & $0.0\%$ & $0.095$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Two things follow, and they point in opposite directions. The \emph{direction} is more robust than
+the model-level figure suggests: clustering by publisher, not one of $20{,}000$ resamples is
+negative. The \emph{magnitude} is less resolved: under family clustering the effect no longer clears
+$0.05$ on any tie convention ($p=0.087$ and $p=0.095$), where the model-level statistic did. The
+mass at exactly zero is discreteness at five or six clusters, not degenerate draws.
+
+A leave-one-family-out jackknife shows where the magnitude lives. Dropping the two Gemma models
+takes the pooled difference in differences from $+0.242$ to $+0.056$; dropping all six Qwen models
+takes it to $+0.133$, and dropping any of the three singleton families leaves it between $+0.222$
+and $+0.296$. The steering effect is therefore concentrated in the family the paper already names
+as the one whose GSM8K rank falls under general-text adaptation, which is coherent with the
+mechanism but means the effect rests on two models. We report the direction as well supported and
+the magnitude as unresolved, and note that this is the same $n$ problem as everywhere else in the
+study: the remedy is more \emph{families}, not more models.
+
+Second, corpus effects could in principle be confounded with optimisation randomness, since each
+cell is a single adaptation run. They are not, to the precision that matters here: re-running two
+Ministral-3-14B cells weeks later on different hardware reproduced zero-shot BPB exactly
+($0.7181$ and $0.6718$) and adapted BPB to within $0.0003$ ($0.6788$ against a published $0.6791$;
+$0.6221$ exactly). Run-to-run variation is two orders of magnitude below the effects being compared.
+
+Third, the benchmark rankings are treated above as ground truth, but they are themselves estimates.
+Recomputing selection accuracy while discarding model pairs whose benchmark gap is smaller than
+$k$ combined standard errors---taken from the committed per-benchmark logs---leaves the result
+intact and slightly improves it: on GSM8K $0.909$ at $k=0$ becomes $0.933$ at $k=3$, and on
+HellaSwag $0.836$ becomes $0.863$. The errors the metric makes are concentrated in pairs the
+benchmark itself cannot separate, which is the failure mode one would want.
+
+\paragraph{Against the obvious baseline: model size.} A selection metric has to beat ``pick the
+bigger model,'' and over the full cohort it does not. Parameter count orders $0.855$ of pairs
+correctly on GSM8K and MMLU-Pro and $0.964$ on HellaSwag, against $0.909$, $0.909$ and $0.836$ for
+math-adapted BPB. That comparison flatters size for a structural reason: this cohort spans $0.5$B
+to $35$B, a $70\times$ range, so ordering by parameters is close to ordering by capability and the
+question is not one a practitioner needs help with.
+
+The decision that is actually hard is between candidates of comparable size, and there the picture
+reverses. Restricted to pairs within $2\times$ of each other in parameters, size is barely better
+than a coin flip---$0.545$ on GSM8K and MMLU-Pro---while math-adapted BPB orders $0.818$ of the same
+pairs correctly; within $1.5\times$, $0.714$ against $0.857$. HellaSwag runs the other way in every
+band ($0.818$ against $0.545$ within $2\times$), which is the rotation of Section~\ref{sec:math}
+appearing again: a metric steered toward mathematical prose orders reasoning better and commonsense
+worse. The same restriction prices the two tiers against each other, which the cost--fidelity frontier
+otherwise leaves qualitative. Within $2\times$, on GSM8K, picking the bigger model is right $0.545$
+of the time, zero-shot BPB $0.636$, and math-adapted BPB $0.818$: adaptation buys roughly $0.18$
+over doing nothing exactly where the choice is hard, against $0.07$ over the whole cohort where size
+already answers the question. The value of the paid tier is concentrated in the close calls, which
+is also where a practitioner would be willing to pay for it.
+
+These bands hold $7$ to $20$ pairs, so we report them as descriptive rather than tested; the
+claim they support is a scoping one. BPB earns its cost where size is uninformative, and the honest
+recommendation to a practitioner choosing between a $7$B and a $9$B model is different from the one
+we would give someone choosing between $0.5$B and $35$B, who does not need a metric at all.
 
 \clearpage
 \section{Reporting Standard and Limitations}
@@ -526,10 +917,141 @@ unsupervised domain intervention. Zero-shot BPB better describes immediate langu
 task benchmark remains the relevant criterion when the deployment task and elicitation protocol are
 known. The framework complements rather than replaces capability and safety evaluation.
 
-\paragraph{Limitations.} The cohort contains only 11 English-centric base models and confounds
-architecture, data mixture, token budget, release generation, and parameter count. Fixed update and
-data budgets are not equal-FLOP budgets. Accuracy intervals cover test-set sampling only; static
-scores can change with prompts, harness versions, and extraction. The three diagnostic adapters and
+\paragraph{Report both tiers, and choose between them on cost.} Table~\ref{tab:alignment_matrix}
+makes the practical recommendation two-tiered rather than singular. Zero-shot BPB requires one
+forward pass over held-out domain text and, in this cohort, already selects the generative-benchmark
+leader on three of four corpora. Adaptation costs a training run per candidate and does not
+dominate it: it buys alignment with whatever the adaptation corpus exercises, at the price of
+alignment elsewhere. A practitioner who will ship the base model as released should read the
+zero-shot column; one who will fine-tune on domain text should read the adapted column for
+\emph{that} domain; and one who cares about a specific downstream capability should adapt on text
+matched to it, as Section~\ref{sec:math} demonstrates for mathematics.
+
+\subsection{What a Fixed Update Budget Actually Measures}
+\label{sec:convergence}
+The fixed 250-step budget makes cells comparable, but Section~\ref{sec:tokengain} shows what is being
+compared, and it is narrower than ``fit to the domain''. Across the two adapters studied there,
+roughly $83\%$ of the gain falls on formatting, punctuation, and function words, with content words
+at $5.2\%$ and $14.0\%$; the opening 32 positions of a block account for $23.0\%$ of Gemma's total
+gain. At 250 steps every model has consumed 8{,}000 blocks, which is $0.21$ epochs of the news
+corpus. What that budget resolves best is therefore how quickly a model absorbs a corpus's surface
+conventions---and the models that move most are exactly those that begin furthest from them
+(Gemma-4-12B $24.5\%$ reduction, LFM2.5 $36.4\%$, every Qwen between $3.6\%$ and $5.4\%$).
+
+This is a genuine limitation of the present estimand rather than a defect in the measurement, and it
+has a clean resolution we did not have the compute budget to run here: adapt every cell to its own
+convergence instead of to a shared step count. Concretely, replace ``250 steps at one configuration''
+with ``the minimum test BPB over a small \emph{published} configuration grid, at the checkpoint that
+minimises validation BPB, with early stopping.'' A fixed grid rather than an adaptive search matters
+for the same reason the fixed configuration replaced the sweep: an equal count of adaptive trials is
+not equal treatment, because the search path differs per model. Under that estimand the cheap
+surface-form gain is exhausted for every candidate, unequal epoch counts across corpora become a
+property of the corpora rather than a confound, and steps-to-convergence becomes a second reportable
+axis---how expensive each base model is to bring to a domain---that the present protocol discards.
+We specify it here so the current leaderboard is read as what it is: fit after an equal and
+explicitly stated budget, not attainable fit.
+
+\subsection{Direct Measurement of Adapted Task Accuracy}
+\label{sec:adaptedacc}
+Section~\ref{sec:math} argues from rank movement that domain-matched adaptation trades general
+conditional-continuation calibration for task-relevant calibration. That is an inference about a
+mechanism, and the runs behind the published leaderboard did not retain adapters, so it had never
+been measured. We therefore repeated the news and mathematics adaptations retaining each adapter,
+merged them, and scored the adapted models on GSM8K and HellaSwag under the published task,
+few-shot, and extraction settings.
+
+Two design points make the resulting deltas interpretable. First, the released weights were
+\emph{re-scored on the same host and engine build} that produced the adapted numbers. This is not
+bookkeeping: the identical released weights scored on our earlier hardware and on this one differ by
+$-0.60$ to $+0.69$ accuracy points on GSM8K, which is larger than most of the effects being
+measured, while HellaSwag---a loglikelihood task---moves by at most $0.05$. Any adapted-versus-base
+delta that spans a hardware or engine change is uninterpretable at this scale, and cross-host
+comparison is common practice. Second, cells whose base score could not be re-measured on the same
+host are excluded from every aggregate rather than mixed in.
+
+\paragraph{The ranking survives adaptation, and that is the claim the leaderboard makes.} The unit here is a
+ranking, not a cell: four rankings of five models each---two corpora by two benchmarks---and
+\emph{all four came back in exactly the base order}, Spearman $\rho=1.00$ with not one inverted
+pair. A single such ranking arises by chance with probability $1/5!=0.0083$, so one ranking already
+rejects at $p<0.01$; the four are dependent, sharing both models and benchmarks, so we read them as
+one corroborated observation rather than four. It is a different measurement of the rank claim
+rather than an independent replication of it---the same cohort, the same adaptations---and it is
+evidence that these adaptation runs leave the ordering intact.
+
+\paragraph{Absolute accuracy moves little, and by less than the cohort can localise.} Mean changes
+are small and negative in all four cells, the largest being $-2.82$ points on GSM8K after
+mathematics adaptation. Two observations bound how much weight that can carry. The paired
+per-model contrast between the two corpora is $-1.47$ accuracy points with $t(4)=-1.63$, and only
+three of five models fall on the negative side, so the cohort cannot separate the corpora on
+accuracy the way it separates them on rank. And the natural mechanism---that degradation tracks how
+far a model moved in BPB---is carried entirely by one model: Pearson $r=-0.935$ over all cells and
+$-0.036$ once LFM2.5-1.2B is removed, that model reducing BPB by $36$--$42\%$ where every other
+reduces it by $3.6$--$7.9\%$. A third check rules out the obvious artefact: answer-extraction drift
+is real, in that the lenient-minus-strict extraction gap widens under mathematics adaptation, but it
+cannot explain the change because the reported metric is already the lenient extractor.
+
+\paragraph{Scope of this section.} We pre-registered that no probe-versus-stress-test verdict would
+be issued until the full cohort was measured, and it was not: three Qwen3.5 and two Gemma-4
+checkpoints are multimodal wrappers this inference stack cannot load, the latter because it refuses
+a configuration whose per-layer attention width genuinely varies
+($\mathtt{head\_dim}=256$ against $\mathtt{global\_head\_dim}=512$ over $40$ sliding and $8$ full
+attention layers), and Ministral-3-14B's merged checkpoint requires a preprocessor configuration its
+publisher does not ship. All six exclusions were diagnosed before any excluded result existed, so
+their cause is independent of the outcomes, and each was refused a workaround that would have
+produced plausible numbers from a silently wrong model. We therefore report the accuracy comparison
+as directional and leave the mechanism question to the cohort extension of
+Section~\ref{sec:convergence}, which is the experiment that settles it: on the observed effect and spread---themselves
+imprecise at five models---separating the two corpora on accuracy would need a cohort on the order
+of fifteen, which is an indication of scale rather than a target. Section~\ref{sec:math}'s
+mechanism sentence stands as an inference, now explicitly labelled as one. The rank result above is
+unaffected---it is complete on the models measured.
+
+\paragraph{The validation is circular, and here is how far that goes.} The sharpest objection to
+this study is that it validates a metric said to be resistant to benchmark preparation by measuring
+its agreement with the benchmarks whose preparability motivates it. If those benchmarks are
+trustworthy enough to serve as ground truth, they are trustworthy enough to read directly; if they
+are not, agreement with them is agreement with noise. The objection is real and it bounds the claim
+rather than dissolving it. Our answer is that the two readings operate at different levels:
+preparation perturbs an individual model's score on an individual suite, whereas what we validate
+against is a \emph{cohort ordering} aggregated over eleven models and three benchmarks, which is a
+far more robust object than any single cell. Recovering that ordering from text no vendor could
+have seen establishes that the axis is real. What it cannot establish is that BPB is \emph{more
+correct} than the benchmarks where the two disagree; on this evidence, disagreement is a flag to
+investigate, not a verdict in our favour. Settling that requires an outcome criterion independent
+of the static suites---in-domain cloze on held-out corpus splits is the design we have specified and
+not yet run---and until then the honest statement is that adapted BPB is an independent,
+unpreparable second axis that is as informative as size where the decision is hard, not a
+replacement for task evaluation.
+
+\paragraph{Limitations.} The protocol is designed to be honest about what it does not show, which is
+what makes the rest of it trustworthy.
+
+\emph{Cohort size is the binding constraint.} Eleven models is too few to resolve differences between
+rank correlations, as the bootstrap intervals in Section~\ref{sec:math} show, and the family-level
+reading of the GSM8K residual rests on two Gemma models. Expanding the cohort is the single change
+that would most improve this work, and it is cheap, because the models that tighten the statistics
+are the small ones. The cohort is also English-centric and confounds architecture, data mixture,
+token budget, release generation, and parameter count.
+
+\emph{The external yardstick is domain-general.} We validate a domain-specific selection metric
+against MMLU-Pro, HellaSwag, and GSM8K, none of which is about news, Reddit, or Hacker News. When a
+domain-adapted ranking disagrees with a benchmark, this design cannot separate ``the metric was
+wrong'' from ``the benchmark was the wrong yardstick for this domain''. Closing that gap requires an
+automatic, in-domain, non-likelihood task---masked-entity or numeric cloze built from the held-out
+split is the natural candidate, since it is uncontaminated by construction and scores exactly the
+content positions Section~\ref{sec:tokengain} shows adaptation does \emph{not} improve---and that
+experiment is not in this paper.
+
+\emph{Measurement caveats.} Fixed update and data budgets are not equal-FLOP budgets, and
+Section~\ref{sec:convergence} states what the budget does and does not measure. Evaluation blocks are
+512 \emph{tokens} rather than a fixed byte span, so models with different tokenizers score slightly
+different amounts of text (5.92--6.24\,MB, a $5\%$ spread) with block boundaries in different places;
+using the measured context sensitivity of Figure~\ref{fig:contextlength} to bound the resulting
+bias, it reaches at most $0.08\times$ the smallest adjacent rank gap and overturns no rank, but
+byte-aligned blocking would remove it. Adapters were not retained, so no adapted model is scored on
+a task benchmark anywhere in this work: the claim that domain-matched adaptation trades one kind of
+calibration for another is an inference from rank movement, not a direct measurement of accuracy
+before and after. Accuracy intervals cover test-set sampling only. The three diagnostic adapters and
 64-window context study are explanatory probes, not cohort-wide replications. Reference-free
 contamination signals justify conservative removal but cannot verify proprietary training
 membership. Finally, the news text is third-party material: the release publishes its exact
@@ -539,20 +1061,47 @@ comparison auditable.
 
 \section{Conclusion}
 The old choice between incomparable perplexities and narrow task accuracies is unnecessary. A recent
-raw-text snapshot, a byte denominator, conservative risk screening, and a fixed adaptation protocol
-turn predictive loss into an auditable base-model selection experiment. In our 11-model study,
-adaptation changes which models look strongest, yet the adapted order transfers across three domains.
+raw-text snapshot, a byte denominator, conservative risk screening, and an explicitly stated
+adaptation budget turn predictive loss into an auditable base-model selection experiment.
 
-The benchmark residuals make the result more useful, not less. HellaSwag almost reproduces the BPB
-order because both measure conditional continuation. MMLU-Pro and GSM8K reorder families because
-they additionally require knowledge, arithmetic, few-shot elicitation, generation, and answer
-extraction. The resulting recommendation is two-layered: use adapted BPB on fresh target data to
-choose broad base-model potential and stable tiers; use deployment-matched task and safety tests to
-resolve capability requirements and close calls.
+What the experiment shows is not that adaptation makes the ranking better. Measured against external
+benchmarks, adaptation on general text makes it better on one axis and worse on the other: HellaSwag
+agreement rises from $\rho=0.718$ to $0.982$ on news while GSM8K falls from $0.836$ to $0.727$ and
+MMLU-Pro from $0.855$ to $0.764$, with the same pattern on Reddit and Hacker News. In selection terms,
+the free zero-shot ranking picks the GSM8K and MMLU-Pro leader outright and the adapted ranking gives
+up $2.3$ and $4.2$ accuracy points to pick the HellaSwag leader instead. Adaptation rotates the
+ranking toward whatever the adaptation corpus exercises.
 
-Relative to train-before-test, the distinction is labels and estimand: it harmonizes ranks after
-supervised task adaptation; we compare off-the-shelf bases after unlabeled target-text preparation,
-across tokenizers. Released protocol checks make each leaderboard value traceable.
+That is a more useful result than a uniform improvement would have been, because it is
+controllable. Adapting on contamination-screened mathematical prose---not on GSM8K questions---puts
+GSM8K agreement at $\rho=0.936$ with 50 of 55 model pairs ordered correctly, the best selection
+performance anywhere in this study, and restores the oracle pick; the same swap costs HellaSwag
+agreement, down to $0.818$. Three general-text corpora, tried as controls, all leave GSM8K at or
+below the do-nothing baseline. The adaptation corpus is the instrument, and choosing it is the
+substantive decision the protocol asks of its user.
+
+The recommendation is therefore a frontier rather than a number. Rank by zero-shot BPB on fresh
+target text when the model will be used as released---it is one forward pass and it is a strong
+general-purpose selector. Adapt and rank by adapted BPB when the model will be fine-tuned on domain
+text, reading the column for \emph{that} domain. And when a specific downstream capability decides
+the choice, adapt on text matched to that capability and expect to trade breadth for it. Relative to
+train-before-test, the distinction is labels and estimand: that work harmonizes ranks after
+supervised task adaptation, whereas we compare off-the-shelf bases after unlabeled target-text
+preparation, across tokenizers.
+
+We are explicit about what would change these conclusions, and about what turned out not to need
+changing. Eleven models cannot resolve a difference between two rank correlations, and our bootstrap
+intervals say so rather than implying otherwise---but that is a limit of the statistic, not of the
+evidence. Section~\ref{sec:pairwise} reports the more informative
+statistic---selection accuracy over model pairs---with uncertainty still taken at the model level,
+and the selection claim holds in $23$ of $24$ cells while the between-corpus contrast remains
+unresolved. Testing those pairs as independent trials would make the contrast significant; it would
+also be wrong, and we say so rather than banking it. Three limits remain. The external yardsticks are domain-general while the metric is domain-specific, and a fixed
+step budget measures how fast a model absorbs a corpus's surface form rather than how well it can
+ultimately model the domain. Each has a concrete remedy---a wider cohort, an in-domain generative
+task, adaptation run to convergence---and the cohort is the one that would settle the between-corpus
+contrast. The released code, manifests, and per-cell artifacts are arranged so
+that anyone, including us, can run all of them against exactly these numbers.
 
 \bibliographystyle{plain}
 \begin{thebibliography}{99}
@@ -574,6 +1123,8 @@ across tokenizers. Released protocol checks make each leaderboard value traceabl
 \bibitem{liang2022helm} Liang, P., et al. (2022). Holistic Evaluation of Language Models (HELM). arXiv:2211.09110.
 \bibitem{gao2024lmeval} Gao, L., Biderman, S., et al. (2024). A Framework for Few-Shot Language Model Evaluation (lm-evaluation-harness). EleutherAI.
 \bibitem{heineman2025signal} Heineman, D., Hofmann, V., Magnusson, I., et al. (2025). Signal and Noise: A Framework for Reducing Uncertainty in Language Model Evaluation. NeurIPS 2025.
+\bibitem{thrush2024perplexity} Thrush, T., Potts, C., and Hashimoto, T. (2024). Improving Pretraining Data Using Perplexity Correlations. arXiv:2409.05816.
+
 \bibitem{zhang2025trainbeforetest} Zhang, G., Dominguez-Olmedo, R., and Hardt, M. (2025). Train-before-Test Harmonizes Language Model Rankings. arXiv:2507.05195.
 \bibitem{ruan2024observational} Ruan, Y., Maddison, C. J., and Hashimoto, T. (2024). Observational Scaling Laws and the Predictability of Language Model Performance. NeurIPS 2024.
 \bibitem{gadre2025scales} Gadre, S. Y., Smyrnis, G., Shankar, V., et al. (2025). Language Models Scale Reliably with Over-Training and on Downstream Tasks. ICLR 2025.

@@ -1,0 +1,13 @@
+{
+  "learning_rate": 1.723847477738828e-05,
+  "batch_size": 2,
+  "warmup_ratio": 0.18205797486182346,
+  "weight_decay": 2.6196859036162755e-05,
+  "gradient_accumulation_steps": 2,
+  "lora_r": 8,
+  "lora_alpha": 32,
+  "lora_dropout": 0.061735110880272615,
+  "final_epochs": 3,
+  "eval_batch_size": 4,
+  "gradient_clip": 1.0
+}

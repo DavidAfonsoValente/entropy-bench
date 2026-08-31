@@ -1,0 +1,361 @@
+{
+  "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+  "model_slug": "LiquidAI_LFM2_5-1_2B-Base",
+  "contamination_scores": [
+    {
+      "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+      "split": "train",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.0788122832775116,
+        "p99": -0.7516457355022467,
+        "median": -1.431952178478241,
+        "mad": 0.16088461875915527,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.04,
+        "suspicious_fraction": 0.001,
+        "high_suspicious_fraction": 0.01,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.5483906269073486,
+        "codec_delta_median": -2.3125,
+        "codec_delta_std": 1.463945984840393,
+        "suspicious_fraction": 0.0,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 11,
+        "num_scored": 11,
+        "original_selected_count": 11,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.09533614462072199,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.0,
+      "risk_score": 0.4,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        288,
+        259,
+        134,
+        587,
+        206,
+        910,
+        337,
+        338,
+        214,
+        570,
+        574
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+      "split": "val",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.094889658689499,
+        "p99": 0.21625713080167425,
+        "median": -1.4151156544685364,
+        "mad": 0.14578425884246826,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.036,
+        "suspicious_fraction": 0.004,
+        "high_suspicious_fraction": 0.011,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.7097030878067017,
+        "codec_delta_median": -2.3671875,
+        "codec_delta_std": 1.4270466566085815,
+        "suspicious_fraction": 0.002,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 15,
+        "num_scored": 15,
+        "original_selected_count": 15,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.16306622823079428,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.002,
+      "risk_score": 0.401,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        89,
+        360,
+        44,
+        505,
+        174,
+        911,
+        626,
+        947,
+        565,
+        854,
+        439,
+        248,
+        217,
+        26,
+        985
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+      "split": "test",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.0833198070526124,
+        "p99": 0.08355105191469189,
+        "median": -1.4227365255355835,
+        "mad": 0.14751505851745605,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.028,
+        "suspicious_fraction": 0.012,
+        "high_suspicious_fraction": 0.011,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.8030937910079956,
+        "codec_delta_median": -2.453125,
+        "codec_delta_std": 1.432354211807251,
+        "suspicious_fraction": 0.008,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 23,
+        "num_scored": 23,
+        "original_selected_count": 22,
+        "dcq_accuracy": 0.9565217391304348,
+        "mean_margin": 0.13546745673469876,
+        "positive_fraction": 0.9565217391304348,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.008,
+      "risk_score": 0.404,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        526,
+        917,
+        407,
+        921,
+        678,
+        169,
+        942,
+        309,
+        54,
+        181,
+        182,
+        953,
+        694,
+        699,
+        316,
+        62,
+        959,
+        471,
+        95,
+        232,
+        498,
+        244
+      ],
+      "notes": [
+        "DCQ accuracy (0.96) confirmed memorization on suspicious samples."
+      ]
+    }
+  ],
+  "total_params": 1178073856,
+  "trainable_params": 7733248,
+  "trainable_pct": 0.6564315098424525,
+  "model_size_gb": 2.371614208,
+  "zero_shot_bpb": 1.3461382751554676,
+  "best_bpb": 0.8542691902145586,
+  "delta_bpb": -0.4918778661912553,
+  "pct_improvement": 36.544762619782375,
+  "adaptation_score": 17.33701429320939,
+  "stability_index": 0.962381786663001,
+  "completion_reason": "Early Stopping (Converged)",
+  "training_time_seconds": 3988.454575061798,
+  "peak_gpu_memory_gb": 4.063661568,
+  "bpb_per_gpu_hour": 32.98549424476725,
+  "best_config": {
+    "learning_rate": 0.0001390934066513988,
+    "batch_size": 2,
+    "warmup_ratio": 0.050318248402247294,
+    "weight_decay": 0.03318223647929417,
+    "gradient_accumulation_steps": 1,
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "lora_dropout": 0.07457950173239117,
+    "final_epochs": 3,
+    "eval_batch_size": 4,
+    "gradient_clip": 1.0
+  },
+  "effective_batch_size": 2,
+  "range_health": {
+    "learning_rate": "optimal",
+    "batch_size": "optimal",
+    "warmup_ratio": "optimal",
+    "weight_decay": "optimal",
+    "gradient_accumulation_steps": "optimal",
+    "lora_r": "optimal",
+    "lora_alpha": "fixed",
+    "lora_dropout": "optimal",
+    "final_epochs": "fixed",
+    "eval_batch_size": "fixed",
+    "gradient_clip": "fixed"
+  },
+  "bpb_curve": [
+    [
+      500,
+      0.9294409474679689
+    ],
+    [
+      1000,
+      0.8929438545748803
+    ],
+    [
+      1500,
+      0.8847790960597768
+    ],
+    [
+      2000,
+      0.8799471360710701
+    ],
+    [
+      2500,
+      0.8769426857306121
+    ],
+    [
+      3000,
+      0.8731117604032816
+    ],
+    [
+      3500,
+      0.8701093428772378
+    ],
+    [
+      4000,
+      0.8672055752716781
+    ],
+    [
+      4500,
+      0.8640368885803816
+    ],
+    [
+      5000,
+      0.8622809785338912
+    ],
+    [
+      5500,
+      0.8608499258467444
+    ],
+    [
+      6000,
+      0.859831355341077
+    ],
+    [
+      6500,
+      0.8594985636468825
+    ],
+    [
+      7000,
+      0.8582221137222377
+    ],
+    [
+      7500,
+      0.8583671872016552
+    ],
+    [
+      8000,
+      0.8562982062648764
+    ],
+    [
+      8500,
+      0.857283745364194
+    ],
+    [
+      9000,
+      0.8565821045596111
+    ],
+    [
+      9500,
+      0.8576349742424779
+    ],
+    [
+      10000,
+      0.8557636815904439
+    ],
+    [
+      10500,
+      0.8557690132562596
+    ],
+    [
+      11000,
+      0.856807407435154
+    ]
+  ],
+  "dtype": "torch.bfloat16",
+  "quarantined_count": 80
+}

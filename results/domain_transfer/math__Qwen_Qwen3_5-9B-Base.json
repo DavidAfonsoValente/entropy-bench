@@ -1,0 +1,25 @@
+{
+  "model_id": "Qwen/Qwen3.5-9B-Base",
+  "dataset": "/opt/dt/corpora/math_arxiv.jsonl",
+  "corpus": "math_arxiv",
+  "avg_bytes_per_token": 4.59953917753872,
+  "n_train_blocks": 5220,
+  "n_test_blocks_scored": 639,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.6640560141944567,
+  "trainable_params": 43278336,
+  "total_params": 8997081600,
+  "trainable_pct": 0.48102638082108756,
+  "adapted_bpb": 0.6141648411518748,
+  "reduction_pct": 7.513097084604105,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1885.8059432506561
+}

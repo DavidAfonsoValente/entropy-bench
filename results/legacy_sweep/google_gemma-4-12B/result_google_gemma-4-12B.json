@@ -1,0 +1,360 @@
+{
+  "model_id": "google/gemma-4-12B",
+  "model_slug": "google_gemma-4-12B",
+  "contamination_scores": [
+    {
+      "model_id": "google/gemma-4-12B",
+      "split": "train",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.240352237224579,
+        "p99": -0.9837416934967043,
+        "median": -3.011499285697937,
+        "mad": 1.696782648563385,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.04,
+        "suspicious_fraction": 0.011,
+        "high_suspicious_fraction": 0.0,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.1663438081741333,
+        "codec_delta_median": -1.73046875,
+        "codec_delta_std": 1.2579227685928345,
+        "suspicious_fraction": 0.0,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 11,
+        "num_scored": 11,
+        "original_selected_count": 11,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.4904969795183702,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.0,
+      "risk_score": 0.4,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        839,
+        136,
+        42,
+        590,
+        147,
+        348,
+        409,
+        603,
+        284,
+        477,
+        127
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "google/gemma-4-12B",
+      "split": "val",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.2691130280494691,
+        "p99": -0.9585647249221803,
+        "median": -3.446689248085022,
+        "mad": 2.129258096218109,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.04,
+        "suspicious_fraction": 0.011,
+        "high_suspicious_fraction": 0.0,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.3312578201293945,
+        "codec_delta_median": -1.8125,
+        "codec_delta_std": 1.1481478214263916,
+        "suspicious_fraction": 0.004,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 11,
+        "num_scored": 11,
+        "original_selected_count": 11,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.3998799649151889,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.004,
+      "risk_score": 0.402,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        10,
+        172,
+        400,
+        914,
+        501,
+        565,
+        87,
+        280,
+        698,
+        637,
+        216
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "google/gemma-4-12B",
+      "split": "test",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.2481664299964912,
+        "p99": -0.9489370393753052,
+        "median": -3.1569143533706665,
+        "mad": 1.8444581031799316,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.04,
+        "suspicious_fraction": 0.011,
+        "high_suspicious_fraction": 0.0,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.349359393119812,
+        "codec_delta_median": -1.88671875,
+        "codec_delta_std": 1.1651582717895508,
+        "suspicious_fraction": 0.006,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 11,
+        "num_scored": 11,
+        "original_selected_count": 11,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.46896104379133746,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.006,
+      "risk_score": 0.403,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        417,
+        875,
+        108,
+        174,
+        499,
+        246,
+        471,
+        249,
+        411,
+        892,
+        927
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    }
+  ],
+  "total_params": 12025298944,
+  "trainable_params": 65568768,
+  "trainable_pct": 0.545256864759403,
+  "model_size_gb": 24.050597888,
+  "zero_shot_bpb": 0.8667268715275657,
+  "best_bpb": 0.6180255656380201,
+  "delta_bpb": -0.24917365711161665,
+  "pct_improvement": 28.759884497928816,
+  "adaptation_score": 1.249454904619397,
+  "stability_index": 0.982959349377908,
+  "completion_reason": "Converged (Chained Training)",
+  "training_time_seconds": 79264.60264372826,
+  "peak_gpu_memory_gb": 31.973262336,
+  "bpb_per_gpu_hour": 1.3062020213222616,
+  "best_config": {
+    "learning_rate": 0.00011290133559092664,
+    "batch_size": 8,
+    "warmup_ratio": 0.10401360423556216,
+    "weight_decay": 0.0015375920235481753,
+    "gradient_accumulation_steps": 2,
+    "lora_r": 16,
+    "lora_alpha": 64,
+    "lora_dropout": 0.0176985004103839,
+    "final_epochs": 3,
+    "eval_batch_size": 4,
+    "gradient_clip": 1.0,
+    "max_train_seconds": 74137.46951389313,
+    "target_train_steps": 8000,
+    "lr_floor_ratio": 0.1
+  },
+  "effective_batch_size": 16,
+  "range_health": {
+    "learning_rate": "optimal",
+    "batch_size": "optimal",
+    "warmup_ratio": "optimal",
+    "weight_decay": "constrained",
+    "gradient_accumulation_steps": "optimal",
+    "lora_r": "optimal",
+    "lora_alpha": "fixed",
+    "lora_dropout": "optimal",
+    "final_epochs": "fixed",
+    "eval_batch_size": "fixed",
+    "gradient_clip": "fixed",
+    "max_train_seconds": "fixed",
+    "target_train_steps": "fixed",
+    "lr_floor_ratio": "fixed"
+  },
+  "bpb_curve": [
+    [
+      500,
+      0.6566651115555204
+    ],
+    [
+      1000,
+      0.6433745500057115
+    ],
+    [
+      1500,
+      0.6385982041492504
+    ],
+    [
+      2000,
+      0.6364541697326315
+    ],
+    [
+      2500,
+      0.6337235254758002
+    ],
+    [
+      3000,
+      0.6327298025973622
+    ],
+    [
+      3500,
+      0.629680308635655
+    ],
+    [
+      4000,
+      0.626976687891656
+    ],
+    [
+      4500,
+      0.6244585400043887
+    ],
+    [
+      5000,
+      0.6225062465501103
+    ],
+    [
+      5500,
+      0.6208070763115302
+    ],
+    [
+      6000,
+      0.6196990172601277
+    ],
+    [
+      6500,
+      0.6188881731180108
+    ],
+    [
+      7000,
+      0.618410518617673
+    ],
+    [
+      7500,
+      0.6183344623603282
+    ],
+    [
+      8000,
+      0.6184068860425982
+    ],
+    [
+      8500,
+      0.6183870181522879
+    ],
+    [
+      9000,
+      0.618331042642676
+    ],
+    [
+      9500,
+      0.6182895419852459
+    ],
+    [
+      10000,
+      0.6182539397043638
+    ],
+    [
+      10500,
+      0.6182054520905063
+    ],
+    [
+      11000,
+      0.6181918784901814
+    ],
+    [
+      11500,
+      0.6179486521572841
+    ],
+    [
+      12000,
+      0.6177912163740733
+    ]
+  ],
+  "dtype": "torch.bfloat16",
+  "quarantined_count": 80
+}

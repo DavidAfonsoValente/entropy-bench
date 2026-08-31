@@ -1,0 +1,364 @@
+{
+  "model_id": "mistralai/Ministral-3-14B-Base-2512",
+  "model_slug": "mistralai_Ministral-3-14B-Base-2512",
+  "contamination_scores": [
+    {
+      "model_id": "mistralai/Ministral-3-14B-Base-2512",
+      "split": "train",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -0.9709088593721393,
+        "p99": -0.7923006445169452,
+        "median": -1.3075095415115356,
+        "mad": 0.1460140347480774,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.04,
+        "suspicious_fraction": 0.008,
+        "high_suspicious_fraction": 0.003,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.183687448501587,
+        "codec_delta_median": -1.76171875,
+        "codec_delta_std": 1.2390875816345215,
+        "suspicious_fraction": 0.0,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 11,
+        "num_scored": 11,
+        "original_selected_count": 11,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.3401266878301447,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.0,
+      "risk_score": 0.4,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        801,
+        5,
+        134,
+        139,
+        590,
+        624,
+        284,
+        410,
+        603,
+        156,
+        127
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "mistralai/Ministral-3-14B-Base-2512",
+      "split": "val",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -0.9587193459272385,
+        "p99": -0.7704032570123674,
+        "median": -1.305650770664215,
+        "mad": 0.13838481903076172,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.038,
+        "suspicious_fraction": 0.011,
+        "high_suspicious_fraction": 0.002,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.3272031545639038,
+        "codec_delta_median": -1.82421875,
+        "codec_delta_std": 1.2329654693603516,
+        "suspicious_fraction": 0.0,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 13,
+        "num_scored": 13,
+        "original_selected_count": 13,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.20029061574202317,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.0,
+      "risk_score": 0.4,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        32,
+        0,
+        961,
+        931,
+        867,
+        936,
+        402,
+        342,
+        216,
+        889,
+        794,
+        827,
+        890
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "mistralai/Ministral-3-14B-Base-2512",
+      "split": "test",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -0.9432195812463761,
+        "p99": -0.7569111365079881,
+        "median": -1.312022626399994,
+        "mad": 0.1444290280342102,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.038,
+        "suspicious_fraction": 0.012,
+        "high_suspicious_fraction": 0.001,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.3695000410079956,
+        "codec_delta_median": -1.9296875,
+        "codec_delta_std": 1.1759554147720337,
+        "suspicious_fraction": 0.008,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 13,
+        "num_scored": 13,
+        "original_selected_count": 13,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.3494662046432495,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.008,
+      "risk_score": 0.404,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        192,
+        417,
+        204,
+        781,
+        142,
+        174,
+        499,
+        660,
+        246,
+        471,
+        921,
+        414,
+        927
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    }
+  ],
+  "total_params": 14005980160,
+  "trainable_params": 60948480,
+  "trainable_pct": 0.43516040508228165,
+  "model_size_gb": 28.01196032,
+  "zero_shot_bpb": 0.7230476282726411,
+  "best_bpb": 0.651196759598973,
+  "delta_bpb": -0.07179426163972036,
+  "pct_improvement": 9.933462400059993,
+  "adaptation_score": 0.5561614364375447,
+  "stability_index": 0.9971093898828056,
+  "completion_reason": "Converged (Chained Training)",
+  "training_time_seconds": 60698.71310257912,
+  "peak_gpu_memory_gb": 23.604936704,
+  "bpb_per_gpu_hour": 0.5891469985497353,
+  "best_config": {
+    "learning_rate": 0.00011290133559092664,
+    "batch_size": 8,
+    "warmup_ratio": 0.10401360423556216,
+    "weight_decay": 0.0015375920235481753,
+    "gradient_accumulation_steps": 2,
+    "lora_r": 16,
+    "lora_alpha": 64,
+    "lora_dropout": 0.0176985004103839,
+    "final_epochs": 3,
+    "eval_batch_size": 4,
+    "gradient_clip": 1.0,
+    "max_train_seconds": 74693.8721408844,
+    "target_train_steps": 8000,
+    "lr_floor_ratio": 0.1
+  },
+  "effective_batch_size": 16,
+  "range_health": {
+    "learning_rate": "optimal",
+    "batch_size": "optimal",
+    "warmup_ratio": "optimal",
+    "weight_decay": "constrained",
+    "gradient_accumulation_steps": "optimal",
+    "lora_r": "optimal",
+    "lora_alpha": "fixed",
+    "lora_dropout": "optimal",
+    "final_epochs": "fixed",
+    "eval_batch_size": "fixed",
+    "gradient_clip": "fixed",
+    "max_train_seconds": "fixed",
+    "target_train_steps": "fixed",
+    "lr_floor_ratio": "fixed"
+  },
+  "bpb_curve": [
+    [
+      500,
+      0.6822733906257901
+    ],
+    [
+      1000,
+      0.6750552615800665
+    ],
+    [
+      1500,
+      0.6706210346248023
+    ],
+    [
+      2000,
+      0.6678641211986713
+    ],
+    [
+      2500,
+      0.6661198251212059
+    ],
+    [
+      3000,
+      0.6639113198835687
+    ],
+    [
+      3500,
+      0.6619165315862436
+    ],
+    [
+      4000,
+      0.6595243585533493
+    ],
+    [
+      4500,
+      0.6571353423537049
+    ],
+    [
+      5000,
+      0.6552077608650869
+    ],
+    [
+      5500,
+      0.6534586480902893
+    ],
+    [
+      6000,
+      0.652294525873169
+    ],
+    [
+      6500,
+      0.6515108775950184
+    ],
+    [
+      7000,
+      0.6511220884675352
+    ],
+    [
+      7500,
+      0.6509582541718519
+    ],
+    [
+      8000,
+      0.6507762805629027
+    ],
+    [
+      8500,
+      0.6507783223369042
+    ],
+    [
+      9000,
+      0.6509884601598471
+    ],
+    [
+      9500,
+      0.6514123305174481
+    ],
+    [
+      10000,
+      0.652355450644033
+    ],
+    [
+      10500,
+      0.6528188934863383
+    ],
+    [
+      11000,
+      0.6531387624558492
+    ],
+    [
+      11500,
+      0.6533335424639023
+    ],
+    [
+      12000,
+      0.6530693557249688
+    ]
+  ],
+  "dtype": "torch.bfloat16",
+  "quarantined_count": 80
+}

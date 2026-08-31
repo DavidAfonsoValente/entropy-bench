@@ -1,0 +1,412 @@
+{
+  "model_id": "google/gemma-4-31B",
+  "model_slug": "google_gemma-4-31B",
+  "contamination_scores": [
+    {
+      "model_id": "google/gemma-4-31B",
+      "split": "train",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.0110451459884646,
+        "p99": -0.6145885807275786,
+        "median": -1.4242547154426575,
+        "mad": 0.17507809400558472,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.035,
+        "suspicious_fraction": 0.006,
+        "high_suspicious_fraction": 0.01,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.043375015258789,
+        "codec_delta_median": -1.49609375,
+        "codec_delta_std": 1.1469027996063232,
+        "suspicious_fraction": 0.0,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 16,
+        "num_scored": 16,
+        "original_selected_count": 16,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.3547561839222908,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.0,
+      "risk_score": 0.4,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        449,
+        771,
+        134,
+        422,
+        139,
+        511,
+        177,
+        914,
+        724,
+        284,
+        630,
+        214,
+        603,
+        156,
+        989,
+        127
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "google/gemma-4-31B",
+      "split": "val",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -0.9857383579015733,
+        "p99": -0.7034215146303179,
+        "median": -1.4204015135765076,
+        "mad": 0.16469597816467285,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.032,
+        "suspicious_fraction": 0.012,
+        "high_suspicious_fraction": 0.007,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.1832265853881836,
+        "codec_delta_median": -1.609375,
+        "codec_delta_std": 1.0455315113067627,
+        "suspicious_fraction": 0.002,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 19,
+        "num_scored": 19,
+        "original_selected_count": 19,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.2953172498627713,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.002,
+      "risk_score": 0.401,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        0,
+        774,
+        400,
+        659,
+        157,
+        32,
+        936,
+        429,
+        698,
+        961,
+        834,
+        711,
+        714,
+        845,
+        334,
+        468,
+        216,
+        105,
+        745
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "google/gemma-4-31B",
+      "split": "test",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -0.9811540722846989,
+        "p99": -0.5730924361944199,
+        "median": -1.4197912216186523,
+        "mad": 0.1746833324432373,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.031,
+        "suspicious_fraction": 0.012,
+        "high_suspicious_fraction": 0.008,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.1969218254089355,
+        "codec_delta_median": -1.6796875,
+        "codec_delta_std": 1.0406211614608765,
+        "suspicious_fraction": 0.006,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 20,
+        "num_scored": 20,
+        "original_selected_count": 20,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.3392996735870838,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.006,
+      "risk_score": 0.403,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        781,
+        142,
+        658,
+        660,
+        791,
+        153,
+        411,
+        417,
+        174,
+        192,
+        721,
+        471,
+        730,
+        606,
+        95,
+        875,
+        878,
+        499,
+        246,
+        249
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    }
+  ],
+  "total_params": 31395515952,
+  "trainable_params": 122429440,
+  "trainable_pct": 0.3899583628030831,
+  "model_size_gb": 62.791031904,
+  "zero_shot_bpb": 0.7533643109186661,
+  "best_bpb": 0.5830168256575434,
+  "delta_bpb": -0.17069362851530356,
+  "pct_improvement": 22.66037236594069,
+  "adaptation_score": 0.3363040763509863,
+  "stability_index": 0.9956897893833293,
+  "completion_reason": "Converged (Chained Training)",
+  "training_time_seconds": 238970.18054175377,
+  "peak_gpu_memory_gb": 33.714463744,
+  "bpb_per_gpu_hour": 0.34137037655680635,
+  "best_config": {
+    "learning_rate": 0.00011290133559092664,
+    "batch_size": 8,
+    "warmup_ratio": 0.10401360423556216,
+    "weight_decay": 0.0015375920235481753,
+    "gradient_accumulation_steps": 2,
+    "lora_r": 16,
+    "lora_alpha": 64,
+    "lora_dropout": 0.0176985004103839,
+    "final_epochs": 3,
+    "eval_batch_size": 4,
+    "gradient_clip": 1.0,
+    "max_train_seconds": 600.0,
+    "target_train_steps": 8000,
+    "lr_floor_ratio": 0.1
+  },
+  "effective_batch_size": 16,
+  "range_health": {
+    "learning_rate": "optimal",
+    "batch_size": "optimal",
+    "warmup_ratio": "optimal",
+    "weight_decay": "constrained",
+    "gradient_accumulation_steps": "optimal",
+    "lora_r": "optimal",
+    "lora_alpha": "fixed",
+    "lora_dropout": "optimal",
+    "final_epochs": "fixed",
+    "eval_batch_size": "fixed",
+    "gradient_clip": "fixed",
+    "max_train_seconds": "fixed"
+  },
+  "bpb_curve": [
+    [
+      500,
+      0.6227654855943868
+    ],
+    [
+      1000,
+      0.6110117099559015
+    ],
+    [
+      1500,
+      0.6061985521707649
+    ],
+    [
+      2000,
+      0.603169377807962
+    ],
+    [
+      2500,
+      0.6013088087757068
+    ],
+    [
+      3000,
+      0.6141163057772251
+    ],
+    [
+      3500,
+      0.5953287254828226
+    ],
+    [
+      4000,
+      0.5929186404817572
+    ],
+    [
+      4500,
+      0.5923809423572474
+    ],
+    [
+      5000,
+      0.5905310253511245
+    ],
+    [
+      5500,
+      0.5869957271547454
+    ],
+    [
+      6000,
+      0.5864566613034972
+    ],
+    [
+      6500,
+      0.5852011482395062
+    ],
+    [
+      7000,
+      0.5847233167685647
+    ],
+    [
+      7500,
+      0.5850616268269336
+    ],
+    [
+      8000,
+      0.5845258130683616
+    ],
+    [
+      8500,
+      0.5849661189262992
+    ],
+    [
+      9000,
+      0.5845009939261196
+    ],
+    [
+      9500,
+      0.5841876452864201
+    ],
+    [
+      10000,
+      0.5842947590488629
+    ],
+    [
+      10500,
+      0.5840877412406734
+    ],
+    [
+      11000,
+      0.5838020367426643
+    ],
+    [
+      11500,
+      0.5838538423182763
+    ],
+    [
+      12000,
+      0.5840111644875915
+    ],
+    [
+      12500,
+      0.5839474446102441
+    ],
+    [
+      13000,
+      0.5842684463560611
+    ],
+    [
+      13500,
+      0.583783483931731
+    ],
+    [
+      14000,
+      0.5835340321546459
+    ],
+    [
+      14500,
+      0.5845548415018177
+    ],
+    [
+      15000,
+      0.584083440824702
+    ],
+    [
+      15500,
+      0.5838038478294968
+    ],
+    [
+      16000,
+      0.5834163499292772
+    ]
+  ],
+  "dtype": "torch.bfloat16",
+  "quarantined_count": 80
+}

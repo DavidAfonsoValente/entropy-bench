@@ -1,0 +1,49 @@
+{
+  "Qwen2.5-0.5B": {
+    "hf": "Qwen/Qwen2.5-0.5B",
+    "score": 0.518123879705238,
+    "stderr": 0.004986502296931172,
+    "metric": "acc_norm,none",
+    "minutes": 16.7
+  },
+  "LFM2.5-1.2B": {
+    "hf": "LiquidAI/LFM2.5-1.2B-Base",
+    "score": 0.6095399322844055,
+    "stderr": 0.004868564301540801,
+    "metric": "acc_norm,none",
+    "minutes": 17.2
+  },
+  "Llama-3.2-1B": {
+    "hf": "meta-llama/Llama-3.2-1B",
+    "score": 0.6581358295160327,
+    "stderr": 0.00473364927481451,
+    "metric": "acc_norm,none",
+    "minutes": 14.9
+  },
+  "Qwen2.5-1.5B": {
+    "hf": "Qwen/Qwen2.5-1.5B",
+    "score": 0.6788488348934475,
+    "stderr": 0.004659644733309574,
+    "metric": "acc_norm,none",
+    "minutes": 17.4
+  },
+  "Qwen2.5-7B": {
+    "hf": "Qwen/Qwen2.5-7B",
+    "score": 0.8025293766182036,
+    "stderr": 0.003972768277709028,
+    "metric": "acc_norm,none",
+    "minutes": 25.3
+  },
+  "gemma-4-12B": {
+    "hf": "google/gemma-4-12B",
+    "score": null,
+    "error": "rc=1"
+  },
+  "Ministral-3-14B": {
+    "hf": "mistralai/Ministral-3-14B-Base-2512",
+    "score": 0.8285202150965943,
+    "stderr": 0.00376157336061495,
+    "metric": "acc_norm,none",
+    "minutes": 35.7
+  }
+}

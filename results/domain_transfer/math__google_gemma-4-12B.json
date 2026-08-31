@@ -1,0 +1,25 @@
+{
+  "model_id": "google/gemma-4-12B",
+  "dataset": "/opt/dt/corpora/math_arxiv.jsonl",
+  "corpus": "math_arxiv",
+  "avg_bytes_per_token": 4.840691052863168,
+  "n_train_blocks": 4963,
+  "n_test_blocks_scored": 608,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.9331652951663242,
+  "trainable_params": 65935360,
+  "total_params": 12025665536,
+  "trainable_pct": 0.5482886564790621,
+  "adapted_bpb": 0.66638650911146,
+  "reduction_pct": 28.58858847802676,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1230.3783917427063
+}

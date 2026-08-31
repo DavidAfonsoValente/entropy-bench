@@ -26,9 +26,12 @@ OUTPUT_TSV = ROOT / "results" / "static_benchmark_scatter.tsv"
 OUTPUT_FIGURE_TEX = ROOT / "figures" / "fig_benchmark_alignment.tex"
 
 BENCHMARKS = {
-    "mmlu_pro": {"label": "MMLU-Pro", "n": 1000},
-    "hellaswag": {"label": "HellaSwag", "n": 10042},
-    "gsm8k": {"label": "GSM8K", "n": 1319},
+    "mmlu_pro": {"label": "MMLU-Pro", "n": 1000, "raw_dir": "mmlu_pro_1k",
+                 "raw_task": "mmlu_pro_1k", "raw_metric": "exact_match,custom-extract"},
+    "hellaswag": {"label": "HellaSwag", "n": 10042, "raw_dir": "hellaswag",
+                  "raw_task": "hellaswag", "raw_metric": "acc_norm,none"},
+    "gsm8k": {"label": "GSM8K", "n": 1319, "raw_dir": "gsm8k",
+              "raw_task": "gsm8k", "raw_metric": "exact_match,flexible-extract"},
 }
 
 MODEL_IDS = {
@@ -72,6 +75,18 @@ PLOT_LABEL = {
     "LFM2.5-1.2B": "LFM",
     "Qwen2.5-0.5B": "Q0.5",
 }
+
+
+def load_raw_static(model: str, task: str) -> tuple[float, int]:
+    """Exact (accuracy, n) for one model/task, read from the committed raw harness output
+    under results/<raw_dir>/<model>/*/results_*.json (see eval/README.md)."""
+    meta = BENCHMARKS[task]
+    matches = sorted((ROOT / "results" / meta["raw_dir"] / model).glob("*/results_*.json"))
+    if not matches:
+        raise FileNotFoundError(f"no raw results_*.json for {model}/{task}")
+    d = json.loads(matches[-1].read_text())
+    row = d["results"][meta["raw_task"]]
+    return row[meta["raw_metric"]], meta["n"]
 
 
 def ranks(values: dict[str, float], *, lower_is_better: bool) -> dict[str, float]:
@@ -154,17 +169,22 @@ def build_analysis() -> dict:
     for model in sorted(static, key=bpb.get):
         scores = {}
         for task, metadata in BENCHMARKS.items():
-            accuracy = static[model][task]
-            n = metadata["n"]
-            successes = round(accuracy * n)
-            # The committed accuracies have three or four decimal places.  The
-            # nearest integer numerator must reproduce that published rounding.
-            if abs(successes / n - accuracy) > 0.00051:
-                raise ValueError(f"{model}/{task}: score is inconsistent with n={n}")
+            committed_accuracy = static[model][task]
+            exact_accuracy, n = load_raw_static(model, task)
+            # The committed table rounds to 3-4 decimals; the raw harness output must agree
+            # with that rounding, or the committed number and the raw log have diverged.
+            if abs(exact_accuracy - committed_accuracy) > 0.00051:
+                raise ValueError(
+                    f"{model}/{task}: committed accuracy {committed_accuracy} disagrees with "
+                    f"raw log accuracy {exact_accuracy}"
+                )
+            successes = round(exact_accuracy * n)
+            if abs(successes / n - exact_accuracy) > 1e-9:
+                raise ValueError(f"{model}/{task}: raw accuracy is not an exact k/{n} fraction")
             low, high = wilson_interval(successes, n)
             scores[task] = {
-                "accuracy": accuracy,
-                "correct_nearest_integer": successes,
+                "accuracy": committed_accuracy,
+                "correct_count": successes,
                 "n": n,
                 "wilson_95_low": low,
                 "wilson_95_high": high,
@@ -220,9 +240,11 @@ def build_analysis() -> dict:
         },
         "accuracy_source": str(STATIC_PATH.relative_to(ROOT)),
         "accuracy_note": (
-            "Directly observed lm-evaluation-harness point estimates. Correct counts are "
-            "nearest integers reconstructed from committed rounded accuracies; Wilson intervals "
-            "therefore describe test-set sampling uncertainty, not run-to-run or prompt uncertainty."
+            "Directly observed lm-evaluation-harness point estimates. Correct counts are exact, "
+            "read from the committed raw per-model harness output under "
+            "results/{gsm8k,hellaswag,mmlu_pro_1k}/, cross-checked against the rounded accuracy "
+            "in results/combined_bpb_vs_static.json. Wilson intervals describe test-set sampling "
+            "uncertainty, not run-to-run or prompt uncertainty."
         ),
         "benchmarks": BENCHMARKS,
         "rows": rows,

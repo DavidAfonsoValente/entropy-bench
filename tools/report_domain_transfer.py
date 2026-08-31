@@ -11,7 +11,7 @@ import argparse
 import json
 from pathlib import Path
 
-# published news run (pre-fix): zero-shot -> adapted BPB, from results/summary.json
+# published news run (pre-fix): zero-shot -> adapted BPB, from results/legacy_sweep/summary.json
 PUBLISHED = {
     "google/gemma-4-31B": (0.7534, 0.5830), "google/gemma-4-12B": (0.8667, 0.6180),
     "mistralai/Ministral-3-14B-Base-2512": (0.7230, 0.6512),

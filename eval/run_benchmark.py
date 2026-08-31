@@ -59,12 +59,42 @@ def main():
     ap.add_argument("--out", default=os.path.expanduser("~/results"))
     ap.add_argument("--max-model-len", type=int, default=None)
     ap.add_argument("--gpu-mem", type=float, default=0.90)
+    ap.add_argument("--model-paths", default=None, metavar="JSON",
+                    help="JSON file mapping label -> local checkpoint directory. Scores those "
+                         "checkpoints instead of the released base weights, under the identical "
+                         "task, few-shot and extraction settings, so adapted and base numbers are "
+                         "directly comparable. Used by experiment E2 (docs/PLAN.md) to measure "
+                         "what adaptation does to task accuracy rather than inferring it from "
+                         "rank movement.")
+    ap.add_argument("--label-suffix", default="",
+                    help="appended to output directory names, e.g. '__news-adapted', so adapted "
+                         "runs never overwrite the published base-model results")
     args = ap.parse_args()
+
+    overrides = {}
+    if args.model_paths:
+        overrides = json.load(open(args.model_paths))
+        unknown = [k for k in overrides if k not in MODELS]
+        if unknown:
+            raise SystemExit("--model-paths has labels outside the cohort: %s" % sorted(unknown))
+        for label, path in overrides.items():
+            if not os.path.isdir(path):
+                raise SystemExit("--model-paths: %s -> %s is not a directory" % (label, path))
+        # Without a suffix the adapted run writes into the same output directory and result
+        # table as the published base-model run, which either skips it as already-scored or
+        # overwrites it. Either way the two become indistinguishable, so refuse.
+        if not args.label_suffix:
+            raise SystemExit(
+                "--model-paths requires --label-suffix (e.g. --label-suffix __math-adapted). "
+                "Without it the adapted scores share output paths and the results table with "
+                "the published base-model run.")
+    elif args.label_suffix:
+        raise SystemExit("--label-suffix is only meaningful together with --model-paths")
 
     b = BENCH[args.benchmark]
     labels = list(MODELS) if args.models == ["all"] else args.models
     outroot = os.path.join(args.out, args.benchmark); os.makedirs(outroot, exist_ok=True)
-    table_path = os.path.join(args.out, f"{args.benchmark}_table.json")
+    table_path = os.path.join(args.out, f"{args.benchmark}{args.label_suffix}_table.json")
     default_mml = 8192 if args.benchmark == "mmlu_pro_1k" else 4096
     mml = args.max_model_len or default_mml
 
@@ -80,15 +110,29 @@ def main():
         return r.get(m), r.get(s)
 
     tbl = load()
+    if overrides:
+        # Scoring released base weights inside a run labelled "adapted" would silently produce a
+        # zero delta and look like a real measurement. Fail instead.
+        unmapped = [x for x in labels if x not in overrides]
+        if unmapped:
+            raise SystemExit(
+                "--model-paths given but no checkpoint for %s. Every requested model must have "
+                "a local path, or its released base weights would be scored and reported under "
+                "the '%s' label." % (sorted(unmapped), args.label_suffix))
+
     for label in labels:
         hf, extra = MODELS[label]
+        # A local checkpoint replaces only the weights; task, few-shot count, extraction regex
+        # and the tensor-parallel decision all stay exactly as the published base run used them.
+        hf = overrides.get(label, hf)
         if tbl.get(label, {}).get("score") is not None:
             print(f"[skip] {label} = {tbl[label]['score']}", flush=True); continue
         tp = args.tp if args.tp is not None else \
             (2 if "tensor_parallel_size=2" in extra else 1)
         margs = f"pretrained={hf},dtype=bfloat16,trust_remote_code=True," \
                 f"max_model_len={mml},gpu_memory_utilization={args.gpu_mem},tensor_parallel_size={tp}"
-        outdir = os.path.join(outroot, label); logf = os.path.join(args.out, f"log_{args.benchmark}_{label}.log")
+        tag = label + args.label_suffix
+        outdir = os.path.join(outroot, tag); logf = os.path.join(args.out, f"log_{args.benchmark}_{tag}.log")
         cmd = [args.python, "-m", "lm_eval", "--model", "vllm", "--model_args", margs,
                "--tasks", b["task"], "--num_fewshot", str(b["num_fewshot"]),
                "--include_path", args.tasks_path, "--log_samples", "--output_path", outdir]

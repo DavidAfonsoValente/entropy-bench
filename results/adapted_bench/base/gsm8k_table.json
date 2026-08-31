@@ -1,0 +1,49 @@
+{
+  "Qwen2.5-0.5B": {
+    "hf": "Qwen/Qwen2.5-0.5B",
+    "score": 0.34268385140257773,
+    "stderr": 0.013073030230827913,
+    "metric": "exact_match,flexible-extract",
+    "minutes": 5.2
+  },
+  "LFM2.5-1.2B": {
+    "hf": "LiquidAI/LFM2.5-1.2B-Base",
+    "score": 0.5443517816527672,
+    "stderr": 0.013718194542485598,
+    "metric": "exact_match,flexible-extract",
+    "minutes": 5.1
+  },
+  "Llama-3.2-1B": {
+    "hf": "meta-llama/Llama-3.2-1B",
+    "score": 0.06141015921152388,
+    "stderr": 0.006613027536586312,
+    "metric": "exact_match,flexible-extract",
+    "minutes": 4.9
+  },
+  "Qwen2.5-1.5B": {
+    "hf": "Qwen/Qwen2.5-1.5B",
+    "score": 0.6125852918877938,
+    "stderr": 0.013418798447827382,
+    "metric": "exact_match,flexible-extract",
+    "minutes": 7.5
+  },
+  "Qwen2.5-7B": {
+    "hf": "Qwen/Qwen2.5-7B",
+    "score": 0.819560272934041,
+    "stderr": 0.010592508589147896,
+    "metric": "exact_match,flexible-extract",
+    "minutes": 19.7
+  },
+  "gemma-4-12B": {
+    "hf": "google/gemma-4-12B",
+    "score": null,
+    "error": "rc=1"
+  },
+  "Ministral-3-14B": {
+    "hf": "mistralai/Ministral-3-14B-Base-2512",
+    "score": 0.8081880212282032,
+    "stderr": 0.01084516995529402,
+    "metric": "exact_match,flexible-extract",
+    "minutes": 30.0
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+  "dataset": "/opt/dt/corpora/math_arxiv.jsonl",
+  "corpus": "math_arxiv",
+  "avg_bytes_per_token": 4.635357365835955,
+  "n_train_blocks": 5168,
+  "n_test_blocks_scored": 635,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.3985706979707588,
+  "trainable_params": 11108352,
+  "total_params": 1181448960,
+  "trainable_pct": 0.9402312225151055,
+  "adapted_bpb": 0.8171848410348029,
+  "reduction_pct": 41.570001271977986,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "adapter_dir": "/opt/dt/adapters/math__LiquidAI_LFM2_5-1_2B-Base",
+  "wall_seconds": 152.26491594314575
+}

@@ -1,0 +1,315 @@
+{
+  "model_id": "Qwen/Qwen2.5-7B",
+  "model_slug": "Qwen_Qwen2_5-7B",
+  "contamination_scores": [
+    {
+      "model_id": "Qwen/Qwen2.5-7B",
+      "split": "train",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.0478346586227418,
+        "p99": -0.8829562115669254,
+        "median": -1.4150217771530151,
+        "mad": 0.15185970067977905,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.04,
+        "suspicious_fraction": 0.006,
+        "high_suspicious_fraction": 0.005,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.2519999742507935,
+        "codec_delta_median": -1.875,
+        "codec_delta_std": 1.3141709566116333,
+        "suspicious_fraction": 0.0,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 11,
+        "num_scored": 11,
+        "original_selected_count": 11,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.33837046271020715,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.0,
+      "risk_score": 0.4,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        962,
+        259,
+        5,
+        134,
+        139,
+        912,
+        177,
+        348,
+        409,
+        284,
+        127
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "Qwen/Qwen2.5-7B",
+      "split": "val",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.0358968496322636,
+        "p99": -0.8405533868074417,
+        "median": -1.4116525650024414,
+        "mad": 0.14808446168899536,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.038,
+        "suspicious_fraction": 0.01,
+        "high_suspicious_fraction": 0.003,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.3563672304153442,
+        "codec_delta_median": -1.9375,
+        "codec_delta_std": 1.3594311475753784,
+        "suspicious_fraction": 0.002,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 13,
+        "num_scored": 13,
+        "original_selected_count": 13,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.31817466020584106,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.002,
+      "risk_score": 0.401,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        0,
+        961,
+        198,
+        936,
+        301,
+        845,
+        914,
+        659,
+        501,
+        216,
+        698,
+        827,
+        637
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    },
+    {
+      "model_id": "Qwen/Qwen2.5-7B",
+      "split": "test",
+      "min_k_summary": {
+        "variant": "minkpp",
+        "normalized_scoring": true,
+        "fallback_used": false,
+        "valid_n": 1000,
+        "skipped_too_short": 0,
+        "scoring_failed": 0,
+        "p95": -1.0551070630550385,
+        "p99": -0.8645042616128922,
+        "median": -1.4104384183883667,
+        "mad": 0.14211201667785645,
+        "calibration_source": "in_run",
+        "calibration_confidence": "HIGH",
+        "outlier_fraction": 0.037,
+        "suspicious_fraction": 0.01,
+        "high_suspicious_fraction": 0.004,
+        "severe_guardrail_fraction": 0.0,
+        "score_direction": "higher_is_more_suspicious",
+        "notes": []
+      },
+      "codec_summary": {
+        "num_samples": 500,
+        "context_size": 4,
+        "codec_delta_mean": -1.4177656173706055,
+        "codec_delta_median": -2.046875,
+        "codec_delta_std": 1.2719147205352783,
+        "suspicious_fraction": 0.006,
+        "threshold_used": 0.0,
+        "confidence_interval": null,
+        "calibration_confidence": "HIGH",
+        "risk_label": "LOW",
+        "notes": []
+      },
+      "dcq_summary": {
+        "num_candidates": 14,
+        "num_scored": 14,
+        "original_selected_count": 14,
+        "dcq_accuracy": 1.0,
+        "mean_margin": 0.36875787377357483,
+        "positive_fraction": 1.0,
+        "candidate_source": "min_k_and_codec_suspicious",
+        "risk_label": "HIGH",
+        "notes": []
+      },
+      "detector_scores": {},
+      "suspicious_fraction": 0.006,
+      "risk_score": 0.403,
+      "risk_label": "MEDIUM",
+      "sample_size": 1000,
+      "suspicious_indices": [
+        192,
+        417,
+        514,
+        931,
+        471,
+        6,
+        811,
+        268,
+        142,
+        499,
+        660,
+        246,
+        791,
+        795
+      ],
+      "notes": [
+        "DCQ accuracy (1.00) confirmed memorization on suspicious samples."
+      ]
+    }
+  ],
+  "total_params": 7655986688,
+  "trainable_params": 40370176,
+  "trainable_pct": 0.5273020662807087,
+  "model_size_gb": 15.392713728,
+  "zero_shot_bpb": 0.7533251501591681,
+  "best_bpb": 0.7284355251523936,
+  "delta_bpb": -0.024910961853764846,
+  "pct_improvement": 3.309810363283731,
+  "adaptation_score": 0.7687412869394984,
+  "stability_index": 0.9703719001848283,
+  "completion_reason": "Early Stopping (Converged)",
+  "training_time_seconds": 11899.775425434113,
+  "peak_gpu_memory_gb": 16.659061248,
+  "bpb_per_gpu_hour": 1.0013060651845664,
+  "best_config": {
+    "learning_rate": 7.555232351885553e-05,
+    "batch_size": 2,
+    "warmup_ratio": 0.19104386880924357,
+    "weight_decay": 2.8762039921439462e-05,
+    "gradient_accumulation_steps": 1,
+    "lora_r": 16,
+    "lora_alpha": 64,
+    "lora_dropout": 0.14916524556038532,
+    "final_epochs": 3,
+    "eval_batch_size": 4,
+    "gradient_clip": 1.0
+  },
+  "effective_batch_size": 2,
+  "range_health": {
+    "learning_rate": "optimal",
+    "batch_size": "optimal",
+    "warmup_ratio": "constrained",
+    "weight_decay": "constrained",
+    "gradient_accumulation_steps": "optimal",
+    "lora_r": "optimal",
+    "lora_alpha": "fixed",
+    "lora_dropout": "optimal",
+    "final_epochs": "fixed",
+    "eval_batch_size": "fixed",
+    "gradient_clip": "fixed"
+  },
+  "bpb_curve": [
+    [
+      500,
+      0.752953540142322
+    ],
+    [
+      1000,
+      0.7459037742173293
+    ],
+    [
+      1500,
+      0.7391997980929564
+    ],
+    [
+      2000,
+      0.735538946691735
+    ],
+    [
+      2500,
+      0.7342959356581602
+    ],
+    [
+      3000,
+      0.7326977622100603
+    ],
+    [
+      3500,
+      0.7315983062843558
+    ],
+    [
+      4000,
+      0.7299298794095579
+    ],
+    [
+      4500,
+      0.7292700030048055
+    ],
+    [
+      5000,
+      0.731082084082312
+    ],
+    [
+      5500,
+      0.7287883913563135
+    ],
+    [
+      6000,
+      0.7294213077201852
+    ],
+    [
+      6500,
+      0.7328675970033378
+    ]
+  ],
+  "dtype": "torch.bfloat16",
+  "quarantined_count": 80
+}

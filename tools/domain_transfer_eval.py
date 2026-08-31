@@ -54,6 +54,12 @@ def parse_args():
     p.add_argument("--target-modules", default="all-linear",
                    help="LoRA target spec; identical for every model by design")
     p.add_argument("--zero-shot-only", action="store_true")
+    p.add_argument("--save-adapter", default=None, metavar="DIR",
+                   help="write the trained LoRA adapter here. Off by default because the "
+                        "published cells did not need it -- which is exactly why no adapted "
+                        "model in the paper was ever scored on a task benchmark. Pass this "
+                        "for any run whose adapters you may want to evaluate downstream "
+                        "(see docs/PLAN.md, experiment E2).")
     p.add_argument("--device", default="cuda", help="cuda, or cpu for smoke tests")
     return p.parse_args()
 
@@ -200,6 +206,25 @@ def main():
                        "lora": {"r": a.lora_r, "alpha": a.lora_alpha,
                                 "dropout": a.lora_dropout, "lr": a.learning_rate,
                                 "effective_batch": a.train_batch_size * a.grad_accum}})
+
+        if a.save_adapter:
+            adapter_dir = Path(a.save_adapter)
+            adapter_dir.mkdir(parents=True, exist_ok=True)
+            model.save_pretrained(str(adapter_dir))
+            tok.save_pretrained(str(adapter_dir))
+            (adapter_dir / "adapter_provenance.json").write_text(json.dumps({
+                "model_id": a.model_id,
+                "dataset": a.dataset,
+                "corpus": result.get("corpus"),
+                "train_steps": step,
+                "adapted_bpb": ad,
+                "zero_shot_bpb": zs,
+                "lora": result["lora"],
+                "max_seq_len": a.max_seq_len,
+                "mask_injected_special_tokens": True,
+            }, indent=2) + "\n")
+            print(f"[save] adapter + tokenizer -> {adapter_dir}", flush=True)
+            result["adapter_dir"] = str(adapter_dir)
 
     result["wall_seconds"] = time.time() - t0
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)

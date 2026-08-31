@@ -22,6 +22,55 @@ results/*
 !results/token_gain/*.json
 !results/token_gain_bpb/
 !results/token_gain_bpb/*.json
+!results/gsm8k/
+!results/gsm8k/**
+!results/hellaswag/
+!results/hellaswag/**
+!results/mmlu_pro_1k/
+!results/mmlu_pro_1k/**
+!results/alignment_matrix.json
+!results/math_domain_benchmark_analysis.json
+# E2's analysis output and the aggregate harness JSON it is computed from. docs/PROGRESS.md and
+# docs/RUN_LEDGER.md quote these numbers, so a clone has to be able to grep them.
+# Written as an ALLOWLIST on purpose: un-ignoring the tree wholesale pulls in 3.6 GB of
+# samples_*.jsonl, which is the same near-miss that put train_state/ in here. Per-example samples
+# live in gs://gpu-llm-training-gceval/token_gain/adapted_bench/ and stay there.
+!results/adapted_benchmark_analysis.json
+!results/e2_confound_audit.json
+!results/pairwise_significance.json
+# The divergence analysis behind the paper's motivating pair, and the artifact that records why the
+# gap-size correlation is NOT reported as an estimate. Added 2026-08-30: the tool shipped without
+# this line, so `make check` passed locally off an untracked file and would have failed in CI on a
+# fresh clone -- caught by running the gate inside a clean checkout, not by running it here.
+!results/selection_divergence.json
+# The base config of an EXCLUDED model, kept because paper_sota.tex Sec. sec:adaptedacc quotes its
+# head_dim / global_head_dim as the reason the exclusion could not be waived. A claim in the paper
+# has to cite something a reader can grep.
+!results/model_configs/
+!results/model_configs/*.json
+!results/adapted_bench/
+results/adapted_bench/**
+!results/adapted_bench/**/
+!results/adapted_bench/**/results_*.json
+!results/adapted_bench/**/*_table.json
+!results/adapted_bench/bpb/*.json
+# The superseded HPO sweep's search records only -- these are the evidence for the
+# fixed-configuration decision argued in paper_sota.tex Sec. 3.2 (4 completed trials for the
+# largest models against 17-18 for the smallest). Checkpoints stay excluded by the
+# final_checkpoint/best_checkpoint rules below.
+!results/legacy_sweep/
+!results/legacy_sweep/*/
+!results/legacy_sweep/*/trials.csv
+!results/legacy_sweep/*/best_config.json
+!results/legacy_sweep/*/sweep_meta.json
+!results/legacy_sweep/*/result_*.json
+!results/legacy_sweep/*/suspicious_indices.json
+!results/legacy_sweep/README.md
+# ...but not the bulky rendered reports: reports/11-model-run/ already publishes
+# that same legacy run's HTML/PDF/plots, and a second copy is 5 MB of duplication.
+results/legacy_sweep/report.*
+results/legacy_sweep/summary*.json
+results/legacy_sweep/run.log
 results_*/
 reports/*
 !reports/11-model-run/
@@ -37,6 +86,7 @@ data/*.jsonl
 results/cache/
 results/**/final_checkpoint/
 results/**/best_checkpoint/
+results/**/train_state/
 
 # OS and IDE
 .DS_Store

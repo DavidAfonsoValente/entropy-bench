@@ -1,0 +1,872 @@
+{
+  "schema_version": 1,
+  "bpb_source": "results/domain_transfer/news__*.json (adapted_bpb, zero_shot_bpb)",
+  "accuracy_source": "results/{gsm8k,hellaswag,mmlu_pro_1k}/**/results_*.json",
+  "note": "Magnitude correlations between |BPB gap| and |benchmark gap| are reported WITH their leave-one-out range and an explicit estimable flag. The GSM8K coefficient is not estimable at this cohort size and must not be quoted as one; the argument rests on the named existence proofs and the descriptive cross/within-family split instead.",
+  "headline_band": 0.05,
+  "stability_tolerance": 0.15,
+  "n_models": 11,
+  "n_pairs": 55,
+  "correlations_full_cohort": {
+    "mmlu_pro": {
+      "pearson": 0.5908457511085942,
+      "spearman": 0.5442476283349771,
+      "n_pairs": 55
+    },
+    "hellaswag": {
+      "pearson": 0.9088335221515244,
+      "spearman": 0.9002687640130496,
+      "n_pairs": 55
+    },
+    "gsm8k": {
+      "pearson": 0.26580629180415327,
+      "spearman": 0.39198354961698834,
+      "n_pairs": 55
+    }
+  },
+  "stability": {
+    "mmlu_pro": {
+      "full_cohort_pearson": 0.5908457511085942,
+      "min_after_deletion": 0.5309660333897804,
+      "max_after_deletion": 0.7544782771332167,
+      "max_abs_swing": 0.16363252602462253,
+      "most_influential_model": "Llama-3.2-1B",
+      "estimable": false,
+      "per_deletion_pearson": {
+        "LFM2.5-1.2B": 0.5309660333897804,
+        "Llama-3.2-1B": 0.7544782771332167,
+        "Ministral-3-14B": 0.5408320828815951,
+        "Qwen2.5-0.5B": 0.5449497216433662,
+        "Qwen2.5-1.5B": 0.6010673725620586,
+        "Qwen2.5-7B": 0.5792394640816223,
+        "Qwen3.5-35B-MoE": 0.5555112805118031,
+        "Qwen3.5-4B": 0.6570464624566285,
+        "Qwen3.5-9B": 0.5802038346982693,
+        "gemma-4-12B": 0.6044632622142937,
+        "gemma-4-31B": 0.5692445032812163
+      }
+    },
+    "hellaswag": {
+      "full_cohort_pearson": 0.9088335221515244,
+      "min_after_deletion": 0.8587813620382494,
+      "max_after_deletion": 0.936231600410023,
+      "max_abs_swing": 0.05005216011327496,
+      "most_influential_model": "Qwen2.5-0.5B",
+      "estimable": true,
+      "per_deletion_pearson": {
+        "LFM2.5-1.2B": 0.9064033583793646,
+        "Llama-3.2-1B": 0.936231600410023,
+        "Ministral-3-14B": 0.8953203897570461,
+        "Qwen2.5-0.5B": 0.8587813620382494,
+        "Qwen2.5-1.5B": 0.9121717572558953,
+        "Qwen2.5-7B": 0.9113990561410031,
+        "Qwen3.5-35B-MoE": 0.8994326276278125,
+        "Qwen3.5-4B": 0.9285825098794165,
+        "Qwen3.5-9B": 0.9095731613523917,
+        "gemma-4-12B": 0.9029432003371873,
+        "gemma-4-31B": 0.9176511008308883
+      }
+    },
+    "gsm8k": {
+      "full_cohort_pearson": 0.26580629180415327,
+      "min_after_deletion": 0.11849755487976799,
+      "max_after_deletion": 0.6673002489522095,
+      "max_abs_swing": 0.40149395714805625,
+      "most_influential_model": "Llama-3.2-1B",
+      "estimable": false,
+      "per_deletion_pearson": {
+        "LFM2.5-1.2B": 0.31265509500592564,
+        "Llama-3.2-1B": 0.6673002489522095,
+        "Ministral-3-14B": 0.1919611916714988,
+        "Qwen2.5-0.5B": 0.11849755487976799,
+        "Qwen2.5-1.5B": 0.3124277540780861,
+        "Qwen2.5-7B": 0.2241211225202178,
+        "Qwen3.5-35B-MoE": 0.18599645637833115,
+        "Qwen3.5-4B": 0.28890613570560714,
+        "Qwen3.5-9B": 0.21753044529162702,
+        "gemma-4-12B": 0.31532876316740643,
+        "gemma-4-31B": 0.22978392824986937
+      }
+    }
+  },
+  "closeness_bands": {
+    "within_2pct": {
+      "n_pairs": 2,
+      "mmlu_pro": {
+        "median_gap_pp": 8.300000000000002,
+        "max_gap_pp": 8.700000000000008,
+        "n_gap_at_least_20pp": 0
+      },
+      "hellaswag": {
+        "median_gap_pp": 1.9567815176259717,
+        "max_gap_pp": 2.5990838478390788,
+        "n_gap_at_least_20pp": 0
+      },
+      "gsm8k": {
+        "median_gap_pp": 5.2312357846853725,
+        "max_gap_pp": 5.761940864291137,
+        "n_gap_at_least_20pp": 0
+      }
+    },
+    "within_3pct": {
+      "n_pairs": 3,
+      "mmlu_pro": {
+        "median_gap_pp": 8.700000000000008,
+        "max_gap_pp": 40.800000000000004,
+        "n_gap_at_least_20pp": 1
+      },
+      "hellaswag": {
+        "median_gap_pp": 2.5990838478390788,
+        "max_gap_pp": 11.372236606253738,
+        "n_gap_at_least_20pp": 0
+      },
+      "gsm8k": {
+        "median_gap_pp": 5.761940864291137,
+        "max_gap_pp": 73.9196360879454,
+        "n_gap_at_least_20pp": 1
+      }
+    },
+    "within_5pct": {
+      "n_pairs": 10,
+      "mmlu_pro": {
+        "median_gap_pp": 9.050000000000004,
+        "max_gap_pp": 40.800000000000004,
+        "n_gap_at_least_20pp": 1
+      },
+      "hellaswag": {
+        "median_gap_pp": 2.300338577972516,
+        "max_gap_pp": 11.372236606253738,
+        "n_gap_at_least_20pp": 0
+      },
+      "gsm8k": {
+        "median_gap_pp": 11.44806671721001,
+        "max_gap_pp": 73.9196360879454,
+        "n_gap_at_least_20pp": 4
+      }
+    },
+    "within_10pct": {
+      "n_pairs": 22,
+      "mmlu_pro": {
+        "median_gap_pp": 9.050000000000004,
+        "max_gap_pp": 44.50000000000001,
+        "n_gap_at_least_20pp": 4
+      },
+      "hellaswag": {
+        "median_gap_pp": 3.78908583947421,
+        "max_gap_pp": 15.753833897629955,
+        "n_gap_at_least_20pp": 0
+      },
+      "gsm8k": {
+        "median_gap_pp": 11.599696739954513,
+        "max_gap_pp": 79.45413191811978,
+        "n_gap_at_least_20pp": 8
+      }
+    }
+  },
+  "family_split_at_headline_band": {
+    "cross_family": {
+      "n_pairs": 6,
+      "median_gsm8k_gap_pp": 20.01516300227445,
+      "max_gsm8k_gap_pp": 73.9196360879454
+    },
+    "within_family": {
+      "n_pairs": 4,
+      "median_gsm8k_gap_pp": 2.76724791508719,
+      "max_gsm8k_gap_pp": 20.545868081880215
+    }
+  },
+  "witnesses": [
+    {
+      "a": "Llama-3.2-1B",
+      "b": "Qwen-3.5-4B",
+      "adapted_bpb_gap_frac": 0.029185039978184495,
+      "gsm8k_gap_pp": 73.9196360879454,
+      "hellaswag_gap_pp": 11.372236606253738,
+      "cross_family": true,
+      "size_ratio": 3.398493913083463
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "Qwen-2.5-1.5B",
+      "adapted_bpb_gap_frac": 0.03349792897408778,
+      "gsm8k_gap_pp": 54.58680818802123,
+      "hellaswag_gap_pp": 2.0015933081059534,
+      "cross_family": true,
+      "size_ratio": 1.252662872026131
+    },
+    {
+      "a": "Qwen-3.5-35B-MoE",
+      "b": "Gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.038512868250011476,
+      "gsm8k_gap_pp": 22.89613343442002,
+      "hellaswag_gap_pp": 1.2547301334395522,
+      "cross_family": true,
+      "size_ratio": 2.8840888701064236
+    }
+  ],
+  "noise_floor_census": {
+    "mmlu_pro": {
+      "n_gaps_within_0.69pp": 0,
+      "n_gaps_within_1pp": 0,
+      "n_gaps_within_2pp": 3,
+      "n_pairs": 55
+    },
+    "hellaswag": {
+      "n_gaps_within_0.69pp": 0,
+      "n_gaps_within_1pp": 0,
+      "n_gaps_within_2pp": 4,
+      "n_pairs": 55
+    },
+    "gsm8k": {
+      "n_gaps_within_0.69pp": 3,
+      "n_gaps_within_1pp": 4,
+      "n_gaps_within_2pp": 5,
+      "n_pairs": 55
+    }
+  },
+  "size_disagreement": {
+    "math__adapted_bpb__mmlu_pro": {
+      "n_disagreeing_pairs": 7,
+      "bpb_correct": 5,
+      "size_correct": 2,
+      "bpb_share": 0.7142857142857143
+    },
+    "math__adapted_bpb__hellaswag": {
+      "n_disagreeing_pairs": 7,
+      "bpb_correct": 0,
+      "size_correct": 7,
+      "bpb_share": 0.0
+    },
+    "math__adapted_bpb__gsm8k": {
+      "n_disagreeing_pairs": 7,
+      "bpb_correct": 5,
+      "size_correct": 2,
+      "bpb_share": 0.7142857142857143
+    },
+    "news__zero_shot_bpb__mmlu_pro": {
+      "n_disagreeing_pairs": 9,
+      "bpb_correct": 4,
+      "size_correct": 5,
+      "bpb_share": 0.4444444444444444
+    },
+    "news__zero_shot_bpb__hellaswag": {
+      "n_disagreeing_pairs": 9,
+      "bpb_correct": 0,
+      "size_correct": 9,
+      "bpb_share": 0.0
+    },
+    "news__zero_shot_bpb__gsm8k": {
+      "n_disagreeing_pairs": 9,
+      "bpb_correct": 4,
+      "size_correct": 5,
+      "bpb_share": 0.4444444444444444
+    }
+  },
+  "pairs": [
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "Llama-3.2-1B",
+      "adapted_bpb_gap_frac": 0.10437428151235087,
+      "zero_shot_bpb_gap_frac": 0.6525483381615692,
+      "size_ratio": 1.0555568917678848,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 3.7999999999999994,
+      "hellaswag_gap_pp": 4.889464250149366,
+      "gsm8k_gap_pp": 48.521607278241085
+    },
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "Ministral-3-14B",
+      "adapted_bpb_gap_frac": 0.25432197823438846,
+      "zero_shot_bpb_gap_frac": 0.8657801816029049,
+      "size_ratio": 11.862863878605472,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 38.6,
+      "hellaswag_gap_pp": 21.957777335192187,
+      "gsm8k_gap_pp": 25.701288855193326
+    },
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "Qwen2.5-0.5B",
+      "adapted_bpb_gap_frac": 0.05806696495747833,
+      "zero_shot_bpb_gap_frac": 0.4330935884748475,
+      "size_ratio": 2.349594627996824,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 1.200000000000001,
+      "hellaswag_gap_pp": 9.171479784903413,
+      "gsm8k_gap_pp": 20.31842304776345
+    },
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "Qwen2.5-1.5B",
+      "adapted_bpb_gap_frac": 0.06857909488857826,
+      "zero_shot_bpb_gap_frac": 0.608265758028175,
+      "size_ratio": 1.3222569276289347,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 9.5,
+      "hellaswag_gap_pp": 6.89105755825532,
+      "gsm8k_gap_pp": 6.065200909780144
+    },
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "Qwen2.5-7B",
+      "adapted_bpb_gap_frac": 0.18803592254045018,
+      "zero_shot_bpb_gap_frac": 0.7681497844225792,
+      "size_ratio": 6.480167105991613,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 31.999999999999996,
+      "hellaswag_gap_pp": 19.328818960366455,
+      "gsm8k_gap_pp": 26.231993934799092
+    },
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "Qwen3.5-35B-MoE",
+      "adapted_bpb_gap_frac": 0.2557796223178959,
+      "zero_shot_bpb_gap_frac": 0.8938999565123981,
+      "size_ratio": 29.35639989729222,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 46.5,
+      "hellaswag_gap_pp": 24.556861183031266,
+      "gsm8k_gap_pp": 31.463229719484463
+    },
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "Qwen3.5-4B",
+      "adapted_bpb_gap_frac": 0.1366054890691676,
+      "zero_shot_bpb_gap_frac": 0.7128822604719617,
+      "size_ratio": 3.587303671586456,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 37.0,
+      "hellaswag_gap_pp": 16.261700856403106,
+      "gsm8k_gap_pp": 25.39802880970432
+    },
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "Qwen3.5-9B",
+      "adapted_bpb_gap_frac": 0.20283139819461754,
+      "zero_shot_bpb_gap_frac": 0.8092925854120161,
+      "size_ratio": 7.61529435854766,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 40.7,
+      "hellaswag_gap_pp": 20.64329814777932,
+      "gsm8k_gap_pp": 30.9325246398787
+    },
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.30414329746327423,
+      "zero_shot_bpb_gap_frac": 0.5479568739012606,
+      "size_ratio": 10.178743173128698,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 29.200000000000003,
+      "hellaswag_gap_pp": 23.30213104959171,
+      "gsm8k_gap_pp": 8.567096285064446
+    },
+    {
+      "a": "LFM2.5-1.2B",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.36516071408435824,
+      "zero_shot_bpb_gap_frac": 0.7819871781824991,
+      "size_ratio": 26.583207968628624,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 42.29999999999999,
+      "hellaswag_gap_pp": 26.96673969328819,
+      "gsm8k_gap_pp": 29.11296436694466
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "Ministral-3-14B",
+      "adapted_bpb_gap_frac": 0.1357761578046678,
+      "zero_shot_bpb_gap_frac": 0.12903213692287657,
+      "size_ratio": 11.238488395198784,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 42.400000000000006,
+      "hellaswag_gap_pp": 17.068313085042817,
+      "gsm8k_gap_pp": 74.22289613343442
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "Qwen2.5-0.5B",
+      "adapted_bpb_gap_frac": 0.16850194421686884,
+      "zero_shot_bpb_gap_frac": 0.153133578610364,
+      "size_ratio": 2.4801308024428472,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 5.0,
+      "hellaswag_gap_pp": 14.060944035052781,
+      "gsm8k_gap_pp": 28.203184230477635
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "Qwen2.5-1.5B",
+      "adapted_bpb_gap_frac": 0.03349792897408778,
+      "zero_shot_bpb_gap_frac": 0.027534367322280876,
+      "size_ratio": 1.252662872026131,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 13.3,
+      "hellaswag_gap_pp": 2.0015933081059534,
+      "gsm8k_gap_pp": 54.58680818802123
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "Qwen2.5-7B",
+      "adapted_bpb_gap_frac": 0.07575478932154368,
+      "zero_shot_bpb_gap_frac": 0.06995344317105698,
+      "size_ratio": 6.139097907966282,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 35.8,
+      "hellaswag_gap_pp": 14.439354710217088,
+      "gsm8k_gap_pp": 74.75360121304018
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "Qwen3.5-35B-MoE",
+      "adapted_bpb_gap_frac": 0.13709604011984755,
+      "zero_shot_bpb_gap_frac": 0.1460481444187758,
+      "size_ratio": 27.811291012581105,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 50.3,
+      "hellaswag_gap_pp": 19.667396932881896,
+      "gsm8k_gap_pp": 79.98483699772555
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "Qwen3.5-4B",
+      "adapted_bpb_gap_frac": 0.029185039978184495,
+      "zero_shot_bpb_gap_frac": 0.03650962632506885,
+      "size_ratio": 3.398493913083463,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 40.800000000000004,
+      "hellaswag_gap_pp": 11.372236606253738,
+      "gsm8k_gap_pp": 73.9196360879454
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "Qwen3.5-9B",
+      "adapted_bpb_gap_frac": 0.08915194633782819,
+      "zero_shot_bpb_gap_frac": 0.09485002261708242,
+      "size_ratio": 7.214480259603336,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 44.50000000000001,
+      "hellaswag_gap_pp": 15.753833897629955,
+      "gsm8k_gap_pp": 79.45413191811978
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.18088887010059299,
+      "zero_shot_bpb_gap_frac": 0.06756742776477391,
+      "size_ratio": 9.643007641284944,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 33.0,
+      "hellaswag_gap_pp": 18.412666799442345,
+      "gsm8k_gap_pp": 57.08870356330553
+    },
+    {
+      "a": "Llama-3.2-1B",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.23613953796070075,
+      "zero_shot_bpb_gap_frac": 0.07832681019480998,
+      "size_ratio": 25.184059879620612,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 46.099999999999994,
+      "hellaswag_gap_pp": 22.077275443138824,
+      "gsm8k_gap_pp": 77.63457164518574
+    },
+    {
+      "a": "Ministral-3-14B",
+      "b": "Qwen2.5-0.5B",
+      "adapted_bpb_gap_frac": 0.3271566485899196,
+      "zero_shot_bpb_gap_frac": 0.30192486841598315,
+      "size_ratio": 27.872921241828983,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 37.4,
+      "hellaswag_gap_pp": 31.1292571200956,
+      "gsm8k_gap_pp": 46.01971190295678
+    },
+    {
+      "a": "Ministral-3-14B",
+      "b": "Qwen2.5-1.5B",
+      "adapted_bpb_gap_frac": 0.17382230686927092,
+      "zero_shot_bpb_gap_frac": 0.16011932249957078,
+      "size_ratio": 8.971678371069613,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 29.100000000000005,
+      "hellaswag_gap_pp": 15.066719776936866,
+      "gsm8k_gap_pp": 19.636087945413184
+    },
+    {
+      "a": "Ministral-3-14B",
+      "b": "Qwen2.5-7B",
+      "adapted_bpb_gap_frac": 0.05579465606746532,
+      "zero_shot_bpb_gap_frac": 0.05521613499062734,
+      "size_ratio": 1.8306416616381662,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 6.600000000000006,
+      "hellaswag_gap_pp": 2.6289583748257295,
+      "gsm8k_gap_pp": 0.5307050796057644
+    },
+    {
+      "a": "Ministral-3-14B",
+      "b": "Qwen3.5-35B-MoE",
+      "adapted_bpb_gap_frac": 0.0011620972196941558,
+      "zero_shot_bpb_gap_frac": 0.01507132254204522,
+      "size_ratio": 2.4746469484688367,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 7.899999999999996,
+      "hellaswag_gap_pp": 2.5990838478390788,
+      "gsm8k_gap_pp": 5.761940864291137
+    },
+    {
+      "a": "Ministral-3-14B",
+      "b": "Qwen3.5-4B",
+      "adapted_bpb_gap_frac": 0.10356846794891493,
+      "zero_shot_bpb_gap_frac": 0.08926353238594133,
+      "size_ratio": 3.306902611163447,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 1.6000000000000014,
+      "hellaswag_gap_pp": 5.696076478789081,
+      "gsm8k_gap_pp": 0.30326004548900665
+    },
+    {
+      "a": "Ministral-3-14B",
+      "b": "Qwen3.5-9B",
+      "adapted_bpb_gap_frac": 0.04280781173243017,
+      "zero_shot_bpb_gap_frac": 0.03122081892466576,
+      "size_ratio": 1.5577682647670996,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 2.100000000000002,
+      "hellaswag_gap_pp": 1.3144791874128647,
+      "gsm8k_gap_pp": 5.2312357846853725
+    },
+    {
+      "a": "Ministral-3-14B",
+      "b": "gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.03971972116682142,
+      "zero_shot_bpb_gap_frac": 0.20531793427852135,
+      "size_ratio": 1.1654546810772037,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 9.400000000000002,
+      "hellaswag_gap_pp": 1.3443537143995266,
+      "gsm8k_gap_pp": 17.13419257012888
+    },
+    {
+      "a": "Ministral-3-14B",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.08836545781170865,
+      "zero_shot_bpb_gap_frac": 0.04702222577486151,
+      "size_ratio": 2.2408760852909313,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 3.699999999999992,
+      "hellaswag_gap_pp": 5.008962358096003,
+      "gsm8k_gap_pp": 3.411675511751333
+    },
+    {
+      "a": "Qwen2.5-0.5B",
+      "b": "Qwen2.5-1.5B",
+      "adapted_bpb_gap_frac": 0.13062823974576723,
+      "zero_shot_bpb_gap_frac": 0.12223358680974374,
+      "size_ratio": 3.10676777398853,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 8.299999999999999,
+      "hellaswag_gap_pp": 16.062537343158734,
+      "gsm8k_gap_pp": 26.383623957543595
+    },
+    {
+      "a": "Qwen2.5-0.5B",
+      "b": "Qwen2.5-7B",
+      "adapted_bpb_gap_frac": 0.25702156282283195,
+      "zero_shot_bpb_gap_frac": 0.23379924287032167,
+      "size_ratio": 15.225765820759618,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 30.799999999999994,
+      "hellaswag_gap_pp": 28.50029874526987,
+      "gsm8k_gap_pp": 46.550416982562545
+    },
+    {
+      "a": "Qwen2.5-0.5B",
+      "b": "Qwen3.5-35B-MoE",
+      "adapted_bpb_gap_frac": 0.32869893364134456,
+      "zero_shot_bpb_gap_frac": 0.3215465980333902,
+      "size_ratio": 68.97563949600432,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 45.3,
+      "hellaswag_gap_pp": 33.72834096793468,
+      "gsm8k_gap_pp": 51.78165276724791
+    },
+    {
+      "a": "Qwen2.5-0.5B",
+      "b": "Qwen3.5-4B",
+      "adapted_bpb_gap_frac": 0.20260472017342449,
+      "zero_shot_bpb_gap_frac": 0.19523405466831778,
+      "size_ratio": 8.42870943575282,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 35.8,
+      "hellaswag_gap_pp": 25.433180641306517,
+      "gsm8k_gap_pp": 45.716451857467774
+    },
+    {
+      "a": "Qwen2.5-0.5B",
+      "b": "Qwen3.5-9B",
+      "adapted_bpb_gap_frac": 0.27267616684333906,
+      "zero_shot_bpb_gap_frac": 0.26250832462207424,
+      "size_ratio": 17.892854715458103,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 39.5,
+      "hellaswag_gap_pp": 29.814777932682734,
+      "gsm8k_gap_pp": 51.25094768764215
+    },
+    {
+      "a": "Qwen2.5-0.5B",
+      "b": "gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.3798709406166044,
+      "zero_shot_bpb_gap_frac": 0.08015058217422835,
+      "size_ratio": 23.915920279342537,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 28.000000000000004,
+      "hellaswag_gap_pp": 32.473610834495126,
+      "gsm8k_gap_pp": 28.885519332827897
+    },
+    {
+      "a": "Qwen2.5-0.5B",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.4444314534304208,
+      "zero_shot_bpb_gap_frac": 0.24345485355143998,
+      "size_ratio": 62.45976263801218,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 41.099999999999994,
+      "hellaswag_gap_pp": 36.1382194781916,
+      "gsm8k_gap_pp": 49.43138741470811
+    },
+    {
+      "a": "Qwen2.5-1.5B",
+      "b": "Qwen2.5-7B",
+      "adapted_bpb_gap_frac": 0.11179034684777152,
+      "zero_shot_bpb_gap_frac": 0.09941393429306804,
+      "size_ratio": 4.900838082665084,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 22.499999999999996,
+      "hellaswag_gap_pp": 12.437761402111136,
+      "gsm8k_gap_pp": 20.166793025018947
+    },
+    {
+      "a": "Qwen2.5-1.5B",
+      "b": "Qwen3.5-35B-MoE",
+      "adapted_bpb_gap_frac": 0.17518640250849868,
+      "zero_shot_bpb_gap_frac": 0.17760385499622078,
+      "size_ratio": 22.201736503611283,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 37.0,
+      "hellaswag_gap_pp": 17.665803624775943,
+      "gsm8k_gap_pp": 25.39802880970432
+    },
+    {
+      "a": "Qwen2.5-1.5B",
+      "b": "Qwen3.5-4B",
+      "adapted_bpb_gap_frac": 0.06366060734856742,
+      "zero_shot_bpb_gap_frac": 0.06504926310938339,
+      "size_ratio": 2.713015599789062,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 27.500000000000004,
+      "hellaswag_gap_pp": 9.370643298147785,
+      "gsm8k_gap_pp": 19.332827899924176
+    },
+    {
+      "a": "Qwen2.5-1.5B",
+      "b": "Qwen3.5-9B",
+      "adapted_bpb_gap_frac": 0.12563628087824222,
+      "zero_shot_bpb_gap_frac": 0.1249960253026287,
+      "size_ratio": 5.75931515231565,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 31.200000000000006,
+      "hellaswag_gap_pp": 13.752240589524,
+      "gsm8k_gap_pp": 24.867323730098555
+    },
+    {
+      "a": "Qwen2.5-1.5B",
+      "b": "gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.22044620159751344,
+      "zero_shot_bpb_gap_frac": 0.03896031287675351,
+      "size_ratio": 7.698007066887656,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 19.7,
+      "hellaswag_gap_pp": 16.411073491336392,
+      "gsm8k_gap_pp": 2.501895375284302
+    },
+    {
+      "a": "Qwen2.5-1.5B",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.27754765240537,
+      "zero_shot_bpb_gap_frac": 0.10801785668017733,
+      "size_ratio": 20.104419506651794,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 32.8,
+      "hellaswag_gap_pp": 20.075682135032867,
+      "gsm8k_gap_pp": 23.047763457164518
+    },
+    {
+      "a": "Qwen2.5-7B",
+      "b": "Qwen3.5-35B-MoE",
+      "adapted_bpb_gap_frac": 0.057021592101849275,
+      "zero_shot_bpb_gap_frac": 0.0711196377126414,
+      "size_ratio": 4.530191801712808,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 14.500000000000002,
+      "hellaswag_gap_pp": 5.228042222664808,
+      "gsm8k_gap_pp": 5.2312357846853725
+    },
+    {
+      "a": "Qwen2.5-7B",
+      "b": "Qwen3.5-4B",
+      "adapted_bpb_gap_frac": 0.04524915106067449,
+      "zero_shot_bpb_gap_frac": 0.03226580438482056,
+      "size_ratio": 1.8064172144996609,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 5.000000000000004,
+      "hellaswag_gap_pp": 3.067118103963351,
+      "gsm8k_gap_pp": 0.833965125094771
+    },
+    {
+      "a": "Qwen2.5-7B",
+      "b": "Qwen3.5-9B",
+      "adapted_bpb_gap_frac": 0.012453727512320743,
+      "zero_shot_bpb_gap_frac": 0.02326884370990818,
+      "size_ratio": 1.1751694414649432,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 8.700000000000008,
+      "hellaswag_gap_pp": 1.3144791874128647,
+      "gsm8k_gap_pp": 4.700530705079609
+    },
+    {
+      "a": "Qwen2.5-7B",
+      "b": "gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.09773052541588517,
+      "zero_shot_bpb_gap_frac": 0.1422474451541885,
+      "size_ratio": 1.570753193033765,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 2.799999999999997,
+      "hellaswag_gap_pp": 3.973312089225256,
+      "gsm8k_gap_pp": 17.664897649734645
+    },
+    {
+      "a": "Qwen2.5-7B",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.1490904342060224,
+      "zero_shot_bpb_gap_frac": 0.00782591717162625,
+      "size_ratio": 4.10224112030222,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 10.299999999999997,
+      "hellaswag_gap_pp": 7.6379207329217325,
+      "gsm8k_gap_pp": 2.8809704321455687
+    },
+    {
+      "a": "Qwen3.5-35B-MoE",
+      "b": "Qwen3.5-4B",
+      "adapted_bpb_gap_frac": 0.10485092179726051,
+      "zero_shot_bpb_gap_frac": 0.10568017441581737,
+      "size_ratio": 8.183416455599252,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 9.499999999999996,
+      "hellaswag_gap_pp": 8.29516032662816,
+      "gsm8k_gap_pp": 6.065200909780144
+    },
+    {
+      "a": "Qwen3.5-35B-MoE",
+      "b": "Qwen3.5-9B",
+      "adapted_bpb_gap_frac": 0.04401965579111977,
+      "zero_shot_bpb_gap_frac": 0.04676268049875141,
+      "size_ratio": 3.8549264828274983,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 5.799999999999994,
+      "hellaswag_gap_pp": 3.9135630352519435,
+      "gsm8k_gap_pp": 0.5307050796057644
+    },
+    {
+      "a": "Qwen3.5-35B-MoE",
+      "b": "gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.038512868250011476,
+      "zero_shot_bpb_gap_frac": 0.2234836696317446,
+      "size_ratio": 2.8840888701064236,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 17.299999999999997,
+      "hellaswag_gap_pp": 1.2547301334395522,
+      "gsm8k_gap_pp": 22.89613343442002
+    },
+    {
+      "a": "Qwen3.5-35B-MoE",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.08710213943794426,
+      "zero_shot_bpb_gap_frac": 0.06280223544820454,
+      "size_ratio": 1.104321191480588,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 4.200000000000004,
+      "hellaswag_gap_pp": 2.4098785102569242,
+      "gsm8k_gap_pp": 2.3502653525398043
+    },
+    {
+      "a": "Qwen3.5-4B",
+      "b": "Qwen3.5-9B",
+      "adapted_bpb_gap_frac": 0.05826639917046871,
+      "zero_shot_bpb_gap_frac": 0.0562854360541336,
+      "size_ratio": 2.122846309016225,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 3.7000000000000033,
+      "hellaswag_gap_pp": 4.381597291376216,
+      "gsm8k_gap_pp": 5.53449583017438
+    },
+    {
+      "a": "Qwen3.5-4B",
+      "b": "gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.14740189978434212,
+      "zero_shot_bpb_gap_frac": 0.10654391562928073,
+      "size_ratio": 2.837435607626502,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 7.800000000000002,
+      "hellaswag_gap_pp": 7.040430193188607,
+      "gsm8k_gap_pp": 16.830932524639874
+    },
+    {
+      "a": "Qwen3.5-4B",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.20108580084578673,
+      "zero_shot_bpb_gap_frac": 0.04034423106903831,
+      "size_ratio": 7.410358977742304,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 5.299999999999994,
+      "hellaswag_gap_pp": 10.705038836885084,
+      "gsm8k_gap_pp": 3.7149355572403397
+    },
+    {
+      "a": "Qwen3.5-9B",
+      "b": "gemma-4-12B",
+      "adapted_bpb_gap_frac": 0.08422784724502551,
+      "zero_shot_bpb_gap_frac": 0.16882622243352322,
+      "size_ratio": 1.3366184803747918,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 11.500000000000005,
+      "hellaswag_gap_pp": 2.6588329018123913,
+      "gsm8k_gap_pp": 22.365428354814256
+    },
+    {
+      "a": "Qwen3.5-9B",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.13495600142579245,
+      "zero_shot_bpb_gap_frac": 0.015323009931736159,
+      "size_ratio": 3.4907656509417455,
+      "cross_family": true,
+      "mmlu_pro_gap_pp": 1.5999999999999903,
+      "hellaswag_gap_pp": 6.323441545508867,
+      "gsm8k_gap_pp": 1.8195602729340399
+    },
+    {
+      "a": "gemma-4-12B",
+      "b": "gemma-4-31B",
+      "adapted_bpb_gap_frac": 0.04678735591385604,
+      "zero_shot_bpb_gap_frac": 0.15118657904946686,
+      "size_ratio": 2.6116395233162755,
+      "cross_family": false,
+      "mmlu_pro_gap_pp": 13.099999999999994,
+      "hellaswag_gap_pp": 3.6646086436964764,
+      "gsm8k_gap_pp": 20.545868081880215
+    }
+  ]
+}

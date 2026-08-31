@@ -9,30 +9,15 @@ permissions:
   contents: read
 
 jobs:
-  validate-publication:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Validate leaderboard JSON and Markdown
-        run: |
-          python lm_adapt_bench/leaderboard.py validate
-          python lm_adapt_bench/leaderboard.py render --check
-      - name: Validate dataset identity and paper evidence
-        run: |
-          python tools/analyze_static_benchmarks.py --check
-          python tools/regenerate_leaderboard.py --check
-          python lm_adapt_bench/dataset_manifest.py validate-manifest
-          python tools/verify_paper_numbers.py
-          python tools/check_markdown_links.py
-      - name: Validate citation metadata
-        run: |
-          python -m pip install pyyaml
-          python -c "import yaml; yaml.safe_load(open('CITATION.cff'))"
-
-  unit-tests:
+  # One job that runs exactly the gate CONTRIBUTING.md tells contributors to run.
+  #
+  # This used to enumerate a subset of the --check targets by hand, and the list went stale: by
+  # 2026-08-30 it was missing the adapted-benchmark, E2 confound, pairwise-significance and
+  # selection-divergence artifacts, so CI would go green on a pull request that left any of them
+  # inconsistent with the committed results. Invoking `make check` means the documented contributor
+  # command and the enforced gate cannot drift apart again -- adding a target to the Makefile is
+  # now sufficient to have CI enforce it.
+  gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -40,7 +25,13 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      - name: Install package and tests
+      - name: Install package and test extras
         run: python -m pip install -e '.[test]'
-      - name: Run CPU test suite
-        run: pytest -q
+      - name: Run the full gate (make check)
+        # PYTHON is overridden because the Makefile prefers a local virtualenv that does not
+        # exist here; without it the analysis steps would run on a bare interpreter with no deps.
+        run: make check PYTHON=python
+      - name: Validate citation metadata
+        run: |
+          python -m pip install pyyaml
+          python -c "import yaml; yaml.safe_load(open('CITATION.cff'))"

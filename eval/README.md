@@ -84,4 +84,10 @@ already scored.
 
 The committed static scores used by the paper are available in
 `results/combined_bpb_vs_static.json`; the corresponding paper figures are under
-`figures/`.
+`figures/`. The raw harness output behind every one of those numbers — aggregate `results_*.json`
+for all 11 models on all three benchmarks, plus per-example `samples_*.jsonl` (gzipped for
+HellaSwag, where each file is ~180MB uncompressed) — is committed under `results/gsm8k/`,
+`results/hellaswag/`, and `results/mmlu_pro_1k/` (MMLU-Pro per-example samples are included for
+the two largest models, gemma-4-31B and Qwen3.5-35B-MoE; the other 9 have the aggregate
+`results_*.json` only). `tools/verify_paper_numbers.py` recomputes all 33 committed accuracy cells
+directly from these files as part of its gate.

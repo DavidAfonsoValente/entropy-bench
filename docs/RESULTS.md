@@ -15,23 +15,53 @@ results/my-corpus/
 
 | Field | Meaning | Use |
 |---|---|---|
-| `zero_shot_bpb` | Predictive cross-entropy before adaptation, normalized by UTF-8 bytes | Diagnose initial fit to the corpus |
+| `zero_shot_bpb` | Predictive cross-entropy before adaptation, normalized by UTF-8 bytes | Initial fit — and a strong, free selection score in its own right; see below |
 | `adapted_bpb` / `best_bpb` | Held-out BPB after controlled adaptation | Primary model-selection score; lower is better |
 | `reduction_pct` | Relative BPB change from zero-shot to adapted | Diagnose how much corpus calibration was needed |
 
 Do not rank models by reduction percentage. A weak starting model can improve greatly and still end
-with worse adapted BPB than a strong model.
+with worse adapted BPB than a strong model. This is empirically justified, not just a caution:
+across all four corpora the reduction correlates with every benchmark at `|rho| < 0.5`, and with
+GSM8K on news at `-0.055`.
 
 The current primary board uses one fixed LoRA configuration for every model: rank 16, alpha 32,
-dropout 0.05, learning rate `1e-4`, effective batch 32, and 250 update steps. Injected
+dropout 0.05, learning rate `1e-4`, effective batch 32, and 250 update steps. That budget is equal
+by construction but it is 0.21 epochs of the news corpus, and the paper's own token-level diagnostic
+shows ~83% of the resulting gain lands on formatting and function words — so adapted BPB here is
+*fit after a stated budget*, not attainable fit. `docs/PLAN.md` (E5) specifies the
+adapt-to-convergence estimand that would replace it. Injected
 document-start marker targets are excluded from both the loss numerator and scored-token count.
 
 ## What the benchmark comparison shows
 
-Across the 11-model cohort, adapted BPB nearly reproduces the HellaSwag order: Pearson
-`r = -0.975`, Spearman rank agreement `rho = 0.982`, and 7 of 11 exact rank matches. MMLU-Pro and
-GSM8K are complementary rather than interchangeable with entropy: their rank agreements are
-`rho = 0.764` and `0.727`.
+**Read both tiers, not just the adapted one.** The complete picture is
+`results/alignment_matrix.json` — four adaptation corpora × {zero-shot, adapted} × three
+benchmarks, 24 alignments in total. Regenerate it with:
+
+```bash
+python tools/analyze_alignment_matrix.py
+```
+
+Across the 11-model cohort, adapted news BPB nearly reproduces the HellaSwag order (Pearson
+`r = -0.975`, Spearman `rho = 0.982`, 7 of 11 exact ranks) — which is expected, because HellaSwag
+scores continuations by length-normalized conditional log-likelihood, the same object BPB measures.
+Against the two generative benchmarks it does *worse* than the zero-shot ranking it replaced:
+
+| News BPB | GSM8K | MMLU-Pro | HellaSwag |
+|---|---:|---:|---:|
+| zero-shot | **0.836** | **0.855** | 0.718 |
+| adapted | 0.727 | 0.764 | **0.982** |
+
+Adaptation rotates the ranking toward continuation quality and away from generative task ability.
+The same pattern holds on Reddit and Hacker News. So the practical question is not "adapted or not"
+but "adapted **on what**": adapting on mathematical prose puts GSM8K agreement at `rho = 0.936`
+with 50 of 55 pairs ordered correctly, the best selector in the study.
+
+**Prefer selection regret to rank correlation when deciding.** `rho` over 11 models has very wide
+intervals. Regret — the accuracy you give up by taking the metric's top pick — is the number that
+maps onto the decision. Zero-shot news BPB picks the GSM8K and MMLU-Pro leader outright (0.0 pp
+regret); adapted news BPB picks the HellaSwag leader instead, at 2.3 and 4.2 pp regret on the other
+two.
 
 The disagreements are informative. Qwen models tend to move upward on MMLU-Pro and GSM8K, while the
 two Gemma models move downward, consistent with family-specific knowledge/math training and
@@ -42,8 +72,9 @@ GSM8K additionally depends on mathematical reasoning, prompting, generation, and
 
 Point-estimate leaders should not be over-sold. The 0.53 percentage-point GSM8K gap between
 Qwen-3.5-35B-MoE and Qwen-3.5-9B is small relative to test-set sampling uncertainty. The committed
-analysis reconstructs nearest integer counts from rounded accuracies and reports Wilson intervals;
-it does not capture prompt or run-to-run uncertainty. Reproduce it with:
+analysis derives exact correct/total counts from the raw per-model harness output under
+`results/{gsm8k,hellaswag,mmlu_pro_1k}/` and reports Wilson intervals from those; it does not
+capture prompt or run-to-run uncertainty. Reproduce it with:
 
 ```bash
 python tools/analyze_static_benchmarks.py --check

@@ -16,7 +16,12 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3.10-venv ninja
 # 2. Isolated venv (keeps the base image's torch untouched)
 python3 -m venv ~/vllm_env
 ~/vllm_env/bin/pip install --upgrade pip -q
-~/vllm_env/bin/pip install -q -r "$(dirname "$0")/requirements.txt"
+# Install the eval-critical packages first and on their own. A single unsatisfiable pin anywhere
+# in requirements.txt makes pip fail atomically and leaves the venv without vLLM at all, which
+# previously turned a plotting-only version conflict into "no benchmark can run".
+~/vllm_env/bin/pip install -q vllm==0.25.1 lm-eval==0.4.12 "transformers>=5.0" hf_transfer
+~/vllm_env/bin/pip install -q -r "$(dirname "$0")/requirements.txt" \
+  || echo "[warn] optional (figure-generation) deps failed to install; benchmarks are unaffected"
 
 # 3. torchaudio MUST match the torch version vLLM pulled in: transformers>=5
 #    hard-imports torchaudio (loss_rnnt/Parakeet), and a mismatched ABI aborts

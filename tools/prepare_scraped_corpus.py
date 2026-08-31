@@ -31,12 +31,9 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from lm_adapt_bench.contamination.text_normalize import normalize_text  # noqa: E402
+from lm_adapt_bench.contamination.text_normalize import normalize_text, gopher_ok  # noqa: E402
 
 TAG_RE = re.compile(r"<[^>]+>")
-STOPWORDS = {"the", "be", "to", "of", "and", "that", "have", "with", "this", "from",
-             "not", "are", "was", "for", "it", "as", "on", "in", "is", "you"}
-BULLETS = ("*", "-", "•", "‣", "·", "+")
 
 
 def clean_html(text: str) -> str:
@@ -44,32 +41,6 @@ def clean_html(text: str) -> str:
     text = text.replace("<p>", "\n\n")
     text = TAG_RE.sub("", text)
     return html.unescape(text)
-
-
-def gopher_ok(text: str, min_words: int, max_words: int) -> bool:
-    """Standard Gopher-style quality filters (Rae et al. 2021, Appendix A.1.1)."""
-    words = text.split()
-    n = len(words)
-    if n < min_words or n > max_words:
-        return False
-    mean_len = sum(len(w) for w in words) / n
-    if mean_len < 3 or mean_len > 10:
-        return False
-    # symbol-to-word ratio for '#' and ellipsis
-    if (text.count("#") + text.count("...") + text.count("…")) / n > 0.1:
-        return False
-    lines = [ln for ln in text.split("\n") if ln.strip()]
-    if lines:
-        if sum(ln.lstrip().startswith(BULLETS) for ln in lines) / len(lines) > 0.90:
-            return False
-        if sum(ln.rstrip().endswith(("...", "…")) for ln in lines) / len(lines) > 0.30:
-            return False
-    if sum(any(c.isalpha() for c in w) for w in words) / n < 0.80:
-        return False
-    lowered = {w.strip(".,!?;:\"'()").lower() for w in words}
-    if len(lowered & STOPWORDS) < 2:
-        return False
-    return True
 
 
 def iter_records(path: Path, chunk_bytes: int = 8 << 20):
