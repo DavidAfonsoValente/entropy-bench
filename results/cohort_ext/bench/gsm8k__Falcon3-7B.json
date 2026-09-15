@@ -1,0 +1,9 @@
+{
+  "benchmark": "gsm8k",
+  "label": "Falcon3-7B",
+  "metric": "exact_match,flexible-extract",
+  "n": 1319,
+  "provenance": "E9 re-score: all 17 models, one host (A100-SXM-64GB), one build, uniform decode protocol (eval/lm_eval_uniform.py)",
+  "score": 0.7589082638362395,
+  "source": "results/gsm8k/Falcon3-7B/tiiuae__Falcon3-7B-Base/results_2026-09-08T09-28-54.601825.json"
+}

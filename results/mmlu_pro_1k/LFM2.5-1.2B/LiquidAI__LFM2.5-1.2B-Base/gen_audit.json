@@ -1,0 +1,49 @@
+{
+  "argv": [
+    "--model",
+    "hf",
+    "--model_args",
+    "pretrained=LiquidAI/LFM2.5-1.2B-Base,dtype=bfloat16,trust_remote_code=True,max_length=8192",
+    "--tasks",
+    "mmlu_pro_1k",
+    "--num_fewshot",
+    "5",
+    "--batch_size",
+    "16",
+    "--seed",
+    "0,1234,1234,1234",
+    "--include_path",
+    "/leonardo_scratch/large/userexternal/dprazere/tasks",
+    "--log_samples",
+    "--output_path",
+    "/leonardo_scratch/large/userexternal/dprazere/e9/cells/LFM2.5-1.2B/mmlu_pro_1k"
+  ],
+  "as_loaded": {
+    "_from_model_config": true,
+    "bos_token_id": 1,
+    "eos_token_id": 7,
+    "pad_token_id": 0,
+    "transformers_version": "5.11.0"
+  },
+  "effective": {
+    "bos_token_id": 1,
+    "eos_token_id": 7,
+    "pad_token_id": 0,
+    "transformers_version": "5.11.0"
+  },
+  "generate_calls": 63,
+  "kept": {
+    "bos_token_id": 1,
+    "eos_token_id": 7,
+    "pad_token_id": 0
+  },
+  "max_length_lm_eval_will_use": 8192,
+  "max_new_tokens_observed": 2048,
+  "model_class": "Lfm2ForCausalLM",
+  "stripped": {},
+  "versions": {
+    "lm_eval": "0.4.12",
+    "torch": "2.4.1+cu118",
+    "transformers": "5.11.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "benchmark": "hellaswag",
+  "label": "SmolLM2-1.7B",
+  "metric": "acc_norm,none",
+  "n": 10042,
+  "provenance": "E9 re-score: all 17 models, one host (A100-SXM-64GB), one build, uniform decode protocol (eval/lm_eval_uniform.py)",
+  "score": 0.7301334395538738,
+  "source": "results/hellaswag/SmolLM2-1.7B/HuggingFaceTB__SmolLM2-1.7B/results_2026-09-08T09-07-45.923397.json"
+}

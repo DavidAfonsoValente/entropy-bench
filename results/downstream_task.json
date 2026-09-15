@@ -1,0 +1,47 @@
+{
+  "corpus": "google_news_from_2026-06-08_to_2026-06-08_cleaned.jsonl",
+  "counts": {
+    "dropped_exact_duplicate_of_test_doc": 0,
+    "dropped_not_article_shaped": 8274,
+    "dropped_shared_opening_with_test_doc": 4,
+    "n_eval": 500,
+    "n_train": 2000,
+    "n_val_docs": 11905,
+    "usable": 3627
+  },
+  "disjointness": {
+    "bpb_test_blocks_use_same_split": "lm_adapt_bench/contamination/config.py:6 check_contamination defaults to False, so DataModule._split_data is the path the published cells took",
+    "cloze_items_reproduce_from_test_split": true,
+    "eval_doc_in_test_split": false,
+    "method": "sha256 of whitespace-normalised lowercased text, plus a 400-character opening-paragraph hash to catch syndicated reprints",
+    "train_eval_overlap": 0
+  },
+  "eval_doc_hash_sample": [
+    "00eeba508585e4b49b490905b7ec56bd1cf87eb6af8d669cdf2d3c2fb87e082d",
+    "018680f08a148f584eb1d361c5836b30e0a3961ff7edbf8b3c4f256a250e483d",
+    "022a443f0a8d74c261fcdd8b68eea9039d49ac2003ae52dfbc8391e9391aff9a",
+    "0261f4376d3e2e16d08b7a965fa0c275a16b106d92e1013093f8e3b400ea705a",
+    "02a4044f4b0b499d0f588e658cb918c34151de1383feaeae536b33e8b997665e"
+  ],
+  "limits": {
+    "body_budget_chars": 3000,
+    "body_min_chars": 800,
+    "lede_chars": [
+      200,
+      700
+    ],
+    "min_paragraphs": 3
+  },
+  "n_corpus_docs": 119054,
+  "prompt_template": "News article\n{body}\n\nOne-paragraph summary lead\n",
+  "schema_version": 1,
+  "split": {
+    "note": "reproduces lm_adapt_bench.data.DataModule._split_data",
+    "seed": 42,
+    "source_split": "validation",
+    "test_split": 0.1,
+    "val_split": 0.1
+  },
+  "task": "lede generation: write the opening paragraph of a news article from its body",
+  "task_seed": 20260911
+}

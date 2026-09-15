@@ -1,0 +1,49 @@
+{
+  "argv": [
+    "--model",
+    "hf",
+    "--model_args",
+    "pretrained=Qwen/Qwen2.5-1.5B,dtype=bfloat16,trust_remote_code=True,max_length=4096",
+    "--tasks",
+    "gsm8k",
+    "--num_fewshot",
+    "5",
+    "--batch_size",
+    "16",
+    "--seed",
+    "0,1234,1234,1234",
+    "--log_samples",
+    "--output_path",
+    "/leonardo_scratch/large/userexternal/dprazere/e9/cells/Qwen2.5-1.5B/gsm8k"
+  ],
+  "as_loaded": {
+    "bos_token_id": 151643,
+    "do_sample": false,
+    "eos_token_id": 151643,
+    "max_new_tokens": 2048,
+    "transformers_version": "5.11.0"
+  },
+  "effective": {
+    "bos_token_id": 151643,
+    "eos_token_id": 151643,
+    "transformers_version": "5.11.0"
+  },
+  "generate_calls": 83,
+  "kept": {
+    "bos_token_id": 151643,
+    "eos_token_id": 151643,
+    "pad_token_id": null
+  },
+  "max_length_lm_eval_will_use": 4096,
+  "max_new_tokens_observed": 256,
+  "model_class": "Qwen2ForCausalLM",
+  "stripped": {
+    "do_sample": false,
+    "max_new_tokens": 2048
+  },
+  "versions": {
+    "lm_eval": "0.4.12",
+    "torch": "2.4.1+cu118",
+    "transformers": "5.11.0"
+  }
+}

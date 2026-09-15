@@ -1,0 +1,70 @@
+{
+  "argv": [
+    "--model",
+    "hf",
+    "--model_args",
+    "pretrained=google/gemma-4-12B,dtype=bfloat16,trust_remote_code=True,max_length=8192",
+    "--tasks",
+    "mmlu_pro_1k",
+    "--num_fewshot",
+    "5",
+    "--batch_size",
+    "16",
+    "--seed",
+    "0,1234,1234,1234",
+    "--include_path",
+    "/leonardo_scratch/large/userexternal/dprazere/tasks",
+    "--log_samples",
+    "--output_path",
+    "/leonardo_scratch/large/userexternal/dprazere/e9/cells/gemma-4-12B/mmlu_pro_1k"
+  ],
+  "as_loaded": {
+    "bos_token_id": 2,
+    "do_sample": true,
+    "eos_token_id": 1,
+    "pad_token_id": 0,
+    "suppress_tokens": [
+      258883,
+      258882
+    ],
+    "temperature": 1.0,
+    "top_k": 64,
+    "top_p": 0.95,
+    "transformers_version": "5.11.0"
+  },
+  "auto_model_class": "AutoModelForCausalLM",
+  "effective": {
+    "bos_token_id": 2,
+    "eos_token_id": 1,
+    "pad_token_id": 0,
+    "suppress_tokens": [
+      258883,
+      258882
+    ],
+    "transformers_version": "5.11.0"
+  },
+  "generate_calls": 63,
+  "kept": {
+    "bos_token_id": 2,
+    "eos_token_id": 1,
+    "pad_token_id": 0,
+    "suppress_tokens": [
+      258883,
+      258882
+    ]
+  },
+  "max_length_lm_eval_will_use": 8192,
+  "max_new_tokens_observed": 2048,
+  "model_class": "Gemma4UnifiedForConditionalGeneration",
+  "stripped": {
+    "do_sample": true,
+    "temperature": 1.0,
+    "top_k": 64,
+    "top_p": 0.95
+  },
+  "versions": {
+    "lm_eval": "0.4.12",
+    "torch": "2.4.1+cu118",
+    "transformers": "5.11.0"
+  }
+}

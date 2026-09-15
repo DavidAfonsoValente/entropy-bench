@@ -148,7 +148,7 @@
 \end{frame}
 
 % ==================================================================== 3
-\begin{frame}
+\begin{frame}[shrink]
   \frametitle{Why not just read the scorecard?}
   \framesubtitle{Two models, tied on language. Nine-fold apart on the exam.}
 
@@ -318,7 +318,7 @@
 
 % OPTIONAL IN THE 10-MINUTE PATH (adds 0:44)
 % ==================================================================== 6
-\begin{frame}
+\begin{frame}[shrink]
   \frametitle{Phase 1: why we trust the numbers}
   \framesubtitle{``Scout, then verify'' --- cheap detectors propose, an expensive test decides}
 
@@ -497,7 +497,7 @@
 \end{frame}
 
 % ==================================================================== 11
-\begin{frame}
+\begin{frame}[shrink]
   \frametitle{Different tasks reveal different strengths}
   \framesubtitle{\up{n}/\dn{n} $=$ ranks $n$ places higher/lower than \bpb{} puts it}
 
@@ -619,7 +619,7 @@
 \end{frame}
 
 % ==================================================================== 14
-\begin{frame}
+\begin{frame}[shrink]
   \frametitle{Domain-matched adaptation narrows the GSM8K gap}
   \framesubtitle{Same protocol, an independent math-domain corpus instead of news}
 
@@ -659,7 +659,7 @@
 \end{frame}
 
 % ==================================================================== 15
-\begin{frame}
+\begin{frame}[shrink]
   \frametitle{We tried to break it. The ranking held.}
   \framesubtitle{Adapted models scored directly on the benchmarks, every baseline re-measured on the same machine.}
 
@@ -700,8 +700,123 @@
   holds in 23 of 24 settings. Which corpus steers hardest is a bigger-cohort question.}}
 \end{frame}
 
+% ==================================================================== 15b
+\begin{frame}[shrink]
+  \frametitle{The hardest objection --- and the criterion we built to answer it}
+  \framesubtitle{``You validate an un-preparable metric against the very benchmarks you distrust.''}
+
+  \vspace{0.5em}
+  \small
+  \begin{columns}[t]
+  \begin{column}{0.40\textwidth}
+    \normalsize\textbf{So we stopped using them}\\[0.5em]
+    \small
+    \begin{itemize}\setlength\itemsep{0.4em}
+      \item A criterion from \emph{our own} held-out split: predict a hidden entity or number from
+      1{,}200 characters of context. 2{,}500 items, 11 models.
+      \item \keyw{Generate and string-match} --- never log-likelihood. A likelihood criterion would
+      agree with \bpb{} by construction and prove nothing.
+      \item Scored two ways, because base models ramble: answer \emph{anywhere} in a short window,
+      or as an exact prefix. Neither was pre-registered, so both ship.
+      \item \keyw{Then a second one} from the maths corpus, full 2$\times$2. Each corpus's ruler
+      wins on its own criterion (\goodw{0.982} vs 0.778 news, \goodw{0.926} vs 0.870 maths);
+      \goodw{none of 16 contrasts is negative} --- but every interaction interval contains zero.
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.56\textwidth}
+    \normalsize\textbf{Four corpora, each judged on its own criterion}\\
+    {\footnotesize Candidates within 2$\times$ in size --- 10 or 11 pairs each}\\[0.4em]
+    \centering\footnotesize
+    \begin{tabular}{lccccc}
+      \toprule
+      \textbf{Criterion} & \textbf{adapt} & zero-shot & GSM8K & MMLU & size \\
+      \midrule
+      News        & \goodw{0.909}$^\star$ & 0.545 & 0.182 & 0.182 & 0.636 \\
+      Reddit      & 1.000$^\dagger$        & 0.636 & 0.273 & 0.273 & 0.727 \\
+      Mathematics & 0.900                  & 0.900 & 0.700 & 0.700 & 0.800 \\
+      Hacker News & 0.900                  & 0.800 & 0.500 & 0.600 & 1.000$^\dagger$ \\
+      \bottomrule
+    \end{tabular}
+    \vspace{0.4em}
+    \raggedright\scriptsize
+    $^\star$\,\goodw{the ONE interval in all 56 cells that excludes chance.}
+    $^\dagger$\,a perfect score collapses the bootstrap to $[1,1]$ --- not evidence, excluded.\\[0.25em]
+    \goodw{No benchmark clears chance on any of the four}, under either rule --- nor the zero-shot reading,
+    nor model size. At 10 pairs almost nothing is resolvable, so this is \keyw{a failure to reject},
+    not proof the suites are useless.\\[0.25em]
+    \keyw{So we enlarged the cohort} --- next slide.
+  \end{column}
+  \end{columns}
+
+  \vspace{0.3em}
+  \punch{\footnotesize\textbf{Four corpora, criteria no vendor could have prepared for --- and at
+  eleven models the one thing that separates from chance where the decision is hard is ours.}}
+\end{frame}
+
+% ==================================================================== 15c  (E9: forty pairs)
+\begin{frame}[shrink]
+  \frametitle{We said eleven models was too few to resolve this. So we tested that}
+  \framesubtitle{Nine more base models, preregistered before a single cell ran. In-band pairs
+  11 $\rightarrow$ 40.}
+
+  \vspace{0.4em}
+  \centering\footnotesize
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Selector, 40 in-band pairs} & \textbf{anywhere-in-window} & \textbf{exact prefix} \\
+    \midrule
+    \goodw{Adapted \bpb{} (ours)}  & \goodw{0.900}\,$[0.733,1.000]$ & \goodw{0.850}\,$[0.591,1.000]$ \\
+    HellaSwag                      & 0.825\,$[0.593,0.984]$         & 0.825\,$[0.545,0.980]$ \\
+    Zero-shot \bpb{} (zero-shot reading)   & 0.750\,$[0.417,1.000]$         & 0.850\,$[0.595,1.000]$ \\
+    Parameter count                & 0.650\,$[0.379,0.841]$         & 0.750\,$[0.517,0.932]$ \\
+    MMLU-Pro                       & 0.400\,$[0.143,0.688]$         & 0.450\,$[0.172,0.744]$ \\
+    GSM8K                          & 0.359\,$[0.100,0.657]$         & 0.410\,$[0.143,0.718]$ \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.45em}
+  \raggedright\scriptsize
+  \goodw{We rank first under both rules}, and our margin over counting parameters is the only one
+  excluding zero: \goodw{$+0.250$, $[0.074,\,0.500]$}. Seed replication (17 models $\times$ 3 seeds)
+  moves that interval by $0.001$ --- not a lucky draw.\\[0.2em]
+  \warmw{The half that cuts against us, which we preregistered ourselves to report:} HellaSwag
+  \warmw{clears chance under both rules} where at 11 models nothing did, and our margin over the
+  best benchmark \warmw{does not exclude zero} ($+0.075$, $[0.000,\,0.286]$).
+
+  \punch{\scriptsize\textbf{The idea: \emph{stop asking how a new model scores on someone else's
+  exam, and measure how well it predicts your own text.} Bits per byte makes that comparable across
+  tokenizers; a fixed short adaptation is how you read it. Every alternative here fails at least one
+  of the three things that makes the idea work --- it must be impossible to prepare for, it must
+  hold under both of our scoring rules, and it must reproduce.}}
+\end{frame}
+
+% ==================================================================== 15d  (the honest boundary)
+\begin{frame}[shrink]
+  \frametitle{What we will not claim}
+  \framesubtitle{Written down before you ask, because the intervals are in the paper either way}
+
+  \vspace{0.6em}
+  \small
+  \begin{itemize}\setlength\itemsep{0.55em}
+    \item \warmw{``Adapting beats not adapting.''} The paired contrast spans zero under both rules
+      --- $+0.150$ $[-0.087,\,0.476]$ lenient, $+0.000$ $[-0.278,\,0.257]$ strict. Under strict the
+      two readings are \emph{the same number} ($0.850$). Computed after the fact and reported as
+      exploratory.
+    \item \warmw{``\bpb{} beats benchmarks.''} $+0.075$ $[0.000,\,0.286]$. Does not exclude zero.
+    \item \warmw{``Benchmarks are uninformative.''} HellaSwag clears chance under both rules.
+    \item \warmw{``Beats size.''} Lenient only; under strict, size clears chance too.
+  \end{itemize}
+
+  \vspace{0.5em}
+  \punch{\scriptsize\textbf{None of this touches the idea. Measuring a model against your own fresh
+  text is right whether you adapt first or not --- what we cannot yet tell you is which of the two
+  readings is sharper, and we say so rather than picking the flattering one. The criterion is
+  generated by \emph{released} weights, so nothing here forecasts a model after \emph{your}
+  fine-tune.}}
+\end{frame}
+
 % ==================================================================== 16
-\begin{frame}
+\begin{frame}[shrink]
   \frametitle{A simple decision rule}
 
   \vspace{0.9em}
@@ -724,18 +839,24 @@
     \small
     \begin{itemize}\setlength\itemsep{0.4em}
       \item Collect \emph{recent} target-domain text --- freshness beats any contamination detector.
-      \item \goodw{Free tier:} rank by zero-shot \bpb{}. One forward pass; picked the
-      GSM8K/MMLU leader on 3 of our 4 corpora.
-      \item \warmw{Paid tier:} adapt every candidate under one budget, rank by adapted \bpb{} ---
-      when you will actually fine-tune, or when a specific capability decides it.
-      \item Match the corpus to the capability. Test near-ties on the target domain.
+      \item \warmw{More than $\sim2\times$ apart in size?} Take the bigger model and stop. Over a
+      70$\times$ range size selects as well as we do, and under the prefix rule it beats us.
+      \item \goodw{Otherwise:} adapt each finalist on that text under one budget and rank by
+      adapted \bpb{}. Minutes on one GPU --- 4 at 1B, 12 at 8B, 25 at 12B.
+      \item Match the corpus to the capability that decides it.
+      \item \keyw{The zero-shot number is a screen, not the selector} --- and the reason is
+      mechanical, not statistical. It reads a \emph{convention mismatch} as incapacity.
+      \goodw{LFM2.5-1.2B is last of eleven zero-shot} (1.34 bits/byte, behind a 0.5B model at
+      0.93) and \goodw{ahead of that model once adapted} (0.85 vs 0.90) --- and on our in-domain
+      criterion it really is ahead. The three models zero-shot under-rates most are exactly the
+      three with the largest adaptation gains. We used to recommend the free number.
     \end{itemize}
   \end{column}
   \end{columns}
 
   \vspace{0.05em}
-  \punch{\footnotesize\textbf{Bottom line:} one fair ruler, two cost tiers, and a corpus you
-  choose deliberately --- because the corpus decides which capability the ranking tracks.}
+  \punch{\footnotesize\textbf{Bottom line:} one fair ruler, a screen and a selector, and a corpus
+  you choose deliberately --- because the corpus decides which capability the ranking tracks.}
 \end{frame}
 
 % ==================================================================== 17
@@ -754,7 +875,7 @@
 }
 
 % ==================================================================== 18
-\begin{frame}
+\begin{frame}[shrink]
   \frametitle{Backup: why this and not the alternatives}
   \framesubtitle{Including where each alternative is the better instrument}
 
@@ -767,8 +888,13 @@
     \textbf{Option} & \textbf{Cost each} & \textbf{What it does and does not tell you} \\
     \midrule
     Read their scorecard & free &
-    Right first look. Cannot separate \keyw{stronger} from \keyw{more specialised}, and cannot be
-    audited. \\
+    \warmw{Three things go wrong at once.} It \warmw{does not predict what you need} --- among
+    candidates within 2$\times$, GSM8K picks the better model \warmw{0.359} of the time and
+    MMLU-Pro \warmw{0.400}, worse than a coin flip, neither clearing chance under either rule.
+    You \warmw{cannot tell what the score means} --- public exam, undisclosed mixture, so
+    \keyw{stronger} and \keyw{saw more of it} look identical. And the number \warmw{is not stable}
+    --- identical weights move 0.7 GSM8K points when only the inference build changes.
+    (HellaSwag does clear chance, 0.825, and we say so.) \\
     Run the suite yourself & GPU-hours &
     Removes host/harness drift (worth up to 0.7 pts here). Measures the same thing. \\
     Arena / preference & indirect &
@@ -778,6 +904,11 @@
     Label 500 in-house items & human hours &
     \keyw{The sharpest objection.} But it answers a task you must name in advance, and $\pm$4.4 pts
     at $n{=}500$ is wider than most gaps here. \\
+    Build an in-domain cloze set & $\sim$1 GPU-h &
+    The unlabelled form of the row above --- and the instrument we built to check ourselves.
+    \goodw{If you can build one, do:} it measures in-domain ability instead of predicting it. We
+    used it as the \emph{criterion}, so we cannot compare it against ourselves without circularity.
+    \\
     Fine-tune \& test the task & highest &
     \goodw{Strictly better evidence when the task is known.} Needs labels a new domain lacks. \\
     \midrule
@@ -789,7 +920,8 @@
 
   \vspace{0.6em}
   \punch{\footnotesize We are not the best answer to every version of the question. We are the right
-  one when the task is not yet a labelled benchmark and the candidates are close in size.}
+  one when the task is not yet a labelled benchmark and the candidates are close in size --- which
+  is where the scorecard, measured honestly, stops carrying signal.}
 \end{frame}
 
 \begin{frame}
@@ -827,7 +959,7 @@
 \end{frame}
 
 % ==================================================================== 19
-\begin{frame}
+\begin{frame}[shrink]
   \frametitle{Backup: full benchmark scores}
   \framesubtitle{The ranks and displacements on slide 11 are derived from this table}
 

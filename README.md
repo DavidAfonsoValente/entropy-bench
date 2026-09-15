@@ -12,13 +12,48 @@ after the same controlled adaptation procedure.
 The headline finding is that those two measurements answer different questions. Adaptation does not
 move the ranking uniformly closer to "better model" — it **rotates** the ranking toward whatever the
 adaptation corpus exercises. So the corpus you adapt on is the question you are asking, and the
-free, zero-shot ranking is a serious baseline rather than an intermediate step.
+free, zero-shot ranking is worth reporting rather than an intermediate step — though **not the
+number to select on**: it reads a model's distance from your corpus's writing conventions as
+incapacity, and under-rates exactly the candidates adaptation helps most. See the rule below.
 
 **[Read the paper](paper_sota.pdf) · [Start in five minutes](docs/QUICKSTART.md) · [View the
 leaderboard](LEADERBOARD.md) · [Understand a result](docs/RESULTS.md) · [Check the
 dataset](docs/DATASET.md)**
 
 ## Why not just read the benchmark scores?
+
+**The short version: where the decision is hard, they carry no signal we could resolve.**
+
+We built an outcome measure that is *not* a benchmark — fill-in-the-blank items drawn from our own
+held-out split, scored by making the model generate the answer — and asked which selector predicts
+it among candidates **within 2× in size**, the only case where anyone needs a tool at all:
+
+| Deciding by | accuracy | interval excludes chance? |
+|---|---:|---|
+| **One short adaptation run, then rank by BPB** | **0.909** | **yes** |
+| HellaSwag | 0.818 | no |
+| Pick the bigger model | 0.636 | no |
+| GSM8K | 0.182 | no |
+| MMLU-Pro | 0.182 | no |
+
+We repeated this on **all four** of our corpora — news, Reddit, arXiv mathematics, Hacker News —
+each judged against a criterion built from its own held-out split. Across 4 corpora × 2 scoring
+conventions × 7 selectors, **exactly one interval excludes chance, and it is the one above.**
+**No public benchmark clears chance on any corpus under either convention** — and neither does the
+free zero-shot number, nor parameter count. (`results/cloze_coverage.json`.)
+
+**Read that as a failure to reject, not a demolition.** With 10–11 in-band pairs a selector has to
+be near-perfect to separate from a coin flip, so this says the suites do not *resolve* this
+decision — not that they are uninformative. It is still the scorecard failing at the job people use
+it for.
+
+**And what we do not claim:** that we beat picking the bigger model (across eight contrasts we lead
+on five and trail on three, none separating from zero), or that our lead over the benchmarks is
+measurable (it isn't, at 11 models). If your candidates differ by more than ~2× in size, use size
+and skip this entirely. One more thing a reviewer should know up front: the cloze items come from
+the same held-out documents on which BPB is measured, which the benchmarks have no counterpart to.
+
+---
 
 Because one score cannot separate *this model is stronger* from *this model was trained on more of
 this*. Two models in our own cohort make the point without any statistics:
@@ -108,15 +143,24 @@ the interesting behaviour lives:
   parameters, size is a coin flip at `0.545` while math-adapted BPB reaches `0.818`. These bands
   hold 7–20 pairs and are reported as descriptive.
 
-The practical rule is therefore three steps, and the first one is free:
+The practical rule is therefore three steps:
 
 0. **If the candidates differ by more than about 2x in size, take the bigger one and stop.** The
-   measurement will not tell you anything size has not already.
-1. **Free tier** — rank by zero-shot BPB on recent target-domain text. One forward pass; it picked
-   the generative-benchmark leader on three of our four corpora.
-2. **Paid tier** — adapt every candidate under one budget and rank by adapted BPB when you will
-   actually fine-tune on domain text, or when one specific capability decides the choice. Then
-   match the adaptation corpus to that capability, not just to the genre.
+   measurement will not tell you anything size has not already, and under one of two defensible
+   scoring conventions on our own in-domain criterion, size beats us outright.
+1. **Otherwise, adapt each finalist under one budget on recent target-domain text and rank by
+   adapted BPB.** Minutes on one GPU — 3.7 at 0.5B, 11.6 at 7.7B, 24.7 at 12B. Match the
+   adaptation corpus to the capability that decides the choice, not just to the genre.
+2. **Read the zero-shot number as a free screen, not as the selector.** One forward pass, and it
+   will show you a candidate badly off-distribution for your text.
+
+**This changed on 2026-09-01, and step 1 used to be the zero-shot ranking.** The zero-shot tier
+agrees well with the public benchmarks, which is what that recommendation rested on. Measured
+against an in-domain criterion that is *not* a benchmark
+([`sec:cloze`](paper_sota.pdf), `results/cloze_validity.json`) it reaches chance (0.545) among
+candidates within 2x in size — the regime where the decision is actually hard — while the adapted
+tier reaches 0.909 there and is the only one of seven selectors whose interval clears chance. We
+recommended the free tier as a selector and the independent test did not support it.
 
 ## Pick your path
 
@@ -175,8 +219,9 @@ entropy-bench \
   --no-pdf
 ```
 
-Remove `--baseline-only` for LoRA adaptation. **Read the zero-shot number too** — on our cohort it
-is a strong selector on its own, and it costs one forward pass. For a leaderboard-comparable run,
+Remove `--baseline-only` for LoRA adaptation. **Read the zero-shot number too** — it costs one
+forward pass and it screens for a candidate badly off-distribution for your text. Select on the
+adapted number: see the three-step rule above for why the tiers are not interchangeable. For a leaderboard-comparable run,
 use the fixed configuration in the benchmark manifest; optional hyperparameter search is exploratory
 and creates a different protocol, for the reason documented in
 [`results/legacy_sweep/README.md`](results/legacy_sweep/README.md). Remove `--no-pdf` when
@@ -291,17 +336,20 @@ diagnostic; a large reduction is not automatically a better final model.
 ## Project layout
 
 ```text
-lm_adapt_bench/       evaluation, adaptation, reporting, and verification code
-docs/                 quickstart, dataset policy, and result interpretation
-eval/                 MMLU-Pro, HellaSwag, and GSM8K harness
+lm_adapt_bench/       the pipeline: config, data, contamination audit, sweep, adapt, evaluate, report
+tools/                analysis, figure generators, and the reproducibility gates
+docs/                 MAP.md (every file, generated) - STATUS.md (where things stand) - the ledger, plan and positioning
+eval/                 standalone MMLU-Pro, HellaSwag and GSM8K harness
+results/              committed artifacts and raw result cells; see docs/MAP.md
+figures/              paper and slide figures, each produced by a tools/plot_*.py
 benchmarks/           versioned benchmark contracts
 data/manifests/       source-free record fingerprint indexes
-results/              canonical machine-readable public results
-reports/              complete primary-run artifacts
-tools/                paper analyses and reproducibility checks
-slurm/                HPC launch templates
-paper_sota.tex        manuscript source
+reports/              rendered report of the superseded 11-model sweep
+slurm/                Leonardo batch scripts - never run on the login node
+slides/               team-talk deck and speaker script
+paper_sota.tex        manuscript source; `make` builds paper_sota.pdf
 LEADERBOARD.md        rendered public leaderboard
+Makefile              every command this repo supports - start here
 ```
 
 ## Citation

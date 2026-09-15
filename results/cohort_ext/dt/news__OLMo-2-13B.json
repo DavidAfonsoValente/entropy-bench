@@ -1,0 +1,26 @@
+{
+  "model_id": "allenai/OLMo-2-1124-13B",
+  "dataset": "/home/dprazere/dt/corpora/google_news_from_2026-06-08_to_2026-06-08_cleaned.jsonl",
+  "corpus": "google_news_from_2026-06-08_to_2026-06-08_cleaned",
+  "avg_bytes_per_token": 4.876131383301166,
+  "n_train_blocks": 38408,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.7370934470692998,
+  "trainable_params": 62586880,
+  "total_params": 13778785280,
+  "trainable_pct": 0.4542263975246445,
+  "adapted_bpb": 0.6910986126595439,
+  "reduction_pct": 6.240027583019824,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1650.07190990448,
+  "label": "OLMo-2-13B"
+}

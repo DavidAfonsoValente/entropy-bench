@@ -61,6 +61,8 @@ def parse_args():
                         "for any run whose adapters you may want to evaluate downstream "
                         "(see docs/PLAN.md, experiment E2).")
     p.add_argument("--device", default="cuda", help="cuda, or cpu for smoke tests")
+    p.add_argument("--seed", type=int, default=None,
+                   help="Seed torch/numpy/random before adapter init and training. The\n                        published cells ran with this UNSET: DataConfig.seed fixes the\n                        splits, but LoRA A/B init and dropout drew from the unseeded\n                        global torch RNG. Pass an int to make a cell reproducible and to\n                        run seed replicates (experiment E8); leave unset to reproduce the\n                        published protocol exactly.")
     return p.parse_args()
 
 
@@ -110,6 +112,14 @@ def main():
     from lm_adapt_bench.data import DataModule
     from lm_adapt_bench.evaluate import compute_bpb
 
+    # Seed before anything stochastic runs, so the recorded seed is always the one applied.
+    # This covers LoRA A/B initialisation, dropout and DataLoader batch order; the split and
+    # the max_samples subsample are seeded separately and independently by DataConfig.seed.
+    if a.seed is not None:
+        from lm_adapt_bench.utils import set_seed
+        set_seed(a.seed)
+        print(f"[info] seeded torch/numpy/random with {a.seed}", flush=True)
+
     t0 = time.time()
     tok = AutoTokenizer.from_pretrained(a.model_id, trust_remote_code=True)
 
@@ -145,6 +155,7 @@ def main():
         "max_seq_len": a.max_seq_len,
         "mask_injected_special_tokens": True,
         "zero_shot_bpb": zs,
+        "seed": a.seed,
     }
 
     if not a.zero_shot_only:

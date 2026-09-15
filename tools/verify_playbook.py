@@ -1,3 +1,10 @@
+"""Offline smoke test of the full pipeline against mocked models.
+
+Runs config -> data -> sweep -> adapt -> evaluate -> report end to end with the model and trainer
+replaced by mocks, writing to ./results_verify, so the wiring is exercised on CPU in seconds
+without downloading a checkpoint. Catches the class of breakage that unit tests miss because they
+never run the stages together. Run by `make check`.
+"""
 import sys
 import os
 import shutil

@@ -15,7 +15,7 @@ import sys
 
 SRC = "slides/script.tex"
 # Detail/bonus slides the team explicitly said could go ("good to skip details"). Cut these first.
-OPTIONAL = {6, 7, 10, 15}
+OPTIONAL = {6, 7, 10, 14, 15}
 
 
 def blocks(path):

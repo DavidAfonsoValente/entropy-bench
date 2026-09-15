@@ -1,0 +1,144 @@
+{
+  "_comment": "Reproduction target for E9, extracted from the July harness logs under results/{gsm8k,hellaswag,mmlu_pro_1k}/. The Leonardo re-score must match task version and task_hash exactly -- those pin the task DEFINITION, which is the thing that can silently change and score something else. Host, driver and tensor_parallel_size are NOT part of the target: the July column itself used several TP values across models.",
+  "source": "results/{bench}/**/results_*.json",
+  "benchmarks": {
+    "gsm8k": {
+      "n_published_logs": 11,
+      "lm_eval_version": "0.4.12",
+      "transformers_version": "5.14.1",
+      "task_versions": {
+        "gsm8k": 3.0
+      },
+      "task_hashes": {
+        "gsm8k": "2330f4ebfcccaf66a892922df2819cdb1f118e448d076d3f42bdde4177678ac7"
+      },
+      "n_shot": {
+        "gsm8k": 5
+      },
+      "max_length": 4096,
+      "chat_template_sha": null,
+      "fewshot_as_multiturn": null,
+      "batch_size": 1,
+      "seeds": {
+        "random_seed": 0,
+        "numpy_seed": 1234,
+        "torch_seed": 1234,
+        "fewshot_seed": 1234
+      },
+      "gen_kwargs": {},
+      "limit": null,
+      "bootstrap_iters": 100000,
+      "model_args_fixed": {
+        "dtype": "bfloat16",
+        "max_model_len": 4096,
+        "gpu_memory_utilization": 0.9,
+        "trust_remote_code": true
+      },
+      "tensor_parallel_sizes_used_in_july": [
+        1,
+        2
+      ]
+    },
+    "hellaswag": {
+      "n_published_logs": 11,
+      "lm_eval_version": "0.4.12",
+      "transformers_version": "5.14.1",
+      "task_versions": {
+        "hellaswag": 1.0
+      },
+      "task_hashes": {
+        "hellaswag": "d4bcb44ec68db2b8a65f050c3c64c48454179b48fd8aee3e73b55e2ec51e6d82"
+      },
+      "n_shot": {
+        "hellaswag": 10
+      },
+      "max_length": 4096,
+      "chat_template_sha": null,
+      "fewshot_as_multiturn": null,
+      "batch_size": 1,
+      "seeds": {
+        "random_seed": 0,
+        "numpy_seed": 1234,
+        "torch_seed": 1234,
+        "fewshot_seed": 1234
+      },
+      "gen_kwargs": {},
+      "limit": null,
+      "bootstrap_iters": 100000,
+      "model_args_fixed": {
+        "dtype": "bfloat16",
+        "max_model_len": 4096,
+        "gpu_memory_utilization": 0.9,
+        "trust_remote_code": true
+      },
+      "tensor_parallel_sizes_used_in_july": [
+        1,
+        2,
+        null
+      ]
+    },
+    "mmlu_pro_1k": {
+      "n_published_logs": 11,
+      "lm_eval_version": "0.4.12",
+      "transformers_version": "5.14.1",
+      "task_versions": {
+        "mmlu_pro_1k": "2.0",
+        "mmlu_pro_1k_biology": 3.1,
+        "mmlu_pro_1k_business": 3.1,
+        "mmlu_pro_1k_chemistry": 3.1,
+        "mmlu_pro_1k_computer_science": 3.1,
+        "mmlu_pro_1k_economics": 3.1,
+        "mmlu_pro_1k_engineering": 3.1,
+        "mmlu_pro_1k_health": 3.1,
+        "mmlu_pro_1k_history": 3.1,
+        "mmlu_pro_1k_law": 3.1,
+        "mmlu_pro_1k_math": 3.1,
+        "mmlu_pro_1k_other": 3.1,
+        "mmlu_pro_1k_philosophy": 3.1,
+        "mmlu_pro_1k_physics": 3.1,
+        "mmlu_pro_1k_psychology": 3.1
+      },
+      "task_hashes": {},
+      "n_shot": {
+        "mmlu_pro_1k": 5,
+        "mmlu_pro_1k_biology": 5,
+        "mmlu_pro_1k_business": 5,
+        "mmlu_pro_1k_chemistry": 5,
+        "mmlu_pro_1k_computer_science": 5,
+        "mmlu_pro_1k_economics": 5,
+        "mmlu_pro_1k_engineering": 5,
+        "mmlu_pro_1k_health": 5,
+        "mmlu_pro_1k_history": 5,
+        "mmlu_pro_1k_law": 5,
+        "mmlu_pro_1k_math": 5,
+        "mmlu_pro_1k_other": 5,
+        "mmlu_pro_1k_philosophy": 5,
+        "mmlu_pro_1k_physics": 5,
+        "mmlu_pro_1k_psychology": 5
+      },
+      "max_length": 8192,
+      "chat_template_sha": null,
+      "fewshot_as_multiturn": null,
+      "batch_size": 1,
+      "seeds": {
+        "random_seed": 0,
+        "numpy_seed": 1234,
+        "torch_seed": 1234,
+        "fewshot_seed": 1234
+      },
+      "gen_kwargs": {},
+      "limit": null,
+      "bootstrap_iters": 100000,
+      "model_args_fixed": {
+        "dtype": "bfloat16",
+        "max_model_len": 8192,
+        "gpu_memory_utilization": 0.9,
+        "trust_remote_code": true
+      },
+      "tensor_parallel_sizes_used_in_july": [
+        2,
+        null
+      ]
+    }
+  }
+}

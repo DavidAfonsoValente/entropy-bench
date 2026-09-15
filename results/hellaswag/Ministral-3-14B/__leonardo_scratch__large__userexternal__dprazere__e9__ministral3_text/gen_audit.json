@@ -1,0 +1,49 @@
+{
+  "argv": [
+    "--model",
+    "hf",
+    "--model_args",
+    "pretrained=/leonardo_scratch/large/userexternal/dprazere/e9/ministral3_text,dtype=bfloat16,trust_remote_code=True,max_length=4096",
+    "--tasks",
+    "hellaswag",
+    "--num_fewshot",
+    "10",
+    "--batch_size",
+    "16",
+    "--seed",
+    "0,1234,1234,1234",
+    "--log_samples",
+    "--output_path",
+    "/leonardo_scratch/large/userexternal/dprazere/e9/cells/Ministral-3-14B/hellaswag"
+  ],
+  "as_loaded": {
+    "_from_model_config": true,
+    "bos_token_id": 1,
+    "eos_token_id": 2,
+    "pad_token_id": 11,
+    "transformers_version": "5.11.0",
+    "use_cache": true
+  },
+  "auto_model_class": "AutoModelForCausalLM",
+  "effective": {
+    "bos_token_id": 1,
+    "eos_token_id": 2,
+    "pad_token_id": 11,
+    "transformers_version": "5.11.0"
+  },
+  "kept": {
+    "bos_token_id": 1,
+    "eos_token_id": 2,
+    "pad_token_id": 11
+  },
+  "max_length_lm_eval_will_use": 4096,
+  "model_class": "Ministral3ForCausalLM",
+  "stripped": {
+    "use_cache": true
+  },
+  "versions": {
+    "lm_eval": "0.4.12",
+    "torch": "2.4.1+cu118",
+    "transformers": "5.11.0"
+  }
+}

@@ -71,6 +71,22 @@ def main():
                          "runs never overwrite the published base-model results")
     args = ap.parse_args()
 
+    # Cohort-extension models (docs/RUN_LEDGER.md, "E3 -- cohort extension") are registered here
+    # at run time rather than added to MODELS, deliberately. MODELS is the published eleven-model
+    # cohort that every gated artifact is built from; growing it would change what `--models all`
+    # means and what the eleven-model tests see. EXT_MODEL_PATHS maps label -> local snapshot
+    # directory, is validated the same way --model-paths is, and cannot silently shadow a member
+    # of the published cohort.
+    ext = os.environ.get("EXT_MODEL_PATHS")
+    if ext:
+        for label, path in json.loads(ext).items():
+            if label in MODELS:
+                raise SystemExit(
+                    "EXT_MODEL_PATHS may not shadow a published cohort member: %s" % label)
+            if not os.path.isdir(path):
+                raise SystemExit("EXT_MODEL_PATHS: %s -> %s is not a directory" % (label, path))
+            MODELS[label] = (path, "")
+
     overrides = {}
     if args.model_paths:
         overrides = json.load(open(args.model_paths))

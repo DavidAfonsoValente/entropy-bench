@@ -1,0 +1,537 @@
+{
+  "schema_version": 2,
+  "question": "Does adapting on a corpus make BPB a better selector for THAT corpus's in-domain criterion? Asked with no public benchmark anywhere in it.",
+  "method": "pairwise selection accuracy; cluster bootstrap over models, 20000 draws, seed 20260831; pairs are NOT resampled; one shared resample stream across all four cells so the interaction is read directly. Interval covers which models are in the cohort only.",
+  "n_models": 11,
+  "models": [
+    "LFM2.5-1.2B",
+    "Llama-3.2-1B",
+    "Ministral-3-14B",
+    "Qwen2.5-0.5B",
+    "Qwen2.5-1.5B",
+    "Qwen2.5-7B",
+    "Qwen3.5-35B-MoE",
+    "Qwen3.5-4B",
+    "Qwen3.5-9B",
+    "gemma-4-12B",
+    "gemma-4-31B"
+  ],
+  "models_missing_a_criterion": [],
+  "primary_band": 2.0,
+  "lenient": {
+    "all_pairs": {
+      "cells": {
+        "news_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.9814814814814815,
+          "n_pairs": 54
+        },
+        "news_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.8703703703703703,
+          "n_pairs": 54
+        },
+        "math_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.7777777777777778,
+          "n_pairs": 54
+        },
+        "math_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.9259259259259259,
+          "n_pairs": 54
+        }
+      },
+      "difference_in_differences": {
+        "observed": 0.2592592592592593,
+        "ci_lo": 0.0,
+        "ci_hi": 0.6,
+        "inference_available": true,
+        "ci_excludes_zero": false,
+        "supports_positive_effect": false,
+        "supports_negative_effect": false,
+        "ci_contains_zero": true,
+        "frac_draws_positive": 0.9585,
+        "n_draws": 20000
+      },
+      "arms": {
+        "news_arm": {
+          "observed": 0.20370370370370372,
+          "ci_lo": 0.04081632653061229,
+          "ci_hi": 0.4285714285714286,
+          "inference_available": true,
+          "ci_excludes_zero": true,
+          "supports_positive_effect": true,
+          "supports_negative_effect": false,
+          "ci_contains_zero": false,
+          "frac_draws_positive": 0.99045,
+          "n_draws": 20000
+        },
+        "math_arm": {
+          "observed": 0.05555555555555558,
+          "ci_lo": -0.16326530612244894,
+          "ci_hi": 0.25,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.69265,
+          "n_draws": 20000
+        }
+      },
+      "both_arms_positive_point_estimate": true,
+      "both_arms_resolved": false,
+      "degenerate_draw_frac": 0.0,
+      "inference_available": true
+    },
+    "within_3x": {
+      "cells": {
+        "news_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 1.0,
+          "n_pairs": 19
+        },
+        "news_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.631578947368421,
+          "n_pairs": 19
+        },
+        "math_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.47368421052631576,
+          "n_pairs": 19
+        },
+        "math_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.8421052631578947,
+          "n_pairs": 19
+        }
+      },
+      "difference_in_differences": {
+        "observed": 0.736842105263158,
+        "ci_lo": 0.0,
+        "ci_hi": 1.5555555555555556,
+        "inference_available": true,
+        "ci_excludes_zero": false,
+        "supports_positive_effect": false,
+        "supports_negative_effect": false,
+        "ci_contains_zero": true,
+        "frac_draws_positive": 0.956143421513227,
+        "n_draws": 19997
+      },
+      "arms": {
+        "news_arm": {
+          "observed": 0.5263157894736843,
+          "ci_lo": 0.11111111111111116,
+          "ci_hi": 0.8421052631578947,
+          "inference_available": true,
+          "ci_excludes_zero": true,
+          "supports_positive_effect": true,
+          "supports_negative_effect": false,
+          "ci_contains_zero": false,
+          "frac_draws_positive": 0.9873981097164575,
+          "n_draws": 19997
+        },
+        "math_arm": {
+          "observed": 0.21052631578947367,
+          "ci_lo": -0.33333333333333337,
+          "ci_hi": 0.7692307692307692,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.7653648047207081,
+          "n_draws": 19997
+        }
+      },
+      "both_arms_positive_point_estimate": true,
+      "both_arms_resolved": false,
+      "degenerate_draw_frac": 0.00015,
+      "inference_available": true,
+      "n_pairs": 20,
+      "is_primary": false
+    },
+    "within_2x": {
+      "cells": {
+        "news_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 1.0,
+          "n_pairs": 10
+        },
+        "news_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.5,
+          "n_pairs": 10
+        },
+        "math_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.4,
+          "n_pairs": 10
+        },
+        "math_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.9,
+          "n_pairs": 10
+        }
+      },
+      "difference_in_differences": {
+        "observed": 1.0,
+        "ci_lo": 0.0,
+        "ci_hi": 2.0,
+        "inference_available": true,
+        "ci_excludes_zero": false,
+        "supports_positive_effect": false,
+        "supports_negative_effect": false,
+        "ci_contains_zero": true,
+        "frac_draws_positive": 0.902489210077286,
+        "n_draws": 19926
+      },
+      "arms": {
+        "news_arm": {
+          "observed": 0.6,
+          "ci_lo": 0.0,
+          "ci_hi": 1.0,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.958396065442136,
+          "n_draws": 19926
+        },
+        "math_arm": {
+          "observed": 0.4,
+          "ci_lo": -0.4285714285714286,
+          "ci_hi": 1.0,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.8351400180668473,
+          "n_draws": 19926
+        }
+      },
+      "both_arms_positive_point_estimate": true,
+      "both_arms_resolved": false,
+      "degenerate_draw_frac": 0.0037,
+      "inference_available": true,
+      "n_pairs": 11,
+      "is_primary": true
+    },
+    "within_1.5x": {
+      "cells": {
+        "news_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 1.0,
+          "n_pairs": 6
+        },
+        "news_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.3333333333333333,
+          "n_pairs": 6
+        },
+        "math_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.3333333333333333,
+          "n_pairs": 6
+        },
+        "math_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 1.0,
+          "n_pairs": 6
+        }
+      },
+      "difference_in_differences": {
+        "observed": 1.3333333333333335,
+        "ci_lo": 0.0,
+        "ci_hi": 2.0,
+        "inference_available": true,
+        "ci_excludes_zero": false,
+        "supports_positive_effect": false,
+        "supports_negative_effect": false,
+        "ci_contains_zero": true,
+        "frac_draws_positive": 0.9207199708682308,
+        "n_draws": 19223
+      },
+      "arms": {
+        "news_arm": {
+          "observed": 0.6666666666666667,
+          "ci_lo": 0.0,
+          "ci_hi": 1.0,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.9207199708682308,
+          "n_draws": 19223
+        },
+        "math_arm": {
+          "observed": 0.6666666666666667,
+          "ci_lo": 0.0,
+          "ci_hi": 1.0,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.9207199708682308,
+          "n_draws": 19223
+        }
+      },
+      "both_arms_positive_point_estimate": true,
+      "both_arms_resolved": false,
+      "degenerate_draw_frac": 0.03885,
+      "inference_available": true,
+      "n_pairs": 7,
+      "is_primary": false
+    }
+  },
+  "strict": {
+    "all_pairs": {
+      "cells": {
+        "news_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.8703703703703703,
+          "n_pairs": 54
+        },
+        "news_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.8518518518518519,
+          "n_pairs": 54
+        },
+        "math_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.8333333333333334,
+          "n_pairs": 54
+        },
+        "math_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.9629629629629629,
+          "n_pairs": 54
+        }
+      },
+      "difference_in_differences": {
+        "observed": 0.14814814814814803,
+        "ci_lo": -0.16326530612244883,
+        "ci_hi": 0.46808510638297873,
+        "inference_available": true,
+        "ci_excludes_zero": false,
+        "supports_positive_effect": false,
+        "supports_negative_effect": false,
+        "ci_contains_zero": true,
+        "frac_draws_positive": 0.79475,
+        "n_draws": 20000
+      },
+      "arms": {
+        "news_arm": {
+          "observed": 0.03703703703703698,
+          "ci_lo": -0.18367346938775508,
+          "ci_hi": 0.2272727272727273,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.629,
+          "n_draws": 20000
+        },
+        "math_arm": {
+          "observed": 0.11111111111111105,
+          "ci_lo": -0.09090909090909094,
+          "ci_hi": 0.3191489361702128,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.82715,
+          "n_draws": 20000
+        }
+      },
+      "both_arms_positive_point_estimate": true,
+      "both_arms_resolved": false,
+      "degenerate_draw_frac": 0.0,
+      "inference_available": true
+    },
+    "within_3x": {
+      "cells": {
+        "news_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.6842105263157895,
+          "n_pairs": 19
+        },
+        "news_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.5789473684210527,
+          "n_pairs": 19
+        },
+        "math_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.631578947368421,
+          "n_pairs": 19
+        },
+        "math_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.9473684210526315,
+          "n_pairs": 19
+        }
+      },
+      "difference_in_differences": {
+        "observed": 0.42105263157894735,
+        "ci_lo": -0.47058823529411753,
+        "ci_hi": 1.1304347826086956,
+        "inference_available": true,
+        "ci_excludes_zero": false,
+        "supports_positive_effect": false,
+        "supports_negative_effect": false,
+        "ci_contains_zero": true,
+        "frac_draws_positive": 0.7945794579457945,
+        "n_draws": 19998
+      },
+      "arms": {
+        "news_arm": {
+          "observed": 0.052631578947368474,
+          "ci_lo": -0.5,
+          "ci_hi": 0.5217391304347827,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.5501050105010501,
+          "n_draws": 19998
+        },
+        "math_arm": {
+          "observed": 0.36842105263157887,
+          "ci_lo": -0.1428571428571429,
+          "ci_hi": 0.7692307692307692,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.8895389538953895,
+          "n_draws": 19998
+        }
+      },
+      "both_arms_positive_point_estimate": true,
+      "both_arms_resolved": false,
+      "degenerate_draw_frac": 0.0001,
+      "inference_available": true,
+      "n_pairs": 20,
+      "is_primary": false
+    },
+    "within_2x": {
+      "cells": {
+        "news_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.7,
+          "n_pairs": 10
+        },
+        "news_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.5,
+          "n_pairs": 10
+        },
+        "math_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.6,
+          "n_pairs": 10
+        },
+        "math_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 1.0,
+          "n_pairs": 10
+        }
+      },
+      "difference_in_differences": {
+        "observed": 0.6,
+        "ci_lo": 0.0,
+        "ci_hi": 1.7777777777777777,
+        "inference_available": true,
+        "ci_excludes_zero": false,
+        "supports_positive_effect": false,
+        "supports_negative_effect": false,
+        "ci_contains_zero": true,
+        "frac_draws_positive": 0.7795969773299748,
+        "n_draws": 19850
+      },
+      "arms": {
+        "news_arm": {
+          "observed": 0.09999999999999998,
+          "ci_lo": -1.0,
+          "ci_hi": 0.8333333333333334,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.5138035264483627,
+          "n_draws": 19850
+        },
+        "math_arm": {
+          "observed": 0.5,
+          "ci_lo": 0.0,
+          "ci_hi": 1.0,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.9059445843828715,
+          "n_draws": 19850
+        }
+      },
+      "both_arms_positive_point_estimate": true,
+      "both_arms_resolved": false,
+      "degenerate_draw_frac": 0.0075,
+      "inference_available": true,
+      "n_pairs": 11,
+      "is_primary": true
+    },
+    "within_1.5x": {
+      "cells": {
+        "news_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.5714285714285714,
+          "n_pairs": 7
+        },
+        "news_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 0.42857142857142855,
+          "n_pairs": 7
+        },
+        "math_adapted_bpb__vs__news_cloze": {
+          "pairwise_accuracy": 0.5714285714285714,
+          "n_pairs": 7
+        },
+        "math_adapted_bpb__vs__math_cloze": {
+          "pairwise_accuracy": 1.0,
+          "n_pairs": 7
+        }
+      },
+      "difference_in_differences": {
+        "observed": 0.5714285714285714,
+        "ci_lo": 0.0,
+        "ci_hi": 2.0,
+        "inference_available": true,
+        "ci_excludes_zero": false,
+        "supports_positive_effect": false,
+        "supports_negative_effect": false,
+        "ci_contains_zero": true,
+        "frac_draws_positive": 0.6956853566703979,
+        "n_draws": 19654
+      },
+      "arms": {
+        "news_arm": {
+          "observed": 0.0,
+          "ci_lo": -1.0,
+          "ci_hi": 1.0,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.39610257453953396,
+          "n_draws": 19654
+        },
+        "math_arm": {
+          "observed": 0.5714285714285714,
+          "ci_lo": 0.0,
+          "ci_hi": 1.0,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.9005291543706115,
+          "n_draws": 19654
+        }
+      },
+      "both_arms_positive_point_estimate": false,
+      "both_arms_resolved": false,
+      "degenerate_draw_frac": 0.0173,
+      "inference_available": true,
+      "n_pairs": 7,
+      "is_primary": false
+    }
+  },
+  "primary_estimand": "difference_in_differences over all pairs, reported under both conventions",
+  "sign_pattern_consistent_with_steering": true,
+  "any_arm_resolved": true,
+  "any_interaction_resolved": false
+}

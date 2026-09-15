@@ -1,4 +1,9 @@
 #!/bin/bash
+# Account: AIFAC_S03_029 expired 2026-07-13. AIFAC_F02_541 is live to 2026-09-23
+# (verified with `saldo -b` on 2026-09-01: 80,000 h, 3.7% consumed). Check `saldo -b`
+# before assuming either.
+#SBATCH --account=AIFAC_F02_541
+#SBATCH --partition=boost_usr_prod
 #SBATCH --job-name=lmab-qwen-strict-contam
 #SBATCH --output=logs/%x-%j.out
 #SBATCH --error=logs/%x-%j.err

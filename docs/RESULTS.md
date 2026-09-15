@@ -15,7 +15,7 @@ results/my-corpus/
 
 | Field | Meaning | Use |
 |---|---|---|
-| `zero_shot_bpb` | Predictive cross-entropy before adaptation, normalized by UTF-8 bytes | Initial fit — and a strong, free selection score in its own right; see below |
+| `zero_shot_bpb` | Predictive cross-entropy before adaptation, normalized by UTF-8 bytes | Initial fit, and a free **screen** — it agrees well with the public benchmarks but reaches chance against an in-domain criterion among candidates within 2x in size (`results/cloze_validity.json`). Do not select on it |
 | `adapted_bpb` / `best_bpb` | Held-out BPB after controlled adaptation | Primary model-selection score; lower is better |
 | `reduction_pct` | Relative BPB change from zero-shot to adapted | Diagnose how much corpus calibration was needed |
 
@@ -28,8 +28,8 @@ The current primary board uses one fixed LoRA configuration for every model: ran
 dropout 0.05, learning rate `1e-4`, effective batch 32, and 250 update steps. That budget is equal
 by construction but it is 0.21 epochs of the news corpus, and the paper's own token-level diagnostic
 shows ~83% of the resulting gain lands on formatting and function words — so adapted BPB here is
-*fit after a stated budget*, not attainable fit. `docs/PLAN.md` (E5) specifies the
-adapt-to-convergence estimand that would replace it. Injected
+*fit after a stated budget*, not attainable fit; an adapt-to-convergence estimand would be the natural
+replacement. Injected
 document-start marker targets are excluded from both the loss numerator and scored-token count.
 
 ## What the benchmark comparison shows

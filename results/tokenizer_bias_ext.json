@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "question": "Could token-aligned eval blocks, rather than model quality, account for any adjacent rank in the 17-model extended cohort?",
+  "cohort": [
+    "Falcon3-10B",
+    "Falcon3-7B",
+    "LFM2.5-1.2B",
+    "Llama-3.2-1B",
+    "Ministral-3-14B",
+    "Mistral-Nemo-12B",
+    "Qwen2.5-0.5B",
+    "Qwen2.5-1.5B",
+    "Qwen2.5-14B",
+    "Qwen2.5-3B",
+    "Qwen2.5-7B",
+    "Qwen3.5-35B-MoE",
+    "Qwen3.5-4B",
+    "Qwen3.5-9B",
+    "SmolLM2-1.7B",
+    "gemma-4-12B",
+    "gemma-4-31B"
+  ],
+  "n_models": 17,
+  "excluded": [
+    "OLMo-2-13B",
+    "OLMo-2-7B",
+    "Qwen2.5-32B"
+  ],
+  "corpus": "news",
+  "tier": "adapted",
+  "context_sensitivity_per_doubling": 0.032,
+  "bytes_per_token": {
+    "LFM2.5-1.2B": 4.626540791939786,
+    "Qwen2.5-0.5B": 4.763125833764395,
+    "Qwen2.5-1.5B": 4.763125833764395,
+    "Qwen2.5-7B": 4.763125833764395,
+    "Qwen3.5-35B-MoE": 4.69882733684942,
+    "Qwen3.5-4B": 4.69882733684942,
+    "Qwen3.5-9B": 4.69882733684942,
+    "gemma-4-12B": 4.7193449189746906,
+    "gemma-4-31B": 4.7193449189746906,
+    "Llama-3.2-1B": 4.877745754383275,
+    "Ministral-3-14B": 4.689020141243317,
+    "Falcon3-10B": 4.576902198793999,
+    "Falcon3-7B": 4.576902198793999,
+    "Mistral-Nemo-12B": 4.689020141243317,
+    "Qwen2.5-14B": 4.763125833764395,
+    "Qwen2.5-3B": 4.763125833764395,
+    "SmolLM2-1.7B": 4.436778439241493
+  },
+  "bytes_per_token_range": {
+    "min_model": "SmolLM2-1.7B",
+    "min": 4.436778439241493,
+    "max_model": "Llama-3.2-1B",
+    "max": 4.877745754383275
+  },
+  "bound": {
+    "adjacent_pairs": [
+      {
+        "better": "gemma-4-31B",
+        "worse": "Mistral-Nemo-12B",
+        "bpb_gap_frac": 0.0354802385266683,
+        "bytes_per_token_delta_frac": 0.006425632847781346,
+        "bias_bound_frac": 0.0002956983063972863,
+        "bias_over_gap": 0.008334169066395315
+      },
+      {
+        "better": "Mistral-Nemo-12B",
+        "worse": "gemma-4-12B",
+        "bpb_gap_frac": 0.010919684380723726,
+        "bytes_per_token_delta_frac": 0.0064671886274587425,
+        "bias_bound_frac": 0.000297604492491399,
+        "bias_over_gap": 0.027253946370167394
+      },
+      {
+        "better": "gemma-4-12B",
+        "worse": "Qwen2.5-14B",
+        "bpb_gap_frac": 0.03332297865683435,
+        "bytes_per_token_delta_frac": 0.009276905066565056,
+        "bias_bound_frac": 0.00042630548340572016,
+        "bias_over_gap": 0.012793138566509493
+      },
+      {
+        "better": "Qwen2.5-14B",
+        "worse": "Qwen3.5-35B-MoE",
+        "bpb_gap_frac": 0.005022524128828738,
+        "bytes_per_token_delta_frac": 0.013499222812712992,
+        "bias_bound_frac": 0.0006190394398500965,
+        "bias_over_gap": 0.12325265622854412
+      },
+      {
+        "better": "Qwen3.5-35B-MoE",
+        "worse": "Ministral-3-14B",
+        "bpb_gap_frac": 0.0011620972196941558,
+        "bytes_per_token_delta_frac": 0.0020871581147901834,
+        "bias_bound_frac": 9.625582951473458e-05,
+        "bias_over_gap": 0.08282941210380614
+      },
+      {
+        "better": "Ministral-3-14B",
+        "worse": "Qwen3.5-9B",
+        "bpb_gap_frac": 0.04280781173243017,
+        "bytes_per_token_delta_frac": 0.0020915234549414383,
+        "bias_bound_frac": 9.645694067181315e-05,
+        "bias_over_gap": 0.0022532555804234133
+      },
+      {
+        "better": "Qwen3.5-9B",
+        "worse": "Qwen2.5-7B",
+        "bpb_gap_frac": 0.012453727512320743,
+        "bytes_per_token_delta_frac": 0.013683945441180496,
+        "bias_bound_frac": 0.0006274530352253077,
+        "bias_over_gap": 0.05038274963094823
+      },
+      {
+        "better": "Qwen2.5-7B",
+        "worse": "Falcon3-10B",
+        "bpb_gap_frac": 0.015390602514750398,
+        "bytes_per_token_delta_frac": 0.039096937907941005,
+        "bias_bound_frac": 0.0017705680099480013,
+        "bias_over_gap": 0.11504215044544772
+      },
+      {
+        "better": "Falcon3-10B",
+        "worse": "Qwen3.5-4B",
+        "bpb_gap_frac": 0.0294059729053779,
+        "bytes_per_token_delta_frac": 0.0266392273113348,
+        "bias_bound_frac": 0.001213737321146397,
+        "bias_over_gap": 0.041275196880985465
+      },
+      {
+        "better": "Qwen3.5-4B",
+        "worse": "Qwen2.5-3B",
+        "bpb_gap_frac": 0.008402075534714053,
+        "bytes_per_token_delta_frac": 0.013683945441180496,
+        "bias_bound_frac": 0.0006274530352253077,
+        "bias_over_gap": 0.07467833782651917
+      },
+      {
+        "better": "Qwen2.5-3B",
+        "worse": "Falcon3-7B",
+        "bpb_gap_frac": 0.002923504003596327,
+        "bytes_per_token_delta_frac": 0.039096937907941005,
+        "bias_bound_frac": 0.0017705680099480013,
+        "bias_over_gap": 0.6056321481926996
+      },
+      {
+        "better": "Falcon3-7B",
+        "worse": "Llama-3.2-1B",
+        "bpb_gap_frac": 0.01763474011562823,
+        "bytes_per_token_delta_frac": 0.06573082458885571,
+        "bias_bound_frac": 0.0029389791202365967,
+        "bias_over_gap": 0.1666584877897928
+      },
+      {
+        "better": "Llama-3.2-1B",
+        "worse": "SmolLM2-1.7B",
+        "bpb_gap_frac": 0.02182933287157378,
+        "bytes_per_token_delta_frac": 0.09040391552706831,
+        "bias_bound_frac": 0.003995604730653632,
+        "bias_over_gap": 0.18303833443562173
+      },
+      {
+        "better": "SmolLM2-1.7B",
+        "worse": "Qwen2.5-1.5B",
+        "bpb_gap_frac": 0.011419319965813258,
+        "bytes_per_token_delta_frac": 0.07355503525632297,
+        "bias_bound_frac": 0.0032766768679885062,
+        "bias_over_gap": 0.2869415059564056
+      },
+      {
+        "better": "Qwen2.5-1.5B",
+        "worse": "LFM2.5-1.2B",
+        "bpb_gap_frac": 0.06857909488857826,
+        "bytes_per_token_delta_frac": 0.028675505664032166,
+        "bias_bound_frac": 0.0013052146477587768,
+        "bias_over_gap": 0.019032252465264868
+      },
+      {
+        "better": "LFM2.5-1.2B",
+        "worse": "Qwen2.5-0.5B",
+        "bpb_gap_frac": 0.05806696495747833,
+        "bytes_per_token_delta_frac": 0.029522065829952912,
+        "bias_bound_frac": 0.001343192054444373,
+        "bias_over_gap": 0.023131776483030837
+      }
+    ],
+    "worst_case": {
+      "better": "Qwen2.5-3B",
+      "worse": "Falcon3-7B",
+      "bpb_gap_frac": 0.002923504003596327,
+      "bytes_per_token_delta_frac": 0.039096937907941005,
+      "bias_bound_frac": 0.0017705680099480013,
+      "bias_over_gap": 0.6056321481926996
+    },
+    "max_bias_over_gap": 0.6056321481926996,
+    "scored_text_mb": {
+      "LFM2.5-1.2B": 5.921972213682927,
+      "Qwen2.5-0.5B": 6.096801067218426,
+      "Qwen2.5-1.5B": 6.096801067218426,
+      "Qwen2.5-7B": 6.096801067218426,
+      "Qwen3.5-35B-MoE": 6.014498991167257,
+      "Qwen3.5-4B": 6.014498991167257,
+      "Qwen3.5-9B": 6.014498991167257,
+      "gemma-4-12B": 6.040761496287604,
+      "gemma-4-31B": 6.040761496287604,
+      "Llama-3.2-1B": 6.243514565610592,
+      "Ministral-3-14B": 6.001945780791446,
+      "Falcon3-10B": 5.858434814456318,
+      "Falcon3-7B": 5.858434814456318,
+      "Mistral-Nemo-12B": 6.001945780791446,
+      "Qwen2.5-14B": 6.096801067218426,
+      "Qwen2.5-3B": 6.096801067218426,
+      "SmolLM2-1.7B": 5.679076402229112
+    },
+    "scored_text_spread_frac": 0.09938907727318678,
+    "context_sensitivity_per_doubling": 0.032,
+    "overturns_any_rank": false
+  }
+}

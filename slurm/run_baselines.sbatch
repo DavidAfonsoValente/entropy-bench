@@ -9,7 +9,11 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=0
 #SBATCH -p boost_usr_prod
-#SBATCH -A AIFAC_S03_029
+# Account: AIFAC_S03_029 expired 2026-07-13. AIFAC_F02_541 is live to 2026-09-23
+# (verified with `saldo -b` on 2026-09-01: 80,000 h, 3.7% consumed). Check `saldo -b`
+# before assuming either -- this file was unusable for seven weeks because it named a
+# dead account and nothing checked.
+#SBATCH -A AIFAC_F02_541
 
 source slurm/setup_env.sh
 export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:128"

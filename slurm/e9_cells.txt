@@ -1,0 +1,70 @@
+# E9 cells: <hf-id> <label> <benchmark> <tp>. tp started as July's value (2 only for
+# gemma-4-31B and Qwen3.5-35B-MoE); extension models tp=1. NOT the E8 GPU column.
+#
+# Ministral-3-14B points at a DERIVED checkpoint, 2026-09-09. The published checkpoint is a
+# vision-language one whose tensors are named language_model.model.* / language_model.lm_head.*,
+# while transformers 5.11's Mistral3ForConditionalGeneration expects model.language_model.* plus an
+# lm_head it builds itself -- disjoint key spaces, so loading it that way yields a RANDOMLY
+# INITIALISED model that scored 0.0000 on gsm8k and chance on hellaswag while passing every gate.
+# tools/materialise_prefixed_text_model.py strips the prefix and VERIFIES the result matches
+# Ministral3ForCausalLM exactly (363 tensors, names and shapes) before writing. Absolute path on
+# purpose: the manifest is read with `read -r` and does not expand $SCRATCH.
+#
+# gemma-4-31B raised to tp=4 on 2026-09-08. Probe C (job 56619906) OOM'd it on 2xA100-64GB
+# during attention -- the model LOADED (51.95 GiB resident) and died in repeat_kv with
+# 1.36 GiB free. The preregistration explicitly does not pin tensor_parallel_size, on the
+# stated grounds that Leonardo's 64GB cards need more sharding than the 80GB cards July used,
+# so more GPUs is the dimension left free rather than a shrunk protocol. The prompt, the cap,
+# the batch size and max_model_len are all unchanged. Qwen3.5-35B-MoE stays at 2: measured
+# 30.3 s/item there, 8.42 h projected for a full mmlu_pro_1k cell against a 20 h walltime.
+Qwen/Qwen2.5-0.5B Qwen2.5-0.5B gsm8k 1
+Qwen/Qwen2.5-0.5B Qwen2.5-0.5B hellaswag 1
+Qwen/Qwen2.5-0.5B Qwen2.5-0.5B mmlu_pro_1k 1
+Qwen/Qwen2.5-1.5B Qwen2.5-1.5B gsm8k 1
+Qwen/Qwen2.5-1.5B Qwen2.5-1.5B hellaswag 1
+Qwen/Qwen2.5-1.5B Qwen2.5-1.5B mmlu_pro_1k 1
+Qwen/Qwen2.5-7B Qwen2.5-7B gsm8k 1
+Qwen/Qwen2.5-7B Qwen2.5-7B hellaswag 1
+Qwen/Qwen2.5-7B Qwen2.5-7B mmlu_pro_1k 1
+meta-llama/Llama-3.2-1B Llama-3.2-1B gsm8k 1
+meta-llama/Llama-3.2-1B Llama-3.2-1B hellaswag 1
+meta-llama/Llama-3.2-1B Llama-3.2-1B mmlu_pro_1k 1
+LiquidAI/LFM2.5-1.2B-Base LFM2.5-1.2B gsm8k 1
+LiquidAI/LFM2.5-1.2B-Base LFM2.5-1.2B hellaswag 1
+LiquidAI/LFM2.5-1.2B-Base LFM2.5-1.2B mmlu_pro_1k 1
+/leonardo_scratch/large/userexternal/dprazere/e9/ministral3_text Ministral-3-14B gsm8k 1
+/leonardo_scratch/large/userexternal/dprazere/e9/ministral3_text Ministral-3-14B hellaswag 1
+/leonardo_scratch/large/userexternal/dprazere/e9/ministral3_text Ministral-3-14B mmlu_pro_1k 1
+Qwen/Qwen3.5-4B-Base Qwen3.5-4B gsm8k 1
+Qwen/Qwen3.5-4B-Base Qwen3.5-4B hellaswag 1
+Qwen/Qwen3.5-4B-Base Qwen3.5-4B mmlu_pro_1k 1
+Qwen/Qwen3.5-9B-Base Qwen3.5-9B gsm8k 1
+Qwen/Qwen3.5-9B-Base Qwen3.5-9B hellaswag 1
+Qwen/Qwen3.5-9B-Base Qwen3.5-9B mmlu_pro_1k 1
+Qwen/Qwen3.5-35B-A3B-Base Qwen3.5-35B-MoE gsm8k 2
+Qwen/Qwen3.5-35B-A3B-Base Qwen3.5-35B-MoE hellaswag 2
+Qwen/Qwen3.5-35B-A3B-Base Qwen3.5-35B-MoE mmlu_pro_1k 2
+google/gemma-4-12B gemma-4-12B gsm8k 1
+google/gemma-4-12B gemma-4-12B hellaswag 1
+google/gemma-4-12B gemma-4-12B mmlu_pro_1k 1
+google/gemma-4-31B gemma-4-31B gsm8k 4
+google/gemma-4-31B gemma-4-31B hellaswag 4
+google/gemma-4-31B gemma-4-31B mmlu_pro_1k 4
+HuggingFaceTB/SmolLM2-1.7B SmolLM2-1.7B gsm8k 1
+HuggingFaceTB/SmolLM2-1.7B SmolLM2-1.7B hellaswag 1
+HuggingFaceTB/SmolLM2-1.7B SmolLM2-1.7B mmlu_pro_1k 1
+Qwen/Qwen2.5-3B Qwen2.5-3B gsm8k 1
+Qwen/Qwen2.5-3B Qwen2.5-3B hellaswag 1
+Qwen/Qwen2.5-3B Qwen2.5-3B mmlu_pro_1k 1
+tiiuae/Falcon3-7B-Base Falcon3-7B gsm8k 1
+tiiuae/Falcon3-7B-Base Falcon3-7B hellaswag 1
+tiiuae/Falcon3-7B-Base Falcon3-7B mmlu_pro_1k 1
+tiiuae/Falcon3-10B-Base Falcon3-10B gsm8k 1
+tiiuae/Falcon3-10B-Base Falcon3-10B hellaswag 1
+tiiuae/Falcon3-10B-Base Falcon3-10B mmlu_pro_1k 1
+mistralai/Mistral-Nemo-Base-2407 Mistral-Nemo-12B gsm8k 1
+mistralai/Mistral-Nemo-Base-2407 Mistral-Nemo-12B hellaswag 1
+mistralai/Mistral-Nemo-Base-2407 Mistral-Nemo-12B mmlu_pro_1k 1
+Qwen/Qwen2.5-14B Qwen2.5-14B gsm8k 1
+Qwen/Qwen2.5-14B Qwen2.5-14B hellaswag 1
+Qwen/Qwen2.5-14B Qwen2.5-14B mmlu_pro_1k 1

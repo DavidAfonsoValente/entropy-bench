@@ -367,7 +367,7 @@ def render_figure_tex(analysis: dict) -> str:
                 f"\\draw[black!45] (0,{y:.3f}) -- (-0.055,{y:.3f}) node[left] {{{100*tick:.0f}}};"
             )
         if panel_index == 0:
-            lines.append(f"\\node[rotate=90] at (-0.62,{height / 2:.3f}) {{accuracy (\\%) $\\uparrow$}};")
+            lines.append(f"\\node[rotate=90] at (-0.95,{height / 2:.3f}) {{accuracy (\\%) $\\uparrow$}};")
 
         for row in analysis["rows"]:
             source_label = row["source_label"]
@@ -389,13 +389,15 @@ def render_figure_tex(analysis: dict) -> str:
     total_width = 3 * width + 2 * gap
     lines.extend(
         [
-            f"\\node at ({total_width / 2:.3f},-0.47) {{adapted BPB $\\downarrow$}};",
-            f"\\fill[benchqwen] ({total_width / 2 - 1.75:.3f},-0.88) circle (1.25pt);",
-            f"\\node[anchor=west] at ({total_width / 2 - 1.63:.3f},-0.88) {{Qwen}};",
-            f"\\fill[benchgemma] ({total_width / 2 - 0.45:.3f},-0.88) circle (1.25pt);",
-            f"\\node[anchor=west] at ({total_width / 2 - 0.33:.3f},-0.88) {{Gemma}};",
-            f"\\fill[benchother] ({total_width / 2 + 1.03:.3f},-0.88) circle (1.25pt);",
-            f"\\node[anchor=west] at ({total_width / 2 + 1.15:.3f},-0.88) {{other}};",
+            # -0.47 sat on top of the x tick labels, which hang below y=-0.055; the label and
+            # the legend below it both drop to clear them.
+            f"\\node at ({total_width / 2:.3f},-0.72) {{adapted BPB $\\downarrow$}};",
+            f"\\fill[benchqwen] ({total_width / 2 - 1.75:.3f},-1.12) circle (1.25pt);",
+            f"\\node[anchor=west] at ({total_width / 2 - 1.63:.3f},-1.12) {{Qwen}};",
+            f"\\fill[benchgemma] ({total_width / 2 - 0.45:.3f},-1.12) circle (1.25pt);",
+            f"\\node[anchor=west] at ({total_width / 2 - 0.33:.3f},-1.12) {{Gemma}};",
+            f"\\fill[benchother] ({total_width / 2 + 1.03:.3f},-1.12) circle (1.25pt);",
+            f"\\node[anchor=west] at ({total_width / 2 + 1.15:.3f},-1.12) {{other}};",
             "\\end{tikzpicture}",
         ]
     )

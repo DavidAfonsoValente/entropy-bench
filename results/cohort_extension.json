@@ -1,0 +1,604 @@
+{
+  "schema_version": 1,
+  "question": "Does the in-band conclusion survive a cohort large enough to resolve it?",
+  "preregistration": "docs/RUN_LEDGER.md, \"E3 -- cohort extension: PREREGISTRATION\"",
+  "method": "pairwise selection accuracy against the news in-domain cloze criterion; cluster bootstrap over models, 20000 draws, seed 20260831; pairs NOT resampled; one shared stream and one shared eligibility mask per table; degenerate [x, x] intervals do not count as clearing chance.",
+  "reproduction_control": {
+    "ran": true,
+    "control_of": "Qwen2.5-7B",
+    "tolerance_frac": 0.01,
+    "zero_shot_bpb": {
+      "published": 0.7577238292039596,
+      "re_run": 0.7577407826707437,
+      "rel_diff": 2.2374203015244172e-05,
+      "within_tolerance": true
+    },
+    "adapted_bpb": {
+      "published": 0.7170081839948478,
+      "re_run": 0.7169380764893093,
+      "rel_diff": 9.777783169486061e-05,
+      "within_tolerance": true
+    },
+    "reproduces": true
+  },
+  "published_cohort": [
+    "LFM2.5-1.2B",
+    "Llama-3.2-1B",
+    "Ministral-3-14B",
+    "Qwen2.5-0.5B",
+    "Qwen2.5-1.5B",
+    "Qwen2.5-7B",
+    "Qwen3.5-35B-MoE",
+    "Qwen3.5-4B",
+    "Qwen3.5-9B",
+    "gemma-4-12B",
+    "gemma-4-31B"
+  ],
+  "extension_cohort": [
+    "Falcon3-10B",
+    "Falcon3-7B",
+    "Mistral-Nemo-12B",
+    "Qwen2.5-14B",
+    "Qwen2.5-3B",
+    "SmolLM2-1.7B"
+  ],
+  "extension_incomplete": [
+    "OLMo-2-13B",
+    "OLMo-2-7B"
+  ],
+  "n_models": 17,
+  "pairs_all": 136,
+  "benchmarks_included": true,
+  "benchmark_cells_missing": [],
+  "pooled": true,
+  "all_pairs": {
+    "lenient": {
+      "selectors": {
+        "zero_shot_bpb": {
+          "pairwise_accuracy": 0.7941176470588235,
+          "ci_lo": 0.608,
+          "ci_hi": 0.9448818897637795,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        },
+        "matched_adapted_bpb": {
+          "pairwise_accuracy": 0.9117647058823529,
+          "ci_lo": 0.8217054263565892,
+          "ci_hi": 0.9763779527559056,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        },
+        "parameter_count": {
+          "pairwise_accuracy": 0.8235294117647058,
+          "ci_lo": 0.703125,
+          "ci_hi": 0.925,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        },
+        "gsm8k": {
+          "pairwise_accuracy": 0.6666666666666666,
+          "ci_lo": 0.5040650406504065,
+          "ci_hi": 0.8125,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 135,
+          "n_draws": 20000
+        },
+        "mmlu_pro": {
+          "pairwise_accuracy": 0.7352941176470589,
+          "ci_lo": 0.5826771653543307,
+          "ci_hi": 0.8740157480314961,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        },
+        "hellaswag": {
+          "pairwise_accuracy": 0.875,
+          "ci_lo": 0.7637795275590551,
+          "ci_hi": 0.96,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        }
+      },
+      "paired_differences": {
+        "bpb_minus_parameter_count": {
+          "observed": 0.08823529411764708,
+          "preregistered": true,
+          "ci_lo": 0.016260162601626105,
+          "ci_hi": 0.16666666666666663,
+          "separates_from_zero": true,
+          "inference_available": true,
+          "ci_excludes_zero": true,
+          "supports_positive_effect": true,
+          "supports_negative_effect": false,
+          "ci_contains_zero": false,
+          "frac_draws_positive": 0.98995,
+          "n_draws": 20000
+        },
+        "bpb_minus_best_benchmark": {
+          "observed": 0.03676470588235292,
+          "preregistered": true,
+          "ci_lo": -0.008064516129032251,
+          "ci_hi": 0.1015625,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.8956,
+          "n_draws": 20000
+        },
+        "bpb_minus_zero_shot": {
+          "observed": 0.11764705882352944,
+          "preregistered": false,
+          "ci_lo": -0.03100775193798455,
+          "ci_hi": 0.3015873015873016,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.90075,
+          "n_draws": 20000
+        }
+      },
+      "common_pair_mask": false,
+      "n_pairs": 136,
+      "clears_chance": [
+        "gsm8k",
+        "hellaswag",
+        "matched_adapted_bpb",
+        "mmlu_pro",
+        "parameter_count",
+        "zero_shot_bpb"
+      ],
+      "degenerate_intervals": [],
+      "bpb_beats_every_static_benchmark": true,
+      "bpb_beats_parameter_count": true
+    },
+    "strict": {
+      "selectors": {
+        "zero_shot_bpb": {
+          "pairwise_accuracy": 0.8308823529411765,
+          "ci_lo": 0.6587301587301587,
+          "ci_hi": 0.9457364341085271,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        },
+        "matched_adapted_bpb": {
+          "pairwise_accuracy": 0.8455882352941176,
+          "ci_lo": 0.7286821705426356,
+          "ci_hi": 0.9375,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        },
+        "parameter_count": {
+          "pairwise_accuracy": 0.8161764705882353,
+          "ci_lo": 0.6821705426356589,
+          "ci_hi": 0.9302325581395349,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        },
+        "gsm8k": {
+          "pairwise_accuracy": 0.6592592592592592,
+          "ci_lo": 0.47540983606557374,
+          "ci_hi": 0.8306451612903226,
+          "interval_is_degenerate": false,
+          "beats_chance": false,
+          "beats_chance_including_degenerate": false,
+          "n_pairs": 135,
+          "n_draws": 20000
+        },
+        "mmlu_pro": {
+          "pairwise_accuracy": 0.7132352941176471,
+          "ci_lo": 0.5546875,
+          "ci_hi": 0.8571428571428571,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        },
+        "hellaswag": {
+          "pairwise_accuracy": 0.8382352941176471,
+          "ci_lo": 0.71875,
+          "ci_hi": 0.9365079365079365,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 136,
+          "n_draws": 20000
+        }
+      },
+      "paired_differences": {
+        "bpb_minus_parameter_count": {
+          "observed": 0.02941176470588236,
+          "preregistered": true,
+          "ci_lo": -0.08661417322834652,
+          "ci_hi": 0.12,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.7156,
+          "n_draws": 20000
+        },
+        "bpb_minus_best_benchmark": {
+          "observed": 0.007352941176470562,
+          "preregistered": true,
+          "ci_lo": -0.07633587786259544,
+          "ci_hi": 0.07751937984496127,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.5487,
+          "n_draws": 20000
+        },
+        "bpb_minus_zero_shot": {
+          "observed": 0.014705882352941124,
+          "preregistered": false,
+          "ci_lo": -0.13076923076923075,
+          "ci_hi": 0.18110236220472442,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.5193,
+          "n_draws": 20000
+        }
+      },
+      "common_pair_mask": false,
+      "n_pairs": 136,
+      "clears_chance": [
+        "hellaswag",
+        "matched_adapted_bpb",
+        "mmlu_pro",
+        "parameter_count",
+        "zero_shot_bpb"
+      ],
+      "degenerate_intervals": [],
+      "bpb_beats_every_static_benchmark": true,
+      "bpb_beats_parameter_count": true
+    }
+  },
+  "within_2x": {
+    "lenient": {
+      "selectors": {
+        "zero_shot_bpb": {
+          "pairwise_accuracy": 0.75,
+          "ci_lo": 0.4166666666666667,
+          "ci_hi": 1.0,
+          "interval_is_degenerate": false,
+          "beats_chance": false,
+          "beats_chance_including_degenerate": false,
+          "n_pairs": 40,
+          "n_draws": 20000
+        },
+        "matched_adapted_bpb": {
+          "pairwise_accuracy": 0.9,
+          "ci_lo": 0.7333333333333333,
+          "ci_hi": 1.0,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 40,
+          "n_draws": 20000
+        },
+        "parameter_count": {
+          "pairwise_accuracy": 0.65,
+          "ci_lo": 0.3793103448275862,
+          "ci_hi": 0.8409090909090909,
+          "interval_is_degenerate": false,
+          "beats_chance": false,
+          "beats_chance_including_degenerate": false,
+          "n_pairs": 40,
+          "n_draws": 20000
+        },
+        "gsm8k": {
+          "pairwise_accuracy": 0.358974358974359,
+          "ci_lo": 0.1,
+          "ci_hi": 0.6571428571428571,
+          "interval_is_degenerate": false,
+          "beats_chance": false,
+          "beats_chance_including_degenerate": false,
+          "n_pairs": 39,
+          "n_draws": 20000
+        },
+        "mmlu_pro": {
+          "pairwise_accuracy": 0.4,
+          "ci_lo": 0.14285714285714285,
+          "ci_hi": 0.6875,
+          "interval_is_degenerate": false,
+          "beats_chance": false,
+          "beats_chance_including_degenerate": false,
+          "n_pairs": 40,
+          "n_draws": 20000
+        },
+        "hellaswag": {
+          "pairwise_accuracy": 0.825,
+          "ci_lo": 0.5925925925925926,
+          "ci_hi": 0.9836065573770492,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 40,
+          "n_draws": 20000
+        }
+      },
+      "paired_differences": {
+        "bpb_minus_parameter_count": {
+          "observed": 0.25,
+          "preregistered": true,
+          "ci_lo": 0.07407407407407407,
+          "ci_hi": 0.5,
+          "separates_from_zero": true,
+          "inference_available": true,
+          "ci_excludes_zero": true,
+          "supports_positive_effect": true,
+          "supports_negative_effect": false,
+          "ci_contains_zero": false,
+          "frac_draws_positive": 0.99445,
+          "n_draws": 20000
+        },
+        "bpb_minus_best_benchmark": {
+          "observed": 0.07500000000000007,
+          "preregistered": true,
+          "ci_lo": 0.0,
+          "ci_hi": 0.2857142857142858,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.75065,
+          "n_draws": 20000
+        },
+        "bpb_minus_zero_shot": {
+          "observed": 0.15000000000000002,
+          "preregistered": false,
+          "ci_lo": -0.08695652173913049,
+          "ci_hi": 0.4761904761904762,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.7575,
+          "n_draws": 20000
+        }
+      },
+      "common_pair_mask": false,
+      "n_pairs": 40,
+      "clears_chance": [
+        "hellaswag",
+        "matched_adapted_bpb"
+      ],
+      "degenerate_intervals": [],
+      "bpb_beats_every_static_benchmark": true,
+      "bpb_beats_parameter_count": true
+    },
+    "strict": {
+      "selectors": {
+        "zero_shot_bpb": {
+          "pairwise_accuracy": 0.85,
+          "ci_lo": 0.5945945945945946,
+          "ci_hi": 1.0,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 40,
+          "n_draws": 20000
+        },
+        "matched_adapted_bpb": {
+          "pairwise_accuracy": 0.85,
+          "ci_lo": 0.5909090909090909,
+          "ci_hi": 1.0,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 40,
+          "n_draws": 20000
+        },
+        "parameter_count": {
+          "pairwise_accuracy": 0.75,
+          "ci_lo": 0.5172413793103449,
+          "ci_hi": 0.9318181818181818,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 40,
+          "n_draws": 20000
+        },
+        "gsm8k": {
+          "pairwise_accuracy": 0.41025641025641024,
+          "ci_lo": 0.14285714285714285,
+          "ci_hi": 0.717948717948718,
+          "interval_is_degenerate": false,
+          "beats_chance": false,
+          "beats_chance_including_degenerate": false,
+          "n_pairs": 39,
+          "n_draws": 20000
+        },
+        "mmlu_pro": {
+          "pairwise_accuracy": 0.45,
+          "ci_lo": 0.1724137931034483,
+          "ci_hi": 0.7441860465116279,
+          "interval_is_degenerate": false,
+          "beats_chance": false,
+          "beats_chance_including_degenerate": false,
+          "n_pairs": 40,
+          "n_draws": 20000
+        },
+        "hellaswag": {
+          "pairwise_accuracy": 0.825,
+          "ci_lo": 0.5454545454545454,
+          "ci_hi": 0.9795918367346939,
+          "interval_is_degenerate": false,
+          "beats_chance": true,
+          "beats_chance_including_degenerate": true,
+          "n_pairs": 40,
+          "n_draws": 20000
+        }
+      },
+      "paired_differences": {
+        "bpb_minus_parameter_count": {
+          "observed": 0.09999999999999998,
+          "preregistered": true,
+          "ci_lo": -0.21052631578947367,
+          "ci_hi": 0.3513513513513513,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.7449,
+          "n_draws": 20000
+        },
+        "bpb_minus_best_benchmark": {
+          "observed": 0.025000000000000022,
+          "preregistered": true,
+          "ci_lo": -0.12698412698412703,
+          "ci_hi": 0.2432432432432433,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.4483,
+          "n_draws": 20000
+        },
+        "bpb_minus_zero_shot": {
+          "observed": 0.0,
+          "preregistered": false,
+          "ci_lo": -0.2777777777777778,
+          "ci_hi": 0.2571428571428571,
+          "separates_from_zero": false,
+          "inference_available": true,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false,
+          "ci_contains_zero": true,
+          "frac_draws_positive": 0.3621,
+          "n_draws": 20000
+        }
+      },
+      "common_pair_mask": false,
+      "n_pairs": 40,
+      "clears_chance": [
+        "hellaswag",
+        "matched_adapted_bpb",
+        "parameter_count",
+        "zero_shot_bpb"
+      ],
+      "degenerate_intervals": [],
+      "bpb_beats_every_static_benchmark": true,
+      "bpb_beats_parameter_count": true
+    },
+    "n_band_pairs": 40
+  },
+  "preregistered_answers": {
+    "q1_matched_clears_chance": {
+      "lenient": true,
+      "strict": true
+    },
+    "q2_any_benchmark_clears_chance": {
+      "lenient": true,
+      "strict": true
+    },
+    "q3_zero_shot_clears_chance": {
+      "lenient": false,
+      "strict": true
+    },
+    "q4_paired_differences": {
+      "lenient": {
+        "bpb_minus_parameter_count": {
+          "observed": 0.25,
+          "ci_lo": 0.07407407407407407,
+          "ci_hi": 0.5,
+          "ci_excludes_zero": true,
+          "supports_positive_effect": true,
+          "supports_negative_effect": false
+        },
+        "bpb_minus_best_benchmark": {
+          "observed": 0.07500000000000007,
+          "ci_lo": 0.0,
+          "ci_hi": 0.2857142857142858,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false
+        },
+        "bpb_minus_zero_shot": {
+          "observed": 0.15000000000000002,
+          "ci_lo": -0.08695652173913049,
+          "ci_hi": 0.4761904761904762,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false
+        }
+      },
+      "strict": {
+        "bpb_minus_parameter_count": {
+          "observed": 0.09999999999999998,
+          "ci_lo": -0.21052631578947367,
+          "ci_hi": 0.3513513513513513,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false
+        },
+        "bpb_minus_best_benchmark": {
+          "observed": 0.025000000000000022,
+          "ci_lo": -0.12698412698412703,
+          "ci_hi": 0.2432432432432433,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false
+        },
+        "bpb_minus_zero_shot": {
+          "observed": 0.0,
+          "ci_lo": -0.2777777777777778,
+          "ci_hi": 0.2571428571428571,
+          "ci_excludes_zero": false,
+          "supports_positive_effect": false,
+          "supports_negative_effect": false
+        }
+      }
+    }
+  }
+}

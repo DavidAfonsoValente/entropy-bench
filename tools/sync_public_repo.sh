@@ -23,12 +23,13 @@ PUSH=0
 [[ "${1:-}" == "--push" ]] && PUSH=1
 
 # Internal-only paths. Everything tracked here is published EXCEPT these.
-#   - agent instructions and internal state docs (routing, ledger, roadmap, sales positioning)
+#   - agent instructions and internal state docs (routing, ledger, roadmap, sales positioning,
+#     and docs/STATUS.md, the session-to-session state file added after this list was written)
 #   - GCP runners: they hard-code our private GCS bucket and are useless to an outside reader
 #   - per-example samples: ~370 MB of samples_*.jsonl(.gz). The public repo has never carried
 #     these; they live in gs://gpu-llm-training-gceval/token_gain/adapted_bench/. The scored
 #     results_*.json summaries ARE published, so every number in the paper stays greppable.
-EXCLUDE_RE='^(CLAUDE|AGENTS|GEMINI)\.md$|^docs/(POSITIONING|PROGRESS|RUN_LEDGER|PLAN)\.md$|^tools/(gcp_[a-z_]*\.sh|gce_run_watchdog\.sh)$|samples_.*\.jsonl(\.gz)?$|^\.claude/'
+EXCLUDE_RE='^(CLAUDE|AGENTS|GEMINI)\.md$|^docs/(POSITIONING|PROGRESS|RUN_LEDGER|PLAN|STATUS)\.md$|^tools/(gcp_[a-z_]*\.sh|gce_run_watchdog\.sh)$|samples_.*\.jsonl(\.gz)?$|^\.claude/'
 
 # Files that exist only in the public repo and must survive a sync rather than being deleted.
 KEEP_PUBLIC='^docs/TITLE_OPTIONS\.md$'
@@ -85,6 +86,33 @@ git ls-files | grep -vE "$EXCLUDE_RE" > "$WORK/.sync-manifest"
 rsync -a --files-from="$WORK/.sync-manifest" "$ROOT/" "$WORK/"
 find "$WORK" -type d -empty -not -path "$WORK/.git/*" -delete
 rm -f "$WORK/.sync-manifest"
+
+echo "==> stripping scraped text from per-item quiz results"
+# The per-item quiz files record each hidden answer span and the model's short guess. Those spans come
+# from scraped news, Reddit and Hacker News text and can include real people's names, so the public
+# snapshot keeps only what the numbers need: each item's id, type and right/wrong flags. Every
+# published number still reproduces -- analyze_criterion_uncertainty reads only id/strict/lenient --
+# and the text stays internal.
+"$PYTHON" - "$WORK" <<'STRIP'
+import json, sys
+from pathlib import Path
+root = Path(sys.argv[1])
+dirs = ["results/cloze", "results/cloze_reddit", "results/cloze_hackernews", "results/cloze_math",
+        "results/cohort_ext/cloze"]
+n = 0
+for d in dirs:
+    for f in sorted((root / d).glob("*.json")) if (root / d).is_dir() else []:
+        data = json.loads(f.read_text())
+        if not isinstance(data.get("samples"), list):
+            continue
+        for sample in data["samples"]:
+            sample.pop("answer", None)
+            sample.pop("generated", None)
+        data["samples_text_redacted"] = "answer spans and model generations removed for publication"
+        f.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+        n += 1
+print(f"  redacted {n} quiz result files")
+STRIP
 
 echo "==> leak check"
 leaked=0

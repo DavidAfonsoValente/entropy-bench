@@ -1,0 +1,17 @@
+{
+  "original_rows": 119054,
+  "cleaned_rows": 119040,
+  "duplicates_removed": 10,
+  "quarantined_rows": 15,
+  "test_rows_dropped": 5,
+  "split_leakage_count": 5,
+  "forbidden_overlap_count": 0,
+  "active_test_examples": 0,
+  "active_test_fraction": 1.0,
+  "test_split_compromised": false,
+  "risk_level": "CRITICAL",
+  "risk_score": 1.0,
+  "findings_count": 15,
+  "timestamp": "2026-06-22T19:17:51.394549",
+  "global_forensic_quarantine_count": 80
+}

@@ -1,0 +1,26 @@
+{
+  "baseline_hf_column": {
+    "lenient": {},
+    "q2": null,
+    "strict": {}
+  },
+  "counterfactual_july_gemma_cells": {
+    "lenient": {},
+    "q2": null,
+    "strict": {}
+  },
+  "method": "Substitute July's vLLM values for gemma-4-12B gsm8k and mmlu_pro_1k, re-run the full cohort-extension analysis, compare. The staged column is restored afterwards.",
+  "question": "Does the Q2 answer depend on gemma-4-12B's two broken generative cells?",
+  "substitutions": {
+    "gsm8k": {
+      "delta_pp": -9.855951478392722,
+      "hf_backend": 0.5375284306292646,
+      "july_vllm": 0.6360879454131918
+    },
+    "mmlu_pro_1k": {
+      "delta_pp": -14.3,
+      "hf_backend": 0.304,
+      "july_vllm": 0.447
+    }
+  }
+}

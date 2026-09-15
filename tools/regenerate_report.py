@@ -1,3 +1,9 @@
+"""Rebuild the HTML/PDF report and all plots for a finished sweep, without re-running it.
+
+Re-derives every figure in reports/11-model-run/ from that run's committed search records, so the
+report can be regenerated after a plotting change. Superseded by the current results pipeline; it
+is kept because it is the only generator for the 11-model sweep report the README links to.
+"""
 import os
 import json
 import logging

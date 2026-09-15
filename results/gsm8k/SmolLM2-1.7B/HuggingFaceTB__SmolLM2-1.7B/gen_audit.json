@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "--model",
+    "hf",
+    "--model_args",
+    "pretrained=HuggingFaceTB/SmolLM2-1.7B,dtype=bfloat16,trust_remote_code=True,max_length=4096",
+    "--tasks",
+    "gsm8k",
+    "--num_fewshot",
+    "5",
+    "--batch_size",
+    "16",
+    "--seed",
+    "0,1234,1234,1234",
+    "--log_samples",
+    "--output_path",
+    "/leonardo_scratch/large/userexternal/dprazere/e9/cells/SmolLM2-1.7B/gsm8k"
+  ],
+  "as_loaded": {
+    "_from_model_config": true,
+    "bos_token_id": 0,
+    "eos_token_id": 0,
+    "transformers_version": "5.11.0"
+  },
+  "effective": {
+    "bos_token_id": 0,
+    "eos_token_id": 0,
+    "transformers_version": "5.11.0"
+  },
+  "generate_calls": 83,
+  "kept": {
+    "bos_token_id": 0,
+    "eos_token_id": 0,
+    "pad_token_id": null
+  },
+  "max_length_lm_eval_will_use": 4096,
+  "max_new_tokens_observed": 256,
+  "model_class": "LlamaForCausalLM",
+  "stripped": {},
+  "versions": {
+    "lm_eval": "0.4.12",
+    "torch": "2.4.1+cu118",
+    "transformers": "5.11.0"
+  }
+}

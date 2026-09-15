@@ -1,0 +1,26 @@
+{
+  "model_id": "mistralai/Mistral-Nemo-Base-2407",
+  "dataset": "/home/dprazere/dt/corpora/google_news_from_2026-06-08_to_2026-06-08_cleaned.jsonl",
+  "corpus": "google_news_from_2026-06-08_to_2026-06-08_cleaned",
+  "avg_bytes_per_token": 4.689020141243317,
+  "n_train_blocks": 40042,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.6868234312271736,
+  "trainable_params": 57016320,
+  "total_params": 12304798720,
+  "trainable_pct": 0.4633665393268619,
+  "adapted_bpb": 0.6461178191789242,
+  "reduction_pct": 5.926648713122547,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1325.6655778884888,
+  "label": "Mistral-Nemo-12B"
+}

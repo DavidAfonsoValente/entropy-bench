@@ -1,0 +1,9 @@
+{
+  "benchmark": "gsm8k",
+  "label": "Mistral-Nemo-12B",
+  "metric": "exact_match,flexible-extract",
+  "n": 1319,
+  "provenance": "E9 re-score: all 17 models, one host (A100-SXM-64GB), one build, uniform decode protocol (eval/lm_eval_uniform.py)",
+  "score": 0.577710386656558,
+  "source": "results/gsm8k/Mistral-Nemo-12B/mistralai__Mistral-Nemo-Base-2407/results_2026-09-08T10-06-04.777154.json"
+}

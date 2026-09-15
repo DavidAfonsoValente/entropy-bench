@@ -1,0 +1,53 @@
+{
+  "chance": 0.25,
+  "cohort": [
+    "Falcon3-10B",
+    "Falcon3-7B",
+    "LFM2.5-1.2B",
+    "Llama-3.2-1B",
+    "Ministral-3-14B",
+    "Mistral-Nemo-12B",
+    "Qwen2.5-0.5B",
+    "Qwen2.5-1.5B",
+    "Qwen2.5-14B",
+    "Qwen2.5-3B",
+    "Qwen2.5-7B",
+    "Qwen3.5-4B",
+    "Qwen3.5-9B",
+    "SmolLM2-1.7B",
+    "gemma-4-12B"
+  ],
+  "excluded_multi_gpu": [
+    "gemma-4-31B",
+    "Qwen3.5-35B-MoE"
+  ],
+  "models_missing": [
+    "Falcon3-10B",
+    "Falcon3-7B",
+    "LFM2.5-1.2B",
+    "Llama-3.2-1B",
+    "Ministral-3-14B",
+    "Mistral-Nemo-12B",
+    "Qwen2.5-1.5B",
+    "Qwen2.5-14B",
+    "Qwen2.5-3B",
+    "Qwen3.5-4B",
+    "Qwen3.5-9B",
+    "SmolLM2-1.7B",
+    "gemma-4-12B"
+  ],
+  "models_scored": [
+    "Qwen2.5-0.5B",
+    "Qwen2.5-7B"
+  ],
+  "pilot_accuracy": {
+    "Qwen2.5-0.5B": 0.91,
+    "Qwen2.5-7B": 0.964
+  },
+  "preregistered": {
+    "degenerate_if": "all at chance, any >0.95, or spread <0.02",
+    "metric": "accuracy on a one-letter answer"
+  },
+  "schema_version": 1,
+  "verdict": "UNINFORMATIVE (pilot): Qwen2.5-7B reaches 0.964, above the 0.95 ceiling declared before the data; four-way discrimination saturates, so the sweep was not run"
+}

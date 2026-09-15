@@ -1,0 +1,9 @@
+{
+  "benchmark": "hellaswag",
+  "label": "Mistral-Nemo-12B",
+  "metric": "acc_norm,none",
+  "n": 10042,
+  "provenance": "E9 re-score: all 17 models, one host (A100-SXM-64GB), one build, uniform decode protocol (eval/lm_eval_uniform.py)",
+  "score": 0.8526190001991635,
+  "source": "results/hellaswag/Mistral-Nemo-12B/mistralai__Mistral-Nemo-Base-2407/results_2026-09-08T10-46-40.180799.json"
+}

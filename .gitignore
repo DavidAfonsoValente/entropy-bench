@@ -28,6 +28,19 @@ results/*
 !results/hellaswag/**
 !results/mmlu_pro_1k/
 !results/mmlu_pro_1k/**
+# The E9 re-score's per-example samples are 2.9 GB (17 models, and the hf backend logs far more
+# per hellaswag item than July's vLLM did), against 383 MB for the whole July column. They are
+# archived to $WORK/e9_column_samples/ -- $WORK, not $SCRATCH, because $SCRATCH is purged ~40d --
+# and deliberately NOT tracked. results_*.json and gen_audit.json carry every number the docs
+# quote; the samples are evidence for one-off forensics (they are what diagnosed gemma-4-12B).
+results/gsm8k/**/samples_*.jsonl
+results/hellaswag/**/samples_*.jsonl
+results/mmlu_pro_1k/**/samples_*.jsonl
+# The superseded July column, moved here by tools/collect_e9.py. The preregistration requires the
+# July answer to be reported ALONGSIDE the new one as the superseded result, so its raw logs must
+# stay in the repo -- without this the move would silently drop them, since results/* is ignored.
+!results/legacy_july_bench/
+!results/legacy_july_bench/**
 !results/alignment_matrix.json
 !results/math_domain_benchmark_analysis.json
 # E2's analysis output and the aggregate harness JSON it is computed from. docs/PROGRESS.md and
@@ -38,11 +51,84 @@ results/*
 !results/adapted_benchmark_analysis.json
 !results/e2_confound_audit.json
 !results/pairwise_significance.json
+!results/tokenizer_bias_ext.json
+!results/seed_sensitivity.json
+# The criterion's own paired item-bootstrap intervals, and the two-candidate decision rule computed
+# from them. Both are READ by gates, not just quoted: make_mechanism_table.py --check crashes
+# without criterion_uncertainty.json, analyze_decision_rule.py reads it, and verify_paper_numbers.py
+# asserts 26 prose numbers against the pair. Fourth time an artifact has shipped without its
+# allowlist line; the defect is invisible in place and only a fresh clone shows it.
+!results/criterion_uncertainty.json
+!results/decision_rule.json
+# E10: the late-position control. The raw per-position cells are ~2 MB each and stay in
+# $SCRATCH/e10_late_position; only the analysis lands here.
+!results/late_position.json
+# E11: the downstream fine-tune. Task data (2,500 articles) stays in $SCRATCH/e11_downstream;
+# the manifest and the verdict land here.
+!results/downstream.json
+!results/downstream_task.json
+# E12: the non-generative downstream task (in-domain multiple choice). Task data (2,500 questions)
+# stays in $SCRATCH/e12_mcq; the manifest and the verdict land here.
+!results/mcq.json
+!results/mcq_task.json
+
+# The council/review docs the state files CITE by path. results/* is an allowlist, so without
+# these three the citations in docs/PLAN.md, docs/PROGRESS.md and docs/RUN_LEDGER.md resolve to
+# nothing in a fresh clone -- the same defect class that broke the 2026-08-30 release. The raw
+# per-engine dumps stay untracked on purpose: they are unverified LEADS, and only the adjudicated
+# and actioned documents belong in the repo.
+!results/_council/
+results/_council/*
+!results/_council/ADJUDICATION.md
+!results/_council/e8_review.txt
+!results/_council/e8_gate_review.md
+!results/_council/framing_ADJUDICATION.md
+!results/_council/framing_question.txt
+!results/_council/framing_claude_own.md
 # The divergence analysis behind the paper's motivating pair, and the artifact that records why the
 # gap-size correlation is NOT reported as an estimate. Added 2026-08-30: the tool shipped without
 # this line, so `make check` passed locally off an untracked file and would have failed in CI on a
 # fresh clone -- caught by running the gate inside a clean checkout, not by running it here.
 !results/selection_divergence.json
+# E4: the in-domain cloze scores and the validity analysis computed from them. The per-model files
+# carry their per-item generations (~540 KB each, 6 MB total) and are committed deliberately -- the
+# whole point of a generation-scored criterion is that a reader can audit what was actually
+# produced, which a summary accuracy does not let them do.
+!results/cloze/
+!results/cloze/*.json
+!results/cloze_validity.json
+# E5: the mathematics criterion and the 2x2 computed from it, same reasoning (4.4 MB). Added
+# because the E4 block above did NOT cover a second results directory -- verified with
+# `git add -n results/cloze_math/`, never with `git check-ignore`, whose exit code is misleading
+# for negated patterns and which is how a public release shipped without its evidence in August.
+!results/cloze_math/
+!results/cloze_math/*.json
+!results/cloze_steering.json
+!results/cloze_reddit/
+!results/cloze_reddit/*.json
+!results/cloze_hackernews/
+!results/cloze_hackernews/*.json
+!results/cloze_coverage.json
+# Two small artifacts that docs/RUN_LEDGER.md cites BY PATH and quotes numbers from. Both existed
+# only locally until 2026-09-10, so those citations resolved to nothing in a fresh clone -- found
+# by tools/repo_map.py running inside a clean checkout, which is the fourth occurrence of this
+# allowlist defect class. contamination_summary.json is committed despite its miscalibrated
+# "CRITICAL" label (the ledger explains why the label is wrong and what the operational facts are);
+# hiding the file did not stop a reader encountering the claim, it only stopped them auditing it.
+!results/sensitivity_gemma12b.json
+!results/contamination/
+results/contamination/*
+!results/contamination/contamination_summary.json
+
+# The tier-mechanism artifact carries the paper's EXPLANATION for demoting the free tier
+# (results/tier_mechanism.json). Caught missing by cloning into a temp dir and running the
+# gates there -- `git add -n` in the working copy is necessary but not sufficient, because
+# an untracked-but-present file passes every check run in place.
+!results/tier_mechanism.json
+# E3 cohort extension: the six new models' BPB and cloze cells, and the pooled analysis.
+!results/cohort_ext/
+!results/cohort_ext/**/*.json
+!results/cohort_extension.json
 # The base config of an EXCLUDED model, kept because paper_sota.tex Sec. sec:adaptedacc quotes its
 # head_dim / global_head_dim as the reason the exclusion could not be waived. A claim in the paper
 # has to cite something a reader can grep.
@@ -112,3 +198,12 @@ htmlcov/
 # personal agent env — symlinks into ~/bottlecap/shared, never repo content
 .claude/
 scripts/ai
+.review_*
+
+# Scratch job-id files written by slurm/submit_*.sh. Nothing reads them back; two were committed
+# by accident (.e9_arrays, .e9_ministral_job, removed 2026-09-10).
+.e9_*
+.*_job
+
+# Inspection copy written beside the PDF by tools/plot_downstream.py; the paper uses the PDF.
+figures/fig_downstream.png

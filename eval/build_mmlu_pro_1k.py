@@ -10,7 +10,7 @@ Usage:
 
 Then run with:  lm_eval ... --tasks mmlu_pro_1k --include_path <parent-of-out>
 """
-import argparse, os, shutil, re
+import argparse, os, pathlib, shutil, re
 from collections import Counter
 
 import lm_eval
@@ -47,7 +47,14 @@ def main():
     for f in os.listdir(dst):
         if f.endswith(".yaml"):
             p = os.path.join(dst, f)
-            open(p, "w").write(open(p).read().replace("mmlu_pro", "mmlu_pro_1k"))
+            # Read fully BEFORE opening for write: open(p, "w") truncates at open() time, so
+            # the one-liner `open(p,"w").write(open(p).read()...)` evaluates its argument
+            # against an already-emptied file and silently writes "" to every task YAML. The
+            # script still prints "built" and correct per-subject counts (those come from the
+            # dataset, not the YAMLs), so the failure is invisible until lm_eval reports the
+            # task does not exist.
+            text = pathlib.Path(p).read_text()
+            pathlib.Path(p).write_text(text.replace("mmlu_pro", "mmlu_pro_1k"))
 
     # patch process_docs: seed-subsample only the large TEST split (the small
     # validation/few-shot pool is < K per subject, so `len(ds) > k` leaves it intact)
@@ -65,7 +72,14 @@ def main():
         r"\ndef process_docs\(dataset, subject\):\n    return dataset\.filter\(lambda x: x\[.category.\] == subject\)\n",
         inject, s)
     open(up, "w").write(s)
-    print(f"built mmlu_pro_1k at {dst}")
+    yamls = [os.path.join(dst, f) for f in os.listdir(dst) if f.endswith(".yaml")]
+    empty = [f for f in yamls if os.path.getsize(f) == 0]
+    if empty:
+        raise SystemExit(f"FATAL: {len(empty)} task YAMLs are empty: {sorted(map(os.path.basename, empty))[:3]}")
+    unrenamed = [f for f in yamls if "mmlu_pro_1k" not in pathlib.Path(f).read_text()]
+    if unrenamed:
+        raise SystemExit(f"FATAL: task id not renamed in {sorted(map(os.path.basename, unrenamed))[:3]}")
+    print(f"built mmlu_pro_1k at {dst} ({len(yamls)} task YAMLs, all non-empty and renamed)")
 
 
 if __name__ == "__main__":

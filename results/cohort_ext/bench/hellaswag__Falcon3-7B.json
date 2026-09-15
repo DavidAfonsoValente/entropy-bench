@@ -1,0 +1,9 @@
+{
+  "benchmark": "hellaswag",
+  "label": "Falcon3-7B",
+  "metric": "acc_norm,none",
+  "n": 10042,
+  "provenance": "E9 re-score: all 17 models, one host (A100-SXM-64GB), one build, uniform decode protocol (eval/lm_eval_uniform.py)",
+  "score": 0.7671778530173272,
+  "source": "results/hellaswag/Falcon3-7B/tiiuae__Falcon3-7B-Base/results_2026-09-08T09-53-42.993583.json"
+}

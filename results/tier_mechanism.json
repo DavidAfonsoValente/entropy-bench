@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "question": "Are the models zero-shot BPB mis-ranks the ones that need the most adaptation?",
+  "corpus": "news",
+  "criterion": "in-domain cloze, lenient_accuracy",
+  "caveat": "eleven models; a described pattern with named instances, not an estimate. The correlations place the pattern and are not tested.",
+  "per_model": {
+    "LFM2.5-1.2B": {
+      "reduction_pct": 36.4195367917333,
+      "zero_shot_bpb": 1.3397692252588325,
+      "adapted_bpb": 0.8518314793413718,
+      "cloze": 0.0776,
+      "rank_zero_shot": 11,
+      "rank_adapted": 10,
+      "rank_cloze": 10,
+      "rank_error_zero_shot": 1,
+      "rank_error_adapted": 0
+    },
+    "Llama-3.2-1B": {
+      "reduction_pct": 4.860344383899094,
+      "zero_shot_bpb": 0.8107292200295345,
+      "adapted_bpb": 0.7713249879152001,
+      "cloze": 0.1044,
+      "rank_zero_shot": 7,
+      "rank_adapted": 8,
+      "rank_cloze": 7,
+      "rank_error_zero_shot": 0,
+      "rank_error_adapted": 1
+    },
+    "Ministral-3-14B": {
+      "reduction_pct": 5.425265402668852,
+      "zero_shot_bpb": 0.7180745290733163,
+      "adapted_bpb": 0.6791170800821243,
+      "cloze": 0.1416,
+      "rank_zero_shot": 2,
+      "rank_adapted": 4,
+      "rank_cloze": 4,
+      "rank_error_zero_shot": -2,
+      "rank_error_adapted": 0
+    },
+    "Qwen2.5-0.5B": {
+      "reduction_pct": 3.5923724521934717,
+      "zero_shot_bpb": 0.9348790867766463,
+      "adapted_bpb": 0.9012947480019642,
+      "cloze": 0.0664,
+      "rank_zero_shot": 10,
+      "rank_adapted": 11,
+      "rank_cloze": 11,
+      "rank_error_zero_shot": -1,
+      "rank_error_adapted": 0
+    },
+    "Qwen2.5-1.5B": {
+      "reduction_pct": 4.308176768058814,
+      "zero_shot_bpb": 0.833052136172734,
+      "adapted_bpb": 0.7971627775763226,
+      "cloze": 0.0888,
+      "rank_zero_shot": 8,
+      "rank_adapted": 9,
+      "rank_cloze": 9,
+      "rank_error_zero_shot": -1,
+      "rank_error_adapted": 0
+    },
+    "Qwen2.5-7B": {
+      "reduction_pct": 5.373414909213878,
+      "zero_shot_bpb": 0.7577238292039596,
+      "adapted_bpb": 0.7170081839948478,
+      "cloze": 0.1208,
+      "rank_zero_shot": 5,
+      "rank_adapted": 6,
+      "rank_cloze": 5,
+      "rank_error_zero_shot": 0,
+      "rank_error_adapted": 1
+    },
+    "Qwen3.5-35B-MoE": {
+      "reduction_pct": 4.111331028835714,
+      "zero_shot_bpb": 0.7074128813678242,
+      "adapted_bpb": 0.6783287960741681,
+      "cloze": 0.1472,
+      "rank_zero_shot": 1,
+      "rank_adapted": 3,
+      "rank_cloze": 3,
+      "rank_error_zero_shot": -2,
+      "rank_error_adapted": 0
+    },
+    "Qwen3.5-4B": {
+      "reduction_pct": 4.183246879073584,
+      "zero_shot_bpb": 0.7821723980547718,
+      "adapted_bpb": 0.7494521956241705,
+      "cloze": 0.1008,
+      "rank_zero_shot": 6,
+      "rank_adapted": 7,
+      "rank_cloze": 8,
+      "rank_error_zero_shot": -2,
+      "rank_error_adapted": -1
+    },
+    "Qwen3.5-9B": {
+      "reduction_pct": 4.362605738060627,
+      "zero_shot_bpb": 0.7404934039199289,
+      "adapted_bpb": 0.7081885961905576,
+      "cloze": 0.1164,
+      "rank_zero_shot": 3,
+      "rank_adapted": 5,
+      "rank_cloze": 6,
+      "rank_error_zero_shot": -3,
+      "rank_error_adapted": -1
+    },
+    "gemma-4-12B": {
+      "reduction_pct": 24.532974819176857,
+      "zero_shot_bpb": 0.8655081080406716,
+      "adapted_bpb": 0.6531732218371196,
+      "cloze": 0.186,
+      "rank_zero_shot": 9,
+      "rank_adapted": 2,
+      "rank_cloze": 2,
+      "rank_error_zero_shot": 7,
+      "rank_error_adapted": 0
+    },
+    "gemma-4-31B": {
+      "reduction_pct": 17.0064234554041,
+      "zero_shot_bpb": 0.7518399917025791,
+      "adapted_bpb": 0.6239788990065634,
+      "cloze": 0.2128,
+      "rank_zero_shot": 4,
+      "rank_adapted": 1,
+      "rank_cloze": 1,
+      "rank_error_zero_shot": 3,
+      "rank_error_adapted": 0
+    }
+  },
+  "mean_abs_rank_error": {
+    "zero_shot": 2.0,
+    "adapted": 0.36363636363636365
+  },
+  "models_ranked_exactly_right": {
+    "zero_shot": [
+      "Llama-3.2-1B",
+      "Qwen2.5-7B"
+    ],
+    "adapted": [
+      "LFM2.5-1.2B",
+      "Ministral-3-14B",
+      "Qwen2.5-0.5B",
+      "Qwen2.5-1.5B",
+      "Qwen3.5-35B-MoE",
+      "gemma-4-12B",
+      "gemma-4-31B"
+    ]
+  },
+  "pearson_reduction_vs_rank_error": {
+    "zero_shot": 0.6720438144085693,
+    "adapted": 0.024370964790373196
+  },
+  "pairs_zero_shot_gets_wrong_that_adapted_gets_right": [
+    [
+      "LFM2.5-1.2B",
+      "Qwen2.5-0.5B"
+    ],
+    [
+      "Llama-3.2-1B",
+      "gemma-4-12B"
+    ],
+    [
+      "Ministral-3-14B",
+      "gemma-4-12B"
+    ],
+    [
+      "Ministral-3-14B",
+      "gemma-4-31B"
+    ],
+    [
+      "Qwen2.5-1.5B",
+      "gemma-4-12B"
+    ],
+    [
+      "Qwen2.5-7B",
+      "gemma-4-12B"
+    ],
+    [
+      "Qwen3.5-35B-MoE",
+      "gemma-4-12B"
+    ],
+    [
+      "Qwen3.5-35B-MoE",
+      "gemma-4-31B"
+    ],
+    [
+      "Qwen3.5-4B",
+      "gemma-4-12B"
+    ],
+    [
+      "Qwen3.5-9B",
+      "gemma-4-12B"
+    ],
+    [
+      "Qwen3.5-9B",
+      "gemma-4-31B"
+    ]
+  ],
+  "n_such_pairs": 11,
+  "most_underrated_by_zero_shot": [
+    "gemma-4-12B",
+    "gemma-4-31B",
+    "LFM2.5-1.2B"
+  ],
+  "largest_reductions": [
+    "LFM2.5-1.2B",
+    "gemma-4-12B",
+    "gemma-4-31B"
+  ]
+}

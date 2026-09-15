@@ -1,0 +1,2082 @@
+{
+  "cohort_11": [
+    "LFM2.5-1.2B",
+    "Llama-3.2-1B",
+    "Ministral-3-14B",
+    "Qwen2.5-0.5B",
+    "Qwen2.5-1.5B",
+    "Qwen2.5-7B",
+    "Qwen3.5-35B-MoE",
+    "Qwen3.5-4B",
+    "Qwen3.5-9B",
+    "gemma-4-12B",
+    "gemma-4-31B"
+  ],
+  "cohort_17": [
+    "Falcon3-10B",
+    "Falcon3-7B",
+    "LFM2.5-1.2B",
+    "Llama-3.2-1B",
+    "Ministral-3-14B",
+    "Mistral-Nemo-12B",
+    "Qwen2.5-0.5B",
+    "Qwen2.5-1.5B",
+    "Qwen2.5-14B",
+    "Qwen2.5-3B",
+    "Qwen2.5-7B",
+    "Qwen3.5-35B-MoE",
+    "Qwen3.5-4B",
+    "Qwen3.5-9B",
+    "SmolLM2-1.7B",
+    "gemma-4-12B",
+    "gemma-4-31B"
+  ],
+  "lenient": {
+    "adjacent_pairs": [
+      {
+        "better": "gemma-4-31B",
+        "ci_excludes_zero": true,
+        "ci_hi": 0.039199999999999985,
+        "ci_lo": 0.014800000000000008,
+        "observed": 0.02679999999999999,
+        "worse": "gemma-4-12B"
+      },
+      {
+        "better": "gemma-4-12B",
+        "ci_excludes_zero": true,
+        "ci_hi": 0.05199999999999999,
+        "ci_lo": 0.025999999999999995,
+        "observed": 0.0388,
+        "worse": "Qwen3.5-35B-MoE"
+      },
+      {
+        "better": "Qwen3.5-35B-MoE",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.01679999999999998,
+        "ci_lo": -0.00520000000000001,
+        "observed": 0.005599999999999994,
+        "worse": "Ministral-3-14B"
+      },
+      {
+        "better": "Ministral-3-14B",
+        "ci_excludes_zero": true,
+        "ci_hi": 0.03159999999999999,
+        "ci_lo": 0.010000000000000009,
+        "observed": 0.0208,
+        "worse": "Qwen2.5-7B"
+      },
+      {
+        "better": "Qwen2.5-7B",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.014799999999999994,
+        "ci_lo": -0.006000000000000005,
+        "observed": 0.004400000000000001,
+        "worse": "Qwen3.5-9B"
+      },
+      {
+        "better": "Qwen3.5-9B",
+        "ci_excludes_zero": true,
+        "ci_hi": 0.022799999999999987,
+        "ci_lo": 0.0012000000000000066,
+        "observed": 0.011999999999999997,
+        "worse": "Llama-3.2-1B"
+      },
+      {
+        "better": "Llama-3.2-1B",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.013999999999999999,
+        "ci_lo": -0.0068000000000000005,
+        "observed": 0.003600000000000006,
+        "worse": "Qwen3.5-4B"
+      },
+      {
+        "better": "Qwen3.5-4B",
+        "ci_excludes_zero": true,
+        "ci_hi": 0.021599999999999994,
+        "ci_lo": 0.0023999999999999994,
+        "observed": 0.011999999999999997,
+        "worse": "Qwen2.5-1.5B"
+      },
+      {
+        "better": "Qwen2.5-1.5B",
+        "ci_excludes_zero": true,
+        "ci_hi": 0.020800000000000013,
+        "ci_lo": 0.0016000000000000042,
+        "observed": 0.011200000000000002,
+        "worse": "LFM2.5-1.2B"
+      },
+      {
+        "better": "LFM2.5-1.2B",
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0208,
+        "ci_lo": 0.0016000000000000042,
+        "observed": 0.011200000000000002,
+        "worse": "Qwen2.5-0.5B"
+      }
+    ],
+    "n_adjacent_resolved": 7,
+    "pairwise": {
+      "Falcon3-10B|Falcon3-7B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.016799999999999995,
+        "ci_lo": -0.00040000000000001146,
+        "observed": 0.008000000000000007
+      },
+      "Falcon3-10B|LFM2.5-1.2B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.027200000000000002,
+        "ci_lo": 0.0059999999999999915,
+        "observed": 0.016399999999999998
+      },
+      "Falcon3-10B|Llama-3.2-1B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.0007999999999999952,
+        "ci_lo": -0.021599999999999994,
+        "observed": -0.010400000000000006
+      },
+      "Falcon3-10B|Ministral-3-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.03560000000000001,
+        "ci_lo": -0.0596,
+        "observed": -0.0476
+      },
+      "Falcon3-10B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.058800000000000005,
+        "ci_lo": -0.08600000000000001,
+        "observed": -0.07239999999999999
+      },
+      "Falcon3-10B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.038000000000000006,
+        "ci_lo": 0.01759999999999999,
+        "observed": 0.0276
+      },
+      "Falcon3-10B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.015200000000000005,
+        "ci_lo": -0.004799999999999999,
+        "observed": 0.005199999999999996
+      },
+      "Falcon3-10B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.03119999999999999,
+        "ci_lo": -0.0552,
+        "observed": -0.04319999999999999
+      },
+      "Falcon3-10B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0023999999999999994,
+        "ci_lo": -0.0232,
+        "observed": -0.012800000000000006
+      },
+      "Falcon3-10B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.015600000000000003,
+        "ci_lo": -0.03799999999999999,
+        "observed": -0.026800000000000004
+      },
+      "Falcon3-10B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0408,
+        "ci_lo": -0.0656,
+        "observed": -0.0532
+      },
+      "Falcon3-10B|Qwen3.5-4B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.003600000000000006,
+        "ci_lo": -0.017199999999999993,
+        "observed": -0.0068000000000000005
+      },
+      "Falcon3-10B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0116,
+        "ci_lo": -0.03320000000000001,
+        "observed": -0.022400000000000003
+      },
+      "Falcon3-10B|SmolLM2-1.7B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.013600000000000001,
+        "ci_lo": -0.0068000000000000005,
+        "observed": 0.0031999999999999945
+      },
+      "Falcon3-10B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.07800000000000001,
+        "ci_lo": -0.10561000000000001,
+        "observed": -0.092
+      },
+      "Falcon3-10B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.1036,
+        "ci_lo": -0.1336,
+        "observed": -0.11879999999999999
+      },
+      "Falcon3-7B|LFM2.5-1.2B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.018799999999999997,
+        "ci_lo": -0.0020000000000000018,
+        "observed": 0.00839999999999999
+      },
+      "Falcon3-7B|Llama-3.2-1B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.007199999999999998,
+        "ci_lo": -0.029200000000000004,
+        "observed": -0.018400000000000014
+      },
+      "Falcon3-7B|Ministral-3-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0436,
+        "ci_lo": -0.06760000000000001,
+        "observed": -0.05560000000000001
+      },
+      "Falcon3-7B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.06719999999999998,
+        "ci_lo": -0.094,
+        "observed": -0.0804
+      },
+      "Falcon3-7B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.029599999999999994,
+        "ci_lo": 0.009999999999999995,
+        "observed": 0.019599999999999992
+      },
+      "Falcon3-7B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.0068000000000000005,
+        "ci_lo": -0.012799999999999992,
+        "observed": -0.002800000000000011
+      },
+      "Falcon3-7B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0392,
+        "ci_lo": -0.06359999999999999,
+        "observed": -0.051199999999999996
+      },
+      "Falcon3-7B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.009999999999999995,
+        "ci_lo": -0.0316,
+        "observed": -0.020800000000000013
+      },
+      "Falcon3-7B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.023599999999999996,
+        "ci_lo": -0.046,
+        "observed": -0.03480000000000001
+      },
+      "Falcon3-7B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.04880000000000001,
+        "ci_lo": -0.0736,
+        "observed": -0.061200000000000004
+      },
+      "Falcon3-7B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.004400000000000001,
+        "ci_lo": -0.0252,
+        "observed": -0.014800000000000008
+      },
+      "Falcon3-7B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.01920000000000001,
+        "ci_lo": -0.0416,
+        "observed": -0.03040000000000001
+      },
+      "Falcon3-7B|SmolLM2-1.7B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.004800000000000013,
+        "ci_lo": -0.014799999999999994,
+        "observed": -0.004800000000000013
+      },
+      "Falcon3-7B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.08600000000000001,
+        "ci_lo": -0.114,
+        "observed": -0.1
+      },
+      "Falcon3-7B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.11199999999999999,
+        "ci_lo": -0.142,
+        "observed": -0.1268
+      },
+      "LFM2.5-1.2B|Llama-3.2-1B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.016,
+        "ci_lo": -0.037599999999999995,
+        "observed": -0.026800000000000004
+      },
+      "LFM2.5-1.2B|Ministral-3-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.05120000000000001,
+        "ci_lo": -0.0768,
+        "observed": -0.064
+      },
+      "LFM2.5-1.2B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0748,
+        "ci_lo": -0.1028,
+        "observed": -0.08879999999999999
+      },
+      "LFM2.5-1.2B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0208,
+        "ci_lo": 0.0016000000000000042,
+        "observed": 0.011200000000000002
+      },
+      "LFM2.5-1.2B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0016000000000000042,
+        "ci_lo": -0.020800000000000013,
+        "observed": -0.011200000000000002
+      },
+      "LFM2.5-1.2B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.04719999999999999,
+        "ci_lo": -0.07200000000000001,
+        "observed": -0.059599999999999986
+      },
+      "LFM2.5-1.2B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0184,
+        "ci_lo": -0.04000000000000001,
+        "observed": -0.029200000000000004
+      },
+      "LFM2.5-1.2B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0316,
+        "ci_lo": -0.054400000000000004,
+        "observed": -0.0432
+      },
+      "LFM2.5-1.2B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0572,
+        "ci_lo": -0.08200000000000002,
+        "observed": -0.0696
+      },
+      "LFM2.5-1.2B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.012800000000000006,
+        "ci_lo": -0.033600000000000005,
+        "observed": -0.0232
+      },
+      "LFM2.5-1.2B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.027999999999999997,
+        "ci_lo": -0.05,
+        "observed": -0.0388
+      },
+      "LFM2.5-1.2B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0032000000000000084,
+        "ci_lo": -0.0232,
+        "observed": -0.013200000000000003
+      },
+      "LFM2.5-1.2B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.09439999999999998,
+        "ci_lo": -0.12240000000000001,
+        "observed": -0.1084
+      },
+      "LFM2.5-1.2B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.11960000000000001,
+        "ci_lo": -0.1504,
+        "observed": -0.1352
+      },
+      "Llama-3.2-1B|Ministral-3-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.025599999999999998,
+        "ci_lo": -0.049199999999999994,
+        "observed": -0.0372
+      },
+      "Llama-3.2-1B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.049199999999999994,
+        "ci_lo": -0.07519999999999999,
+        "observed": -0.061999999999999986
+      },
+      "Llama-3.2-1B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0488,
+        "ci_lo": 0.027200000000000002,
+        "observed": 0.038000000000000006
+      },
+      "Llama-3.2-1B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.025999999999999995,
+        "ci_lo": 0.005599999999999994,
+        "observed": 0.015600000000000003
+      },
+      "Llama-3.2-1B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.021199999999999997,
+        "ci_lo": -0.044399999999999995,
+        "observed": -0.03279999999999998
+      },
+      "Llama-3.2-1B|Qwen2.5-3B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.007199999999999998,
+        "ci_lo": -0.012399999999999994,
+        "observed": -0.0023999999999999994
+      },
+      "Llama-3.2-1B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.005599999999999994,
+        "ci_lo": -0.027200000000000002,
+        "observed": -0.016399999999999998
+      },
+      "Llama-3.2-1B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.030800000000000008,
+        "ci_lo": -0.05479999999999999,
+        "observed": -0.04279999999999999
+      },
+      "Llama-3.2-1B|Qwen3.5-4B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.013999999999999999,
+        "ci_lo": -0.0068000000000000005,
+        "observed": 0.003600000000000006
+      },
+      "Llama-3.2-1B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0012000000000000066,
+        "ci_lo": -0.022799999999999987,
+        "observed": -0.011999999999999997
+      },
+      "Llama-3.2-1B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.023599999999999996,
+        "ci_lo": 0.003599999999999992,
+        "observed": 0.013600000000000001
+      },
+      "Llama-3.2-1B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.068,
+        "ci_lo": -0.09519999999999999,
+        "observed": -0.08159999999999999
+      },
+      "Llama-3.2-1B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.09359999999999999,
+        "ci_lo": -0.1232,
+        "observed": -0.10839999999999998
+      },
+      "Ministral-3-14B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.013600000000000001,
+        "ci_lo": -0.036000000000000004,
+        "observed": -0.02479999999999999
+      },
+      "Ministral-3-14B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.08760000000000001,
+        "ci_lo": 0.0628,
+        "observed": 0.0752
+      },
+      "Ministral-3-14B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.06479999999999998,
+        "ci_lo": 0.0412,
+        "observed": 0.0528
+      },
+      "Ministral-3-14B|Qwen2.5-14B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.015199999999999991,
+        "ci_lo": -0.006000000000000005,
+        "observed": 0.004400000000000015
+      },
+      "Ministral-3-14B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.045999999999999985,
+        "ci_lo": 0.024000000000000007,
+        "observed": 0.0348
+      },
+      "Ministral-3-14B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.03159999999999999,
+        "ci_lo": 0.010000000000000009,
+        "observed": 0.0208
+      },
+      "Ministral-3-14B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.00520000000000001,
+        "ci_lo": -0.01679999999999998,
+        "observed": -0.005599999999999994
+      },
+      "Ministral-3-14B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.05199999999999999,
+        "ci_lo": 0.029600000000000015,
+        "observed": 0.0408
+      },
+      "Ministral-3-14B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.03560000000000001,
+        "ci_lo": 0.014799999999999994,
+        "observed": 0.0252
+      },
+      "Ministral-3-14B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0624,
+        "ci_lo": 0.03920000000000001,
+        "observed": 0.0508
+      },
+      "Ministral-3-14B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.032,
+        "ci_lo": -0.0572,
+        "observed": -0.044399999999999995
+      },
+      "Ministral-3-14B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0572,
+        "ci_lo": -0.0852,
+        "observed": -0.07119999999999999
+      },
+      "Mistral-Nemo-12B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.11399999999999999,
+        "ci_lo": 0.08639999999999999,
+        "observed": 0.09999999999999999
+      },
+      "Mistral-Nemo-12B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.09079999999999999,
+        "ci_lo": 0.0648,
+        "observed": 0.07759999999999999
+      },
+      "Mistral-Nemo-12B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.04000000000000001,
+        "ci_lo": 0.0184,
+        "observed": 0.029200000000000004
+      },
+      "Mistral-Nemo-12B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0724,
+        "ci_lo": 0.04680000000000001,
+        "observed": 0.059599999999999986
+      },
+      "Mistral-Nemo-12B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.05799999999999998,
+        "ci_lo": 0.033600000000000005,
+        "observed": 0.04559999999999999
+      },
+      "Mistral-Nemo-12B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.03159999999999999,
+        "ci_lo": 0.0068000000000000005,
+        "observed": 0.019199999999999995
+      },
+      "Mistral-Nemo-12B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.07840000000000001,
+        "ci_lo": 0.05319999999999998,
+        "observed": 0.06559999999999999
+      },
+      "Mistral-Nemo-12B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.06279999999999998,
+        "ci_lo": 0.037599999999999995,
+        "observed": 0.04999999999999999
+      },
+      "Mistral-Nemo-12B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.08879999999999999,
+        "ci_lo": 0.0628,
+        "observed": 0.07559999999999999
+      },
+      "Mistral-Nemo-12B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.007599999999999996,
+        "ci_lo": -0.032,
+        "observed": -0.019600000000000006
+      },
+      "Mistral-Nemo-12B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.034,
+        "ci_lo": -0.059199999999999975,
+        "observed": -0.0464
+      },
+      "Qwen2.5-0.5B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.013600000000000001,
+        "ci_lo": -0.031200000000000006,
+        "observed": -0.022400000000000003
+      },
+      "Qwen2.5-0.5B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.05840000000000001,
+        "ci_lo": -0.0832,
+        "observed": -0.07079999999999999
+      },
+      "Qwen2.5-0.5B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.030399999999999996,
+        "ci_lo": -0.050409999999999996,
+        "observed": -0.040400000000000005
+      },
+      "Qwen2.5-0.5B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0436,
+        "ci_lo": -0.06559999999999999,
+        "observed": -0.054400000000000004
+      },
+      "Qwen2.5-0.5B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.06839999999999999,
+        "ci_lo": -0.09359999999999999,
+        "observed": -0.0808
+      },
+      "Qwen2.5-0.5B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.024400000000000005,
+        "ci_lo": -0.04440000000000001,
+        "observed": -0.0344
+      },
+      "Qwen2.5-0.5B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0392,
+        "ci_lo": -0.06080000000000001,
+        "observed": -0.05
+      },
+      "Qwen2.5-0.5B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.015199999999999991,
+        "ci_lo": -0.03399999999999999,
+        "observed": -0.024400000000000005
+      },
+      "Qwen2.5-0.5B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.10519999999999999,
+        "ci_lo": -0.134,
+        "observed": -0.1196
+      },
+      "Qwen2.5-0.5B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.1308,
+        "ci_lo": -0.1624,
+        "observed": -0.14639999999999997
+      },
+      "Qwen2.5-1.5B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0372,
+        "ci_lo": -0.0596,
+        "observed": -0.048399999999999985
+      },
+      "Qwen2.5-1.5B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0092,
+        "ci_lo": -0.027200000000000002,
+        "observed": -0.018000000000000002
+      },
+      "Qwen2.5-1.5B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.021999999999999992,
+        "ci_lo": -0.04200000000000001,
+        "observed": -0.032
+      },
+      "Qwen2.5-1.5B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.046799999999999994,
+        "ci_lo": -0.07039999999999999,
+        "observed": -0.058399999999999994
+      },
+      "Qwen2.5-1.5B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0023999999999999994,
+        "ci_lo": -0.021599999999999994,
+        "observed": -0.011999999999999997
+      },
+      "Qwen2.5-1.5B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.017600000000000005,
+        "ci_lo": -0.037599999999999995,
+        "observed": -0.0276
+      },
+      "Qwen2.5-1.5B|SmolLM2-1.7B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.0068000000000000005,
+        "ci_lo": -0.011200000000000002,
+        "observed": -0.0020000000000000018
+      },
+      "Qwen2.5-1.5B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.08360000000000001,
+        "ci_lo": -0.11080000000000001,
+        "observed": -0.0972
+      },
+      "Qwen2.5-1.5B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.10880000000000001,
+        "ci_lo": -0.1392,
+        "observed": -0.12399999999999999
+      },
+      "Qwen2.5-14B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.04119999999999999,
+        "ci_lo": 0.019600000000000006,
+        "observed": 0.030399999999999983
+      },
+      "Qwen2.5-14B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.026800000000000004,
+        "ci_lo": 0.006000000000000005,
+        "observed": 0.016399999999999984
+      },
+      "Qwen2.5-14B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.0012000000000000066,
+        "ci_lo": -0.021199999999999997,
+        "observed": -0.010000000000000009
+      },
+      "Qwen2.5-14B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0476,
+        "ci_lo": 0.024800000000000016,
+        "observed": 0.03639999999999999
+      },
+      "Qwen2.5-14B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.032,
+        "ci_lo": 0.009200000000000014,
+        "observed": 0.020799999999999985
+      },
+      "Qwen2.5-14B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.05800000000000001,
+        "ci_lo": 0.0348,
+        "observed": 0.04639999999999998
+      },
+      "Qwen2.5-14B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.03560000000000002,
+        "ci_lo": -0.062,
+        "observed": -0.04880000000000001
+      },
+      "Qwen2.5-14B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.061600000000000016,
+        "ci_lo": -0.08960000000000001,
+        "observed": -0.0756
+      },
+      "Qwen2.5-3B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.004400000000000015,
+        "ci_lo": -0.0232,
+        "observed": -0.013999999999999999
+      },
+      "Qwen2.5-3B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.029599999999999987,
+        "ci_lo": -0.05159999999999999,
+        "observed": -0.04039999999999999
+      },
+      "Qwen2.5-3B|Qwen3.5-4B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.016,
+        "ci_lo": -0.00399999999999999,
+        "observed": 0.006000000000000005
+      },
+      "Qwen2.5-3B|Qwen3.5-9B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.00040000000000001146,
+        "ci_lo": -0.019600000000000006,
+        "observed": -0.009599999999999997
+      },
+      "Qwen2.5-3B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0252,
+        "ci_lo": 0.0068000000000000005,
+        "observed": 0.016
+      },
+      "Qwen2.5-3B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.06559999999999999,
+        "ci_lo": -0.09280000000000001,
+        "observed": -0.07919999999999999
+      },
+      "Qwen2.5-3B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0908,
+        "ci_lo": -0.12119999999999999,
+        "observed": -0.10599999999999998
+      },
+      "Qwen2.5-7B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.015200000000000005,
+        "ci_lo": -0.037599999999999995,
+        "observed": -0.026399999999999993
+      },
+      "Qwen2.5-7B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.03,
+        "ci_lo": 0.009999999999999995,
+        "observed": 0.020000000000000004
+      },
+      "Qwen2.5-7B|Qwen3.5-9B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.014799999999999994,
+        "ci_lo": -0.006000000000000005,
+        "observed": 0.004400000000000001
+      },
+      "Qwen2.5-7B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.04000000000000001,
+        "ci_lo": 0.019600000000000006,
+        "observed": 0.03
+      },
+      "Qwen2.5-7B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0524,
+        "ci_lo": -0.0784,
+        "observed": -0.0652
+      },
+      "Qwen2.5-7B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0776,
+        "ci_lo": -0.10679999999999999,
+        "observed": -0.09199999999999998
+      },
+      "Qwen3.5-35B-MoE|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0572,
+        "ci_lo": 0.03560000000000001,
+        "observed": 0.0464
+      },
+      "Qwen3.5-35B-MoE|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0412,
+        "ci_lo": 0.020799999999999985,
+        "observed": 0.030799999999999994
+      },
+      "Qwen3.5-35B-MoE|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.068,
+        "ci_lo": 0.04519999999999999,
+        "observed": 0.05639999999999999
+      },
+      "Qwen3.5-35B-MoE|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.025999999999999995,
+        "ci_lo": -0.05199999999999999,
+        "observed": -0.0388
+      },
+      "Qwen3.5-35B-MoE|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.05159999999999998,
+        "ci_lo": -0.07999999999999999,
+        "observed": -0.06559999999999999
+      },
+      "Qwen3.5-4B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0068000000000000005,
+        "ci_lo": -0.024400000000000005,
+        "observed": -0.015600000000000003
+      },
+      "Qwen3.5-4B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.01999999999999999,
+        "ci_lo": 0.0003999999999999976,
+        "observed": 0.009999999999999995
+      },
+      "Qwen3.5-4B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.07160000000000001,
+        "ci_lo": -0.0988,
+        "observed": -0.0852
+      },
+      "Qwen3.5-4B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0976,
+        "ci_lo": -0.1264,
+        "observed": -0.11199999999999999
+      },
+      "Qwen3.5-9B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.03560000000000001,
+        "ci_lo": 0.015600000000000003,
+        "observed": 0.025599999999999998
+      },
+      "Qwen3.5-9B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.05679999999999999,
+        "ci_lo": -0.08279999999999998,
+        "observed": -0.0696
+      },
+      "Qwen3.5-9B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.08200000000000002,
+        "ci_lo": -0.1108,
+        "observed": -0.09639999999999999
+      },
+      "SmolLM2-1.7B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.08120000000000001,
+        "ci_lo": -0.1092,
+        "observed": -0.09519999999999999
+      },
+      "SmolLM2-1.7B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.10679999999999999,
+        "ci_lo": -0.1372,
+        "observed": -0.12199999999999998
+      },
+      "gemma-4-12B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.014800000000000008,
+        "ci_lo": -0.039199999999999985,
+        "observed": -0.02679999999999999
+      }
+    },
+    "per_model": {
+      "Falcon3-10B": {
+        "accuracy": 0.094,
+        "ci_hi": 0.1056,
+        "ci_lo": 0.0828,
+        "half_width": 0.0114
+      },
+      "Falcon3-7B": {
+        "accuracy": 0.086,
+        "ci_hi": 0.0972,
+        "ci_lo": 0.0752,
+        "half_width": 0.010999999999999996
+      },
+      "LFM2.5-1.2B": {
+        "accuracy": 0.0776,
+        "ci_hi": 0.0884,
+        "ci_lo": 0.0672,
+        "half_width": 0.010600000000000005
+      },
+      "Llama-3.2-1B": {
+        "accuracy": 0.1044,
+        "ci_hi": 0.1164,
+        "ci_lo": 0.0924,
+        "half_width": 0.012000000000000004
+      },
+      "Ministral-3-14B": {
+        "accuracy": 0.1416,
+        "ci_hi": 0.1552,
+        "ci_lo": 0.128,
+        "half_width": 0.013600000000000001
+      },
+      "Mistral-Nemo-12B": {
+        "accuracy": 0.1664,
+        "ci_hi": 0.1808099999999991,
+        "ci_lo": 0.1516,
+        "half_width": 0.014604999999999549
+      },
+      "Qwen2.5-0.5B": {
+        "accuracy": 0.0664,
+        "ci_hi": 0.0764,
+        "ci_lo": 0.0568,
+        "half_width": 0.009799999999999996
+      },
+      "Qwen2.5-1.5B": {
+        "accuracy": 0.0888,
+        "ci_hi": 0.1,
+        "ci_lo": 0.078,
+        "half_width": 0.011000000000000003
+      },
+      "Qwen2.5-14B": {
+        "accuracy": 0.1372,
+        "ci_hi": 0.1508,
+        "ci_lo": 0.1236,
+        "half_width": 0.013599999999999994
+      },
+      "Qwen2.5-3B": {
+        "accuracy": 0.1068,
+        "ci_hi": 0.1188,
+        "ci_lo": 0.0948,
+        "half_width": 0.012000000000000004
+      },
+      "Qwen2.5-7B": {
+        "accuracy": 0.1208,
+        "ci_hi": 0.1336,
+        "ci_lo": 0.108,
+        "half_width": 0.012799999999999999
+      },
+      "Qwen3.5-35B-MoE": {
+        "accuracy": 0.1472,
+        "ci_hi": 0.1612,
+        "ci_lo": 0.1336,
+        "half_width": 0.013800000000000007
+      },
+      "Qwen3.5-4B": {
+        "accuracy": 0.1008,
+        "ci_hi": 0.1124,
+        "ci_lo": 0.0892,
+        "half_width": 0.0116
+      },
+      "Qwen3.5-9B": {
+        "accuracy": 0.1164,
+        "ci_hi": 0.1292,
+        "ci_lo": 0.104,
+        "half_width": 0.012600000000000007
+      },
+      "SmolLM2-1.7B": {
+        "accuracy": 0.0908,
+        "ci_hi": 0.102,
+        "ci_lo": 0.0796,
+        "half_width": 0.011199999999999995
+      },
+      "gemma-4-12B": {
+        "accuracy": 0.186,
+        "ci_hi": 0.2012,
+        "ci_lo": 0.1708,
+        "half_width": 0.015199999999999991
+      },
+      "gemma-4-31B": {
+        "accuracy": 0.2128,
+        "ci_hi": 0.2288,
+        "ci_lo": 0.1968,
+        "half_width": 0.016
+      }
+    },
+    "rank_error": {
+      "adapted": {
+        "ci_hi": 0.5454545454545454,
+        "ci_lo": 0.0,
+        "median_models_ranked_exactly_right": 7.0,
+        "observed_mean_abs_rank_error": 0.36363636363636365
+      },
+      "n_models": 11,
+      "note": "criterion ordering resampled; BPB orderings fixed",
+      "zero_shot": {
+        "ci_hi": 2.1818181818181817,
+        "ci_lo": 2.0,
+        "median_models_ranked_exactly_right": 2.0,
+        "observed_mean_abs_rank_error": 2.0
+      },
+      "zero_shot_minus_adapted": {
+        "ci_excludes_zero": true,
+        "ci_hi": 2.0,
+        "ci_lo": 1.4545454545454546,
+        "observed": 1.6363636363636362
+      }
+    }
+  },
+  "method": {
+    "answers": "how well the yardstick is known; the paper's selection-accuracy intervals resample models instead and answer whether a selector generalises",
+    "corpus": "news",
+    "n_boot": 20000,
+    "paired": "one item resample is applied to every model per draw, so between-model differences do not pay the item-difficulty noise twice",
+    "resampling_unit": "cloze item (2,500 shared items), NOT model",
+    "seed": 20260911,
+    "tie_convention": "analyze_tier_mechanism._ranks; exact ties broken by model order"
+  },
+  "n_items": 2500,
+  "question": "How precisely is the in-domain cloze criterion itself measured, and does it resolve the adjacent orderings the paper's rank claims rely on?",
+  "schema_version": 1,
+  "strict": {
+    "adjacent_pairs": [
+      {
+        "better": "Ministral-3-14B",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.009999999999999995,
+        "ci_lo": -0.0092,
+        "observed": 0.00040000000000001146,
+        "worse": "Qwen3.5-35B-MoE"
+      },
+      {
+        "better": "Qwen3.5-35B-MoE",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.019599999999999992,
+        "ci_lo": -0.0020000000000000018,
+        "observed": 0.008799999999999988,
+        "worse": "gemma-4-31B"
+      },
+      {
+        "better": "gemma-4-31B",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.012800000000000006,
+        "ci_lo": -0.0023999999999999994,
+        "observed": 0.00520000000000001,
+        "worse": "gemma-4-12B"
+      },
+      {
+        "better": "gemma-4-12B",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.015200000000000005,
+        "ci_lo": -0.004799999999999999,
+        "observed": 0.005199999999999996,
+        "worse": "Qwen2.5-7B"
+      },
+      {
+        "better": "Qwen2.5-7B",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.01079999999999999,
+        "ci_lo": -0.006799999999999987,
+        "observed": 0.0020000000000000018,
+        "worse": "Qwen3.5-9B"
+      },
+      {
+        "better": "Qwen3.5-9B",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.017600000000000005,
+        "ci_lo": -0.0007999999999999952,
+        "observed": 0.008400000000000005,
+        "worse": "Llama-3.2-1B"
+      },
+      {
+        "better": "Llama-3.2-1B",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.014799999999999994,
+        "ci_lo": -0.003599999999999992,
+        "observed": 0.005599999999999994,
+        "worse": "Qwen3.5-4B"
+      },
+      {
+        "better": "Qwen3.5-4B",
+        "ci_excludes_zero": true,
+        "ci_hi": 0.017600000000000005,
+        "ci_lo": 0.0023999999999999994,
+        "observed": 0.009999999999999995,
+        "worse": "Qwen2.5-1.5B"
+      },
+      {
+        "better": "Qwen2.5-1.5B",
+        "ci_excludes_zero": true,
+        "ci_hi": 0.018000000000000002,
+        "ci_lo": 0.0020000000000000018,
+        "observed": 0.010000000000000002,
+        "worse": "LFM2.5-1.2B"
+      },
+      {
+        "better": "LFM2.5-1.2B",
+        "ci_excludes_zero": false,
+        "ci_hi": 0.014000000000000005,
+        "ci_lo": -0.0020000000000000018,
+        "observed": 0.006000000000000005,
+        "worse": "Qwen2.5-0.5B"
+      }
+    ],
+    "n_adjacent_resolved": 2,
+    "pairwise": {
+      "Falcon3-10B|Falcon3-7B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.012800000000000006,
+        "ci_lo": 0.0,
+        "observed": 0.006400000000000003
+      },
+      "Falcon3-10B|LFM2.5-1.2B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.01759999999999999,
+        "ci_lo": 0.0,
+        "observed": 0.008799999999999995
+      },
+      "Falcon3-10B|Llama-3.2-1B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.007999999999999993,
+        "ci_lo": -0.02600000000000001,
+        "observed": -0.016799999999999995
+      },
+      "Falcon3-10B|Ministral-3-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0368,
+        "ci_lo": -0.0572,
+        "observed": -0.04680000000000001
+      },
+      "Falcon3-10B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.05679999999999999,
+        "ci_lo": -0.0804,
+        "observed": -0.0684
+      },
+      "Falcon3-10B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.022799999999999994,
+        "ci_lo": 0.0068000000000000005,
+        "observed": 0.0148
+      },
+      "Falcon3-10B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.006400000000000003,
+        "ci_lo": -0.008800000000000002,
+        "observed": -0.0012000000000000066
+      },
+      "Falcon3-10B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0296,
+        "ci_lo": -0.04920000000000001,
+        "observed": -0.0392
+      },
+      "Falcon3-10B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.010399999999999993,
+        "ci_lo": -0.028399999999999995,
+        "observed": -0.01920000000000001
+      },
+      "Falcon3-10B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0184,
+        "ci_lo": -0.0364,
+        "observed": -0.027200000000000002
+      },
+      "Falcon3-10B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.036000000000000004,
+        "ci_lo": -0.0568,
+        "observed": -0.0464
+      },
+      "Falcon3-10B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.002799999999999997,
+        "ci_lo": -0.019600000000000006,
+        "observed": -0.011200000000000002
+      },
+      "Falcon3-10B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.016,
+        "ci_lo": -0.0344,
+        "observed": -0.0252
+      },
+      "Falcon3-10B|SmolLM2-1.7B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.006400000000000003,
+        "ci_lo": -0.009599999999999997,
+        "observed": -0.0016000000000000042
+      },
+      "Falcon3-10B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0232,
+        "ci_lo": -0.0416,
+        "observed": -0.0324
+      },
+      "Falcon3-10B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.02800000000000001,
+        "ci_lo": -0.047200000000000006,
+        "observed": -0.03760000000000001
+      },
+      "Falcon3-7B|LFM2.5-1.2B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.010400000000000006,
+        "ci_lo": -0.0059999999999999915,
+        "observed": 0.0023999999999999924
+      },
+      "Falcon3-7B|Llama-3.2-1B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.014400000000000003,
+        "ci_lo": -0.03200000000000001,
+        "observed": -0.0232
+      },
+      "Falcon3-7B|Ministral-3-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.04319999999999999,
+        "ci_lo": -0.064,
+        "observed": -0.05320000000000001
+      },
+      "Falcon3-7B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0632,
+        "ci_lo": -0.08679999999999999,
+        "observed": -0.0748
+      },
+      "Falcon3-7B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.015999999999999993,
+        "ci_lo": 0.0008000000000000021,
+        "observed": 0.008399999999999998
+      },
+      "Falcon3-7B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0003999999999999976,
+        "ci_lo": -0.014800000000000008,
+        "observed": -0.0076000000000000095
+      },
+      "Falcon3-7B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.03560000000000001,
+        "ci_lo": -0.055600000000000004,
+        "observed": -0.0456
+      },
+      "Falcon3-7B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.016799999999999995,
+        "ci_lo": -0.0344,
+        "observed": -0.02560000000000001
+      },
+      "Falcon3-7B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.024800000000000003,
+        "ci_lo": -0.04279999999999999,
+        "observed": -0.033600000000000005
+      },
+      "Falcon3-7B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.04240000000000001,
+        "ci_lo": -0.0632,
+        "observed": -0.0528
+      },
+      "Falcon3-7B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.009599999999999997,
+        "ci_lo": -0.025600000000000005,
+        "observed": -0.017600000000000005
+      },
+      "Falcon3-7B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.022400000000000003,
+        "ci_lo": -0.0408,
+        "observed": -0.0316
+      },
+      "Falcon3-7B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0007999999999999952,
+        "ci_lo": -0.015599999999999996,
+        "observed": -0.008000000000000007
+      },
+      "Falcon3-7B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.03,
+        "ci_lo": -0.048,
+        "observed": -0.0388
+      },
+      "Falcon3-7B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0344,
+        "ci_lo": -0.05399999999999999,
+        "observed": -0.04400000000000001
+      },
+      "LFM2.5-1.2B|Llama-3.2-1B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.016799999999999995,
+        "ci_lo": -0.03440000000000001,
+        "observed": -0.02559999999999999
+      },
+      "LFM2.5-1.2B|Ministral-3-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0448,
+        "ci_lo": -0.0668,
+        "observed": -0.055600000000000004
+      },
+      "LFM2.5-1.2B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0652,
+        "ci_lo": -0.0896,
+        "observed": -0.07719999999999999
+      },
+      "LFM2.5-1.2B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.014000000000000005,
+        "ci_lo": -0.0020000000000000018,
+        "observed": 0.006000000000000005
+      },
+      "LFM2.5-1.2B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0020000000000000018,
+        "ci_lo": -0.018000000000000002,
+        "observed": -0.010000000000000002
+      },
+      "LFM2.5-1.2B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.03799999999999999,
+        "ci_lo": -0.05840000000000001,
+        "observed": -0.047999999999999994
+      },
+      "LFM2.5-1.2B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.018799999999999997,
+        "ci_lo": -0.037200000000000004,
+        "observed": -0.028000000000000004
+      },
+      "LFM2.5-1.2B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.02679999999999999,
+        "ci_lo": -0.0456,
+        "observed": -0.036
+      },
+      "LFM2.5-1.2B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.04479999999999999,
+        "ci_lo": -0.066,
+        "observed": -0.05519999999999999
+      },
+      "LFM2.5-1.2B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0116,
+        "ci_lo": -0.02840000000000001,
+        "observed": -0.019999999999999997
+      },
+      "LFM2.5-1.2B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.024399999999999998,
+        "ci_lo": -0.04399999999999999,
+        "observed": -0.033999999999999996
+      },
+      "LFM2.5-1.2B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0023999999999999994,
+        "ci_lo": -0.0184,
+        "observed": -0.0104
+      },
+      "LFM2.5-1.2B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0308,
+        "ci_lo": -0.05160000000000001,
+        "observed": -0.041199999999999994
+      },
+      "LFM2.5-1.2B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.03560000000000001,
+        "ci_lo": -0.05720000000000001,
+        "observed": -0.046400000000000004
+      },
+      "Llama-3.2-1B|Ministral-3-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.01999999999999999,
+        "ci_lo": -0.04039999999999999,
+        "observed": -0.030000000000000013
+      },
+      "Llama-3.2-1B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.040400000000000005,
+        "ci_lo": -0.06280000000000001,
+        "observed": -0.05160000000000001
+      },
+      "Llama-3.2-1B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.041199999999999994,
+        "ci_lo": 0.022000000000000006,
+        "observed": 0.031599999999999996
+      },
+      "Llama-3.2-1B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.02439999999999999,
+        "ci_lo": 0.007199999999999998,
+        "observed": 0.015599999999999989
+      },
+      "Llama-3.2-1B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.012799999999999992,
+        "ci_lo": -0.0324,
+        "observed": -0.022400000000000003
+      },
+      "Llama-3.2-1B|Qwen2.5-3B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.006000000000000005,
+        "ci_lo": -0.010800000000000004,
+        "observed": -0.0024000000000000132
+      },
+      "Llama-3.2-1B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0012000000000000066,
+        "ci_lo": -0.019600000000000006,
+        "observed": -0.010400000000000006
+      },
+      "Llama-3.2-1B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.01999999999999999,
+        "ci_lo": -0.039599999999999996,
+        "observed": -0.0296
+      },
+      "Llama-3.2-1B|Qwen3.5-4B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.014799999999999994,
+        "ci_lo": -0.003599999999999992,
+        "observed": 0.005599999999999994
+      },
+      "Llama-3.2-1B|Qwen3.5-9B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.0007999999999999952,
+        "ci_lo": -0.017600000000000005,
+        "observed": -0.008400000000000005
+      },
+      "Llama-3.2-1B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.023999999999999994,
+        "ci_lo": 0.006400000000000003,
+        "observed": 0.015199999999999991
+      },
+      "Llama-3.2-1B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.005599999999999994,
+        "ci_lo": -0.025599999999999998,
+        "observed": -0.015600000000000003
+      },
+      "Llama-3.2-1B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.010000000000000009,
+        "ci_lo": -0.0316,
+        "observed": -0.020800000000000013
+      },
+      "Ministral-3-14B|Mistral-Nemo-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.01200000000000001,
+        "ci_lo": -0.03159999999999999,
+        "observed": -0.021599999999999994
+      },
+      "Ministral-3-14B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0728,
+        "ci_lo": 0.05079999999999999,
+        "observed": 0.06160000000000001
+      },
+      "Ministral-3-14B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.05600000000000001,
+        "ci_lo": 0.03559999999999999,
+        "observed": 0.0456
+      },
+      "Ministral-3-14B|Qwen2.5-14B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.016399999999999998,
+        "ci_lo": -0.0012000000000000066,
+        "observed": 0.0076000000000000095
+      },
+      "Ministral-3-14B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0372,
+        "ci_lo": 0.0184,
+        "observed": 0.0276
+      },
+      "Ministral-3-14B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.028800000000000006,
+        "ci_lo": 0.010400000000000006,
+        "observed": 0.019600000000000006
+      },
+      "Ministral-3-14B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.009999999999999995,
+        "ci_lo": -0.0092,
+        "observed": 0.00040000000000001146
+      },
+      "Ministral-3-14B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.04559999999999999,
+        "ci_lo": 0.02600000000000001,
+        "observed": 0.03560000000000001
+      },
+      "Ministral-3-14B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.030799999999999994,
+        "ci_lo": 0.012399999999999994,
+        "observed": 0.021600000000000008
+      },
+      "Ministral-3-14B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.05520000000000001,
+        "ci_lo": 0.035199999999999995,
+        "observed": 0.045200000000000004
+      },
+      "Ministral-3-14B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0252,
+        "ci_lo": 0.00399999999999999,
+        "observed": 0.01440000000000001
+      },
+      "Ministral-3-14B|gemma-4-31B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.020000000000000004,
+        "ci_lo": -0.0016000000000000042,
+        "observed": 0.0092
+      },
+      "Mistral-Nemo-12B|Qwen2.5-0.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0956,
+        "ci_lo": 0.0708,
+        "observed": 0.0832
+      },
+      "Mistral-Nemo-12B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.07919999999999999,
+        "ci_lo": 0.05560000000000001,
+        "observed": 0.0672
+      },
+      "Mistral-Nemo-12B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.038400000000000004,
+        "ci_lo": 0.01999999999999999,
+        "observed": 0.029200000000000004
+      },
+      "Mistral-Nemo-12B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.060399999999999995,
+        "ci_lo": 0.03839999999999999,
+        "observed": 0.049199999999999994
+      },
+      "Mistral-Nemo-12B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0524,
+        "ci_lo": 0.03040000000000001,
+        "observed": 0.0412
+      },
+      "Mistral-Nemo-12B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.03240000000000001,
+        "ci_lo": 0.0116,
+        "observed": 0.022000000000000006
+      },
+      "Mistral-Nemo-12B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0688,
+        "ci_lo": 0.046,
+        "observed": 0.0572
+      },
+      "Mistral-Nemo-12B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.054400000000000004,
+        "ci_lo": 0.032399999999999984,
+        "observed": 0.0432
+      },
+      "Mistral-Nemo-12B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0784,
+        "ci_lo": 0.0552,
+        "observed": 0.0668
+      },
+      "Mistral-Nemo-12B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.047200000000000006,
+        "ci_lo": 0.024800000000000003,
+        "observed": 0.036000000000000004
+      },
+      "Mistral-Nemo-12B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.04239999999999999,
+        "ci_lo": 0.01920000000000001,
+        "observed": 0.030799999999999994
+      },
+      "Qwen2.5-0.5B|Qwen2.5-1.5B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.008799999999999995,
+        "ci_lo": -0.023200000000000005,
+        "observed": -0.016000000000000007
+      },
+      "Qwen2.5-0.5B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0436,
+        "ci_lo": -0.0648,
+        "observed": -0.054
+      },
+      "Qwen2.5-0.5B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.024800000000000003,
+        "ci_lo": -0.043199999999999995,
+        "observed": -0.03400000000000001
+      },
+      "Qwen2.5-0.5B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0328,
+        "ci_lo": -0.05120000000000001,
+        "observed": -0.042
+      },
+      "Qwen2.5-0.5B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.05039999999999999,
+        "ci_lo": -0.07239999999999999,
+        "observed": -0.0612
+      },
+      "Qwen2.5-0.5B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.017600000000000005,
+        "ci_lo": -0.0344,
+        "observed": -0.026000000000000002
+      },
+      "Qwen2.5-0.5B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.03040000000000001,
+        "ci_lo": -0.0496,
+        "observed": -0.04
+      },
+      "Qwen2.5-0.5B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.008799999999999995,
+        "ci_lo": -0.024000000000000007,
+        "observed": -0.016400000000000005
+      },
+      "Qwen2.5-0.5B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0372,
+        "ci_lo": -0.0576,
+        "observed": -0.0472
+      },
+      "Qwen2.5-0.5B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.04120000000000001,
+        "ci_lo": -0.0636,
+        "observed": -0.05240000000000001
+      },
+      "Qwen2.5-1.5B|Qwen2.5-14B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.029200000000000004,
+        "ci_lo": -0.047200000000000006,
+        "observed": -0.03799999999999999
+      },
+      "Qwen2.5-1.5B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.010000000000000009,
+        "ci_lo": -0.02600000000000001,
+        "observed": -0.018000000000000002
+      },
+      "Qwen2.5-1.5B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.017600000000000005,
+        "ci_lo": -0.0344,
+        "observed": -0.025999999999999995
+      },
+      "Qwen2.5-1.5B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.035199999999999995,
+        "ci_lo": -0.0556,
+        "observed": -0.04519999999999999
+      },
+      "Qwen2.5-1.5B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0023999999999999994,
+        "ci_lo": -0.017600000000000005,
+        "observed": -0.009999999999999995
+      },
+      "Qwen2.5-1.5B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.015600000000000003,
+        "ci_lo": -0.032400000000000005,
+        "observed": -0.023999999999999994
+      },
+      "Qwen2.5-1.5B|SmolLM2-1.7B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.0068000000000000005,
+        "ci_lo": -0.0076000000000000095,
+        "observed": -0.0003999999999999976
+      },
+      "Qwen2.5-1.5B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.021999999999999992,
+        "ci_lo": -0.0408,
+        "observed": -0.03119999999999999
+      },
+      "Qwen2.5-1.5B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.026399999999999993,
+        "ci_lo": -0.04681,
+        "observed": -0.0364
+      },
+      "Qwen2.5-14B|Qwen2.5-3B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.028800000000000006,
+        "ci_lo": 0.011200000000000002,
+        "observed": 0.01999999999999999
+      },
+      "Qwen2.5-14B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0204,
+        "ci_lo": 0.003600000000000006,
+        "observed": 0.011999999999999997
+      },
+      "Qwen2.5-14B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.0020000000000000018,
+        "ci_lo": -0.016399999999999998,
+        "observed": -0.007199999999999998
+      },
+      "Qwen2.5-14B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.03720000000000001,
+        "ci_lo": 0.019199999999999995,
+        "observed": 0.027999999999999997
+      },
+      "Qwen2.5-14B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.0232,
+        "ci_lo": 0.004799999999999999,
+        "observed": 0.013999999999999999
+      },
+      "Qwen2.5-14B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.047200000000000006,
+        "ci_lo": 0.028399999999999995,
+        "observed": 0.037599999999999995
+      },
+      "Qwen2.5-14B|gemma-4-12B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.017199999999999993,
+        "ci_lo": -0.003599999999999992,
+        "observed": 0.0068000000000000005
+      },
+      "Qwen2.5-14B|gemma-4-31B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.012399999999999994,
+        "ci_lo": -0.0092,
+        "observed": 0.0015999999999999903
+      },
+      "Qwen2.5-3B|Qwen2.5-7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0003999999999999976,
+        "ci_lo": -0.015600000000000003,
+        "observed": -0.007999999999999993
+      },
+      "Qwen2.5-3B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.018000000000000002,
+        "ci_lo": -0.0368,
+        "observed": -0.027199999999999988
+      },
+      "Qwen2.5-3B|Qwen3.5-4B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.016,
+        "ci_lo": 0.0,
+        "observed": 0.008000000000000007
+      },
+      "Qwen2.5-3B|Qwen3.5-9B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.002799999999999997,
+        "ci_lo": -0.014799999999999994,
+        "observed": -0.0059999999999999915
+      },
+      "Qwen2.5-3B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.025599999999999998,
+        "ci_lo": 0.009599999999999997,
+        "observed": 0.017600000000000005
+      },
+      "Qwen2.5-3B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.002799999999999997,
+        "ci_lo": -0.02360000000000001,
+        "observed": -0.01319999999999999
+      },
+      "Qwen2.5-3B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.007200000000000012,
+        "ci_lo": -0.0296,
+        "observed": -0.0184
+      },
+      "Qwen2.5-7B|Qwen3.5-35B-MoE": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.009599999999999997,
+        "ci_lo": -0.028800000000000006,
+        "observed": -0.019199999999999995
+      },
+      "Qwen2.5-7B|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.023999999999999994,
+        "ci_lo": 0.008000000000000007,
+        "observed": 0.016
+      },
+      "Qwen2.5-7B|Qwen3.5-9B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.01079999999999999,
+        "ci_lo": -0.006799999999999987,
+        "observed": 0.0020000000000000018
+      },
+      "Qwen2.5-7B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.034,
+        "ci_lo": 0.017199999999999993,
+        "observed": 0.025599999999999998
+      },
+      "Qwen2.5-7B|gemma-4-12B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.004799999999999999,
+        "ci_lo": -0.015200000000000005,
+        "observed": -0.005199999999999996
+      },
+      "Qwen2.5-7B|gemma-4-31B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.0,
+        "ci_lo": -0.0208,
+        "observed": -0.010400000000000006
+      },
+      "Qwen3.5-35B-MoE|Qwen3.5-4B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.04440000000000001,
+        "ci_lo": 0.02600000000000001,
+        "observed": 0.035199999999999995
+      },
+      "Qwen3.5-35B-MoE|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.03,
+        "ci_lo": 0.012399999999999994,
+        "observed": 0.021199999999999997
+      },
+      "Qwen3.5-35B-MoE|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.055199999999999985,
+        "ci_lo": 0.035199999999999995,
+        "observed": 0.04479999999999999
+      },
+      "Qwen3.5-35B-MoE|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.024400000000000005,
+        "ci_lo": 0.003600000000000006,
+        "observed": 0.013999999999999999
+      },
+      "Qwen3.5-35B-MoE|gemma-4-31B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.019599999999999992,
+        "ci_lo": -0.0020000000000000018,
+        "observed": 0.008799999999999988
+      },
+      "Qwen3.5-4B|Qwen3.5-9B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0068000000000000005,
+        "ci_lo": -0.021600000000000008,
+        "observed": -0.013999999999999999
+      },
+      "Qwen3.5-4B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.017199999999999993,
+        "ci_lo": 0.0020000000000000018,
+        "observed": 0.009599999999999997
+      },
+      "Qwen3.5-4B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.011200000000000002,
+        "ci_lo": -0.031200000000000006,
+        "observed": -0.021199999999999997
+      },
+      "Qwen3.5-4B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.016,
+        "ci_lo": -0.0368,
+        "observed": -0.026400000000000007
+      },
+      "Qwen3.5-9B|SmolLM2-1.7B": {
+        "ci_excludes_zero": true,
+        "ci_hi": 0.032,
+        "ci_lo": 0.015200000000000005,
+        "observed": 0.023599999999999996
+      },
+      "Qwen3.5-9B|gemma-4-12B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.002800000000000011,
+        "ci_lo": -0.017200000000000007,
+        "observed": -0.007199999999999998
+      },
+      "Qwen3.5-9B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.001999999999999988,
+        "ci_lo": -0.0232,
+        "observed": -0.012400000000000008
+      },
+      "SmolLM2-1.7B|gemma-4-12B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0208,
+        "ci_lo": -0.0408,
+        "observed": -0.030799999999999994
+      },
+      "SmolLM2-1.7B|gemma-4-31B": {
+        "ci_excludes_zero": true,
+        "ci_hi": -0.0252,
+        "ci_lo": -0.046799999999999994,
+        "observed": -0.036000000000000004
+      },
+      "gemma-4-12B|gemma-4-31B": {
+        "ci_excludes_zero": false,
+        "ci_hi": 0.0023999999999999994,
+        "ci_lo": -0.012800000000000006,
+        "observed": -0.00520000000000001
+      }
+    },
+    "per_model": {
+      "Falcon3-10B": {
+        "accuracy": 0.0692,
+        "ci_hi": 0.0792,
+        "ci_lo": 0.0592,
+        "half_width": 0.010000000000000002
+      },
+      "Falcon3-7B": {
+        "accuracy": 0.0628,
+        "ci_hi": 0.0724,
+        "ci_lo": 0.0532,
+        "half_width": 0.009600000000000004
+      },
+      "LFM2.5-1.2B": {
+        "accuracy": 0.0604,
+        "ci_hi": 0.07,
+        "ci_lo": 0.0512,
+        "half_width": 0.009400000000000002
+      },
+      "Llama-3.2-1B": {
+        "accuracy": 0.086,
+        "ci_hi": 0.09680999999999912,
+        "ci_lo": 0.0752,
+        "half_width": 0.010804999999999558
+      },
+      "Ministral-3-14B": {
+        "accuracy": 0.116,
+        "ci_hi": 0.1288,
+        "ci_lo": 0.1036,
+        "half_width": 0.0126
+      },
+      "Mistral-Nemo-12B": {
+        "accuracy": 0.1376,
+        "ci_hi": 0.1512,
+        "ci_lo": 0.124,
+        "half_width": 0.013600000000000001
+      },
+      "Qwen2.5-0.5B": {
+        "accuracy": 0.0544,
+        "ci_hi": 0.0632,
+        "ci_lo": 0.0456,
+        "half_width": 0.008800000000000002
+      },
+      "Qwen2.5-1.5B": {
+        "accuracy": 0.0704,
+        "ci_hi": 0.0804,
+        "ci_lo": 0.0604,
+        "half_width": 0.009999999999999998
+      },
+      "Qwen2.5-14B": {
+        "accuracy": 0.1084,
+        "ci_hi": 0.1208,
+        "ci_lo": 0.0964,
+        "half_width": 0.012200000000000003
+      },
+      "Qwen2.5-3B": {
+        "accuracy": 0.0884,
+        "ci_hi": 0.0996,
+        "ci_lo": 0.0772,
+        "half_width": 0.011199999999999995
+      },
+      "Qwen2.5-7B": {
+        "accuracy": 0.0964,
+        "ci_hi": 0.108,
+        "ci_lo": 0.0848,
+        "half_width": 0.0116
+      },
+      "Qwen3.5-35B-MoE": {
+        "accuracy": 0.1156,
+        "ci_hi": 0.1284,
+        "ci_lo": 0.1028,
+        "half_width": 0.012799999999999992
+      },
+      "Qwen3.5-4B": {
+        "accuracy": 0.0804,
+        "ci_hi": 0.0912,
+        "ci_lo": 0.07,
+        "half_width": 0.010599999999999998
+      },
+      "Qwen3.5-9B": {
+        "accuracy": 0.0944,
+        "ci_hi": 0.106,
+        "ci_lo": 0.0832,
+        "half_width": 0.0114
+      },
+      "SmolLM2-1.7B": {
+        "accuracy": 0.0708,
+        "ci_hi": 0.0812,
+        "ci_lo": 0.0608,
+        "half_width": 0.010199999999999997
+      },
+      "gemma-4-12B": {
+        "accuracy": 0.1016,
+        "ci_hi": 0.1136,
+        "ci_lo": 0.0896,
+        "half_width": 0.012000000000000004
+      },
+      "gemma-4-31B": {
+        "accuracy": 0.1068,
+        "ci_hi": 0.1192,
+        "ci_lo": 0.0948,
+        "half_width": 0.012200000000000003
+      }
+    }
+  }
+}

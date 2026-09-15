@@ -1,10 +1,15 @@
 """Figure: base loss and adaptation gain versus position in the packed block.
 
 Shows why the zero-shot BPB ranking is partly a cold-start artefact -- Gemma-4-12B is worse
-than a 1.5B Qwen over the first few dozen tokens of a block and better once it has context.
+than a 1.5B Qwen for roughly the first half of a block and better once it has context.
 
   python tools/plot_block_position.py --out figures/fig_block_position.pdf \
-      $WORK/token_gain/*.json
+      results/token_gain_bpb/*.json
+
+The inputs must be the byte-normalised cells: the default --units bpb reads
+mean_base_bits_per_byte, which results/token_gain/ (nats only) does not carry. Verified 2026-09-11
+against the caption -- Gemma-4-12B opens a block at 2.83 bits/byte and closes at 0.72, Qwen-2.5-1.5B
+at 2.04 and 0.77.
 """
 import argparse
 import json
@@ -49,7 +54,7 @@ def main():
         fig, ax1 = plt.subplots(1, 1, figsize=(6.8, 3.4))
         ax2 = None
     else:
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.4, 3.5))
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.4, 2.9))
     for d in runs:
         st = STYLE.get(d["model_id"], dict(color="#6B7785", marker="x",
                                            label=d["model_id"].split("/")[-1]))
@@ -64,7 +69,7 @@ def main():
         else:
             base = [bp[k]["mean_base_loss"] for k in bp if k in BUCKETS]
             gain = [bp[k]["mean_gain"] for k in bp if k in BUCKETS]
-        kw = dict(color=st["color"], marker=st["marker"], ms=4, lw=1.6)
+        kw = dict(color=st["color"], marker=st["marker"], ms=4.5, lw=1.8)
         ax1.plot(xs, base, label=st["label"], **kw)
         if ax2 is not None:
             ax2.plot(xs, gain, **kw)
@@ -85,8 +90,8 @@ def main():
             y = gb[cross][metric]
             ax1.axvline(x, color="#6B7785", lw=0.8, ls="--", alpha=0.7)
             ax1.annotate("Gemma-4-12B overtakes\nQwen-2.5-1.5B here",
-                         xy=(x, y), xytext=(-12, 48), textcoords="offset points",
-                         fontsize=7, color="#1C2733", ha="center",
+                         xy=(x, y), xytext=(-50, 88), textcoords="offset points",
+                         fontsize=8.5, color="#1C2733", ha="center",
                          arrowprops=dict(arrowstyle="->", lw=0.8, color="#6B7785",
                                          connectionstyle="arc3,rad=-0.25"))
 
@@ -96,14 +101,20 @@ def main():
         panels.append((ax2, f"Gain from adaptation ({unit})", "Loss reduction from adaptation"))
     for ax, ylab, title in panels:
         ax.set_xscale("log")
-        ax.set_xlabel("Position in the 512-token block  (log scale)")
-        ax.set_ylabel(ylab)
-        ax.set_title(title, fontsize=10)
+        ax.set_xlabel("Position in block (log scale)", fontsize=10)
+        ax.set_ylabel(ylab, fontsize=10)
+        ax.set_title(title, fontsize=11)
+        ax.tick_params(labelsize=9)
         ax.grid(alpha=0.25, lw=0.6)
         ax.spines[["top", "right"]].set_visible(False)
-    ax1.legend(fontsize=7.5, frameon=False, loc="upper right")
-
-    fig.tight_layout()
+    handles, labels = ax1.get_legend_handles_labels()
+    if a.panels == "base":
+        ax1.legend(fontsize=8.5, frameon=False, loc="upper right")
+        fig.tight_layout()
+    else:
+        fig.legend(handles, labels, loc="lower center", ncol=3, fontsize=9, frameon=False,
+                   bbox_to_anchor=(0.5, -0.01))
+        fig.tight_layout(rect=[0, 0.07, 1, 1])
     fig.savefig(a.out, bbox_inches="tight")
     print("wrote", a.out)
 

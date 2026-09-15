@@ -1,0 +1,9 @@
+{
+  "benchmark": "mmlu_pro_1k",
+  "label": "Falcon3-10B",
+  "metric": "exact_match,custom-extract",
+  "n": 1000,
+  "provenance": "E9 re-score: all 17 models, one host (A100-SXM-64GB), one build, uniform decode protocol (eval/lm_eval_uniform.py)",
+  "score": 0.49,
+  "source": "results/mmlu_pro_1k/Falcon3-10B/tiiuae__Falcon3-10B-Base/results_2026-09-08T10-56-13.577016.json"
+}

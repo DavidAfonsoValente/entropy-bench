@@ -62,7 +62,7 @@
 
 \vspace{0.6em}
 \begin{tabular}{@{}ll@{}}
-\textbf{Deck} & \texttt{slides/talk.pdf} --- 17 slides $+$ 5 backup slides \\
+\textbf{Deck} & \texttt{slides/talk.pdf} --- 18 slides $+$ 5 backup slides \\
 \textbf{Version} & Final paper-aligned presentation and discussion guide \\
 \textbf{Target} & \textbf{under 10 minutes} of talking, then Q\&A on the remaining time \\
 \textbf{Goal} & The team understands \emph{how the method works} and \emph{what we found} \\
@@ -78,7 +78,7 @@ pressure.
 \vspace{0.4em}
 \textbf{Length, measured not guessed.} The spoken text is 1{,}205 words on the core path and
 1{,}508 words in full, which at 150\,wpm is \textbf{8:00} and 10:01 respectively. The cumulative
-times on each slide are the core path, which \emph{omits slides 6, 7, 10, and 15} --- the pipeline
+times on each slide are the core path, which \emph{omits slides 6, 7, 10, 14, and 15} --- the pipeline
 diagram, the contamination audit, and the math-domain bonus result. Those three are marked
 \texttt{optional} with the time they cost if you keep them; they are the detail/bonus slides that
 are the first thing to cut, not the must-land points. Re-check after any edit with
@@ -95,13 +95,17 @@ are the first thing to cut, not the must-land points. Re-check after any edit wi
   rank positions, while relative reduction explains corpus calibration.
   \item BPB matches sentence continuation ($r=-0.975$, $\rho=0.982$ vs.\ HellaSwag), while knowledge and
   arithmetic benchmarks add complementary capability views.
-  \item \textbf{The adapted ordering is domain-stable} (slide 14). All eleven models on three
-  corpora: Spearman $\rho$ between $+0.955$ and $+0.991$, Gemma-4-31B first on all three, and
-  nothing moving more than two places. This is the cross-domain confirmation.
+  \item \textbf{We answered the circularity objection, at its real strength} (slide 17). On an
+  in-domain criterion that is \emph{not} a benchmark, adapted BPB is the only one of seven
+  selectors clearing chance among comparable-size candidates --- and we say plainly that the lead
+  over the benchmarks is unresolved and that model size is not beaten. Conceding those two is what
+  makes the first one land.
 \end{enumerate}
 
 \vspace{0.4em}
-\textbf{Talk shape.} One ruler, one controlled intervention, three-domain evidence, one decision rule.}}
+\textbf{Talk shape.} One ruler, one controlled intervention, an independent criterion, one decision
+rule. \emph{The domain-stability result (slide 14) moved to the optional set to make room; it is
+still in the deck and still worth using if the room wants robustness.}}}
 
 % ================================================================ 1
 \slide{1}{Title --- ``Back to entropy''}{0:00--0:13}
@@ -138,19 +142,19 @@ fresh target-domain text, controlled adaptation, and contamination filtering.
 silence before you say the numbers. Do not rush to the punchline.}
 
 \begin{say}
-The obvious question first. Every model ships with a scorecard --- why measure anything ourselves?
+The obvious question first: every model ships with a scorecard, so why measure anything ourselves?
 
-Look at these two. On our ruler they are three per cent apart. On commonsense, two points apart.
+Look at these two. On our ruler they are three per cent apart; on commonsense, two points apart.
 Essentially the same model, twice. On grade-school maths, one scores six per cent and the other
 sixty-one.
 
-That gap is not telling you one model is better --- the other two rows say they are tied. It is
-telling you what went into the two training mixes. Both are legitimate choices; the score just
-cannot tell you which one you are buying.
+That gap is not telling you one model is better --- the other two rows say they are tied. It tells
+you what went into the two training mixes. Both are legitimate choices; the score cannot tell you
+which one you are buying.
 
-And note what I am not claiming. I am not saying anyone games their benchmarks; I cannot see
-anyone's training data. The point is structural. A years-old public benchmark is a target whether
-or not anybody aims at it, and text written after a model ships cannot have been studied for.
+And note what I am not claiming. I am not saying anyone games their benchmarks --- I cannot see
+anyone's training data. The point is structural: a years-old public benchmark is a target whether or
+not anybody aims at it, and text written after a model ships cannot have been studied for.
 \end{say}
 
 \slide{4}{Measure the model we will actually use}{1:50--2:21}
@@ -292,31 +296,28 @@ form.
 \cue{Land the reporting rule: adapted level for selection, reduction for calibration.}
 
 % ================================================================ 10
-\slide{11}{Adaptation does not improve the ranking --- it rotates it}{4:13--5:18}
+\slide{11}{Adaptation does not improve the ranking --- it rotates it}{4:13--5:02}
 
 \cue{\keyw{LAND THIS} --- this is the central finding of the talk. Read the little table left to
 right, one row at a time. Do not rush it.}
 
 \begin{say}
-Now compare both rankings --- before and after adaptation --- against the three benchmarks. The
-before column is free: it is one forward pass, no training.
+Now compare both rankings --- before and after adaptation --- against the three benchmarks.
 
-And that free column is already good. Zero-shot news BPB agrees with GSM8K at 0.84 and MMLU-Pro at
-0.86. After adaptation those fall to 0.73 and 0.76. HellaSwag goes the other way: 0.72 up to 0.98.
-The same three-way pattern repeats on Reddit and Hacker News.
+Zero-shot news BPB agrees with GSM8K at 0.84 and MMLU-Pro at 0.86. After adaptation those fall to
+0.73 and 0.76, while HellaSwag goes the other way, 0.72 up to 0.98. The same three-way pattern
+repeats on Reddit and Hacker News.
 
-So adaptation did not find a better model. It rotated the ranking --- toward continuation quality
-and away from the generative tasks. And notice why HellaSwag agrees so well: it scores continuations
-by log-likelihood, which is the same object BPB measures. That is convergent validity, not proof the
-ranking improved.
+So adaptation did not find a better model --- it rotated the ranking, toward continuation quality
+and away from the generative tasks. And HellaSwag agrees so well because it scores continuations by
+log-likelihood, the same object BPB measures: convergent validity, not proof.
 
-Concretely: pick by zero-shot BPB and you get Qwen-3.5-35B, which is the actual GSM8K and MMLU
-leader. Pick by adapted BPB and you get Gemma-4-31B --- the HellaSwag leader, and two to four
-accuracy points behind on the other two.
+Concretely: zero-shot BPB picks Qwen-3.5-35B, the actual GSM8K and MMLU leader; adapted BPB picks
+Gemma-4-31B, the HellaSwag leader, two to four points behind on the other two.
 \end{say}
 
 % ================================================================ 11
-\slide{12}{Different tasks reveal different strengths}{5:18--6:06}
+\slide{12}{Different tasks reveal different strengths}{5:02--5:50}
 
 \cue{\keyw{LAND THIS} --- the centrepiece. Slow down. Let people read the table for a beat before
 you talk over it.}
@@ -339,7 +340,7 @@ forms a one-dimensional causal ladder.
 \cue{The 7/11, 3/11, 0/11 progression is the sentence to land before advancing.}
 
 % ================================================================ 12
-\slide{13}{The family pattern explains the shift}{6:06--6:42}
+\slide{13}{The family pattern explains the shift}{5:50--6:26}
 
 \cue{The two-model box on the right is the memorable example --- point at it.}
 
@@ -355,7 +356,7 @@ Same two models, two capabilities. The preferred model follows the capability th
 \end{say}
 
 % ================================================================ 13
-\slide{14}{Adaptation changes the ranking --- then it transfers}{6:42--7:42}
+\slide{14}{Adaptation changes the ranking --- then it transfers}{optional +1:00}
 
 \cue{\keyw{LAND THIS} --- adaptation changes the choice; the adapted result then transfers.}
 
@@ -403,48 +404,74 @@ before they do.
 \end{say}
 
 % ================================================================ 15
-\slide{16}{We tried to break it. The ranking held.}{7:42--8:44}
+\slide{16}{We tried to break it. The ranking held.}{6:26--6:54}
 
 \begin{say}
-Everything so far infers what adaptation does from how the \emph{ranking} moves. So we tested it
-directly: we kept the adapters this time and scored the adapted models on the benchmarks.
+Everything so far infers what adaptation does from how the \emph{ranking} moves, so we kept the
+adapters and scored the adapted models on the benchmarks directly. The ordering came back identical
+in all twenty cells --- not one inverted pair, which under reshuffling happens about once in a
+hundred and twenty times. And re-scored as head-to-head picks with uncertainty over models, the
+metric beats chance in twenty-three of twenty-four settings.
+\end{say}
 
-The ordering came back identical in all twenty model-corpus-benchmark cells --- rank correlation of
-one everywhere, not a single inverted pair. If adaptation were reshuffling models, that happens
-about once in a hundred and twenty times. So the claim we sell --- that this ruler tells you which
-model is better --- survived a direct attack at better than one percent.
+% ================================================================ 16b
+\slide{17}{The hardest objection --- and the criterion we built}{6:54--8:21}
 
-We also re-scored the main study as head-to-head picks rather than correlations, taking the
-uncertainty over models. The metric picks the better model above chance in twenty-three of the
-twenty-four settings. And resampling the cohort twenty thousand times, matched adaptation steered
-the ranking the way we predicted in ninety-three and a half percent of draws, and the opposite way
-in one point four.
+\cue{\keyw{The credibility slide.} Do not rush it and do not oversell it --- the concession is what
+makes the rest land. If you are behind, cut the second paragraph, never the third.}
+
+\begin{say}
+Now the objection you should be forming: everything so far is validated against the same benchmarks
+whose gameability is our whole argument.
+
+So we built a criterion that is not a benchmark: items from our own held-out split, predict a
+hidden name or number. The model must \emph{generate} it and match the string --- never a
+likelihood score, which would agree with BPB by construction.
+
+We built one for all four corpora and asked each which selector predicts it, among candidates
+within a factor of two in size.
+
+Start with how little is resolvable. Across four corpora, two scoring rules and seven selectors,
+exactly one interval excludes chance --- ours, on news. On all four, \emph{not one public benchmark
+clears chance} under either rule; neither does the free zero-shot number, nor picking the bigger
+model. At ten pairs almost nothing separates, so this is a failure to reject, not proof the suites
+are useless --- but it is the scorecard failing to resolve the decision it gets used for.
+
+So we enlarged the cohort: nine more base models, preregistered; six landed, taking in-band pairs
+from eleven to forty. There adapt-and-rank beats counting parameters by twenty-five points,
+interval seven to fifty --- the first resolved comparison in the study. Under the prefix rule it
+spans zero, so: convention-specific.
 \end{say}
 
 % ================================================================ 16
-\slide{17}{A simple decision rule}{8:44--9:46}
+\slide{18}{A simple decision rule}{8:21--9:50}
 
 \begin{say}
-What we learned: BPB gives one coordinate system across tokenizers and architectures; adaptation does
-not improve the ranking so much as rotate it toward whatever the corpus exercises; that rotation is
-stable across three domains and holds through a 2,048-token inference context. So the adaptation
-corpus is not a detail of the setup --- it is the question you are asking.
+What we learned: BPB gives one coordinate system across tokenizers, and adaptation rotates the
+ranking toward whatever the corpus exercises rather than improving it. The corpus is not a setup
+detail --- it is the question you are asking.
 
-How to use it. Collect recent target-domain text; freshness beats any contamination detector. Then
-pick your tier. Free tier: rank by zero-shot BPB --- one forward pass, and on three of our four
-corpora it picked the benchmark leader outright. Paid tier: adapt every candidate under one budget
-and rank by adapted BPB --- worth it when you are actually going to fine-tune, or when one specific
-capability decides the choice. In that case match the corpus to the capability.
+How to use it. Collect recent target-domain text. More than about a factor of two apart in size?
+Take the bigger one --- we are not better than that. Close? Adapt each finalist on your text and rank
+by adapted BPB: minutes on one GPU. Match the corpus to the capability that decides it.
 
-The bottom line: one fair ruler, two cost tiers, and a corpus you choose deliberately.
+And one correction we made to ourselves, with a reason rather than a p-value. We used to recommend
+the free zero-shot number. The problem is that it measures two things at once: how well a model
+knows your domain, and how far its writing conventions sit from yours. Look at LFM: zero-shot it is
+last of eleven, behind a model a third its size. Adapt it and it moves ahead of that model --- and
+on our own criterion it really is ahead. The free number read a style mismatch as incapacity. The
+three models it under-rates most are exactly the three that gain most from adaptation. It is a
+screen now.
+
+The bottom line: one fair ruler, a screen and a selector, and a corpus you choose deliberately.
 \end{say}
 
 % ================================================================ 17
-\slide{18}{Thank you / questions}{9:46--9:56}
+\slide{19}{Thank you / questions}{9:50--9:59}
 
 \begin{say}
-That is the tour. Happy to go deeper --- there are backup slides with the benchmark scores,
-contamination numbers, training protocol, and longer-context result.
+That is the tour. Happy to go deeper --- backup slides cover the benchmark scores, contamination
+numbers, training protocol, and the longer-context result.
 \end{say}
 
 \vspace{1.4em}

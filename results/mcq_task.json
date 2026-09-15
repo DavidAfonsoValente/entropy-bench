@@ -1,0 +1,34 @@
+{
+  "chance_accuracy": 0.25,
+  "corpus": "google_news_from_2026-06-08_to_2026-06-08_cleaned.jsonl",
+  "counts": {
+    "dropped_duplicate_of_test_doc": 4,
+    "dropped_not_article_shaped": 9092,
+    "n_eval": 500,
+    "n_train": 2000,
+    "usable": 2809
+  },
+  "disjointness": {
+    "cloze_items_reproduce_from_test_split": true,
+    "method": "sha256 of whitespace-normalised lowercased text, plus a 400-character opening hash to catch syndicated reprints"
+  },
+  "distractors": "topical: other articles' continuations ranked by shared rare vocabulary with the opening",
+  "eval_answer_distribution": {
+    "A": 116,
+    "B": 133,
+    "C": 123,
+    "D": 128
+  },
+  "n_options": 4,
+  "prompt_template": "{body}",
+  "schema_version": 1,
+  "split": {
+    "note": "reproduces lm_adapt_bench.data.DataModule._split_data",
+    "seed": 42,
+    "source_split": "validation",
+    "test_split": 0.1,
+    "val_split": 0.1
+  },
+  "task": "in-domain multiple choice: which paragraph continues this article",
+  "task_seed": 20260912
+}

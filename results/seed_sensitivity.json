@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "question": "Does the resolved comparison survive within-cell training stochasticity?",
+  "preregistration": "docs/RUN_LEDGER.md, \"E8 -- seed sensitivity: PREREGISTRATION\"",
+  "method": "three explicit seed replicates per model under the pinned E3 protocol; news in-domain cloze criterion, lenient scoring; 2.0x band; cluster bootstrap over models, 20000 draws, seed 20260831; the seed-resampling variant additionally draws one replicate per drawn model. The published unseeded cells remain the numbers of record and are never replaced.",
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "n_models_complete": 17,
+  "models": [
+    "Falcon3-10B",
+    "Falcon3-7B",
+    "LFM2.5-1.2B",
+    "Llama-3.2-1B",
+    "Ministral-3-14B",
+    "Mistral-Nemo-12B",
+    "Qwen2.5-0.5B",
+    "Qwen2.5-1.5B",
+    "Qwen2.5-14B",
+    "Qwen2.5-3B",
+    "Qwen2.5-7B",
+    "Qwen3.5-35B-MoE",
+    "Qwen3.5-4B",
+    "Qwen3.5-9B",
+    "SmolLM2-1.7B",
+    "gemma-4-12B",
+    "gemma-4-31B"
+  ],
+  "models_missing_replicates": [],
+  "models_partial": [],
+  "q3_answerable": true,
+  "n_in_band_pairs": 40,
+  "q1_within_cell_spread": {
+    "per_model": {
+      "Falcon3-10B": {
+        "mean": 0.7279436100756391,
+        "sd": 2.29059650256212e-05,
+        "min": 0.7279214164621398,
+        "max": 0.727967167455154,
+        "range_frac_of_mean": 6.284963887440136e-05,
+        "published": 0.7280433719545355,
+        "by_seed": {
+          "1": 0.727967167455154,
+          "2": 0.7279422463096235,
+          "3": 0.7279214164621398
+        }
+      },
+      "Falcon3-7B": {
+        "mean": 0.7580853978095757,
+        "sd": 8.700891486434347e-05,
+        "min": 0.7580055434875562,
+        "max": 0.7581781266439205,
+        "range_frac_of_mean": 0.00022765661607903725,
+        "published": 0.757958585245978,
+        "by_seed": {
+          "1": 0.7580055434875562,
+          "2": 0.7580725232972506,
+          "3": 0.7581781266439205
+        }
+      },
+      "LFM2.5-1.2B": {
+        "mean": 0.8518016366082672,
+        "sd": 0.00015209863533838794,
+        "min": 0.8516392693058492,
+        "max": 0.8519407999041881,
+        "range_frac_of_mean": 0.0003539915696095315,
+        "published": 0.8518314793413718,
+        "by_seed": {
+          "1": 0.8518248406147645,
+          "2": 0.8516392693058492,
+          "3": 0.8519407999041881
+        }
+      },
+      "Llama-3.2-1B": {
+        "mean": 0.7715496973267343,
+        "sd": 4.095603835178257e-05,
+        "min": 0.7715042719532318,
+        "max": 0.7715838029349322,
+        "range_frac_of_mean": 0.0001030795319808905,
+        "published": 0.7713249879152001,
+        "by_seed": {
+          "1": 0.7715838029349322,
+          "2": 0.771561017092039,
+          "3": 0.7715042719532318
+        }
+      },
+      "Ministral-3-14B": {
+        "mean": 0.6791733828646354,
+        "sd": 0.0001320290593313446,
+        "min": 0.6790376484704187,
+        "max": 0.679301364978178,
+        "range_frac_of_mean": 0.0003882904047961039,
+        "published": 0.6791170800821243,
+        "by_seed": {
+          "1": 0.6791811351453093,
+          "2": 0.6790376484704187,
+          "3": 0.679301364978178
+        }
+      },
+      "Mistral-Nemo-12B": {
+        "mean": 0.6461542473892157,
+        "sd": 0.00010021070349654664,
+        "min": 0.6460553847949534,
+        "max": 0.6462557538789732,
+        "range_frac_of_mean": 0.00031009481842665253,
+        "published": 0.6461178191789242,
+        "by_seed": {
+          "1": 0.6462557538789732,
+          "2": 0.6460553847949534,
+          "3": 0.6461516034937204
+        }
+      },
+      "Qwen2.5-0.5B": {
+        "mean": 0.9014865437836969,
+        "sd": 0.00011960713520570173,
+        "min": 0.9013896633368536,
+        "max": 0.9016202277814173,
+        "range_frac_of_mean": 0.0002557602730219228,
+        "published": 0.9012947480019642,
+        "by_seed": {
+          "1": 0.9014497402328198,
+          "2": 0.9016202277814173,
+          "3": 0.9013896633368536
+        }
+      },
+      "Qwen2.5-1.5B": {
+        "mean": 0.7973022893559322,
+        "sd": 2.548399382959337e-05,
+        "min": 0.7972849972719696,
+        "max": 0.7973315550927628,
+        "range_frac_of_mean": 5.839418927396235e-05,
+        "published": 0.7971627775763226,
+        "by_seed": {
+          "1": 0.7972903157030641,
+          "2": 0.7973315550927628,
+          "3": 0.7972849972719696
+        }
+      },
+      "Qwen2.5-14B": {
+        "mean": 0.6748969354791593,
+        "sd": 8.228575867417421e-05,
+        "min": 0.6748293121034431,
+        "max": 0.674988550760099,
+        "range_frac_of_mean": 0.00023594514700655295,
+        "published": 0.6749388991676136,
+        "by_seed": {
+          "1": 0.674988550760099,
+          "2": 0.6748293121034431,
+          "3": 0.6748729435739358
+        }
+      },
+      "Qwen2.5-3B": {
+        "mean": 0.7558001481708995,
+        "sd": 4.802042505984418e-05,
+        "min": 0.7557630519118154,
+        "max": 0.7558543875023602,
+        "range_frac_of_mean": 0.00012084621942176227,
+        "published": 0.7557491495814621,
+        "by_seed": {
+          "1": 0.7557830050985228,
+          "2": 0.7557630519118154,
+          "3": 0.7558543875023602
+        }
+      },
+      "Qwen2.5-7B": {
+        "mean": 0.7171514910444763,
+        "sd": 5.3506687831608896e-05,
+        "min": 0.7171178734298624,
+        "max": 0.7172131925865347,
+        "range_frac_of_mean": 0.00013291355851947515,
+        "published": 0.7170081839948478,
+        "by_seed": {
+          "1": 0.7171178734298624,
+          "2": 0.7171234071170318,
+          "3": 0.7172131925865347
+        }
+      },
+      "Qwen3.5-35B-MoE": {
+        "mean": 0.6784193088611004,
+        "sd": 0.0001750346204918856,
+        "min": 0.6782506867506506,
+        "max": 0.6786001189125446,
+        "range_frac_of_mean": 0.0005150681257592623,
+        "published": 0.6783287960741681,
+        "by_seed": {
+          "1": 0.6782506867506506,
+          "2": 0.6784071209201059,
+          "3": 0.6786001189125446
+        }
+      },
+      "Qwen3.5-4B": {
+        "mean": 0.7494149046185946,
+        "sd": 0.00010886266952140848,
+        "min": 0.7492901610634043,
+        "max": 0.7494907063959731,
+        "range_frac_of_mean": 0.00026760254077268827,
+        "published": 0.7494521956241705,
+        "by_seed": {
+          "1": 0.7492901610634043,
+          "2": 0.7494907063959731,
+          "3": 0.7494638463964065
+        }
+      },
+      "Qwen3.5-9B": {
+        "mean": 0.7083189285808443,
+        "sd": 5.299241404291623e-05,
+        "min": 0.7082614674525398,
+        "max": 0.7083658761699066,
+        "range_frac_of_mean": 0.00014740353978118508,
+        "published": 0.7081885961905576,
+        "by_seed": {
+          "1": 0.7083658761699066,
+          "2": 0.7082614674525398,
+          "3": 0.7083294421200866
+        }
+      },
+      "SmolLM2-1.7B": {
+        "mean": 0.7882625787386051,
+        "sd": 7.617923106579766e-05,
+        "min": 0.7881874797789462,
+        "max": 0.7883397941350304,
+        "range_frac_of_mean": 0.00019322794230311067,
+        "published": 0.7881624978285636,
+        "by_seed": {
+          "1": 0.7883397941350304,
+          "2": 0.7882604623018387,
+          "3": 0.7881874797789462
+        }
+      },
+      "gemma-4-12B": {
+        "mean": 0.6576634612849924,
+        "sd": 0.003148152233918351,
+        "min": 0.6553043190165595,
+        "max": 0.6612381729799892,
+        "range_frac_of_mean": 0.009022629829298565,
+        "published": 0.6531732218371196,
+        "by_seed": {
+          "1": 0.6564478918584287,
+          "2": 0.6553043190165595,
+          "3": 0.6612381729799892
+        }
+      },
+      "gemma-4-31B": {
+        "mean": 0.6211422936135387,
+        "sd": 0.0005957774190797228,
+        "min": 0.6204707435745392,
+        "max": 0.6216073595527705,
+        "range_frac_of_mean": 0.0018298801899624044,
+        "published": 0.6239788990065634,
+        "by_seed": {
+          "1": 0.6204707435745392,
+          "2": 0.6213487777133064,
+          "3": 0.6216073595527705
+        }
+      }
+    },
+    "median_within_model_sd": 8.700891486434347e-05,
+    "between_model_sd_published": 0.07434041444383219,
+    "within_over_between": 0.0011704120230602555
+  },
+  "q2_pairwise_accuracy": {
+    "published_unseeded": {
+      "adapted_pairwise_accuracy": 0.9,
+      "n_pairs": 40
+    },
+    "per_seed": {
+      "1": {
+        "adapted_pairwise_accuracy": 0.9,
+        "n_pairs": 40
+      },
+      "2": {
+        "adapted_pairwise_accuracy": 0.9,
+        "n_pairs": 40
+      },
+      "3": {
+        "adapted_pairwise_accuracy": 0.9,
+        "n_pairs": 40
+      }
+    }
+  },
+  "q3_adapted_minus_parameter_count": {
+    "published_estimator_no_seed_stage": {
+      "adapted_pairwise_accuracy": 0.9,
+      "parameter_count_pairwise_accuracy": 0.65,
+      "difference": 0.25,
+      "ci_lo": 0.07407407407407407,
+      "ci_hi": 0.5,
+      "separates_from_zero": true,
+      "frac_draws_positive": 0.99445,
+      "n_pairs": 40,
+      "n_draws": 20000,
+      "draws_skipped": 0,
+      "resamples_seeds": false
+    },
+    "with_seed_resampling": {
+      "adapted_pairwise_accuracy": 0.9,
+      "parameter_count_pairwise_accuracy": 0.65,
+      "difference": 0.25,
+      "ci_lo": 0.07272727272727264,
+      "ci_hi": 0.5,
+      "separates_from_zero": true,
+      "frac_draws_positive": 0.9951,
+      "n_pairs": 40,
+      "n_draws": 20000,
+      "draws_skipped": 0,
+      "resamples_seeds": true
+    }
+  },
+  "q4_in_band_order_reversals": {
+    "count": 0,
+    "pairs": []
+  }
+}

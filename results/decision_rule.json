@@ -1,0 +1,595 @@
+{
+  "lenient": {
+    "by_threshold": [
+      {
+        "accuracy": 0.9,
+        "accuracy_criterion_resolved": 0.9714285714285714,
+        "n_pairs": 40,
+        "n_pairs_criterion_resolved": 35,
+        "threshold_pct": 0.0
+      },
+      {
+        "accuracy": 0.9473684210526315,
+        "accuracy_criterion_resolved": 0.9714285714285714,
+        "n_pairs": 38,
+        "n_pairs_criterion_resolved": 35,
+        "threshold_pct": 1.0
+      },
+      {
+        "accuracy": 1.0,
+        "accuracy_criterion_resolved": 1.0,
+        "n_pairs": 33,
+        "n_pairs_criterion_resolved": 32,
+        "threshold_pct": 2.0
+      },
+      {
+        "accuracy": 1.0,
+        "accuracy_criterion_resolved": 1.0,
+        "n_pairs": 22,
+        "n_pairs_criterion_resolved": 22,
+        "threshold_pct": 5.0
+      }
+    ],
+    "n_in_band_pairs": 40,
+    "pairs": [
+      {
+        "agrees": true,
+        "criterion_resolved": false,
+        "pair": "Falcon3-10B|Falcon3-7B",
+        "rel_bpb_gap_pct": 4.108987794385231
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Ministral-3-14B",
+        "rel_bpb_gap_pct": 7.204397195619729
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Mistral-Nemo-12B",
+        "rel_bpb_gap_pct": 12.67966156384929
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Qwen2.5-14B",
+        "rel_bpb_gap_pct": 7.868041514930371
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 1.5390602514750398
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 2.803600039704028
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|gemma-4-12B",
+        "rel_bpb_gap_pct": 11.462525960086916
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Ministral-3-14B",
+        "rel_bpb_gap_pct": 11.609412791432007
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Mistral-Nemo-12B",
+        "rel_bpb_gap_pct": 17.309655104262443
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Qwen2.5-14B",
+        "rel_bpb_gap_pct": 12.300326174821254
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 5.711287843741615
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Qwen3.5-4B",
+        "rel_bpb_gap_pct": 1.1350143039774636
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 7.027787417524077
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|gemma-4-12B",
+        "rel_bpb_gap_pct": 16.042507547100357
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "LFM2.5-1.2B|Llama-3.2-1B",
+        "rel_bpb_gap_pct": 10.437428151235087
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "LFM2.5-1.2B|Qwen2.5-1.5B",
+        "rel_bpb_gap_pct": 6.857909488857826
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "LFM2.5-1.2B|SmolLM2-1.7B",
+        "rel_bpb_gap_pct": 8.078154148189007
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Llama-3.2-1B|Qwen2.5-1.5B",
+        "rel_bpb_gap_pct": 3.349792897408778
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Llama-3.2-1B|SmolLM2-1.7B",
+        "rel_bpb_gap_pct": 2.1829332871573777
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Ministral-3-14B|Mistral-Nemo-12B",
+        "rel_bpb_gap_pct": 5.107313236637719
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": false,
+        "pair": "Ministral-3-14B|Qwen2.5-14B",
+        "rel_bpb_gap_pct": 0.6190458009848852
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Ministral-3-14B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 5.579465606746532
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Ministral-3-14B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 4.280781173243017
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Ministral-3-14B|gemma-4-12B",
+        "rel_bpb_gap_pct": 3.971972116682142
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Mistral-Nemo-12B|Qwen2.5-14B",
+        "rel_bpb_gap_pct": 4.46065394471163
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Mistral-Nemo-12B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 10.971739628851266
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Mistral-Nemo-12B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 9.606727313373272
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": true,
+        "pair": "Mistral-Nemo-12B|gemma-4-12B",
+        "rel_bpb_gap_pct": 1.0919684380723726
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-1.5B|Qwen2.5-3B",
+        "rel_bpb_gap_pct": 5.4798113921524845
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": false,
+        "pair": "Qwen2.5-1.5B|SmolLM2-1.7B",
+        "rel_bpb_gap_pct": 1.1419319965813257
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-14B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 6.233050855287378
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-14B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 4.926326970330215
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-14B|gemma-4-12B",
+        "rel_bpb_gap_pct": 3.332297865683435
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": false,
+        "pair": "Qwen2.5-3B|Qwen3.5-4B",
+        "rel_bpb_gap_pct": 0.8402075534714053
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-3B|SmolLM2-1.7B",
+        "rel_bpb_gap_pct": 4.288903039461202
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-7B|Qwen3.5-4B",
+        "rel_bpb_gap_pct": 4.524915106067449
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": false,
+        "pair": "Qwen2.5-7B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 1.2453727512320742
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-7B|gemma-4-12B",
+        "rel_bpb_gap_pct": 9.773052541588518
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen3.5-35B-MoE|gemma-4-31B",
+        "rel_bpb_gap_pct": 8.710213943794425
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen3.5-9B|gemma-4-12B",
+        "rel_bpb_gap_pct": 8.42278472450255
+      }
+    ]
+  },
+  "method": {
+    "band": 2.0,
+    "cohort": [
+      "Falcon3-10B",
+      "Falcon3-7B",
+      "LFM2.5-1.2B",
+      "Llama-3.2-1B",
+      "Ministral-3-14B",
+      "Mistral-Nemo-12B",
+      "Qwen2.5-0.5B",
+      "Qwen2.5-1.5B",
+      "Qwen2.5-14B",
+      "Qwen2.5-3B",
+      "Qwen2.5-7B",
+      "Qwen3.5-35B-MoE",
+      "Qwen3.5-4B",
+      "Qwen3.5-9B",
+      "SmolLM2-1.7B",
+      "gemma-4-12B",
+      "gemma-4-31B"
+    ],
+    "corpus": "news",
+    "criterion_resolved_column": "restricted to pairs whose criterion difference has a paired item-bootstrap CI excluding zero; a pair the yardstick cannot order is not a selector error",
+    "gap_units": "percent of the smaller adapted BPB"
+  },
+  "noise_floor": {
+    "block_alignment": {
+      "bias_over_gap": 0.6056321481926996,
+      "worst_case_bias_bound_frac": 0.0017705680099480013,
+      "worst_pair": "Qwen2.5-3B over Falcon3-7B"
+    },
+    "combined_frac": 0.014189281450057021,
+    "seed": {
+      "as_frac_of_median_bpb": 0.01241871344010902,
+      "basis": "2 x sqrt(2) x the largest within-model seed SD over 3 replicates",
+      "gap_two_such_models_could_produce": 0.008904319171244977,
+      "median_within_model_sd": 8.700891486434347e-05,
+      "worst_model": "gemma-4-12B",
+      "worst_within_model_sd": 0.003148152233918351
+    }
+  },
+  "question": "Given two candidates whose adapted BPB differs by a relative margin g, how often is the lower-BPB model actually the better one?",
+  "schema_version": 1,
+  "strict": {
+    "by_threshold": [
+      {
+        "accuracy": 0.85,
+        "accuracy_criterion_resolved": 0.967741935483871,
+        "n_pairs": 40,
+        "n_pairs_criterion_resolved": 31,
+        "threshold_pct": 0.0
+      },
+      {
+        "accuracy": 0.8947368421052632,
+        "accuracy_criterion_resolved": 0.967741935483871,
+        "n_pairs": 38,
+        "n_pairs_criterion_resolved": 31,
+        "threshold_pct": 1.0
+      },
+      {
+        "accuracy": 0.9090909090909091,
+        "accuracy_criterion_resolved": 0.9642857142857143,
+        "n_pairs": 33,
+        "n_pairs_criterion_resolved": 28,
+        "threshold_pct": 2.0
+      },
+      {
+        "accuracy": 0.9545454545454546,
+        "accuracy_criterion_resolved": 1.0,
+        "n_pairs": 22,
+        "n_pairs_criterion_resolved": 19,
+        "threshold_pct": 5.0
+      }
+    ],
+    "n_in_band_pairs": 40,
+    "pairs": [
+      {
+        "agrees": true,
+        "criterion_resolved": false,
+        "pair": "Falcon3-10B|Falcon3-7B",
+        "rel_bpb_gap_pct": 4.108987794385231
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Ministral-3-14B",
+        "rel_bpb_gap_pct": 7.204397195619729
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Mistral-Nemo-12B",
+        "rel_bpb_gap_pct": 12.67966156384929
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Qwen2.5-14B",
+        "rel_bpb_gap_pct": 7.868041514930371
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 1.5390602514750398
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 2.803600039704028
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-10B|gemma-4-12B",
+        "rel_bpb_gap_pct": 11.462525960086916
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Ministral-3-14B",
+        "rel_bpb_gap_pct": 11.609412791432007
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Mistral-Nemo-12B",
+        "rel_bpb_gap_pct": 17.309655104262443
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Qwen2.5-14B",
+        "rel_bpb_gap_pct": 12.300326174821254
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 5.711287843741615
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Qwen3.5-4B",
+        "rel_bpb_gap_pct": 1.1350143039774636
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 7.027787417524077
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Falcon3-7B|gemma-4-12B",
+        "rel_bpb_gap_pct": 16.042507547100357
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "LFM2.5-1.2B|Llama-3.2-1B",
+        "rel_bpb_gap_pct": 10.437428151235087
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "LFM2.5-1.2B|Qwen2.5-1.5B",
+        "rel_bpb_gap_pct": 6.857909488857826
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "LFM2.5-1.2B|SmolLM2-1.7B",
+        "rel_bpb_gap_pct": 8.078154148189007
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Llama-3.2-1B|Qwen2.5-1.5B",
+        "rel_bpb_gap_pct": 3.349792897408778
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Llama-3.2-1B|SmolLM2-1.7B",
+        "rel_bpb_gap_pct": 2.1829332871573777
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Ministral-3-14B|Mistral-Nemo-12B",
+        "rel_bpb_gap_pct": 5.107313236637719
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": false,
+        "pair": "Ministral-3-14B|Qwen2.5-14B",
+        "rel_bpb_gap_pct": 0.6190458009848852
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Ministral-3-14B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 5.579465606746532
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Ministral-3-14B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 4.280781173243017
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": true,
+        "pair": "Ministral-3-14B|gemma-4-12B",
+        "rel_bpb_gap_pct": 3.971972116682142
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Mistral-Nemo-12B|Qwen2.5-14B",
+        "rel_bpb_gap_pct": 4.46065394471163
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Mistral-Nemo-12B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 10.971739628851266
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Mistral-Nemo-12B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 9.606727313373272
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Mistral-Nemo-12B|gemma-4-12B",
+        "rel_bpb_gap_pct": 1.0919684380723726
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-1.5B|Qwen2.5-3B",
+        "rel_bpb_gap_pct": 5.4798113921524845
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": false,
+        "pair": "Qwen2.5-1.5B|SmolLM2-1.7B",
+        "rel_bpb_gap_pct": 1.1419319965813257
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-14B|Qwen2.5-7B",
+        "rel_bpb_gap_pct": 6.233050855287378
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-14B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 4.926326970330215
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": false,
+        "pair": "Qwen2.5-14B|gemma-4-12B",
+        "rel_bpb_gap_pct": 3.332297865683435
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": false,
+        "pair": "Qwen2.5-3B|Qwen3.5-4B",
+        "rel_bpb_gap_pct": 0.8402075534714053
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-3B|SmolLM2-1.7B",
+        "rel_bpb_gap_pct": 4.288903039461202
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": true,
+        "pair": "Qwen2.5-7B|Qwen3.5-4B",
+        "rel_bpb_gap_pct": 4.524915106067449
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": false,
+        "pair": "Qwen2.5-7B|Qwen3.5-9B",
+        "rel_bpb_gap_pct": 1.2453727512320742
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": false,
+        "pair": "Qwen2.5-7B|gemma-4-12B",
+        "rel_bpb_gap_pct": 9.773052541588518
+      },
+      {
+        "agrees": false,
+        "criterion_resolved": false,
+        "pair": "Qwen3.5-35B-MoE|gemma-4-31B",
+        "rel_bpb_gap_pct": 8.710213943794425
+      },
+      {
+        "agrees": true,
+        "criterion_resolved": false,
+        "pair": "Qwen3.5-9B|gemma-4-12B",
+        "rel_bpb_gap_pct": 8.42278472450255
+      }
+    ]
+  }
+}

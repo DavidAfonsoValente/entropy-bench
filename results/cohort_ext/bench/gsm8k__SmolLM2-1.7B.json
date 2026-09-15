@@ -1,0 +1,9 @@
+{
+  "benchmark": "gsm8k",
+  "label": "SmolLM2-1.7B",
+  "metric": "exact_match,flexible-extract",
+  "n": 1319,
+  "provenance": "E9 re-score: all 17 models, one host (A100-SXM-64GB), one build, uniform decode protocol (eval/lm_eval_uniform.py)",
+  "score": 0.29946929492039426,
+  "source": "results/gsm8k/SmolLM2-1.7B/HuggingFaceTB__SmolLM2-1.7B/results_2026-09-08T09-01-35.605013.json"
+}

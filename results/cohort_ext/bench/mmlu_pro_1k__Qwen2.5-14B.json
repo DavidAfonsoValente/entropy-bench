@@ -1,0 +1,9 @@
+{
+  "benchmark": "mmlu_pro_1k",
+  "label": "Qwen2.5-14B",
+  "metric": "exact_match,custom-extract",
+  "n": 1000,
+  "provenance": "E9 re-score: all 17 models, one host (A100-SXM-64GB), one build, uniform decode protocol (eval/lm_eval_uniform.py)",
+  "score": 0.545,
+  "source": "results/mmlu_pro_1k/Qwen2.5-14B/Qwen__Qwen2.5-14B/results_2026-09-08T12-51-32.392182.json"
+}
