@@ -151,14 +151,15 @@ the search by time, small models finish more trials and get tuned better.
 \end{say}
 
 % ================================================================ 7
-\slide{7}{Checking it without ground truth}{4:34--5:22}
+\slide{7}{Independent views, not ground truth}{4:34--5:22}
 \begin{say}
-How do we know the ranking is any good, without appealing to the benchmarks we are criticising? Two
-ways. The direct one: fine-tune fifteen models on a real news task and see which builds the best
-system. The cheap one: a fill-in-the-blank quiz on articles no model has seen, answered by the
-original weights. We score it leniently, so a model is not penalised for how it stops talking, and
-we check everything strictly too. On news the two yardsticks agree at zero point nine two, so the
-quiz can stand in for the fine-tune elsewhere.
+There is no ground truth for which base model is better. A task tells you which model is better at
+that task, and different tasks disagree --- that is exactly why GSM8K and HellaSwag disagree. So the
+question is whether the loss agrees with concrete uses it never saw. We built two. One real use:
+fine-tune fifteen models on a news task. If that were the only task, fine-tuning on it would be the
+right evaluation, but it needs labels and budget and speaks for one task. And a quiz on articles no
+model has seen, answered by the original weights, scored leniently and strictly. On news the two
+views agree at zero point nine two.
 \end{say}
 
 % ================================================================ 8
@@ -184,13 +185,13 @@ about.
 \end{say}
 
 % ================================================================ 10
-\slide{10}{3. It predicts what a model becomes}{6:47--7:26}
+\slide{10}{3. It anticipates a real use it never saw}{6:47--7:26}
 \begin{say}
-Third, and this is the one that matters. We fine-tuned fifteen models and asked which way of
-choosing, made beforehand, picks the better final system. Adapted bits per byte gets ninety-five
-percent of the pairs right. HellaSwag gets eighty-seven. GSM8K and MMLU-Pro are a coin flip. Every
-model lands within one rank of where it finishes --- including Gemma, the model the scorecard would
-never have shortlisted. A second, very different fine-tuning recipe gives the same picture.
+Third, and this is the one that matters. We fine-tuned fifteen models on a news task, and asked how
+often each way of choosing, fixed before the task existed, agrees with how the fine-tuned systems
+come out. Adapted bits per byte agrees on ninety-five percent of the pairs. HellaSwag, eighty-seven.
+GSM8K and MMLU-Pro, a coin flip. Every model lands within one rank of where it finishes ---
+including Gemma, the model the scorecard would never have shortlisted.
 \end{say}
 \cue{LAND THIS: 0.949 against a coin flip for the reasoning benchmarks.}
 
@@ -198,7 +199,7 @@ never have shortlisted. A second, very different fine-tuning recipe gives the sa
 \slide{11}{4. It holds}{7:26--8:01}
 \begin{say}
 Fourth, it holds up. On the hardest choices, models within two times of each other in size, it
-picks the better one ninety percent of the time, and under lenient scoring it beats simply picking the bigger model.
+agrees with the quiz on ninety percent of pairs, and under lenient scoring it beats simply picking the bigger model.
 Across four corpora --- news, Reddit, Hacker News and maths --- it never ranks below a public
 benchmark. The lead over HellaSwag is consistent but not yet statistically settled; a larger cohort
 is the next step.
@@ -222,6 +223,11 @@ So: evaluate language models as language models. Thank you --- happy to take que
 \vspace{1.4em}
 {\color{rule}\rule{\textwidth}{0.6pt}}\\[0.4em]
 {\large\bfseries Q\&A preparation}
+
+\textbf{``If the fine-tune is the real test, why not just fine-tune?''} When you have the task, its
+labels and the budget, do --- it is the better evaluation for that task. A base model is usually
+chosen before any of those exist and has to serve many tasks. The fine-tune is not ground truth; it
+is one use the loss was asked to anticipate, and it did.
 
 \textbf{``Isn't the quiz circular --- built from the same text?''} It is answered by the released
 weights, not the adapted ones, and scored by generation, not likelihood. And the fine-tune, scored on

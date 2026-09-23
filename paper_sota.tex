@@ -46,16 +46,16 @@
 \maketitle
 \begin{abstract}
 A language model is trained to predict text and should be judged by how well it predicts the text
-it will be used on. Base models are instead chosen by public benchmarks, which
-vendors optimise for, which can leak into training data, and which score a model as it ships although
-teams adapt it before use. We return to the model's own objective: adapt every candidate to fresh,
-decontaminated text from the target domain by the same procedure, and rank by held-out loss in bits
-per byte---no labels, and with a fixed recipe minutes of GPU time per model. Adaptation changes the ordering:
-models that look weak out of the box can be among the best. The new ordering closely
-tracks HellaSwag, the likelihood-scored benchmark, and when fifteen models are fine-tuned on news
-it orders the resulting systems correctly in $0.949$ of size-matched pairs and places every
-model within one rank of its finish. On four corpora, judged by in-domain quizzes, it never ranks
-below a public benchmark. Code and artifacts are released.
+it will be used on. Base models are instead chosen by public benchmarks, which vendors optimise for,
+which can leak into training data, and which score a model before the adaptation every team applies.
+We return to the model's own objective: adapt every candidate to fresh, decontaminated domain text by
+the same procedure and rank by held-out bits per byte---no labels, minutes of GPU time per model with
+a fixed recipe. Adaptation changes the ordering. With no ground truth to appeal to, we compare the
+new ordering with independent views of the models---fine-tuning fifteen of them on a news task, and
+quizzes built from four corpora. Each benchmark falls short on some view; adapted bits per byte
+agrees with every one at least as closely as any benchmark, matching the fine-tuned outcome in
+$0.949$ of size-matched pairs. It also tracks HellaSwag and turns toward the reasoning benchmarks on
+mathematics. Code and artifacts are released.
 \end{abstract}
 
 \section{Introduction}
@@ -64,10 +64,11 @@ Everything a base model can do, it learned by predicting the next piece of text.
 to ask how good one is, for a given use, is therefore to measure how well it predicts the text of
 that use. That is not how base models are chosen. A new one ships most weeks, and what arrives with it is a
 scorecard---MMLU-Pro, HellaSwag, GSM8K---read as the answer to \emph{how good is this model, for what
-we do?} This paper argues that language models should be evaluated as language models, and shows
-that doing so answers that question at least as well as the scorecard, and on the outcome that
-matters most---which model builds the best fine-tuned system---with the highest accuracy of any
-selector.
+we do?} This paper argues that language models should be evaluated as language models: by the loss they
+were trained to minimise, on the text they will be used on. No task-specific score can serve as
+ground truth for a base model, which is chosen before most of its uses exist; the case for loss is
+that it is the one quantity every use is built on, and the evidence is that it agrees with every concrete use we could test at least as closely as any
+benchmark, while each benchmark falls short on some.
 
 The scorecard misleads for two reasons. The first is that benchmarks are public. Each was written by
 other people, for other purposes, and released before the model existed; vendors optimise for the
@@ -105,21 +106,18 @@ identically before comparing them, but with labelled benchmark data; we do it un
 text, and in bytes.
 
 We test the protocol on seventeen base models from eight families (0.5B--35B) and four corpora, and
-the results form one argument. \textbf{Adaptation changes the ordering.} Judged by a fill-in-the-blank
-quiz on held-out news, eleven of fifty-five model pairs move from wrongly to correctly ordered after
-adaptation and none the other way, because the unadapted number mixes familiarity with this prose into
+the results form one argument. \textbf{Adaptation changes the ordering.} Against a fill-in-the-blank quiz on held-out news, eleven of fifty-five model pairs move from
+disagreeing to agreeing with it after adaptation and none the other way, because the unadapted number mixes familiarity with this prose into
 capability and adaptation largely removes the familiarity (Section~\ref{sec:mechanism}).
 \textbf{The new ordering recovers what benchmarks measure, and can be aimed.} Over eleven models it
 matches HellaSwag at Spearman $0.96$--$0.98$ on news, Reddit and Hacker News, up from $0.63$--$0.72$
 before adaptation, and when the text is mathematics it swings to GSM8K and MMLU-Pro ($0.91$ and
-$0.93$; Section~\ref{sec:agreement}). \textbf{It predicts what a model becomes.} Measured before any
-task training, it orders fifteen fine-tuned systems correctly in $0.949$ of size-matched pairs (within $2\times$ in
-parameters), the
-highest of any selector (HellaSwag $0.872$), and places every model within one rank of where it
-finishes (Section~\ref{sec:divergence}). \textbf{And it holds.} Over seventeen models and four
-corpora, each judged by its own in-domain quiz, it never ranks candidates worse than a public
-benchmark (Section~\ref{sec:pairwise}). Section~\ref{sec:protocol} gives the protocol and how we
-check it without ground truth, Section~\ref{sec:results} the results in this order, and
+$0.93$; Section~\ref{sec:agreement}). \textbf{It anticipates a real use it never saw.} Measured before any task exists, it matches the
+ordering of fifteen models fine-tuned on a news task in $0.949$ of size-matched pairs (within
+$2\times$ in parameters)---more than any benchmark (HellaSwag $0.872$; GSM8K and MMLU-Pro near a
+coin)---and places every model within one rank of where it finishes
+(Section~\ref{sec:divergence}). \textbf{And it holds.} Over seventeen models and four corpora, against a quiz built from each
+corpus, it never agrees less than a public benchmark does (Section~\ref{sec:pairwise}). Section~\ref{sec:protocol} gives the protocol and the independent views we compare it with, Section~\ref{sec:results} the results in this order, and
 Section~\ref{sec:using} how to use them. Every number recomputes from a committed artifact:
 \url{https://github.com/DavidAfonsoValente/entropy-bench}.
 \begin{figure*}[t]
@@ -172,7 +170,7 @@ comparison of the two orderings.}
 \section{The Protocol}
 \label{sec:protocol}
 The protocol has two halves, shown in Figure~\ref{fig:pipeline}: the measurement itself, and the
-checks that say whether the ranking it produces is any good.
+independent views of the models we compare it with.
 
 \subsection{The measurement}
 \label{sec:phases}
@@ -240,16 +238,20 @@ pairs, because pairs that share a model are not independent: a \emph{selector's}
 \textbf{models} ($20{,}000$ draws, percentile, clustered), the \emph{criterion's own} scores its
 $2{,}500$ \textbf{items}, paired across models, and a fine-tuned pair its $500$ evaluation articles.
 
-\subsection{Checking the ranking without ground truth}
+\subsection{Independent views, not ground truth}
 \label{sec:criterion}
-Because no ground truth exists, the case for adapted BPB rests on the principle of
-Section~\ref{sec:intro}. What can be checked is whether that principle carries into practice, on the
-question a team actually asks: \emph{which model is better at the job, in this domain?} We check it
-two independent ways, neither of which uses a public benchmark.
+No measurement of a base model can be ground truth, because a base model is chosen before most of
+its uses exist and each use can order the models differently. A task shows which model is better
+\emph{at that task}; GSM8K and HellaSwag disagree precisely because they are different tasks. The
+case for adapted BPB therefore rests on the principle of Section~\ref{sec:intro}, and what can be
+tested is whether a quantity chosen on principle agrees with concrete uses it was never shown.
+We build two such views, neither of which uses a public benchmark, and throughout the paper a
+selector is ``right'' on a pair when it orders the pair as the view does.
 
-The direct way is to do what a team does: fine-tune every model on a real task and score the systems
-that come out (Section~\ref{sec:divergence}). It is expensive, so we run it once, on fifteen models,
-on news. The cheap, repeatable way is a fill-in-the-blank quiz built from each corpus's held-out test
+The first is one real use: fine-tune every model on a news task and score the systems that come out
+(Section~\ref{sec:divergence}). If that task were the only one that mattered, fine-tuning on it would
+be the better evaluation; it is expensive, needs labels, and speaks for one task, so we run it once, on
+fifteen models, as a use the measurement is asked to anticipate. The second is cheap and repeatable: a fill-in-the-blank quiz built from each corpus's held-out test
 split: hide a name or a number in an article no model was adapted on, show the model the $1{,}200$
 characters before it, and count how often it writes the missing words (Appendix~\ref{app:criterion}
 shows an item). A hidden span that already appears earlier in the prompt is excluded, so a right
@@ -260,8 +262,8 @@ generation begins with it, and \emph{lenient} scoring if it begins within the fi
 Lenient is our primary convention, because it scores what the model knows rather than how it stops.
 We report both, and every comparison with a public benchmark holds under both: adapted BPB never ranks
 below one under either. On news, the corpus where we ran both checks, the quiz and the fine-tune rank the
-fifteen models at Spearman $0.921$ (lenient), which is what lets the quiz stand in for the fine-tune
-on the other three corpora.
+fifteen models at Spearman $0.921$ (lenient), so on news the two views largely agree, and the quiz carries the comparison to the other three
+corpora.
 
 The quiz is a fair judge for three reasons. It cannot have been prepared for: Reddit and Hacker News
 were scraped after every model's weights were frozen, most of the arXiv set was written after them
@@ -376,19 +378,18 @@ mathematics instead, BPB swings toward the reasoning benchmarks---Spearman $0.91
 $0.93$ with MMLU-Pro, up from $0.76$ and $0.74$---so the adaptation corpus steers which capability
 the ranking tracks. Because HellaSwag and BPB are both likelihoods, this is consistency rather than
 validation: measuring on fresh text of one's own gives up nothing the likelihood benchmark captures,
-and the choice of text decides which capability the ranking follows. Whether it predicts which model
-is better at the job is the next question.
+and the choice of text decides which capability the ranking follows. Whether it also anticipates a real use of the models is the next question.
 
-\subsection{It predicts what a model becomes}
+\subsection{It anticipates a real use it never saw}
 \label{sec:divergence}
-The question a team actually faces is which model will build the better system once it has been
-trained for their task. So we trained them, and asked whether adapted BPB, measured beforehand,
-predicts the result.
+A measurement made with no task and no labels is most useful if it anticipates how models fare when
+a task does arrive. So we gave the models one, trained them on it, and asked how often each way of
+choosing, fixed beforehand, orders the resulting systems as the task does.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_downstream.pdf}
-\caption{\textbf{Did the selector's pick build the better system?} Every size-matched pair of the
+\caption{\textbf{Does each selector agree with the fine-tuned outcome?} Every size-matched pair of the
 fifteen fine-tuned models, oriented so the selector prefers the first: $x$ is how strongly it
 prefers it, $y$ how much better that model's fine-tuned system scored. Above the line is a pair the
 selector got right; filled markers are pairs the fine-tune itself resolves. Adapted BPB is right on
@@ -404,16 +405,15 @@ against the human-written lede on $500$ held-out articles from a split neither t
 BPB test blocks touch. The analysis was fixed in code before the jobs ran
 (Appendix~\ref{sec:downstream}).
 
-Over all $39$ size-matched pairs the fifteen systems form, the adapted ranking picks the better
-system more often than any other way of choosing. Adapted BPB orders $0.949$ of the pairs
+Over all $39$ size-matched pairs the fifteen systems form, the adapted ranking agrees with the
+fine-tuned outcome more often than any other way of choosing. Adapted BPB orders $0.949$ of the pairs
 correctly, $[0.817, 1.000]$, ahead of HellaSwag at $0.872$, while GSM8K and MMLU-Pro sit at $0.474$
 and $0.513$---a coin (Figure~\ref{fig:downstream}, Table~\ref{tab:downstream}). Its lead over
 parameter count is statistically resolved under this recipe, $+0.231$ $[+0.059, +0.452]$, and on the
 pairs the fine-tune itself separates it picks the better system in $21$ of the $22$. A deliberately
 different recipe---four times the rank, three times the learning rate, half the batch, a new
 seed---leaves the systems' ordering almost unchanged (Spearman $0.982$) and adapted BPB still first
-at $0.923$, right on all $20$ pairs that recipe separates. Table~\ref{tab:outofbox} shows what this
-means for a single model. A model's benchmark standing is a poor guide to where it finishes, while
+at $0.923$, right on all $20$ pairs that recipe separates. Table~\ref{tab:outofbox} shows what this means for a single model on this task. A model's benchmark standing is a poor guide to where it finishes, while
 adapted BPB places all fifteen within one rank of their final order. \textbf{Gemma-4-12B}, $9$th and
 $8$th of fifteen on GSM8K and MMLU-Pro, builds the best system of the fifteen, beating
 Ministral-3-14B by $+0.018$ $[+0.011, +0.025]$; and the $55.3$-point GSM8K gap between Llama-3.2-1B
@@ -447,7 +447,7 @@ it finishes---all fifteen, and eleven exactly.}
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_selectors.pdf}
-\caption{\textbf{How often each way of choosing a base model picks the better one.} Seventeen
+\caption{\textbf{How often each way of choosing a base model agrees with the news quiz.} Seventeen
 models, the $40$ pairs within $2\times$ of each other in size, judged by the news quiz
 (Section~\ref{sec:criterion}; lenient unless marked strict). \textbf{A}: each selector's
 accuracy. Adapted BPB is top under lenient scoring and level with the unadapted reading under strict;
@@ -466,7 +466,7 @@ excluded on infrastructure grounds, never for their scores; Table~\ref{tab:cohor
 and Appendix~\ref{app:eleven} the rules). That gives $\mathbf{40}$ size-matched pairs, $32$ of which
 cross publisher families; adapted BPB is right on $30$ of those ($0.938$ lenient, $0.875$ strict), so
 the result does not lean on any one publisher. Against the news criterion (Figure~\ref{fig:selectors})
-adapted BPB picks the better candidate $0.900$ of the time under lenient scoring, ahead of every
+adapted BPB agrees with the quiz on $0.900$ of pairs under lenient scoring, ahead of every
 alternative, with HellaSwag next and the unadapted reading and parameter count behind it. Under
 strict scoring it is $0.850$ and the unadapted reading is level with it; no alternative is ahead under
 either convention. Both generative benchmarks land \emph{below} chance by point estimate, GSM8K at
@@ -540,15 +540,19 @@ and adaptation all match.
 \section{Conclusion}
 Language models should be evaluated as language models: by the loss they were trained to minimise,
 in bits per byte, on fresh decontaminated text from the domain of use, after the same adaptation for
-every candidate. There is no ground truth to appeal to, but the principle can be checked, and it holds.
+every candidate. There is no ground truth to appeal to; what can be checked is whether the principled quantity agrees with the concrete uses we could build,
+and it agrees with each at least as closely as any benchmark, while each benchmark falls short on
+some.
 Adaptation changes the ordering; the new ordering agrees with HellaSwag at Spearman $0.96$--$0.98$ on
-general text and turns to the reasoning benchmarks on mathematics; it orders fifteen fine-tuned
-systems with the highest accuracy of any selector, each within one rank of its finish; and on four
+general text and turns to the reasoning benchmarks on mathematics; it matches the outcome of fine-tuning fifteen models more often than any benchmark, each within one
+rank of its finish; and on four
 corpora it never ranks candidates worse than a public benchmark. It needs only raw text and minutes of
 GPU time, runs on fresh screened text no benchmark can offer, and captures what a benchmark structurally cannot: how good a
 model becomes once adapted.
 
-The natural objections were tested. \emph{Circularity}---a yardstick built from the same corpus
+The natural objections were tested. \emph{Why not simply fine-tune on the task?} When the task, its
+labels and the budget exist, that is the better evaluation for that task; a base model is usually
+chosen before any of them do, and must serve many tasks at once. \emph{Circularity}---a yardstick built from the same corpus
 rewarding the method---is answered by the fine-tune, scored on separate documents against
 human-written references, whose ranking agrees with the criterion at Spearman $0.921$. \emph{Recipe
 dependence} is answered by repeating every fine-tune with a substantially different recipe, which

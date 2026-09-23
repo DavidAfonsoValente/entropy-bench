@@ -259,17 +259,17 @@
 
 % ==================================================================== 7
 \begin{frame}
-  \frametitle{Checking it without ground truth}
-  \framesubtitle{Two independent yardsticks --- neither is a public benchmark}
+  \frametitle{Independent views, not ground truth}
+  \framesubtitle{A task shows which model is better \emph{at that task}. So we ask: does the loss agree with uses it never saw?}
 
   \vspace{0.6em}
   \begin{columns}[t]
   \begin{column}{0.47\textwidth}
-    \keyw{Fine-tune them and see}
+    \keyw{One real use: fine-tune them}
     \begin{itemize}\setlength\itemsep{0.35em}\small
       \item Do what a team does: fine-tune 15 models on a real news task (write the lede).
       \item ROUGE-L on 500 articles no measurement touched.
-      \item Expensive --- run once.
+      \item If this were the only task, fine-tuning on it would be the evaluation --- but it needs labels, budget, and speaks for one task.
     \end{itemize}
   \end{column}
   \begin{column}{0.47\textwidth}
@@ -283,8 +283,8 @@
   \end{columns}
 
   \vspace{0.8em}
-  \punch{On news the two agree at Spearman \keyw{0.921} --- so the cheap quiz stands in for the
-  fine-tune on the other three corpora.}
+  \punch{On news the two views agree at Spearman \keyw{0.921}; the quiz carries the comparison to the
+  other three corpora. ``Right'' below means \emph{agrees with the view}.}
 \end{frame}
 
 % ==================================================================== 8
@@ -342,7 +342,7 @@
 
 % ==================================================================== 10
 \begin{frame}
-  \frametitle{3. It predicts what a model becomes}
+  \frametitle{3. It anticipates a real use it never saw}
   \framesubtitle{Fifteen models fine-tuned on news; 39 size-matched pairs}
 
   \vspace{-0.3em}
@@ -351,8 +351,8 @@
   \end{center}
   \vspace{-0.4em}
   \small
-  Adapted \bpb{}, measured \emph{before} fine-tuning: \goodw{0.949} of pairs right ---
-  HellaSwag 0.872, MMLU-Pro 0.513, GSM8K 0.474. \keyw{Every model within one rank} of where it
+  Adapted \bpb{}, measured \emph{before} any task existed, agrees with the fine-tuned outcome on
+  \goodw{0.949} of pairs --- HellaSwag 0.872, MMLU-Pro 0.513, GSM8K 0.474. \keyw{Every model within one rank} of where it
   finishes. Holds under a second, very different recipe (0.923).
 \end{frame}
 
@@ -367,9 +367,9 @@
   \end{center}
   \vspace{-0.4em}
   \small
-  Adapted \bpb{} picks the better model \goodw{0.900} of the time (lenient), beats model size
+  Adapted \bpb{} agrees with the news quiz on \goodw{0.900} of pairs (lenient), beats model size
   by $+0.250$ $[+0.074, +0.500]$, and on news, Reddit, Hacker News and arXiv math
-  \keyw{never ranks below a public benchmark} under either scoring.
+  \keyw{never agrees less than a public benchmark} under either scoring.
 \end{frame}
 
 % ==================================================================== 12
