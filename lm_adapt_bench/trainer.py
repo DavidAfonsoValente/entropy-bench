@@ -392,7 +392,12 @@ class Trainer:
                 }, f)
 
         # Loop generously over epochs; real termination is early-stop or the wall-time budget.
-        for epoch in range(self.training_config.final_epochs * 10):
+        # With until_plateau there is no epoch cap at all: only the validation plateau (or NaN) ends it.
+        import itertools
+        epochs = (itertools.count() if getattr(self.training_config, "until_plateau", False)
+                  else range(self.training_config.final_epochs * 10))
+        stop_reason = None
+        for epoch in epochs:
             for batch in self.train_loader:
                 if max_train_seconds and (time.time() - start_time) > max_train_seconds:
                     self.logger.warning(
@@ -409,6 +414,7 @@ class Trainer:
                 if torch.isnan(loss):
                     self.logger.error("Loss exploded to NaN. Terminating training.")
                     converged = True
+                    stop_reason = "nan"
                     break
                 loss.backward()
                 global_step += 1
@@ -432,6 +438,7 @@ class Trainer:
                         if no_improvement_count >= patience:
                             self.logger.info(f"Converged (no improvement > {min_delta} for {patience} evals). Stopping.")
                             converged = True
+                            stop_reason = "plateau"
                             break
             if converged or stopped_on_time:
                 break
@@ -441,14 +448,17 @@ class Trainer:
         peak_vram = torch.cuda.max_memory_allocated() / 1e9 if self.device.type == "cuda" else 0.0
 
         if not converged and not stopped_on_time:
-            # Ran out of epoch passes without plateau or timeout -> treat as done.
+            # Ran out of epoch passes without plateau or timeout -> treat as done, but say so.
             converged = True
+            stop_reason = "epoch_cap"
+            self.logger.warning("Epoch cap reached before a validation plateau; result is not converged.")
 
         # On the last allowed chain link, finalize from the best checkpoint even if the
         # plateau criterion wasn't reached, so the chain always yields a usable result.
         if force_finalize and not converged:
             self.logger.info("force_finalize: finalizing from best checkpoint despite no plateau (last chain link).")
             converged = True
+            stop_reason = "force_finalize"
 
         if converged:
             from .utils import model_stats
@@ -466,6 +476,8 @@ class Trainer:
                 "peak_gpu_memory_gb": peak_vram,
                 "steps_trained": grad_step,
                 "stopped_on_time": stopped_on_time,
+                # "plateau" is the only reason that means validation BPB actually converged.
+                "stop_reason": stop_reason,
                 "model_stats": model_stats(self.model),
             }
         return {

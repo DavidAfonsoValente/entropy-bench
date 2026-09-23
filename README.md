@@ -225,7 +225,10 @@ adapted number: see the three-step rule above for why the tiers are not intercha
 
 Adaptation hyperparameters come from one of two sources, and either way the final adaptation trains
 until validation BPB stops improving (early stop on a plateau; with `--phase train` it resumes across
-chained jobs, so a job's walltime never cuts it short):
+chained jobs, so a job's walltime never cuts it short). On a machine with no job time limit,
+`--no-time-limit` runs the full method with no shortcuts: every sweep trial, then training until the
+validation plateau with no wall-time budget and no epoch cap; the result records `stop_reason`, and
+only `"plateau"` means validation BPB converged.
 
 - `--hparams sweep` (default, the method): a per-model Optuna search — TPE sampler, successive
   halving on validation BPB — with the same `--n-trials` for every model and no wall-time cap, so
@@ -254,36 +257,30 @@ See [Understanding results](docs/RESULTS.md) before comparing scores.
 
 ## Leaderboard and contributions
 
-The [public leaderboard](LEADERBOARD.md) contains 11 base models. Its canonical source is
-[`results/leaderboard.json`](results/leaderboard.json); the Markdown table is generated from that
-file.
+The [public leaderboard](LEADERBOARD.md) has two tracks over the same eleven base models, each its
+own benchmark:
 
-Check it locally:
+- **Mathematics** (`arxiv-math-2026-08-fixed-lora-v1`) — arXiv `math.*` titles and abstracts from
+  9 June to 20 August 2026, CC0 metadata, published in
+  [`data/corpora/`](data/corpora/arxiv-math-2026.jsonl.gz). **Anyone can run it** and submit a model.
+- **News** (`primary-news-2026-06-08-fixed-lora-v1`) — the paper's primary corpus; its text cannot be
+  redistributed, so the maintainers run requested models.
+
+Canonical boards are [`results/leaderboard.json`](results/leaderboard.json) and
+[`results/leaderboard_math.json`](results/leaderboard_math.json); the Markdown tables are generated
+from them. Check them locally:
 
 ```bash
 entropy-leaderboard validate
 entropy-leaderboard render --check
 ```
 
-To add a model, either open a [model evaluation
-request](https://github.com/DavidAfonsoValente/entropy-bench/issues/new?template=model-evaluation.yml)
-or turn an authorized run into a self-checking submission:
-
-```bash
-entropy-leaderboard prepare-submission \
-  results/my-run/model/result_model.json \
-  --output submission.json \
-  --model-name Model-Name \
-  --model-revision <commit-sha> \
-  --tokenizer-revision <commit-sha> \
-  --parameters 7B
-
-entropy-leaderboard validate-submission submission.json
-```
-
-Open a pull request with the submission and contamination audit summary. CI checks the benchmark ID,
-model uniqueness, arithmetic, ordering, dataset manifest, and generated leaderboard. See
-[CONTRIBUTING.md](CONTRIBUTING.md) for the evidence contract.
+[LEADERBOARD.md](LEADERBOARD.md) gives the exact commands to evaluate a model on the mathematics
+track and turn the result into a self-checking submission; `prepare-submission` rejects a result
+whose corpus hash, context length or adaptation recipe differs from the track's manifest. For the
+news track, open a [model evaluation
+request](https://github.com/DavidAfonsoValente/entropy-bench/issues/new?template=model-evaluation.yml).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the evidence contract.
 
 ## Dataset and reproducibility
 

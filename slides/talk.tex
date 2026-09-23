@@ -237,7 +237,7 @@
       \item Successive halving prunes weak trials from 50 steps.
       \item Scored on the \emph{validation} split; test never touched.
       \item Same number of trials for every model --- no time cap.
-      \item Winner trained until validation \bpb{} stops improving.
+      \item Winner trained until validation \bpb{} stops improving (\texttt{--no-time-limit}).
     \end{itemize}
   \end{column}
   \begin{column}{0.48\textwidth}
@@ -259,38 +259,23 @@
 
 % ==================================================================== 7
 \begin{frame}
-  \frametitle{Independent views, not ground truth}
-  \framesubtitle{A task shows which model is better \emph{at that task}. So we ask: does the loss agree with uses it never saw?}
+  \frametitle{What adaptation does to the ordering}
+  \framesubtitle{Left: fifteen models, ranked five ways. Right: what the adapted ordering tracks.}
 
-  \vspace{0.6em}
-  \begin{columns}[t]
-  \begin{column}{0.47\textwidth}
-    \keyw{One real use: fine-tune them}
-    \begin{itemize}\setlength\itemsep{0.35em}\small
-      \item Do what a team does: fine-tune 15 models on a real news task (write the lede).
-      \item ROUGE-L on 500 articles no measurement touched.
-      \item If this were the only task, fine-tuning on it would be the evaluation --- but it needs labels, budget, and speaks for one task.
-    \end{itemize}
-  \end{column}
-  \begin{column}{0.47\textwidth}
-    \keyw{A quiz no model has seen}
-    \begin{itemize}\setlength\itemsep{0.35em}\small
-      \item Hide a name or number in a held-out article; the model writes it.
-      \item Answered by the \emph{released} weights, not the adapted ones.
-      \item \emph{Lenient}: answer starts in the first 24 characters (primary). \emph{Strict}: exact start.
-    \end{itemize}
-  \end{column}
-  \end{columns}
-
-  \vspace{0.8em}
-  \punch{On news the two views agree at Spearman \keyw{0.921}; the quiz carries the comparison to the
-  other three corpora. ``Right'' below means \emph{agrees with the view}.}
+  \vspace{-0.2em}
+  \begin{center}
+    \includegraphics[width=0.97\textwidth]{fig_headline.pdf}
+  \end{center}
+  \vspace{-0.5em}
+  \punch{\small Gemma-4-12B: 13th on raw loss, mid-table on the benchmarks, 2nd once adapted, and
+  the best fine-tuned system of all. Adapted on news the ranking lands on HellaSwag; adapted on
+  maths it swings to GSM8K and MMLU-Pro.}
 \end{frame}
 
 % ==================================================================== 8
 \begin{frame}
-  \frametitle{1. Adaptation changes the ordering}
-  \framesubtitle{Eleven models, news quiz}
+  \frametitle{1. Adaptation reorders the models}
+  \framesubtitle{Eleven models; unadapted vs adapted rankings agree only at $\rho = 0.61$--$0.68$}
 
   \vspace{-0.2em}
   \begin{columns}[c]
@@ -300,22 +285,21 @@
   \begin{column}{0.44\textwidth}
     \small
     \begin{itemize}\setlength\itemsep{0.45em}
-      \item Adapted \bpb{}: \goodw{7 of 11} in the exact quiz rank, mean error \goodw{0.36}.
-      \item Unadapted: 2 of 11, mean error 2.00.
-      \item \keyw{11 of 55} pairs flip wrong $\to$ right; none the other way.
-      \item Why: unadapted loss is mostly \emph{cold starts} --- Gemma-4-12B opens a block at
-        2.83 \bpb{} vs a 1.5B model's 2.04, and passes it by the end.
+      \item Adaptation cuts loss by \textbf{3.6--5.4\%} for every Qwen, Llama and Ministral model \ldots
+      \item \ldots but by \goodw{17--36\%} for the two Gemmas and LFM --- the \emph{only} models that climb.
+      \item Gemma-4-12B: 9th $\to$ 2nd. Unadapted, it opens each block at 2.83 \bpb{} vs a 1.5B model's 2.04, and passes it by the end.
     \end{itemize}
   \end{column}
   \end{columns}
 
-  \punch{\small Zero-shot loss mixes \emph{familiarity with this prose} into capability. A short
+  \punch{\small Unadapted loss mixes \emph{familiarity with this prose} into capability. A short
   equal adaptation removes the familiarity.}
 \end{frame}
 
+
 % ==================================================================== 9
 \begin{frame}
-  \frametitle{2. It recovers what benchmarks measure --- and can be aimed}
+  \frametitle{2. It converges on the language benchmark --- and can be aimed}
   \framesubtitle{Rank correlation with each benchmark, eleven models}
 
   \vspace{0.6em}
@@ -342,7 +326,35 @@
 
 % ==================================================================== 10
 \begin{frame}
-  \frametitle{3. It anticipates a real use it never saw}
+  \frametitle{3. It is stable where benchmarks are not}
+
+  \vspace{0.5em}
+  \begin{columns}[t]
+  \begin{column}{0.47\textwidth}
+    \keyw{Adapted \bpb{}}
+    \begin{itemize}\setlength\itemsep{0.4em}\small
+      \item Seed-to-seed SD is \goodw{0.0012$\times$} the spread between models; 0 of 40 close pairs flip.
+      \item Re-run weeks later on other hardware: within 0.0003.
+      \item Adapted ranking across news / Reddit / Hacker News: $\rho = 0.955$--$0.991$.
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.47\textwidth}
+    \keyw{Generative benchmarks}
+    \begin{itemize}\setlength\itemsep{0.4em}\small
+      \item Same weights, new host (A100 $\to$ H100): GSM8K moves \warmw{$-0.60$ to $+0.69$} points.
+      \item One shipped decoding setting: \warmw{9.86} GSM8K and \warmw{14.30} MMLU-Pro points for Gemma-4-12B.
+    \end{itemize}
+  \end{column}
+  \end{columns}
+
+  \vspace{0.8em}
+  \punch{\small A generative benchmark measures the model, the harness, the decoding and the hardware
+  at once. Bits per byte on a fixed corpus measures the model.}
+\end{frame}
+
+% ==================================================================== 10
+\begin{frame}
+  \frametitle{4. Minutes of adaptation anticipate hours of fine-tuning}
   \framesubtitle{Fifteen models fine-tuned on news; 39 size-matched pairs}
 
   \vspace{-0.3em}
@@ -351,44 +363,31 @@
   \end{center}
   \vspace{-0.4em}
   \small
-  Adapted \bpb{}, measured \emph{before} any task existed, agrees with the fine-tuned outcome on
-  \goodw{0.949} of pairs --- HellaSwag 0.872, MMLU-Pro 0.513, GSM8K 0.474. \keyw{Every model within one rank} of where it
+  Adapted \bpb{}, measured \emph{before} any task existed, orders \goodw{0.949} of pairs as the
+  fine-tune does --- HellaSwag 0.872, MMLU-Pro 0.513, GSM8K 0.474. \keyw{Every model within one rank} of where it
   finishes. Holds under a second, very different recipe (0.923).
 \end{frame}
 
-% ==================================================================== 11
-\begin{frame}
-  \frametitle{4. It holds}
-  \framesubtitle{Seventeen models, the 40 hardest (similar-size) pairs, and four corpora}
-
-  \vspace{-0.3em}
-  \begin{center}
-    \includegraphics[width=0.86\textwidth]{fig_selectors.pdf}
-  \end{center}
-  \vspace{-0.4em}
-  \small
-  Adapted \bpb{} agrees with the news quiz on \goodw{0.900} of pairs (lenient), beats model size
-  by $+0.250$ $[+0.074, +0.500]$, and on news, Reddit, Hacker News and arXiv math
-  \keyw{never agrees less than a public benchmark} under either scoring.
-\end{frame}
 
 % ==================================================================== 12
 \begin{frame}
-  \frametitle{Using it}
+  \frametitle{Using it --- and adding your model}
 
-  \vspace{0.7em}
-  \begin{enumerate}\setlength\itemsep{0.7em}
+  \vspace{0.5em}
+  \begin{itemize}\setlength\itemsep{0.55em}
     \item Candidates more than $\sim$2$\times$ apart in size? The larger is usually better.
-    \item Otherwise: gather recent text from your domain, dated after every candidate shipped, and
-      screen it.
-    \item Adapt every finalist by the same procedure --- the per-model search where compute
-      allows, the hand-picked recipe where it does not --- and rank by adapted \bpb{}.
-    \item Treat a gap under \keyw{2\%} as a tie; then licence, latency or cost decide.
-    \item The zero-shot number is a free screen, not the selector.
-  \end{enumerate}
+    \item Otherwise: recent domain text, decontaminated; adapt every finalist the same way; rank by adapted \bpb{}.
+    \item A gap under \keyw{2\%} is a tie --- let licence, latency or cost decide.
+    \item The zero-shot number is a free screen, not the choice.
+  \end{itemize}
 
-  \punch{\small No labels. No answer key. Text you own, that nobody could have trained on.}
+  \vspace{0.4em}
+  \small
+  \textbf{Public leaderboard, two tracks:} \keyw{arXiv maths} (CC0 corpus in the repo --- anyone can run
+  it and submit) and \keyw{news} (maintainers run requested models). Submissions are checked against
+  the track's corpus hash and recipe.
 \end{frame}
+
 
 % ==================================================================== 13
 {

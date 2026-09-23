@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "benchmark_id": "arxiv-math-2026-08-fixed-lora-v1",
+  "description": "Public mathematics track: arXiv math.* titles and abstracts, fixed-LoRA protocol as reported in the paper",
+  "corpus": {
+    "source": "arXiv OAI-PMH metadata feed, math.* categories, titles and abstracts only",
+    "window": "2026-06-09 to 2026-08-20",
+    "raw_records": 3207,
+    "documents": 3207,
+    "text_size_mb_approx": 15,
+    "availability": "public",
+    "availability_note": "arXiv releases its article metadata, including titles and abstracts, under CC0 1.0; the corpus is published in this repository so anyone can reproduce the track.",
+    "rebuild": "python tools/prepare_math_corpus.py build-corpus --source arxiv --from-date 2026-06-09 --until-date 2026-08-20 --forbidden-shingles tools/data/gsm8k_test_shingles.json --out math_arxiv.jsonl"
+  },
+  "distribution": {
+    "format": "jsonl",
+    "text_field": "text",
+    "records": 3207,
+    "size_bytes": 15288599,
+    "text_utf8_bytes": 15120707,
+    "sha256": "78e19669d0a569a5f16905509ca058da199480ef7b98a8f3f5c3af4e12ac9bf0",
+    "public_text_available": true,
+    "redistribution_status": "CC0-1.0 (arXiv metadata)",
+    "download": {
+      "path": "data/corpora/arxiv-math-2026.jsonl.gz",
+      "compression": "gzip",
+      "sha256": "95c4346be6b0445a0fb6beec74f1c932aed2d77757549154b8dc239c19794899"
+    }
+  },
+  "record_index": {
+    "path": "data/manifests/arxiv-math-2026.records.jsonl.gz",
+    "format": "gzip-compressed JSON Lines",
+    "records": 3207,
+    "sha256": "30281dcd1c50c2aa02e6370f36d755043d4651f12f62ee93b870445d3bad6ad3",
+    "fields": ["index", "text_sha256", "utf8_bytes"],
+    "contains_source_text": false
+  },
+  "split": {
+    "train_fraction": 0.8,
+    "validation_fraction": 0.1,
+    "test_fraction": 0.1,
+    "seed": 42,
+    "zero_intersection_required": true
+  },
+  "evaluation": {
+    "metric": "adapted_bits_per_byte",
+    "direction": "lower_is_better",
+    "max_sequence_length": 512,
+    "test_aggregation": "corpus-wide over independent non-overlapping blocks",
+    "mask_injected_special_tokens": true
+  },
+  "adaptation": {
+    "method": "LoRA",
+    "selection": "fixed configuration shared by every model",
+    "rank": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "learning_rate": 0.0001,
+    "effective_batch_size": 32,
+    "update_steps": 250,
+    "equal_protocol": true
+  },
+  "contamination": {
+    "test_set_policy": "post-release window",
+    "interpretation": "every document postdates every model in the cohort; an n-gram screen additionally removes overlap with the GSM8K test set",
+    "required": true,
+    "methods": ["SHA256", "Gopher quality", "GSM8K-test shingle screen", "split-leakage"]
+  }
+}

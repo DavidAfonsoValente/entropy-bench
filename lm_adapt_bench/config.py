@@ -51,6 +51,8 @@ class TrainingConfig:
     # across resumes without re-warmup spikes. Avoids the constant-LR oscillation near the optimum.
     target_train_steps: int = 8000
     lr_floor_ratio: float = 0.1
+    # Train until the validation-BPB plateau with no epoch cap (set by --no-time-limit).
+    until_plateau: bool = False
 
 @dataclass
 class SweepConfig:

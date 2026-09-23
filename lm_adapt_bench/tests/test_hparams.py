@@ -36,9 +36,16 @@ def test_unknown_field_raises(tmp_path):
         load_manual_training_config(str(p))
 
 
-@pytest.mark.parametrize("extra", [["--hparams", "manual", "--phase", "sweep"],
-                                   ["--hparams-file", "x.yaml"]])
-def test_cli_rejects_incoherent_flags(extra):
+@pytest.mark.parametrize("extra,flag", [(["--hparams", "manual", "--phase", "sweep"], "--hparams"),
+                                        (["--hparams-file", "x.yaml"], "--hparams"),
+                                        (["--no-time-limit", "--sweep-time-fraction", "0.3"], "--no-time-limit"),
+                                        (["--no-time-limit", "--max-train-seconds", "60"], "--no-time-limit")])
+def test_cli_rejects_incoherent_flags(extra, flag):
     r = subprocess.run([sys.executable, "-m", "lm_adapt_bench.cli", "--dataset", "unused", *extra],
                        capture_output=True, text=True)
-    assert r.returncode == 2 and "--hparams" in r.stderr
+    assert r.returncode == 2 and flag in r.stderr
+
+
+def test_until_plateau_defaults_off():
+    # Only --no-time-limit lifts the epoch cap; a default config must keep it.
+    assert TrainingConfig().until_plateau is False

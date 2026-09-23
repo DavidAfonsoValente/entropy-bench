@@ -44,7 +44,10 @@ The contribution must state:
 
 Maintainers reject results with a changed corpus, split, seed, context length, contamination policy, or adaptation procedure from the existing board. Such results can start a separate, clearly identified board.
 
-If you cannot access the controlled primary corpus, use the **Model evaluation request** issue template. The maintainers can run the candidate without distributing the source text.
+The mathematics track (`arxiv-math-2026-08-fixed-lora-v1`) uses a public corpus shipped in
+`data/corpora/`; [LEADERBOARD.md](LEADERBOARD.md) gives the exact evaluation and submission commands.
+If you want a model on the news track, whose corpus is controlled, use the **Model evaluation
+request** issue template. The maintainers can run the candidate without distributing the source text.
 
 ## Dataset contributions
 

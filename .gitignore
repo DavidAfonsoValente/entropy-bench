@@ -16,6 +16,7 @@ dist/
 results/*
 !results/combined_bpb_vs_static.json
 !results/leaderboard.json
+!results/leaderboard_math.json
 !results/domain_transfer/
 !results/domain_transfer/*.json
 !results/token_gain/

@@ -17,8 +17,18 @@ from typing import Any
 
 DEFAULT_BOARD = Path("results/leaderboard.json")
 DEFAULT_MARKDOWN = Path("LEADERBOARD.md")
-TABLE_START = "<!-- leaderboard:start -->"
-TABLE_END = "<!-- leaderboard:end -->"
+BENCHMARKS = Path("benchmarks")
+
+
+def all_boards() -> list[Path]:
+    """Every track's canonical board: results/leaderboard.json (news) plus results/leaderboard_*.json."""
+    return sorted(Path("results").glob("leaderboard*.json"))
+
+
+def _markers(board: dict[str, Any]) -> tuple[str, str]:
+    """Each track owns its own table in LEADERBOARD.md, keyed by benchmark ID."""
+    benchmark_id = board["dataset"]["benchmark_id"]
+    return (f"<!-- leaderboard:start:{benchmark_id} -->", f"<!-- leaderboard:end:{benchmark_id} -->")
 
 
 class LeaderboardError(ValueError):
@@ -143,13 +153,49 @@ def render_table(board: dict[str, Any]) -> str:
 
 
 def sync_markdown(board: dict[str, Any], markdown_path: Path) -> None:
+    start, end = _markers(board)
     text = markdown_path.read_text(encoding="utf-8")
-    if TABLE_START not in text or TABLE_END not in text:
-        raise LeaderboardError(f"{markdown_path} is missing leaderboard table markers")
-    before, remainder = text.split(TABLE_START, 1)
-    _, after = remainder.split(TABLE_END, 1)
-    rendered = f"{before}{TABLE_START}\n\n{render_table(board)}\n\n{TABLE_END}{after}"
+    if start not in text or end not in text:
+        raise LeaderboardError(f"{markdown_path} is missing the table markers for {start[5:-4]}")
+    before, remainder = text.split(start, 1)
+    _, after = remainder.split(end, 1)
+    rendered = f"{before}{start}\n\n{render_table(board)}\n\n{end}{after}"
     markdown_path.write_text(rendered, encoding="utf-8")
+
+
+def load_manifest(benchmark_id: str) -> dict[str, Any]:
+    path = BENCHMARKS / f"{benchmark_id}.json"
+    if not path.is_file():
+        known = sorted(p.stem for p in BENCHMARKS.glob("*.json"))
+        raise LeaderboardError(f"unknown benchmark_id {benchmark_id!r}; known: {known}")
+    return _read_json(path)
+
+
+def check_protocol(result: dict[str, Any], manifest: dict[str, Any]) -> None:
+    """Refuse a result that was not produced on this track's corpus with this track's recipe.
+
+    A board compares like with like: a different corpus, context length or adaptation procedure
+    (including a per-model hyperparameter search) is a different benchmark and needs its own board.
+    """
+    track = manifest["benchmark_id"]
+    expected_sha = manifest["distribution"]["sha256"]
+    if result.get("dataset_sha256") != expected_sha:
+        raise LeaderboardError(
+            f"result.dataset_sha256 does not match {track}'s corpus ({expected_sha[:12]}...); "
+            "run on the exact benchmark file (tools/domain_transfer_eval.py records the hash)")
+    evaluation = manifest.get("evaluation", {})
+    if result.get("max_seq_len") != evaluation.get("max_sequence_length"):
+        raise LeaderboardError(f"result.max_seq_len must be {evaluation.get('max_sequence_length')} for {track}")
+    if result.get("mask_injected_special_tokens") is not evaluation.get("mask_injected_special_tokens"):
+        raise LeaderboardError(f"result.mask_injected_special_tokens must match {track}")
+    adaptation = manifest.get("adaptation", {})
+    if adaptation.get("selection") == "fixed configuration shared by every model":
+        want = {"r": adaptation["rank"], "alpha": adaptation["alpha"], "dropout": adaptation["dropout"],
+                "lr": adaptation["learning_rate"], "effective_batch": adaptation["effective_batch_size"]}
+        if result.get("lora") != want or result.get("train_steps") != adaptation["update_steps"]:
+            raise LeaderboardError(
+                f"{track} is a fixed-recipe track ({want}, {adaptation['update_steps']} steps); this result "
+                "used a different adaptation and belongs on a separate board")
 
 
 def prepare_submission(args: argparse.Namespace) -> dict[str, Any]:
@@ -162,6 +208,7 @@ def prepare_submission(args: argparse.Namespace) -> dict[str, Any]:
         raise LeaderboardError("result.model_id is required")
     zero = _finite_number(zero, "result.zero_shot_bpb", positive=True)
     adapted = _finite_number(adapted, "result.best_bpb", positive=True)
+    check_protocol(result, load_manifest(args.benchmark_id))
     raw = result_path.read_bytes()
     submission = {
         "schema_version": 1,
@@ -215,18 +262,20 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Manage an auditable Entropy Bench leaderboard")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    validate = subparsers.add_parser("validate", help="validate a canonical leaderboard")
-    validate.add_argument("board", nargs="?", default=str(DEFAULT_BOARD))
+    validate = subparsers.add_parser("validate", help="validate canonical leaderboards (default: every track)")
+    validate.add_argument("boards", nargs="*")
 
-    render = subparsers.add_parser("render", help="synchronize the Markdown leaderboard table")
-    render.add_argument("board", nargs="?", default=str(DEFAULT_BOARD))
+    render = subparsers.add_parser("render", help="synchronize the Markdown leaderboard tables (default: every track)")
+    render.add_argument("boards", nargs="*")
     render.add_argument("--markdown", default=str(DEFAULT_MARKDOWN))
     render.add_argument("--check", action="store_true", help="fail if rendering would change Markdown")
 
     prepare = subparsers.add_parser("prepare-submission", help="convert a run result into a submission")
     prepare.add_argument("result")
     prepare.add_argument("--output", required=True)
-    prepare.add_argument("--benchmark-id", default="primary-news-2026-06-08-fixed-lora-v1")
+    prepare.add_argument("--benchmark-id", required=True,
+                         help="track to submit to, e.g. arxiv-math-2026-08-fixed-lora-v1 (public corpus) "
+                              "or primary-news-2026-06-08-fixed-lora-v1 (maintainer-run)")
     prepare.add_argument("--model-name")
     prepare.add_argument("--model-revision", required=True)
     prepare.add_argument("--tokenizer-revision", required=True)
@@ -237,7 +286,7 @@ def _parser() -> argparse.ArgumentParser:
 
     add = subparsers.add_parser("add", help="add a validated submission and rerender the board")
     add.add_argument("submission")
-    add.add_argument("--board", default=str(DEFAULT_BOARD))
+    add.add_argument("--board", help="default: the board whose benchmark_id the submission names")
     add.add_argument("--markdown", default=str(DEFAULT_MARKDOWN))
     return parser
 
@@ -246,13 +295,14 @@ def main() -> None:
     args = _parser().parse_args()
     try:
         if args.command == "validate":
-            validate_board(_read_json(Path(args.board)))
-            print(f"valid leaderboard: {args.board}")
+            for path in [Path(b) for b in args.boards] or all_boards():
+                validate_board(_read_json(path))
+                print(f"valid leaderboard: {path}")
         elif args.command == "render":
-            board = _read_json(Path(args.board))
             markdown = Path(args.markdown)
             original = markdown.read_text(encoding="utf-8")
-            sync_markdown(board, markdown)
+            for path in [Path(b) for b in args.boards] or all_boards():
+                sync_markdown(_read_json(path), markdown)
             changed = markdown.read_text(encoding="utf-8") != original
             if args.check and changed:
                 markdown.write_text(original, encoding="utf-8")
@@ -268,9 +318,17 @@ def main() -> None:
             validate_submission(_read_json(Path(args.submission)))
             print(f"valid submission: {args.submission}")
         elif args.command == "add":
-            board_path = Path(args.board)
+            submission = _read_json(Path(args.submission))
+            if args.board:
+                board_path = Path(args.board)
+            else:
+                matches = [p for p in all_boards()
+                           if _read_json(p)["dataset"]["benchmark_id"] == submission.get("benchmark_id")]
+                if len(matches) != 1:
+                    raise LeaderboardError(f"no single board for benchmark_id {submission.get('benchmark_id')!r}")
+                board_path = matches[0]
             board = _read_json(board_path)
-            add_submission(board, _read_json(Path(args.submission)))
+            add_submission(board, submission)
             board_path.write_text(json.dumps(board, indent=2) + "\n", encoding="utf-8")
             sync_markdown(board, Path(args.markdown))
             print(f"added submission and updated {board_path} and {args.markdown}")

@@ -1,8 +1,9 @@
 # Earlier wall-time-capped sweep (superseded)
 
 These are the artifacts of the **first** news run, which selected each model's LoRA adapter with the
-pipeline's multi-fidelity Optuna sweep under a wall-clock cap. **They do not produce any number in
-the paper or on the leaderboard** (the reported results use the hand-picked configuration in
+pipeline's multi-fidelity Optuna sweep under a wall-clock cap. **They produce no number on the leaderboard and no number in the paper except the right panel of
+its block-position figure**, which uses three of these adapters to show where in a block adaptation
+gains (the reported results use the hand-picked configuration in
 `lm_adapt_bench/configs/manual_hparams.yaml`, trained for a fixed 250 steps, because a full
 per-model search of every model was beyond the compute budget), and they predate the
 marker-masking correction, so their BPB values score the injected document-start token and are not

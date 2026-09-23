@@ -1565,11 +1565,38 @@ require("rank 16 won for eight of the eleven", sum(c["lora_r"] == 16 for c in _b
 require("median winning learning rate is 1.1e-4",
         "%.1f" % (_st.median(c["learning_rate"] for c in _bc) * 1e4) == "1.1" and "$1.1\\times10^{-4}$" in tex)
 
+# Section "Adaptation reorders the models": gains and rank moves, recomputed from the fixed-recipe cells.
+print("\nAdaptation reorders the models")
+import glob as _g2
+from scipy.stats import spearmanr as _sp
+_cells = {}
+for _corpus, _prefix in (("news", "news"), ("reddit", "reddit"), ("hackernews", "hackernews")):
+    _z = {}; _a = {}
+    for _f in _g2.glob("results/domain_transfer/%s__*.json" % _prefix):
+        _d = json.load(open(_f)); _z[_d["model_id"]] = _d["zero_shot_bpb"]; _a[_d["model_id"]] = _d["adapted_bpb"]
+    _m = sorted(_z)
+    _rho = _sp([_z[k] for k in _m], [_a[k] for k in _m])[0]
+    _cells[_corpus] = (_z, _a, _rho)
+for _corpus, _claim in (("news", "$0.655$"), ("reddit", "$0.609$"), ("hackernews", "$0.682$")):
+    require("zero-shot vs adapted rank rho, %s = %s" % (_corpus, _claim),
+            "$%.3f$" % _cells[_corpus][2] == _claim and _claim in " ".join(tex.split()))
+_z, _a, _ = _cells["news"]
+_gain = {k: 100 * (1 - _a[k] / _z[k]) for k in _z}
+_big = {"google/gemma-4-12B", "google/gemma-4-31B", "LiquidAI/LFM2.5-1.2B-Base"}
+_rest = [v for k, v in _gain.items() if k not in _big]
+require("other models gain 3.6-5.4% on news", "%.1f" % min(_rest) == "3.6" and "%.1f" % max(_rest) == "5.4")
+for _k, _claim in (("google/gemma-4-31B", "17.0"), ("google/gemma-4-12B", "24.5"), ("LiquidAI/LFM2.5-1.2B-Base", "36.4")):
+    require("news gain %s = %s%%" % (_k, _claim), "%.1f" % _gain[_k] == _claim)
+_rz = {k: i for i, k in enumerate(sorted(_z, key=_z.get))}; _ra = {k: i for i, k in enumerate(sorted(_a, key=_a.get))}
+require("the only models that move up on news are the three high-gain models",
+        {k for k in _z if _ra[k] < _rz[k]} == _big and "only models that move up" in " ".join(tex.split()))
+require("Gemma-4-12B moves up seven places on news", _rz["google/gemma-4-12B"] - _ra["google/gemma-4-12B"] == 7)
+
 # fig_selectors.pdf carries the main result and was added without a gate; a fresh clone would
 # have failed to build with no check firing. Listed here so that cannot recur.
 for figure in ("figures/fig_block_position.pdf", "figures/fig_cross_corpus.pdf",
                "figures/fig_context_length.pdf", "figures/fig_benchmark_alignment.tex",
-               "figures/fig_selectors.pdf"):
+               "figures/fig_selectors.pdf", "figures/fig_headline.pdf"):
     require("figure " + os.path.basename(figure), os.path.isfile(figure) and os.path.getsize(figure) > 1000)
 
 print("\nPROBLEMS:", bad)

@@ -1,13 +1,19 @@
 name: Model evaluation request
-description: Request a new model run on an existing controlled benchmark
+description: Ask the maintainers to evaluate a model on a leaderboard track
 title: "[Model request] "
 labels: ["leaderboard", "model-request"]
 body:
-  - type: input
+  - type: markdown
+    attributes:
+      value: The mathematics track's corpus is public, so you can also run it yourself and open a pull request with the submission; see LEADERBOARD.md.
+  - type: dropdown
     id: benchmark
     attributes:
-      label: Benchmark ID
-      value: primary-news-2026-06-08
+      label: Track (benchmark ID)
+      multiple: true
+      options:
+        - primary-news-2026-06-08-fixed-lora-v1
+        - arxiv-math-2026-08-fixed-lora-v1
     validations:
       required: true
   - type: input

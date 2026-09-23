@@ -70,6 +70,8 @@ def main():
                         help="Floor of the cosine LR schedule as a fraction of peak LR (resumable training).")
     parser.add_argument("--final-link", action="store_true",
                         help="Mark this as the last allowed training-chain link: finalize from the best checkpoint and write result_json even if the plateau criterion wasn't reached.")
+    parser.add_argument("--no-time-limit", action="store_true",
+                        help="The full method with no compute shortcuts: the sweep runs every --n-trials with no wall-time cap, and the chosen configuration trains until validation BPB plateaus, with no wall-time budget and no epoch cap. For machines without a job time limit.")
     parser.add_argument("--hparams", choices=HPARAM_SOURCES, default="sweep",
                         help="Where adaptation hyperparameters come from. 'sweep' (default): a per-model Optuna search (TPE + successive halving on validation BPB) with the same --n-trials for every model. 'manual': skip the search and use --hparams-file. Either way the final adaptation trains until validation BPB plateaus.")
     parser.add_argument("--hparams-file", default=None,
@@ -153,6 +155,8 @@ def main():
         parser.error("--phase sweep has nothing to search with --hparams manual; use --phase all or train")
     if args.hparams_file and args.hparams != "manual":
         parser.error("--hparams-file only applies with --hparams manual")
+    if args.no_time_limit and (args.sweep_time_fraction is not None or args.max_train_seconds):
+        parser.error("--no-time-limit cannot be combined with --sweep-time-fraction or --max-train-seconds")
 
     # Anchor the per-model walltime budget to job start so that data loading and the
     # (potentially multi-hour) contamination audit are counted against the Slurm hard cap.
@@ -534,7 +538,7 @@ def main():
             if args.max_train_seconds:
                 train_budget = min(train_budget, args.max_train_seconds)
             train_budget = max(600.0, train_budget)
-            best_train_cfg.max_train_seconds = train_budget
+            best_train_cfg.max_train_seconds = None if args.no_time_limit else train_budget
             logger.info(
                 f"Final adaptation wall-time budget for {model_id}: {train_budget/3600:.2f}h "
                 f"(walltime left {time_left/3600:.2f}h, {models_left} model(s) remaining on this rank)."
@@ -543,8 +547,10 @@ def main():
             trainer = Trainer(model, tokeniser, train_ds, val_ds, best_train_cfg, sweep_cfg, device, avg_bpt, model_output_dir)
             targets = args.lora_targets or get_lora_target_modules(model)
 
-            if args.phase == "train":
-                # Open-ended resumable training; chains across jobs until convergence.
+            if args.phase == "train" or args.no_time_limit:
+                # Open-ended resumable training until the validation plateau: chained across jobs
+                # under a walltime (--phase train), or in one uninterrupted run (--no-time-limit).
+                best_train_cfg.until_plateau = args.no_time_limit
                 # Apply the cosine-to-floor LR schedule params (override any stale sweep defaults).
                 best_train_cfg.target_train_steps = args.target_train_steps
                 best_train_cfg.lr_floor_ratio = args.lr_floor_ratio
@@ -615,6 +621,7 @@ def main():
                 "pct_improvement": pct_imp,
                 "adaptation_score": adapt_score,
                 "stability_index": stability_index,
+                "stop_reason": full_res.get("stop_reason"),  # "plateau" = validation BPB converged
                 "completion_reason": (
                     "Converged (Chained Training)" if args.phase == "train"
                     else "Time Budget Reached" if full_res.get("stopped_on_time")

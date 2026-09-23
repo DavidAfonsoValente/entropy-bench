@@ -66,6 +66,15 @@ def parse_args():
     return p.parse_args()
 
 
+def _sha256(path):
+    import hashlib
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def load_model(model_id, device_map="auto"):
     """Load a causal LM, tolerating two things transformers is fussy about.
 
@@ -149,6 +158,8 @@ def main():
         "model_id": a.model_id,
         "dataset": str(a.dataset),
         "corpus": Path(a.dataset).stem,
+        # Lets a leaderboard submission prove it ran on the benchmark's exact corpus.
+        "dataset_sha256": _sha256(a.dataset),
         "avg_bytes_per_token": avg_bpt,
         "n_train_blocks": len(train_ds),
         "n_test_blocks_scored": len(test_subset),

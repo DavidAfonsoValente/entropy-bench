@@ -63,7 +63,7 @@
 \vspace{0.6em}
 \begin{tabular}{@{}ll@{}}
 \textbf{Deck} & \texttt{slides/talk.pdf} --- 13 slides $+$ 4 backup slides \\
-\textbf{Target} & about 8:35 of talking at a relaxed 120\,wpm (under 10 minutes), then Q\&A \\
+\textbf{Target} & about 8:59 of talking at a relaxed 120\,wpm (under 10 minutes), then Q\&A \\
 \textbf{Goal} & The team leaves with one idea: judge a language model by the loss it was trained on \\
 \end{tabular}
 
@@ -81,8 +81,8 @@ verbatim. Orange brackets are delivery cues. Times are cumulative. The spoken le
   \item Loss is the principled yardstick: it is the objective every model was trained on, and in
   bytes it is comparable across models.
   \item Adapt every candidate the same way on fresh, decontaminated text, then measure bits per byte.
-  \item Adaptation changes the ordering; the new ordering recovers HellaSwag, can be aimed at maths,
-  and predicts which model builds the best fine-tuned system.
+  \item Adaptation reorders the models; the new ordering converges on HellaSwag, can be aimed at
+  maths, is stable where benchmarks are not, and anticipates how fine-tuning will go.
 \end{enumerate}}}
 
 % ================================================================ 1
@@ -151,70 +151,73 @@ the search by time, small models finish more trials and get tuned better.
 \end{say}
 
 % ================================================================ 7
-\slide{7}{Independent views, not ground truth}{4:34--5:22}
+\slide{7}{What adaptation does to the ordering}{4:34--5:19}
 \begin{say}
-There is no ground truth for which base model is better. A task tells you which model is better at
-that task, and different tasks disagree --- that is exactly why GSM8K and HellaSwag disagree. So the
-question is whether the loss agrees with concrete uses it never saw. We built two. One real use:
-fine-tune fifteen models on a news task. If that were the only task, fine-tuning on it would be the
-right evaluation, but it needs labels and budget and speaks for one task. And a quiz on articles no
-model has seen, answered by the original weights, scored leniently and strictly. On news the two
-views agree at zero point nine two.
+Here is the result on one slide. On the left, fifteen models ranked five ways: by raw loss, by GSM8K,
+by MMLU-Pro, by adapted bits per byte, and by where they finish after we fine-tune them. Follow the
+blue line. Gemma-4-12B is thirteenth on raw loss and mid-table on both benchmarks. Once adapted it is
+second, and after fine-tuning it builds the best system of all. On the right, what the adapted
+ordering tracks: on general text it lands on HellaSwag, and on maths it swings to the reasoning
+benchmarks.
 \end{say}
+\cue{LAND THIS: one picture, the whole argument.}
 
 % ================================================================ 8
-\slide{8}{1. Adaptation changes the ordering}{5:22--6:07}
+\slide{8}{1. Adaptation reorders the models}{5:19--6:12}
 \begin{say}
-First finding. Adaptation does not just lower every score; it reorders the models. After
-adaptation, seven of eleven models land in exactly their quiz rank. Before, two. Eleven pairs flip
-from wrong to right and none flip back. The plot shows why: unadapted loss is dominated by cold
-starts. Gemma opens each block far worse than a model eight times smaller, and has passed it by the
-end. The unadapted number is measuring familiarity with this kind of prose. A short adaptation
-removes that, and what is left is capability.
+First finding. Adaptation reorders the models: the rankings before and after agree only at about
+zero point six five. And it is not spread evenly. Adaptation cuts loss by four or five percent for
+every Qwen, Llama and Ministral model, but by seventeen to thirty-six percent for the two Gemmas and
+the Liquid model --- and those three are the only ones that climb. The plot shows why: unadapted loss
+is mostly cold starts. Gemma opens each block far worse than a model eight times smaller and has
+passed it by the end. The unadapted number measures familiarity with this kind of prose; adaptation
+removes that.
 \end{say}
 
 % ================================================================ 9
-\slide{9}{2. It recovers what benchmarks measure --- and can be aimed}{6:07--6:47}
+\slide{9}{2. It converges on the language benchmark --- and can be aimed}{6:12--6:49}
 \begin{say}
-Second. A new measurement should recover what existing ones get right. HellaSwag is the benchmark
-closest to language modelling. Before adaptation our ranking correlates with it at about zero point
-seven. After adaptation, zero point nine six to zero point nine eight, on three different corpora.
-And here is the part I find most interesting: adapt on mathematics instead, and the ranking swings
-toward GSM8K and MMLU-Pro. The choice of text points the measurement at the capability you care
-about.
+Second. HellaSwag is the benchmark closest to language modelling. Before adaptation our ranking
+correlates with it at about zero point seven; after, zero point nine six to zero point nine eight,
+on three different corpora. And adapt on mathematics instead, and the ranking swings toward GSM8K
+and MMLU-Pro. A benchmark is fixed; a corpus is chosen by whoever is choosing the model. So you can
+point this measurement at the capability you care about.
 \end{say}
 
 % ================================================================ 10
-\slide{10}{3. It anticipates a real use it never saw}{6:47--7:26}
+\slide{10}{3. It is stable where benchmarks are not}{6:49--7:29}
 \begin{say}
-Third, and this is the one that matters. We fine-tuned fifteen models on a news task, and asked how
-often each way of choosing, fixed before the task existed, agrees with how the fine-tuned systems
-come out. Adapted bits per byte agrees on ninety-five percent of the pairs. HellaSwag, eighty-seven.
-GSM8K and MMLU-Pro, a coin flip. Every model lands within one rank of where it finishes ---
-including Gemma, the model the scorecard would never have shortlisted.
+Third. Seed-to-seed variation is about a thousandth of the spread between models, and not one of
+forty close pairs flips. Re-run weeks later on different hardware, cells match to the fourth decimal.
+Benchmarks do not behave like that: the same weights move GSM8K by more than half a point when only
+the host changes, and one decoding setting was worth ten points for Gemma. A generative benchmark
+measures the model, the harness, the decoding and the hardware at once.
+\end{say}
+
+% ================================================================ 11
+\slide{11}{4. Minutes of adaptation anticipate hours of fine-tuning}{7:29--8:14}
+\begin{say}
+Fourth. Whatever model you choose, you will fine-tune it. So does the cheap number already tell you
+how that goes? We fine-tuned fifteen models on a news task. Adapted bits per byte, measured before
+the task existed, orders ninety-five percent of the pairs the way the fine-tune does. HellaSwag,
+eighty-seven. GSM8K and MMLU-Pro, a coin flip. Of course the two are related --- both adapt the model
+to news --- and that is the point: a few minutes of unlabelled adaptation already contain most of
+what hours of labelled fine-tuning reveal.
 \end{say}
 \cue{LAND THIS: 0.949 against a coin flip for the reasoning benchmarks.}
 
-% ================================================================ 11
-\slide{11}{4. It holds}{7:26--8:01}
-\begin{say}
-Fourth, it holds up. On the hardest choices, models within two times of each other in size, it
-agrees with the quiz on ninety percent of pairs, and under lenient scoring it beats simply picking the bigger model.
-Across four corpora --- news, Reddit, Hacker News and maths --- it never ranks below a public
-benchmark. The lead over HellaSwag is consistent but not yet statistically settled; a larger cohort
-is the next step.
-\end{say}
-
 % ================================================================ 12
-\slide{12}{Using it}{8:01--8:27}
+\slide{12}{Using it --- and adding your model}{8:14--8:52}
 \begin{say}
 In practice: if candidates are more than about two times apart in size, the bigger one usually
-wins. Otherwise, gather recent text from your domain, adapt every finalist the same way, and rank
-by adapted bits per byte. Treat anything under two percent as a tie. No labels, no answer key.
+wins. Otherwise, adapt every finalist the same way on recent domain text and rank by adapted bits
+per byte; treat anything under two percent as a tie. And the leaderboard is open: the maths track's
+corpus is public, so anyone can run a model and submit it, and the submission is checked against
+the exact corpus and recipe.
 \end{say}
 
 % ================================================================ 13
-\slide{13}{Evaluate language models as language models}{8:27--8:34}
+\slide{13}{Evaluate language models as language models}{8:52--8:59}
 \begin{say}
 So: evaluate language models as language models. Thank you --- happy to take questions.
 \end{say}
@@ -224,14 +227,9 @@ So: evaluate language models as language models. Thank you --- happy to take que
 {\color{rule}\rule{\textwidth}{0.6pt}}\\[0.4em]
 {\large\bfseries Q\&A preparation}
 
-\textbf{``If the fine-tune is the real test, why not just fine-tune?''} When you have the task, its
-labels and the budget, do --- it is the better evaluation for that task. A base model is usually
-chosen before any of those exist and has to serve many tasks. The fine-tune is not ground truth; it
-is one use the loss was asked to anticipate, and it did.
-
-\textbf{``Isn't the quiz circular --- built from the same text?''} It is answered by the released
-weights, not the adapted ones, and scored by generation, not likelihood. And the fine-tune, scored on
-separate documents against human-written references, agrees with it at Spearman 0.921.
+\textbf{``Why not just fine-tune on the task?''} When you have the task, its labels and the budget,
+do --- it is the better evaluation for that task. A base model is usually chosen before any of
+those exist and has to serve many tasks; the loss is what every one of them is built on.
 
 \textbf{``Doesn't one hand-picked recipe favour some architectures?''} It suits none perfectly. The
 full method searches each model; we could not afford it at 35B. A second, very different fine-tune
