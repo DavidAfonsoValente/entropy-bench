@@ -221,10 +221,21 @@ entropy-bench \
 
 Remove `--baseline-only` for LoRA adaptation. **Read the zero-shot number too** — it costs one
 forward pass and it screens for a candidate badly off-distribution for your text. Select on the
-adapted number: see the three-step rule above for why the tiers are not interchangeable. For a leaderboard-comparable run,
-use the fixed configuration in the benchmark manifest; optional hyperparameter search is exploratory
-and creates a different protocol, for the reason documented in
-[`results/legacy_sweep/README.md`](results/legacy_sweep/README.md). Remove `--no-pdf` when
+adapted number: see the three-step rule above for why the tiers are not interchangeable.
+
+Adaptation hyperparameters come from one of two sources, and either way the final adaptation trains
+until validation BPB stops improving (early stop on a plateau; with `--phase train` it resumes across
+chained jobs, so a job's walltime never cuts it short):
+
+- `--hparams sweep` (default, the method): a per-model Optuna search — TPE sampler, successive
+  halving on validation BPB — with the same `--n-trials` for every model and no wall-time cap, so
+  no model is better tuned than another. `--sweep-time-fraction` adds a cap when walltime forces
+  one; it lets small models finish more trials than large ones, so use it only when necessary.
+- `--hparams manual`: skip the search and use `--hparams-file` (YAML/JSON of `TrainingConfig`
+  fields). With no file it uses the packaged recipe `lm_adapt_bench/configs/manual_hparams.yaml`,
+  the hand-picked configuration behind the paper's reported results.
+
+Remove `--no-pdf` when
 WeasyPrint's system libraries are installed. Model evaluation and adaptation require accelerator
 hardware in proportion to model size; never launch a full run on an HPC login node.
 
@@ -305,8 +316,8 @@ Published evidence includes:
 - the full corpus × tier × benchmark alignment matrix, selection regret, bootstrap intervals,
   benchmark-redundancy check, and tokenizer-bias bound in `results/alignment_matrix.json`
   (`tools/analyze_alignment_matrix.py`);
-- the superseded HPO sweep's search records in `results/legacy_sweep/`, which are the evidence for
-  using one fixed adaptation configuration (see that directory's README);
+- the search records of an earlier, wall-time-capped HPO sweep in `results/legacy_sweep/`, which
+  show why the sweep must give every model the same trial budget (see that directory's README);
 - context-length result files in `data/context_length/`; and
 - paper, slide, and speaker-script sources.
 

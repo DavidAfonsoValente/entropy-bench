@@ -114,7 +114,7 @@
                 <td class="num" style="font-weight: 700;">{{ r.best_bpb|round(3) if r.best_bpb is defined else 'N/A' }}</td>
                 <td class="num improvement-positive">{{ r.pct_improvement|round(1) if r.pct_improvement is defined else '0.0' }}%</td>
                 <td class="num">
-                    {% if r.stability_index is defined %}
+                    {% if r.stability_index is defined and r.stability_index is not none %}
                         {% if r.stability_index >= 0.95 %}
                             <span class="badge badge-green">{{ (r.stability_index * 100)|round(0) }}%</span>
                         {% else %}

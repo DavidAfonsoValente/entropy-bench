@@ -57,495 +57,188 @@
 % ================================================================ header
 {\color{rule}\rule{\textwidth}{0.9pt}}\\[0.9em]
 {\LARGE\bfseries Speaker script}\\[0.4em]
-{\large\color{mute} ``Back to entropy'' --- about 8:10 on the core path}\\[0.9em]
+{\large\color{mute} ``Back to entropy'' --- evaluating language models as language models}\\[0.9em]
 {\color{rule}\rule{\textwidth}{0.9pt}}
 
 \vspace{0.6em}
 \begin{tabular}{@{}ll@{}}
-\textbf{Deck} & \texttt{slides/talk.pdf} --- 18 slides $+$ 5 backup slides \\
-\textbf{Version} & Final paper-aligned presentation and discussion guide \\
-\textbf{Target} & \textbf{under 10 minutes} of talking, then Q\&A on the remaining time \\
-\textbf{Goal} & The team understands \emph{how the method works} and \emph{what we found} \\
+\textbf{Deck} & \texttt{slides/talk.pdf} --- 13 slides $+$ 4 backup slides \\
+\textbf{Target} & about 8:35 of talking at a relaxed 120\,wpm (under 10 minutes), then Q\&A \\
+\textbf{Goal} & The team leaves with one idea: judge a language model by the loss it was trained on \\
 \end{tabular}
 
-\vspace{1.2em}
+\vspace{1.0em}
 \textbf{How to use this document.} Italic text is what to say --- written to be spoken, not read
-aloud verbatim. Orange brackets are delivery cues. Times are cumulative: if you are past the
-stated time when you leave a slide, cut the next slide to its first sentence. The
-\emph{must-land} points are marked \keyw{LAND THIS}; everything else is expendable under time
-pressure.
-
-\vspace{0.4em}
-\textbf{Length, measured not guessed.} The spoken text is 1{,}205 words on the core path and
-1{,}508 words in full, which at 150\,wpm is \textbf{8:00} and 10:01 respectively. The cumulative
-times on each slide are the core path, which \emph{omits slides 6, 7, 10, 14, and 15} --- the pipeline
-diagram, the contamination audit, and the math-domain bonus result. Those three are marked
-\texttt{optional} with the time they cost if you keep them; they are the detail/bonus slides that
-are the first thing to cut, not the must-land points. Re-check after any edit with
-\texttt{python tools/script\_timing.py}, which checks that the core path stays under ten minutes.
+verbatim. Orange brackets are delivery cues. Times are cumulative. The spoken length is checked by
+\texttt{python tools/script\_timing.py}, which fails the build if it passes ten minutes.
 
 \vspace{0.4em}
 \setlength{\fboxsep}{9pt}
 \colorbox{wash}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
-\textbf{The four things that must land:}
+\textbf{The spine --- if only this lands, the talk worked:}
 \begin{enumerate}[leftmargin=1.4em,itemsep=0.15em,topsep=0.35em]
-  \item Return to predictive entropy, made usable through byte normalization, fresh data,
-  controlled adaptation, and contamination filtering.
-  \item \textbf{Adapted BPB selects the model}; adaptation moves candidates by as many as seven
-  rank positions, while relative reduction explains corpus calibration.
-  \item BPB matches sentence continuation ($r=-0.975$, $\rho=0.982$ vs.\ HellaSwag), while knowledge and
-  arithmetic benchmarks add complementary capability views.
-  \item \textbf{We answered the circularity objection, at its real strength} (slide 17). On an
-  in-domain criterion that is \emph{not} a benchmark, adapted BPB is the only one of seven
-  selectors clearing chance among comparable-size candidates --- and we say plainly that the lead
-  over the benchmarks is unresolved and that model size is not beaten. Conceding those two is what
-  makes the first one land.
-\end{enumerate}
-
-\vspace{0.4em}
-\textbf{Talk shape.} One ruler, one controlled intervention, an independent criterion, one decision
-rule. \emph{The domain-stability result (slide 14) moved to the optional set to make room; it is
-still in the deck and still worth using if the room wants robustness.}}}
+  \item Benchmarks are public and score a model before it is adapted.
+  \item Loss is the principled yardstick: it is the objective every model was trained on, and in
+  bytes it is comparable across models.
+  \item Adapt every candidate the same way on fresh, decontaminated text, then measure bits per byte.
+  \item Adaptation changes the ordering; the new ordering recovers HellaSwag, can be aimed at maths,
+  and predicts which model builds the best fine-tuned system.
+\end{enumerate}}}
 
 % ================================================================ 1
-\slide{1}{Title --- ``Back to entropy''}{0:00--0:13}
-
-\cue{Do not read the title. Land the one-sentence framing and move on.}
-
+\slide{1}{Back to entropy}{0:00--0:18}
 \begin{say}
-Quick version of what I have been building. The thesis: entropy, measured properly, gives us a direct
-and repeatable way to choose a base model for a target domain. Under ten minutes, then questions.
+This talk is about one idea: that we should evaluate language models as language models. I will
+show why the usual way of choosing a base model misleads, what we do instead, and what we found.
 \end{say}
 
 % ================================================================ 2
-\slide{2}{Return to the language-modeling objective}{0:13--0:52}
-
-\cue{\keyw{LAND THIS} --- point 1. If you only get one slide across, it is this one.}
-
+\slide{2}{How good is this model, for what we do?}{0:18--1:11}
 \begin{say}
-Language models were originally evaluated by predictive entropy. Then evaluation moved toward fixed
-task suites: useful, but each one measures only a slice of base-model quality, and repeated
-optimization makes benchmark tuning and contamination difficult to rule out.
-
-So we go full circle, but not back to raw perplexity. Perplexity is per token, and a token is a
-different amount of text in every model. Comparing it across tokenizers is like comparing euros and
-yen without an exchange rate. We make entropy useful again with four pieces: byte normalization,
-fresh target-domain text, controlled adaptation, and contamination filtering.
+Every week a new base model ships, and the question is always the same: how good is it, for what
+we do? A language model is trained to do exactly one thing, predict text. So the direct question is
+how well it predicts our text. Instead, we read a scorecard. Look at these two small models. On
+HellaSwag they are two points apart. On our news text, after adaptation, they are three percent
+apart. On GSM8K they are fifty-five points apart. Two models that model English almost identically
+well differ by nearly a factor of ten on one exam. Which of these numbers describes the model?
 \end{say}
-
-\cue{The euros-to-yen line is the one people repeat afterwards. Deliver it slowly.}
 
 % ================================================================ 3
-\slide{3}{Why not just read the scorecard?}{0:52--1:50}
-
-\cue{\keyw{LAND THIS} --- this is the reason the method exists. Give the table three seconds of
-silence before you say the numbers. Do not rush to the punchline.}
-
+\slide{3}{Two reasons the scorecard misleads}{1:11--2:02}
 \begin{say}
-The obvious question first: every model ships with a scorecard, so why measure anything ourselves?
-
-Look at these two. On our ruler they are three per cent apart; on commonsense, two points apart.
-Essentially the same model, twice. On grade-school maths, one scores six per cent and the other
-sixty-one.
-
-That gap is not telling you one model is better --- the other two rows say they are tied. It tells
-you what went into the two training mixes. Both are legitimate choices; the score cannot tell you
-which one you are buying.
-
-And note what I am not claiming. I am not saying anyone games their benchmarks --- I cannot see
-anyone's training data. The point is structural: a years-old public benchmark is a target whether or
-not anybody aims at it, and text written after a model ships cannot have been studied for.
+There are two reasons. First, benchmarks are public. They were written before the model existed,
+vendors optimise for the ones they report, and their content can end up in the training data. A
+high score might mean a stronger model, or a model that saw more of that exam, and nobody outside
+can tell which. Second, benchmarks score a model as it ships, but nobody deploys a base model as it
+ships. We adapt it first. Gemma-4-12B is ninth on GSM8K, eighth on MMLU-Pro, thirteenth of fifteen
+on raw loss --- and once fine-tuned, it builds the best system of all fifteen.
 \end{say}
-
-\slide{4}{Measure the model we will actually use}{1:50--2:21}
-
-\cue{\keyw{LAND THIS} --- point 2.}
-
-\begin{say}
-A static benchmark describes the model as released. A product uses the model after it has seen some
-domain data. So we score both states on the same held-out corpus: zero-shot BPB, then adapted BPB.
-
-The adapted level is the model-selection number because it measures the system we would actually
-deploy. The reduction between the two states has a different job: it tells us how much calibration
-the base distribution needed. One trajectory, two clearly defined outputs.
-\end{say}
-
-\cue{Point to the right-hand box: that adapted model is the object being selected.}
+\cue{Land the Gemma example; it comes back on slide 10.}
 
 % ================================================================ 4
-\slide{5}{Two measurements, one decision}{2:21--3:04}
-
-\cue{Do not derive the formula. Point at it, say what the denominator is, move on.}
-
+\slide{4}{Why loss is the right quantity}{2:02--2:59}
 \begin{say}
-Two measurements, one decision.
-
-Move one: change the ruler. Normalize the loss by bytes instead of tokens --- bits per byte. A UTF-8
-byte is the same unit for every model on earth, so the numbers become comparable. BPB is not my
-invention --- The Pile used it, Paloma uses it. It is just badly under-used, and we make it primary
-rather than a footnote.
-
-Move two: measure domain fit. For each model, on one identical corpus: zero-shot BPB, a controlled
-LoRA adaptation, then adapted BPB. We rank by the adapted endpoint and keep the relative reduction
-as a calibration diagnostic. That gives every number one simple job.
+So what should we measure? There is no universal ground truth for which model is better, so we need
+a principled yardstick, and loss is the one. Every base model was trained to minimise cross-entropy.
+Held-out loss is its own objective, measured on text it has not seen. And cross-entropy splits
+cleanly: the entropy of the text, which is the same for every model, plus the model's distance from
+the text's true distribution. So a difference in loss is exactly a difference in how close each
+model is to the text. The only thing stopping a direct comparison is that each model counts in its
+own tokens. Divide by bytes and that goes away.
 \end{say}
+\cue{LAND THIS: bits per byte is the training objective on a common scale.}
 
 % ================================================================ 5
-\slide{6}{The pipeline}{optional +0:37}
-
-\cue{Walk the boxes left to right with your hand. Forty seconds, no more.}
-
+\slide{5}{Taking that seriously: three requirements}{2:59--3:38}
 \begin{say}
-Here is the whole thing. Raw corpus in; contamination audit; domain adaptation; BPB out. The
-ordering is strict by design: nothing reaches adaptation or scoring until it clears the
-contamination gate.
-
-The corpus is a deduplicated slice of Google News from the eighth of June this year --- about a
-hundred and twenty thousand articles --- split with no overlap. Eleven base models, half a billion
-to thirty-five billion parameters: mostly dense Transformers, plus one sparse Mixture-of-Experts
-and one Liquid model, deliberately, to see whether the metric holds across genuinely different
-architectures.
+Taking loss seriously asks three things. Bytes, so every tokenizer is on one scale. Fresh,
+decontaminated text, so no model has trained on it: we use text dated after every model shipped,
+we deduplicate and split with no overlap, and on the news snapshot we run three membership tests
+and remove anything any model flags. And equal adaptation: every candidate adapted to the domain
+by the same procedure, because we want to measure the model we will actually use.
 \end{say}
 
 % ================================================================ 6
-\slide{7}{Phase 1 --- why we trust the numbers}{optional +1:23}
-
-\cue{Technical slide. Give the shape of the idea, not the detail. If you are behind schedule, say
-only the first and last paragraphs.}
-
+\slide{6}{Equal adaptation: the procedure, and what we ran}{3:38--4:34}
 \begin{say}
-A word on the contamination audit, because it is what makes the headline result mean anything.
-
-The honest headline first: for three of our four corpora we do not need a detector at all. Reddit,
-Hacker News and the math corpus were all scraped after every model in the cohort shipped, so they are
-clean by construction. Freshness is a stronger contamination defence than any screen, and it is the
-one we lean on.
-
-The news corpus is the exception --- June 2026, which overlaps part of the cohort's release window
---- so it gets the screen. Scout-then-screen: cheap detectors propose suspects, a perturbation test
-adds evidence. Two scouts: Min-K++, which flags odd confidence on a passage's rarest tokens, and
-CoDeC, which is ours --- feed the model the text immediately preceding a passage and watch for a
-sharp jump in confidence. Then a quiz that hides the real passage among two perturbed variants.
-
-Be careful how you say the last part: preference for the original is a risk signal, not proof of
-memorization --- a model can prefer the fluent original having never seen it. We quarantine the union
-across all models, eighty sequences. No finite screen rules out pre-training exposure; only exact
-overlap is direct evidence.
+The procedure is a per-model Optuna search: a TPE sampler over learning rate, batch, rank and the
+rest, successive halving to prune weak trials, scored on the validation split, and every model gets
+the same number of trials. Then the winner trains until validation loss stops improving. That is
+the default in the released pipeline. Searching seventeen models up to 35 billion parameters was
+beyond our compute, so the results you will see use the pipeline's other mode: one hand-picked
+recipe for everyone, 250 steps --- minutes per model. And note the trap at the bottom: if you cap
+the search by time, small models finish more trials and get tuned better.
 \end{say}
 
 % ================================================================ 7
-\slide{8}{Results --- 11 models, one ruler}{3:04--3:44}
-
-\cue{The money slide. Read the axis once, then three models. Do not narrate all eleven. The exact
-table is in backup if anyone wants digits.}
-
+\slide{7}{Checking it without ground truth}{4:34--5:22}
 \begin{say}
-Results. Eleven models, one ruler. One row per model, grey dot as released, blue dot after
-adaptation, further left is better; the label is the reduction.
-
-Three readings. Gemma-4-31B ends furthest left at 0.624, the best adapted result. The
-thirty-five-billion Mixture-of-Experts lands with dense models in the twelve-to-fourteen-billion
-range, which gives us a useful quality measurement between its active and total parameter counts.
-And the Liquid model shows the largest calibration shift, 36.4 percent.
-
-The endpoint chooses the model. The line length explains how much its base distribution moved toward
-the corpus. Keeping those roles separate makes the chart straightforward.
+How do we know the ranking is any good, without appealing to the benchmarks we are criticising? Two
+ways. The direct one: fine-tune fifteen models on a real news task and see which builds the best
+system. The cheap one: a fill-in-the-blank quiz on articles no model has seen, answered by the
+original weights. We score it leniently, so a model is not penalised for how it stops talking, and
+we check everything strictly too. On news the two yardsticks agree at zero point nine two, so the
+quiz can stand in for the fine-tune elsewhere.
 \end{say}
 
 % ================================================================ 8
-\slide{9}{Two numbers, two jobs}{3:44--4:13}
-
-\cue{Keep this operational: endpoint for selection, reduction for explanation.}
-
+\slide{8}{1. Adaptation changes the ordering}{5:22--6:07}
 \begin{say}
-The chart contains two useful numbers.
-
-Adapted BPB is the primary selection score. It measures held-out target-domain prediction after the
-same kind of intervention we would use in deployment, and lower is better.
-
-Relative reduction is the calibration diagnostic. It shows how much the released model adjusted to
-the corpus's style, formatting, and context pattern. It explains the path, while the endpoint makes
-the decision. We verified that interpretation token by token.
+First finding. Adaptation does not just lower every score; it reorders the models. After
+adaptation, seven of eleven models land in exactly their quiz rank. Before, two. Eleven pairs flip
+from wrong to right and none flip back. The plot shows why: unadapted loss is dominated by cold
+starts. Gemma opens each block far worse than a model eight times smaller, and has passed it by the
+end. The unadapted number is measuring familiarity with this kind of prose. A short adaptation
+removes that, and what is left is capability.
 \end{say}
-
-\cue{Pause on ``token by token'' before advancing.}
 
 % ================================================================ 9
-\slide{10}{Context explains the calibration signal}{optional +1:01}
-
-\cue{\keyw{LAND THIS} --- this is the new result and the answer to their question. Point at the
-crossing. Do not rush.}
-
+\slide{9}{2. It recovers what benchmarks measure --- and can be aimed}{6:07--6:47}
 \begin{say}
-We scored every token of the held-out set under the base and adapted models, then looked at where
-probability moved. Two patterns make the calibration interpretation concrete.
-
-First, the picture. We aggregate corpus loss over independent five-hundred-and-twelve-token blocks,
-so almost every cut starts mid-article without the preceding context. The plot is byte-normalized,
-so tokenizer vocabulary size is no longer the simple explanation --- and the curves still cross.
-Over the first eight positions Gemma averages 2.566 bits per byte against Qwen's 1.490; from position
-two-fifty-six on, Gemma is at 0.717 and Qwen at 0.773. With context, Gemma shows the stronger
-steady-state result. Adaptation quickly learns that context-recovery pattern.
-
-Second, which tokens gain: full stops, commas, paragraph breaks, "the", "and", and "a". Within the
-top two hundred gain-carrying tokens, formatting, punctuation, and function words account for
-eighty-three percent of the mass. That is a clear signature of calibration to the corpus's surface
-form.
+Second. A new measurement should recover what existing ones get right. HellaSwag is the benchmark
+closest to language modelling. Before adaptation our ranking correlates with it at about zero point
+seven. After adaptation, zero point nine six to zero point nine eight, on three different corpora.
+And here is the part I find most interesting: adapt on mathematics instead, and the ranking swings
+toward GSM8K and MMLU-Pro. The choice of text points the measurement at the capability you care
+about.
 \end{say}
-
-\cue{Land the reporting rule: adapted level for selection, reduction for calibration.}
 
 % ================================================================ 10
-\slide{11}{Adaptation does not improve the ranking --- it rotates it}{4:13--5:02}
-
-\cue{\keyw{LAND THIS} --- this is the central finding of the talk. Read the little table left to
-right, one row at a time. Do not rush it.}
-
+\slide{10}{3. It predicts what a model becomes}{6:47--7:26}
 \begin{say}
-Now compare both rankings --- before and after adaptation --- against the three benchmarks.
-
-Zero-shot news BPB agrees with GSM8K at 0.84 and MMLU-Pro at 0.86. After adaptation those fall to
-0.73 and 0.76, while HellaSwag goes the other way, 0.72 up to 0.98. The same three-way pattern
-repeats on Reddit and Hacker News.
-
-So adaptation did not find a better model --- it rotated the ranking, toward continuation quality
-and away from the generative tasks. And HellaSwag agrees so well because it scores continuations by
-log-likelihood, the same object BPB measures: convergent validity, not proof.
-
-Concretely: zero-shot BPB picks Qwen-3.5-35B, the actual GSM8K and MMLU leader; adapted BPB picks
-Gemma-4-31B, the HellaSwag leader, two to four points behind on the other two.
+Third, and this is the one that matters. We fine-tuned fifteen models and asked which way of
+choosing, made beforehand, picks the better final system. Adapted bits per byte gets ninety-five
+percent of the pairs right. HellaSwag gets eighty-seven. GSM8K and MMLU-Pro are a coin flip. Every
+model lands within one rank of where it finishes --- including Gemma, the model the scorecard would
+never have shortlisted. A second, very different fine-tuning recipe gives the same picture.
 \end{say}
+\cue{LAND THIS: 0.949 against a coin flip for the reasoning benchmarks.}
 
 % ================================================================ 11
-\slide{12}{Different tasks reveal different strengths}{5:02--5:50}
-
-\cue{\keyw{LAND THIS} --- the centrepiece. Slow down. Let people read the table for a beat before
-you talk over it.}
-
+\slide{11}{4. It holds}{7:26--8:01}
 \begin{say}
-This is the table I find most useful in the whole project.
-
-Eleven models. Left column is their BPB order; then each benchmark's own ordering of the same eleven,
-with a marker for how far each model moves.
-
-The bottom two rows are the result. HellaSwag: seven of eleven in exactly the same position, and no
-model moves more than one place. MMLU-Pro, knowledge, drops to three of eleven. GSM8K, arithmetic,
-is zero of eleven --- not one model keeps its place, and Gemma-4-12B moves five places.
-
-The columns are complementary: BPB isolates target-domain language modelling, while the benchmarks
-add task-specific capability information. The trend is clear, but we do not claim task complexity
-forms a one-dimensional causal ladder.
+Fourth, it holds up. On the hardest choices, models within two times of each other in size, it
+picks the better one ninety percent of the time, and under lenient scoring it beats simply picking the bigger model.
+Across four corpora --- news, Reddit, Hacker News and maths --- it never ranks below a public
+benchmark. The lead over HellaSwag is consistent but not yet statistically settled; a larger cohort
+is the next step.
 \end{say}
 
-\cue{The 7/11, 3/11, 0/11 progression is the sentence to land before advancing.}
-
 % ================================================================ 12
-\slide{13}{The family pattern explains the shift}{5:50--6:26}
-
-\cue{The two-model box on the right is the memorable example --- point at it.}
-
+\slide{12}{Using it}{8:01--8:27}
 \begin{say}
-The GSM8K shift follows a strong model-family pattern. Every Qwen is unchanged or moves up relative
-to its BPB position, while both Gemmas and Llama move down. This is consistent with different
-math/reasoning emphasis, although this observational comparison cannot isolate a causal training ingredient.
-
-The box on the right is the sharpest version. Qwen-2.5-1.5B and Llama-3.2-1B are adjacent in BPB,
-and differ by only two points on HellaSwag. On GSM8K they score 0.611 and 0.065: a 54.6-point gap.
-
-Same two models, two capabilities. The preferred model follows the capability the product needs.
+In practice: if candidates are more than about two times apart in size, the bigger one usually
+wins. Otherwise, gather recent text from your domain, adapt every finalist the same way, and rank
+by adapted bits per byte. Treat anything under two percent as a tie. No labels, no answer key.
 \end{say}
 
 % ================================================================ 13
-\slide{14}{Adaptation changes the ranking --- then it transfers}{optional +1:00}
-
-\cue{\keyw{LAND THIS} --- adaptation changes the choice; the adapted result then transfers.}
-
+\slide{13}{Evaluate language models as language models}{8:27--8:34}
 \begin{say}
-Last result: all eleven models on news, Reddit, and Hacker News under one identical adaptation budget.
-First, adaptation materially changes the choice. Zero-shot versus adapted rank correlations are only
-0.655, 0.609, and 0.682, with maximum moves of seven, seven, and five places. Gemma-4-31B moves from
-fourth, fifth, and sixth zero-shot to first adapted on news, Reddit, and Hacker News. So the adapted
-endpoint is not a rescaled zero-shot ranking.
-
-Second, that adapted result transfers. Each panel compares two corpora; Pearson correlations are
-0.992, 0.977, and 0.990, while Spearman ranges from 0.955 to 0.991. Gemma-4-31B is first on all three,
-and nothing moves more than two places across domains.
-
-Every rank change sits inside a near-tied cluster. On Hacker News, Gemma-4-12B is only eight
-thousandths behind Qwen-MoE and nine behind Ministral. So adapted BPB identifies the winner and stable
-tiers; a target-domain run resolves the choice inside a near-tie.
+So: evaluate language models as language models. Thank you --- happy to take questions.
 \end{say}
-
-\cue{If asked about the MoE: three billion active parameters of thirty-five billion, and it scores
-like a dense 12--14B. BPB gives the direct quality measurement.}
-
-% ================================================================ 14
-\slide{15}{Domain-matched adaptation narrows the GSM8K gap}{optional +1:06}
-
-\cue{Cut this first under time pressure --- it is a bonus result, not one of the four must-land
-points. If you keep it: this is the direct test of the open question from the GSM8K slide earlier.}
-
-\begin{say}
-If the rotation is real, it should be steerable --- so we steered it. Same protocol, but adapt on
-math-domain prose instead of news: arXiv abstracts, not GSM8K questions, screened against the GSM8K
-test set before any model saw it.
-
-GSM8K agreement goes to 0.94, the best selector in the study --- fifty of fifty-five model pairs
-ordered correctly --- and the top pick goes back to being the actual GSM8K leader. It demotes exactly
-the Gemma models GSM8K already penalizes.
-
-The controls are the important part. Reddit gives 0.69, Hacker News 0.79, news 0.73 --- all at or
-below the 0.84 you get for free by not adapting at all. Only the topically matched corpus beats
-doing nothing. And it is not free either: HellaSwag agreement drops from 0.98 to 0.82.
-
-If someone asks about significance: at eleven models the bootstrap interval on that difference still
-spans zero. The evidence is the pattern across four corpora, not any single contrast. Say that
-before they do.
-\end{say}
-
-% ================================================================ 15
-\slide{16}{We tried to break it. The ranking held.}{6:26--6:54}
-
-\begin{say}
-Everything so far infers what adaptation does from how the \emph{ranking} moves, so we kept the
-adapters and scored the adapted models on the benchmarks directly. The ordering came back identical
-in all twenty cells --- not one inverted pair, which under reshuffling happens about once in a
-hundred and twenty times. And re-scored as head-to-head picks with uncertainty over models, the
-metric beats chance in twenty-three of twenty-four settings.
-\end{say}
-
-% ================================================================ 16b
-\slide{17}{The hardest objection --- and the criterion we built}{6:54--8:21}
-
-\cue{\keyw{The credibility slide.} Do not rush it and do not oversell it --- the concession is what
-makes the rest land. If you are behind, cut the second paragraph, never the third.}
-
-\begin{say}
-Now the objection you should be forming: everything so far is validated against the same benchmarks
-whose gameability is our whole argument.
-
-So we built a criterion that is not a benchmark: items from our own held-out split, predict a
-hidden name or number. The model must \emph{generate} it and match the string --- never a
-likelihood score, which would agree with BPB by construction.
-
-We built one for all four corpora and asked each which selector predicts it, among candidates
-within a factor of two in size.
-
-Start with how little is resolvable. Across four corpora, two scoring rules and seven selectors,
-exactly one interval excludes chance --- ours, on news. On all four, \emph{not one public benchmark
-clears chance} under either rule; neither does the free zero-shot number, nor picking the bigger
-model. At ten pairs almost nothing separates, so this is a failure to reject, not proof the suites
-are useless --- but it is the scorecard failing to resolve the decision it gets used for.
-
-So we enlarged the cohort: nine more base models, preregistered; six landed, taking in-band pairs
-from eleven to forty. There adapt-and-rank beats counting parameters by twenty-five points,
-interval seven to fifty --- the first resolved comparison in the study. Under the prefix rule it
-spans zero, so: convention-specific.
-\end{say}
-
-% ================================================================ 16
-\slide{18}{A simple decision rule}{8:21--9:50}
-
-\begin{say}
-What we learned: BPB gives one coordinate system across tokenizers, and adaptation rotates the
-ranking toward whatever the corpus exercises rather than improving it. The corpus is not a setup
-detail --- it is the question you are asking.
-
-How to use it. Collect recent target-domain text. More than about a factor of two apart in size?
-Take the bigger one --- we are not better than that. Close? Adapt each finalist on your text and rank
-by adapted BPB: minutes on one GPU. Match the corpus to the capability that decides it.
-
-And one correction we made to ourselves, with a reason rather than a p-value. We used to recommend
-the free zero-shot number. The problem is that it measures two things at once: how well a model
-knows your domain, and how far its writing conventions sit from yours. Look at LFM: zero-shot it is
-last of eleven, behind a model a third its size. Adapt it and it moves ahead of that model --- and
-on our own criterion it really is ahead. The free number read a style mismatch as incapacity. The
-three models it under-rates most are exactly the three that gain most from adaptation. It is a
-screen now.
-
-The bottom line: one fair ruler, a screen and a selector, and a corpus you choose deliberately.
-\end{say}
-
-% ================================================================ 17
-\slide{19}{Thank you / questions}{9:50--9:59}
-
-\begin{say}
-That is the tour. Happy to go deeper --- backup slides cover the benchmark scores, contamination
-numbers, training protocol, and the longer-context result.
-\end{say}
-
-\vspace{1.4em}
 
 % ================================================================ Q&A
-{\color{rule}\rule{\textwidth}{0.9pt}}\\[0.7em]
-{\Large\bfseries Discussion guide}\\[0.2em]
-{\small\color{mute} Short answers to the most useful follow-up questions.}\\[0.5em]
-{\color{rule}\rule{\textwidth}{0.9pt}}
+\vspace{1.4em}
+{\color{rule}\rule{\textwidth}{0.6pt}}\\[0.4em]
+{\large\bfseries Q\&A preparation}
 
-\vspace{0.5em}
+\textbf{``Isn't the quiz circular --- built from the same text?''} It is answered by the released
+weights, not the adapted ones, and scored by generation, not likelihood. And the fine-tune, scored on
+separate documents against human-written references, agrees with it at Spearman 0.921.
 
-\textbf{``What is BPB in one sentence?''}\\
-BPB is cross-entropy divided by UTF-8 bytes, so every tokenizer and architecture is measured in the
-same unit on the same text.
+\textbf{``Doesn't one hand-picked recipe favour some architectures?''} It suits none perfectly. The
+full method searches each model; we could not afford it at 35B. A second, very different fine-tune
+recipe left the system ordering at Spearman 0.982.
 
-\textbf{``What is new in this work?''}\\
-The contribution is the complete workflow: fresh domain data, contamination screening, controlled
-adaptation, adapted-BPB model selection, token-level interpretation, and three-domain validation.
+\textbf{``Does it beat HellaSwag?''} It has the top point estimate everywhere and never falls below it,
+but at seventeen models the gap is not statistically resolved. We say so in the paper.
 
-\textbf{``Why rank by adapted BPB?''}\\
-It measures the model after the same kind of lightweight domain intervention used in deployment. It
-is therefore the closest score to the system we would actually ship.
+\textbf{``What about contamination of our own text?''} Three layers: dated after every release,
+deduplicated with no split overlap, and membership screens with a quarantine of anything any model
+flags.
 
-\textbf{``What does the relative reduction tell us?''}\\
-It is a calibration diagnostic. The token analysis shows that formatting, function words, and
-context recovery carry most of the movement, so the reduction explains the path to the endpoint.
-
-\textbf{``Does 8.6\% of Gemma's gain come from the first 17 block positions?''}\\
-No. It is the injected document-start marker plus the next 16 tokens after each document boundary,
-which may occur anywhere inside a packed block. We call this the post-boundary window; the marker
-itself is masked from the final cross-domain BPB.
-
-\textbf{``Could Gemma's vocabulary explain the large early loss?''}\\
-Vocabulary size can affect nats per token, so the final plot uses bits per UTF-8 byte. The crossing
-remains after byte normalization, showing that context-start sensitivity is the stronger explanation.
-
-\textbf{``Does the 512-token adapter generalize to longer contexts?''}\\
-Yes in our fixed-target check. Gemma's base BPB continues improving from 0.6465 at 512 tokens to
-0.6054 at 2,048, while adapted BPB stays essentially flat at 0.547. The adapter therefore retains a
-9.6 percent advantage at four times its training context. Qwen's smaller gain also remains positive.
-
-\textbf{``How does the contamination audit work?''}\\
-Min-K++ and CoDeC propose suspicious passages; the Dynamic Choice Quiz tests preference for the
-original over perturbations. We quarantine the union of risk-flagged passages across models so every
-candidate sees one identical screened corpus. This is conservative filtering, not proof of memorization.
-
-\textbf{``How do the static benchmarks complement BPB?''}\\
-HellaSwag confirms the sentence-continuation signal ($r=-0.975$, $\rho=0.982$). MMLU-Pro and GSM8K
-add knowledge and arithmetic views; their rank agreements with BPB are 0.764 and 0.727.
-
-\textbf{``Why does the rank table use eleven models?''}\\
-The corrected analysis uses the complete cohort across BPB and all three static tasks, avoiding the
-stale nine-model subset that appeared in an earlier draft.
-
-\textbf{``How stable is the result across domains?''}\\
-Pairwise Spearman correlations range from $+0.955$ to $+0.991$ across news, Reddit, and Hacker News.
-Gemma-4-31B ranks first on all three, and no model moves more than two places.
-
-\textbf{``Does adaptation actually change which model we select?''}\\
-Yes. Zero-shot versus adapted rank correlations are only $0.655$, $0.609$, and $0.682$ across the
-three corpora, with maximum moves of seven, seven, and five places. Gemma-4-31B moves from ranks
-four, five, and six to first on all three after adaptation.
-
-\textbf{``What is the practical selection rule?''}\\
-Rank candidates by adapted BPB on recent target-domain text. Treat models within $0.01$ BPB as a
-near-tied tier and use a domain-specific run to make the final choice.
-
-\textbf{``What does the MoE result mean?''}\\
-The 35B MoE has about 3B active parameters and scores alongside dense 12--14B models. BPB gives a
-direct quality measurement when neither active nor total parameter count is sufficient.
-
-\textbf{``What does this cost to run?''}\\
-The shared-budget comparison uses lightweight LoRA adaptation rather than full fine-tuning. It fits
-the existing Slurm allocation and produces one reusable score from one domain corpus.
+\textbf{``What does it cost?''} With the hand-picked recipe, 3.7 GPU-minutes at 0.5B up to about an
+hour at 31B on one A100. The corpus is the main cost.
 
 \end{document}

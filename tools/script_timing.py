@@ -15,7 +15,7 @@ import sys
 
 SRC = "slides/script.tex"
 # Detail/bonus slides the team explicitly said could go ("good to skip details"). Cut these first.
-OPTIONAL = {6, 7, 10, 14, 15}
+OPTIONAL = set()
 
 
 def blocks(path):
@@ -65,8 +65,8 @@ def main():
             core += words
 
     print("-" * 68)
-    for label, w in (("full script", full), ("10-min path (skip %s)"
-                                             % ",".join(map(str, sorted(OPTIONAL))), core)):
+    for label, w in (("full script", full), ("10-min path" + (" (skip %s)" % ",".join(map(str, sorted(OPTIONAL)))
+                                                             if OPTIONAL else ""), core)):
         secs = w / a.wpm * 60
         print("%-28s %5d words  %4.1f min at %d wpm  %s"
               % (label, w, secs / 60, a.wpm, "OK" if secs <= a.limit else "OVER"))

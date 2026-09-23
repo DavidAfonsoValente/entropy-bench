@@ -123,7 +123,11 @@ done < <(git ls-files | grep -E "$EXCLUDE_RE")
 echo "  clean"
 
 echo "==> running the full gate inside the staged public tree"
-( cd "$WORK" && make check PYTHON="$PYTHON" ) || {
+# References from published docs to withheld internal files are expected to dangle; tell the map
+# check exactly which paths were withheld (outside the tree, so it is not itself published).
+WITHHELD="$WORK.withheld"
+git ls-files | grep -E "$EXCLUDE_RE" > "$WITHHELD" || true
+( cd "$WORK" && REPO_MAP_WITHHELD_FILE="$WITHHELD" make check PYTHON="$PYTHON" ) || {
   echo "refusing to sync: the public tree does not pass its own gate." >&2
   echo "A file the gate reads is probably untracked here -- check .gitignore's results/ allowlist." >&2
   exit 1

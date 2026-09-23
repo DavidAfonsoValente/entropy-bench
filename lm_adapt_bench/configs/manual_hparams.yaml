@@ -1,0 +1,12 @@
+# Hand-picked adaptation hyperparameters for `--hparams manual`: the recipe behind the paper's
+# reported results (LoRA r=16, alpha=32, dropout 0.05, lr 1e-4, effective batch 4 x 8 = 32,
+# all-linear targets). Keys are TrainingConfig fields; training still runs to convergence
+# (early stop on validation-BPB plateau). The default `--hparams sweep` searches these per model.
+learning_rate: 1.0e-4
+batch_size: 4
+gradient_accumulation_steps: 8
+warmup_ratio: 0.05
+weight_decay: 0.01
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05

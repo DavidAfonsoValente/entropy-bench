@@ -19,6 +19,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import os
 import ast
 import re
 import subprocess
@@ -206,7 +207,14 @@ def _common(paths: list[str]) -> str:
 
 
 def dangling() -> list[str]:
-    """Repository paths referenced by a tracked source file but absent from disk."""
+    """Repository paths referenced by a tracked source file but absent from disk.
+
+    ``REPO_MAP_WITHHELD_FILE`` (set by ``tools/sync_public_repo.sh``) names a file listing, one per
+    line, the exact tracked paths deliberately left out of this tree (internal docs, in the public
+    snapshot). References to exactly those paths are expected to dangle and are not counted.
+    """
+    withheld_file = os.environ.get("REPO_MAP_WITHHELD_FILE")
+    withheld = set(Path(withheld_file).read_text().split()) if withheld_file else set()
     bad: dict[str, set[str]] = {}
     for path in tracked():
         if not path.endswith(SOURCE_SUFFIXES) and Path(path).name != "Makefile":
@@ -218,7 +226,7 @@ def dangling() -> list[str]:
         for ref in REF.findall(text):
             if not ref.startswith(CHECKED_ROOTS) or ref.startswith(PLACEHOLDERS):
                 continue
-            if (ROOT / ref).exists():
+            if (ROOT / ref).exists() or ref in withheld:
                 continue
             bad.setdefault(ref, set()).add(path)
     return [f"{ref}  (referenced by {', '.join(sorted(srcs))})" for ref, srcs in sorted(bad.items())]

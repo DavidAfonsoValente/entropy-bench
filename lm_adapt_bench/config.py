@@ -1,4 +1,5 @@
-from dataclasses import dataclass, field
+import os
+from dataclasses import dataclass, field, fields
 from typing import Optional, List, Dict, Any
 from .contamination.config import ContaminationConfig
 
@@ -77,3 +78,40 @@ class RunConfig:
     no_pdf: bool = False
     parallel_rank: int = 0
     total_ranks: int = 1
+
+
+# Where adaptation hyperparameters come from: a per-model Optuna sweep (the method) or a fixed,
+# hand-picked recipe (the resource-constrained setting the paper's results use).
+HPARAM_SOURCES = ("sweep", "manual")
+DEFAULT_MANUAL_HPARAMS = os.path.join(os.path.dirname(__file__), "configs", "manual_hparams.yaml")
+
+
+def load_manual_training_config(path: Optional[str] = None, **defaults: Any) -> TrainingConfig:
+    """Build the TrainingConfig for ``--hparams manual`` from a YAML/JSON mapping of its fields.
+
+    ``defaults`` (e.g. ``final_epochs``) are applied first and overridden by the file, which falls
+    back to the packaged recipe in ``configs/manual_hparams.yaml``. Unknown keys raise, so a typo
+    cannot silently leave a hyperparameter at its dataclass default.
+    """
+    import json
+    import yaml
+
+    path = path or DEFAULT_MANUAL_HPARAMS
+    with open(path) as f:
+        values = (json.load(f) if path.endswith(".json") else yaml.safe_load(f)) or {}
+    if not isinstance(values, dict):
+        raise ValueError(f"{path}: expected a mapping of TrainingConfig fields, got {type(values).__name__}")
+    known = {f.name: f for f in fields(TrainingConfig)}
+    unknown = set(values) - set(known)
+    if unknown:
+        raise ValueError(f"{path}: unknown TrainingConfig field(s): {sorted(unknown)}")
+    # PyYAML (YAML 1.1) reads "3e-4" as a string; coerce numeric fields so a string never
+    # reaches the optimiser, and fail on anything that is not a number.
+    for name, value in values.items():
+        default = known[name].default
+        if isinstance(default, (int, float)) and not isinstance(default, bool) and isinstance(value, str):
+            try:
+                values[name] = type(default)(float(value)) if isinstance(default, int) else float(value)
+            except ValueError as exc:
+                raise ValueError(f"{path}: {name}={value!r} is not a number") from exc
+    return TrainingConfig(**{**defaults, **values})

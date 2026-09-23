@@ -17,7 +17,8 @@ from rich.console import Console
 from rich.table import Table
 
 from .contamination.config import ContaminationConfig
-from .config import DataConfig, TrainingConfig, SweepConfig, RunConfig
+from .config import (DataConfig, TrainingConfig, SweepConfig, RunConfig, HPARAM_SOURCES,
+                     load_manual_training_config)
 from .utils import (
     setup_logging, set_seed, get_device, get_dtype, slugify, 
     get_model_and_tokeniser, model_stats, hardware_info, 
@@ -69,8 +70,12 @@ def main():
                         help="Floor of the cosine LR schedule as a fraction of peak LR (resumable training).")
     parser.add_argument("--final-link", action="store_true",
                         help="Mark this as the last allowed training-chain link: finalize from the best checkpoint and write result_json even if the plateau criterion wasn't reached.")
-    parser.add_argument("--sweep-time-fraction", type=float, default=0.3,
-                        help="Fraction of each model's remaining walltime (after reserving eval time) the HP sweep may use; the rest goes to final adaptation. Leaned to 0.3 (from 0.5) so HP search doesn't starve training -- big models were being cut off mid-adaptation. HP selection needs far less time than training, so 30%% is ample for the sweep while giving ~70%% to training.")
+    parser.add_argument("--hparams", choices=HPARAM_SOURCES, default="sweep",
+                        help="Where adaptation hyperparameters come from. 'sweep' (default): a per-model Optuna search (TPE + successive halving on validation BPB) with the same --n-trials for every model. 'manual': skip the search and use --hparams-file. Either way the final adaptation trains until validation BPB plateaus.")
+    parser.add_argument("--hparams-file", default=None,
+                        help="YAML/JSON of TrainingConfig fields for --hparams manual (default: the packaged recipe, configs/manual_hparams.yaml).")
+    parser.add_argument("--sweep-time-fraction", type=float, default=None,
+                        help="Optional wall-time cap on the HP sweep, as a fraction of each model's remaining walltime after the eval reserve. Default: no cap, so every model completes the same --n-trials. A cap lets fast (small) models finish more trials than slow (large) ones, which biases the comparison by size; use it only when walltime forces it.")
     parser.add_argument("--lora-targets", nargs="+", help="LoRA targets")
     parser.add_argument("--sweep-config", help="Custom sweep config YAML")
     parser.add_argument("--val-split", type=float, default=0.1)
@@ -144,6 +149,10 @@ def main():
     parser.add_argument("--world-size", type=int, help="Total number of ranks")
     
     args = parser.parse_args()
+    if args.hparams == "manual" and args.phase == "sweep":
+        parser.error("--phase sweep has nothing to search with --hparams manual; use --phase all or train")
+    if args.hparams_file and args.hparams != "manual":
+        parser.error("--hparams-file only applies with --hparams manual")
 
     # Anchor the per-model walltime budget to job start so that data loading and the
     # (potentially multi-hour) contamination audit are counted against the Slurm hard cap.
@@ -456,7 +465,13 @@ def main():
             study = None
 
             # ---- HP config: load from a prior sweep (phase=train) or run the sweep (all|sweep) ----
-            if args.phase == "train":
+            if args.hparams == "manual":
+                best_train_cfg = load_manual_training_config(
+                    args.hparams_file, final_epochs=args.final_epochs, eval_batch_size=args.eval_batch_size)
+                sweep_final_bpb = float("nan")  # no sweep, so no sweep-vs-final stability to report
+                range_health = {}
+                logger.info(f"[hparams=manual] {model_id}: using {args.hparams_file or 'the packaged recipe'}; no sweep.")
+            elif args.phase == "train":
                 if not os.path.exists(sweep_meta_path):
                     logger.error(f"--phase train requires a completed sweep (sweep_meta.json missing for {model_id}). Run --phase sweep first.")
                     continue
@@ -475,12 +490,14 @@ def main():
                 sweep_models_left = _models_left_to_run(model_idx)
                 sweep_time_left = args.wall_time_seconds - (time.time() - proc_start)
                 sweep_per_model = sweep_time_left / sweep_models_left
-                sweep_budget = max(1800.0, args.sweep_time_fraction * (sweep_per_model - args.eval_reserve_seconds))
-                sweep_cfg.max_sweep_seconds = sweep_budget
-                logger.info(
-                    f"HP sweep wall-time budget for {model_id}: {sweep_budget/3600:.2f}h "
-                    f"(walltime left {sweep_time_left/3600:.2f}h, {sweep_models_left} model(s) left on this rank)."
-                )
+                if args.sweep_time_fraction is not None:
+                    sweep_budget = max(1800.0, args.sweep_time_fraction * (sweep_per_model - args.eval_reserve_seconds))
+                    sweep_cfg.max_sweep_seconds = sweep_budget
+                    logger.warning(
+                        f"HP sweep wall-time cap for {model_id}: {sweep_budget/3600:.2f}h "
+                        f"(walltime left {sweep_time_left/3600:.2f}h, {sweep_models_left} model(s) left on this rank); "
+                        f"trial counts may now differ across models."
+                    )
                 train_cfg = TrainingConfig(final_epochs=args.final_epochs, eval_batch_size=args.eval_batch_size)
                 sweeper = SweepRunner(model_id, dm, sweep_cfg, train_cfg, device, dtype, avg_bpt, args.output, run_cfg)
                 best_train_cfg, trials_df, study, range_health = sweeper.run()
@@ -548,7 +565,10 @@ def main():
             # Calculate Stability Index (sweep_final_bpb computed/loaded above)
             try:
                 match_bpb = next((b for s, b in full_res["bpb_curve"] if s >= args.sweep_steps), full_res["val_bpb"])
-                stability_index = (min(sweep_final_bpb, match_bpb) / max(sweep_final_bpb, match_bpb)) if max(sweep_final_bpb, match_bpb) > 0 else 0.0
+                if sweep_final_bpb != sweep_final_bpb:  # NaN: manual hparams, no sweep to compare against
+                    stability_index = None
+                else:
+                    stability_index = (min(sweep_final_bpb, match_bpb) / max(sweep_final_bpb, match_bpb)) if max(sweep_final_bpb, match_bpb) > 0 else 0.0
             except Exception:
                 stability_index = 0.0
             

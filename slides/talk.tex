@@ -95,7 +95,10 @@
 \subtitle{Evaluating base language models beyond perplexity and benchmarks}
 \author{David Afonso Valente}
 \institute{Bottlecap AI}
-\date{August 2026}
+\date{September 2026}
+
+% \input is not expandable, so inside a tabular it breaks booktabs rules; the primitive is.
+\makeatletter\newcommand{\tabinput}[1]{\@@input #1 }\makeatother
 
 \begin{document}
 
@@ -106,827 +109,306 @@
   \vspace{1.2em}
   {\color{rule}\rule{\textwidth}{0.8pt}}\\[1.1em]
   {\LARGE\bfseries Back to entropy}\\[0.55em]
-  {\large\color{mute} Entropy-based evaluation of base language models}\\[1.1em]
+  {\large\color{mute} Evaluating language models as language models}\\[1.1em]
   {\color{rule}\rule{\textwidth}{0.8pt}}\\[1.4em]
   {\small\textbf{David Afonso Valente} \quad\textcolor{mute}{$\cdot$}\quad Bottlecap AI}\\[0.3em]
-  {\small\color{mute} August 2026 \quad$\cdot$\quad under 10 minutes}
+  {\small\color{mute} September 2026 \quad$\cdot$\quad under 10 minutes}
 \end{frame}
 }
 
 % ==================================================================== 2
 \begin{frame}
-  \frametitle{Return to the language-modeling objective}
-  \framesubtitle{Fixed benchmarks are useful slices, not a complete measure of a base model}
+  \frametitle{How good is this model, for what we do?}
+  \framesubtitle{A new base model ships most weeks. What arrives with it is a scorecard.}
 
-  \vspace{0.4em}
-  \begin{columns}[t]
-  \begin{column}{0.47\textwidth}
-    \keyw{Perplexity stopped comparing fairly}\\[0.6em]
-    \small
-    \ppl{} is measured \emph{per token}, but each model divides text differently:
-    Llama-3.2 has \textbf{128,000} vocabulary entries and Qwen-2.5 has \textbf{151,643}.
-    \vspace{0.6em}
-
-    \bpb{} divides loss by UTF-8 bytes. A byte is the same amount of text for every model,
-    so the scores share one unit.
+  \vspace{0.8em}
+  \begin{columns}[c]
+  \begin{column}{0.50\textwidth}
+    \begin{itemize}\setlength\itemsep{0.7em}
+      \item A language model is trained to do one thing: \keyw{predict text}.
+      \item So the direct question is: how well does it predict \emph{our} text?
+      \item Instead we read MMLU-Pro, HellaSwag, GSM8K.
+    \end{itemize}
   \end{column}
-  \begin{column}{0.47\textwidth}
-    \keyw{Fixed benchmarks have blind spots}\\[0.6em]
-    \small
-    Task suites sample specific abilities, and repeated optimization on fixed tests makes
-    contamination and benchmark-specific tuning harder to separate from general LM quality.
-    \vspace{0.6em}
-
-    Entropy sees the full predictive distribution, but it needs a fair denominator, fresh
-    target-domain text, and a contamination audit.
+  \begin{column}{0.46\textwidth}
+    \centering\small
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabular}{lr}
+      \toprule
+      \multicolumn{2}{l}{\textbf{Llama-3.2-1B} vs \textbf{Qwen2.5-1.5B}} \\
+      \midrule
+      HellaSwag & $2.1$ points apart \\
+      Adapted \bpb{} on news & $3.4\%$ apart \\
+      GSM8K & \warmw{$55.3$ points apart} \\
+      \bottomrule
+    \end{tabular}
   \end{column}
   \end{columns}
 
-  \vspace{0.2em}
-  \punch{Go full circle: measure entropy again---with byte normalization, dynamic
-  target-domain evaluation, controlled adaptation, and contamination filtering.}
+  \vspace{1.0em}
+  \punch{Two models that model fresh English almost identically well differ by nearly a factor of
+  ten on one exam. Which number describes the model?}
 \end{frame}
 
 % ==================================================================== 3
-\begin{frame}[shrink]
-  \frametitle{Why not just read the scorecard?}
-  \framesubtitle{Two models, tied on language. Nine-fold apart on the exam.}
+\begin{frame}
+  \frametitle{Two reasons the scorecard misleads}
 
-  \vspace{0.4em}
+  \vspace{0.6em}
   \begin{columns}[t]
-  \begin{column}{0.46\textwidth}
-    \small
-    A published score cannot separate \keyw{this model is better} from
-    \keyw{this model saw more of this}.
-    \vspace{0.6em}
-
-    These two sit at \keyw{adjacent positions} in our ranking and two points apart on
-    commonsense. On grade-school maths one scores \goodw{nine times} the other.
-    \vspace{0.6em}
-
-    That gap is a fact about the two \keyw{training mixes}, not about which model is better.
-    Both are legitimate choices --- the scorecard just cannot tell you which you are buying.
-    \vspace{0.5em}
-
-    {\scriptsize\color{mute} Qwen-3.5-4B vs Llama-3.2-1B is wider still: 2.9\% apart on
-    \bpb{}, 73.9 points apart on GSM8K.}
+  \begin{column}{0.47\textwidth}
+    \keyw{1. Benchmarks are public}
+    \begin{itemize}\setlength\itemsep{0.4em}
+      \item Written before the model existed, for other purposes.
+      \item Vendors optimise for the ones they report.
+      \item Items and subject matter can reach pre-training data.
+      \item Stronger model, or saw more of the exam? \\ No reader can tell.
+    \end{itemize}
   \end{column}
-  \begin{column}{0.49\textwidth}
-    \setlength{\fboxsep}{10pt}
-    \colorbox{wash}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
-      \small\nohyph
-      \renewcommand{\arraystretch}{1.15}
-      \scriptsize
-      \setlength{\tabcolsep}{5pt}
-      \begin{tabular}{lcc}
-        \toprule
-         & \textbf{Llama-3.2-1B} & \textbf{Qwen-2.5-1.5B} \\
-        \midrule
-        Our ruler (\bpb{}) $\downarrow$ & \textbf{0.771} & 0.797 \\
-        HellaSwag $\uparrow$            & 0.658 & \textbf{0.678} \\
-        \midrule
-        GSM8K $\uparrow$                & 0.065 & \textbf{0.611} \\
-        \bottomrule
-      \end{tabular}
-      \vspace{0.7em}
-
-      \textbf{3.4\%} apart on language. \textbf{2.0 pts} on commonsense.
-      \textbf{54.6 pts} on maths.
-      \vspace{0.5em}
-
-      And we cannot audit anyone's training data --- but text written \emph{after} they
-      shipped cannot have been studied for.
-    }}
+  \begin{column}{0.47\textwidth}
+    \keyw{2. They score a model before it is adapted}
+    \begin{itemize}\setlength\itemsep{0.4em}
+      \item Teams adapt a base model to their data first.
+      \item What matters is how good it \emph{becomes}.
+      \item \textbf{Gemma-4-12B}, of fifteen models: 9th on GSM8K, 8th on MMLU-Pro,
+        13th on raw loss \ldots
+      \item \ldots\ and \goodw{the best fine-tuned system of all}.
+    \end{itemize}
   \end{column}
   \end{columns}
-
-  \vspace{0.3em}
-  \punch{We are not accusing anyone. A years-old public benchmark is a target whether or not
-  anyone aims at it --- so read a second axis they could not prepare for.}
-\end{frame}
-
-% ==================================================================== 2b
-\begin{frame}
-  \frametitle{Measure the model we will actually use}
-  \framesubtitle{A controlled adaptation turns evaluation into a deployment measurement}
-
-  \vspace{1.0em}
-  \begin{center}
-  \begin{tikzpicture}[font=\small, >={Stealth[length=2.6mm,width=2.0mm]}]
-    \node[align=center, draw=rule, line width=0.7pt, rounded corners=3pt,
-          fill=wash, minimum width=3.4cm, minimum height=1.3cm] (a)
-      {\textbf{Base model}\\{\scriptsize as released}};
-    \node[align=center, draw=accent, line width=0.9pt, rounded corners=3pt,
-          fill=wash, minimum width=3.4cm, minimum height=1.3cm, right=3.4cm of a] (b)
-      {\textbf{Our model}\\{\scriptsize after in-domain data}};
-    \draw[->, line width=1.0pt, draw=accent] (a) -- node[above, font=\scriptsize\itshape, text=mute]
-      {a little in-domain data} (b);
-    \node[below=0.30cm of a, font=\scriptsize, text=mute] {what benchmarks score};
-    \node[below=0.30cm of b, font=\scriptsize, text=mute] {what we actually ship};
-  \end{tikzpicture}
-  \end{center}
-
-  \vspace{0.9em}
-  A benchmark describes the model as released. A product uses the model after domain data.
-  We measure both states on the same held-out corpus.
-
-  \vspace{0.5em}
-  \punch{The \keyw{adapted BPB level} selects the model. The reduction from zero-shot BPB
-  explains how much calibration it needed.}
 \end{frame}
 
 % ==================================================================== 4
 \begin{frame}
-  \frametitle{Two measurements, one decision}
-
-  \vspace{0.8em}
-  \begin{columns}[t]
-  \begin{column}{0.47\textwidth}
-    \keyw{1 --- Use a fair ruler}\\[0.7em]
-    Normalize cross-entropy onto \emph{bytes} instead of tokens:
-    \vspace{0.3em}
-    \[
-      \bpb \;=\; \frac{\mathcal{L}_{\text{nats}}}{\ln 2}\times\frac{|\text{tokens}|}{|\text{bytes}|}
-    \]
-    \vspace{0.1em}
-
-    UTF-8 bytes are the same unit for every model, so \bpb{} is
-    \goodw{tokenizer-agnostic}. Same physical text, same denominator, comparable
-    numbers.
-    \vspace{0.4em}
-
-    {\scriptsize\color{mute} Not ours --- The Pile, Paloma. Under-used, and we make it the primary metric.}
-  \end{column}
-  \begin{column}{0.47\textwidth}
-    \keyw{2 --- Measure domain fit}\\[0.7em]
-    For each model, on one identical corpus:
-    \vspace{0.5em}
-    \begin{enumerate}[1.]\setlength\itemsep{0.35em}
-      \item Zero-shot \bpb{}
-      \item A \emph{fixed} LoRA adaptation step --- identical for every model
-      \item Adapted \bpb{}
-    \end{enumerate}
-    \vspace{0.7em}
-    \textbf{Primary output:} adapted \bpb{} for model selection.\\[0.45em]
-    \textbf{Diagnostic:} relative reduction for corpus calibration.
-  \end{column}
-  \end{columns}
-\end{frame}
-
-% OPTIONAL IN THE 10-MINUTE PATH (adds 0:37)
-% ==================================================================== 5
-\begin{frame}
-  \frametitle{The pipeline}
-  \framesubtitle{Chronologically strict: nothing is scored before it clears the gate}
-
-  \vspace{0.9em}
-  \begin{center}
-  \resizebox{0.98\textwidth}{!}{
-  \begin{tikzpicture}[
-      font=\small,
-      >={Stealth[length=2.4mm,width=1.9mm]},
-      stage/.style={draw, line width=0.8pt, rounded corners=3pt,
-                    minimum width=2.9cm, minimum height=1.7cm,
-                    align=center, inner sep=3pt},
-      phase/.style={font=\scriptsize\bfseries, text=mute},
-      elbl/.style={font=\scriptsize\itshape, text=mute, fill=white, inner sep=1.5pt},
-      flow/.style={->, line width=1.0pt, draw=mute}
-  ]
-    \node[stage, fill=wash, draw=rule] (data)
-      {\shortstack{\textbf{Raw news}\\\textbf{corpus}\\[3pt]{\scriptsize Dynamic}\\{\scriptsize temporal slice}}};
-    \node[stage, fill=wash, draw=accent, right=1.6cm of data] (audit)
-      {\shortstack{\textbf{Contamination}\\\textbf{audit}\\[3pt]{\scriptsize SHA256 $\cdot$ MinHash}\\{\scriptsize Min-K++ $\cdot$ CoDeC $\cdot$ DCQ}}};
-    \node[stage, fill=wash, draw=warm, right=1.6cm of audit] (adapt)
-      {\shortstack{\textbf{Domain}\\\textbf{adaptation}\\[3pt]{\scriptsize Sequence packing}\\{\scriptsize Fixed LoRA, equal budget}}};
-    \node[stage, fill=wash, draw=good, right=1.6cm of adapt] (eval)
-      {\shortstack{\textbf{\bpb{}}\\\textbf{evaluation}\\[3pt]{\scriptsize Tokenizer-agnostic}\\{\scriptsize 512-token blocks}}};
-    \node[phase, above=2mm of audit] {PHASE 1};
-    \node[phase, above=2mm of adapt] {PHASE 2};
-    \node[phase, above=2mm of eval]  {PHASE 3};
-    \draw[flow] (data)  -- (audit);
-    \draw[flow] (audit) -- node[elbl, above=0.2mm]{\shortstack{clean\\data}} (adapt);
-    \draw[flow] (adapt) -- node[elbl, above=0.2mm]{\shortstack{adapted\\model}} (eval);
-  \end{tikzpicture}}
-  \end{center}
+  \frametitle{Why loss is the right quantity}
+  \framesubtitle{There is no universal ground truth for ``better'' --- so pick the principled yardstick}
 
   \vspace{0.7em}
-  \small
-  \textbf{Corpus:} one deduplicated slice of Google News, 8 June 2026 (119k articles),
-  split 80/10/10 with zero intersection between splits. \textbf{Cohort:} 11 base models,
-  0.5B--35B, dense Transformers $+$ a sparse MoE $+$ a Liquid architecture.
+  \begin{itemize}\setlength\itemsep{0.8em}
+    \item Every base model was trained to minimise cross-entropy on text. Held-out loss is
+      \keyw{its own objective}, measured out of sample.
+    \item Cross-entropy is a proper scoring rule. In expectation over the domain's text $p$:
+      \[ H(p,q) \;=\; \underbrace{H(p)}_{\text{same for every model}} \;+\; \mathrm{KL}(p\,\|\,q) \]
+      so a difference in loss \emph{is} a difference in distance from the text's distribution.
+    \item The one obstacle: each model counts in its own tokens. Divide by \keyw{bytes}.
+  \end{itemize}
+
+  \punch{Bits per byte is not one metric among many. It is the training objective, put on a
+  common scale.}
 \end{frame}
 
-% OPTIONAL IN THE 10-MINUTE PATH (adds 0:44)
-% ==================================================================== 6
-\begin{frame}[shrink]
-  \frametitle{Phase 1: why we trust the numbers}
-  \framesubtitle{``Scout, then verify'' --- cheap detectors propose, an expensive test decides}
+% ==================================================================== 5
+\begin{frame}
+  \frametitle{Taking that seriously: three requirements}
 
-  \vspace{0.8em}
+  \vspace{0.3em}
+  \begin{center}
+  \begin{tikzpicture}[font=\small, node distance=0.55cm,
+    box/.style={draw=rule, fill=wash, rounded corners=3pt, minimum width=3.6cm,
+                minimum height=1.55cm, align=center, text width=3.4cm}]
+    \node[box] (a) {\textbf{Bytes}\\[2pt]\scriptsize every tokenizer on one scale};
+    \node[box, right=of a] (b) {\textbf{Fresh, decontaminated text}\\[2pt]\scriptsize no candidate has trained on it};
+    \node[box, right=of b] (c) {\textbf{Equal adaptation}\\[2pt]\scriptsize the same procedure for every candidate};
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.5em}
+  \small
+  \textbf{Decontamination, three layers:}
+  \begin{itemize}\setlength\itemsep{0.25em}
+    \item \keyw{Time} --- text dated after every model shipped (Reddit and Hacker News, most of arXiv).
+    \item \keyw{Hygiene} --- exact dedup, quality filter, MinHash near-dup removal, 80/10/10 split with no overlap.
+    \item \keyw{Membership screens} --- Min-K++, context sensitivity, perturbation; the union of
+      anything any model flags is quarantined for all (news snapshot).
+  \end{itemize}
+\end{frame}
+
+% ==================================================================== 6
+\begin{frame}
+  \frametitle{Equal adaptation: the procedure, and what we ran}
+
+  \vspace{0.5em}
   \begin{columns}[t]
-  \begin{column}{0.60\textwidth}
-    \small
-    \begin{itemize}\setlength\itemsep{0.5em}
-      \item \keyw{Min-K++} \textcolor{mute}{(scout)} --- inspect the least-likely 20\% of
-      tokens; high confidence on rare tokens looks like recall, not prediction.
-      \item \keyw{CoDeC} \textcolor{mute}{(scout, ours)} --- supply the preceding context;
-      memorized text shows a non-linear \emph{spike} in confidence.
-      \item \keyw{Dynamic Choice Quiz} \textcolor{mute}{(gatekeeper)} --- hide the real
-      passage among \textbf{two} perturbed variants (one word swap, one placeholder). If the
-      model reliably picks the original, quarantine it.
+  \begin{column}{0.48\textwidth}
+    \keyw{The method} \hfill{\scriptsize\color{mute}\texttt{--hparams sweep}, default}
+    \begin{itemize}\setlength\itemsep{0.35em}\small
+      \item Per-model Optuna search: TPE sampler over LR, batch, warm-up, weight decay,
+        LoRA rank, $\alpha$, dropout.
+      \item Successive halving prunes weak trials from 50 steps.
+      \item Scored on the \emph{validation} split; test never touched.
+      \item Same number of trials for every model --- no time cap.
+      \item Winner trained until validation \bpb{} stops improving.
     \end{itemize}
-    \vspace{0.9em}
-    {\footnotesize Removes the passages most at risk. It is \emph{not} proof of memorization:
-    a model can prefer the fluent original without having seen it.}
   \end{column}
-  \begin{column}{0.36\textwidth}
-    \setlength{\fboxsep}{9pt}
-    \colorbox{wash}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
-      \small\nohyph
-      Run \textbf{per model}; we conservatively quarantine the \textbf{union} of every model's
-      risk-flagged passages.\\[0.7em]
-      $\Rightarrow$ all 11 models are adapted and scored on \goodw{one identical,
-      cleansed corpus}.\\[0.7em]
-      \textbf{80} sequences removed globally.\\[0.7em]
-      {\footnotesize Applies to \textbf{news}. Reddit / HN / math were scraped \emph{after} every
-      model shipped --- clean by construction.}
-    }}
+  \begin{column}{0.48\textwidth}
+    \keyw{What these results use} \hfill{\scriptsize\color{mute}\texttt{--hparams manual}}
+    \begin{itemize}\setlength\itemsep{0.35em}\small
+      \item A full search of 17 models up to 35B was beyond our compute.
+      \item One hand-picked recipe: LoRA $r{=}16$, $\alpha{=}32$, lr $10^{-4}$, batch 32,
+        fixed 250 steps.
+      \item One A100: \goodw{3.7 min} at 0.5B, 11.6 at 7.7B, 24.7 at 12B, 62.7 at 31B.
+      \item Where our earlier search settled: rank 16 won for 8 of 11 models.
+    \end{itemize}
   \end{column}
   \end{columns}
+
+  \vspace{0.6em}
+  \punch{\small A time-capped search is a trap: small models finish more trials and get better
+  tuned. In our first run the 1B models completed 17--18 trials, the two largest only 4.}
 \end{frame}
 
 % ==================================================================== 7
 \begin{frame}
-  \frametitle{Results: 11 models, one ruler}
-  \framesubtitle{Corrected fixed protocol; injected marker targets are not scored}
+  \frametitle{Checking it without ground truth}
+  \framesubtitle{Two independent yardsticks --- neither is a public benchmark}
 
-  \vspace{0.2em}
-  \begin{columns}[c]
-  \begin{column}{0.62\textwidth}
-    \centering\scriptsize
-    \renewcommand{\arraystretch}{1.03}
-    \begin{tabular}{lrr}
-      \toprule
-      \textbf{Model} & \textbf{Zero-shot} & \textbf{Adapted} \\
-      \midrule
-      Gemma-4-31B & 0.752 & \textbf{0.624} \\
-      Gemma-4-12B & 0.866 & 0.653 \\
-      Qwen-3.5-35B-MoE & 0.707 & 0.678 \\
-      Ministral-3-14B & 0.718 & 0.679 \\
-      Qwen-3.5-9B & 0.740 & 0.708 \\
-      Qwen-2.5-7B & 0.758 & 0.717 \\
-      Qwen-3.5-4B & 0.782 & 0.749 \\
-      Llama-3.2-1B & 0.811 & 0.771 \\
-      Qwen-2.5-1.5B & 0.833 & 0.797 \\
-      LiquidAI-LFM2.5 & 1.340 & 0.852 \\
-      Qwen-2.5-0.5B & 0.935 & 0.901 \\
-      \bottomrule
-    \end{tabular}
+  \vspace{0.6em}
+  \begin{columns}[t]
+  \begin{column}{0.47\textwidth}
+    \keyw{Fine-tune them and see}
+    \begin{itemize}\setlength\itemsep{0.35em}\small
+      \item Do what a team does: fine-tune 15 models on a real news task (write the lede).
+      \item ROUGE-L on 500 articles no measurement touched.
+      \item Expensive --- run once.
+    \end{itemize}
   \end{column}
-  \begin{column}{0.35\textwidth}
-    \small
-    \keyw{Gemma-4-31B} reaches the best adapted \bpb{}: \textbf{0.624}.\\[0.6em]
-    The \keyw{35B MoE} lands with dense 12--14B models, giving a direct quality measurement
-    between its active and total parameter counts.
-    \vspace{0.9em}
-
-    \keyw{LFM-2.5} shows the largest calibration shift: \textbf{36.4\%}.
-    \vspace{0.7em}
-
-    \textbf{Selection uses adapted BPB.} Reduction explains how much each base distribution
-    moved toward the corpus; it is not the ranking metric.
+  \begin{column}{0.47\textwidth}
+    \keyw{A quiz no model has seen}
+    \begin{itemize}\setlength\itemsep{0.35em}\small
+      \item Hide a name or number in a held-out article; the model writes it.
+      \item Answered by the \emph{released} weights, not the adapted ones.
+      \item \emph{Lenient}: answer starts in the first 24 characters (primary). \emph{Strict}: exact start.
+    \end{itemize}
   \end{column}
   \end{columns}
+
+  \vspace{0.8em}
+  \punch{On news the two agree at Spearman \keyw{0.921} --- so the cheap quiz stands in for the
+  fine-tune on the other three corpora.}
 \end{frame}
 
 % ==================================================================== 8
 \begin{frame}
-  \frametitle{Two numbers, two jobs}
-  \framesubtitle{The level chooses a model; the reduction explains calibration}
+  \frametitle{1. Adaptation changes the ordering}
+  \framesubtitle{Eleven models, news quiz}
 
-  \vspace{0.9em}
-  \begin{columns}[t]
-  \begin{column}{0.46\textwidth}
-    \keyw{Adapted BPB}\\[0.6em]
-    \small
-    The primary selection score: how efficiently the adapted model predicts held-out
-    target-domain text.
-    \vspace{0.7em}
-
-    \goodw{Lower is better.} It is directly comparable across tokenizers and architectures.
+  \vspace{-0.2em}
+  \begin{columns}[c]
+  \begin{column}{0.52\textwidth}
+    \includegraphics[width=\textwidth]{fig_block_position_slide.pdf}
   \end{column}
-  \begin{column}{0.46\textwidth}
-    \keyw{Relative reduction}\\[0.6em]
+  \begin{column}{0.44\textwidth}
     \small
-    A diagnostic: how much the released model recalibrates to the corpus's style,
-    formatting, and context pattern.
-    \vspace{0.7em}
-
-    It explains the trajectory; it does not replace the adapted endpoint.
-    \vspace{0.7em}
-
-    \textbf{Token-level evidence makes that interpretation visible.}
+    \begin{itemize}\setlength\itemsep{0.45em}
+      \item Adapted \bpb{}: \goodw{7 of 11} in the exact quiz rank, mean error \goodw{0.36}.
+      \item Unadapted: 2 of 11, mean error 2.00.
+      \item \keyw{11 of 55} pairs flip wrong $\to$ right; none the other way.
+      \item Why: unadapted loss is mostly \emph{cold starts} --- Gemma-4-12B opens a block at
+        2.83 \bpb{} vs a 1.5B model's 2.04, and passes it by the end.
+    \end{itemize}
   \end{column}
   \end{columns}
+
+  \punch{\small Zero-shot loss mixes \emph{familiarity with this prose} into capability. A short
+  equal adaptation removes the familiarity.}
 \end{frame}
 
 % ==================================================================== 9
 \begin{frame}
-  \frametitle{Context explains the calibration signal}
+  \frametitle{2. It recovers what benchmarks measure --- and can be aimed}
+  \framesubtitle{Rank correlation with each benchmark, eleven models}
 
-  \vspace{0em}
-  \begin{columns}[c]
-  \begin{column}{0.60\textwidth}
-    \includegraphics[width=0.90\textwidth]{fig_block_position_slide.pdf}
-  \end{column}
-  \begin{column}{0.37\textwidth}
-    \footnotesize
-    Corpus loss is aggregated over independent 512-token blocks, so nearly all cuts start
-    mid-document with \emph{no preceding context}.
-    \vspace{0em}
+  \vspace{0.6em}
+  \begin{center}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{lcc}
+    \toprule
+    & \textbf{Before adaptation} & \textbf{After adaptation} \\
+    \midrule
+    HellaSwag, on news / Reddit / Hacker News & $0.63$--$0.72$ & \goodw{$0.96$--$0.98$} \\
+    GSM8K, adapted on arXiv mathematics & $0.76$ & \goodw{$0.91$} \\
+    MMLU-Pro, adapted on arXiv mathematics & $0.74$ & \goodw{$0.93$} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
 
-    \warmw{The byte-normalized curves cross.} Over the first 8 positions Gemma averages
-    2.566 bits/byte vs Qwen's 1.490 --- but at position 256+ Gemma is \goodw{0.717}
-    and Qwen \goodw{0.773}.
-    \vspace{0em}
-
-    The crossing survives tokenizer normalization: vocabulary size alone does not explain
-    it. With context, the 12B model shows the stronger steady-state result.
-  \end{column}
-  \end{columns}
-
-  \vspace{-0.1em}
-  \punch{\scriptsize Among the top 200 gain-carrying tokens: \keyw{`.', `,',
-  `\textbackslash n\textbackslash n', ` the', ` and'}. Formatting, punctuation, and
-  function words carry 83\% of that mass.}
+  \vspace{0.8em}
+  \begin{itemize}\setlength\itemsep{0.4em}
+    \item HellaSwag is the benchmark closest to language modelling --- and adapted \bpb{} lands on it.
+    \item Change the text to mathematics and the ranking swings to the reasoning benchmarks.
+  \end{itemize}
+  \punch{\small The choice of text points the ranking at the capability that matters.}
 \end{frame}
 
 % ==================================================================== 10
 \begin{frame}
-  \frametitle{Adaptation does not improve the ranking --- it rotates it}
-  \framesubtitle{The zero-shot baseline is the comparison that makes this visible}
+  \frametitle{3. It predicts what a model becomes}
+  \framesubtitle{Fifteen models fine-tuned on news; 39 size-matched pairs}
 
-  \vspace{0.2em}
-  \begin{columns}[c]
-  \begin{column}{0.56\textwidth}
-    \resizebox{\textwidth}{!}{\input{../figures/fig_benchmark_alignment.tex}}
-  \end{column}
-  \begin{column}{0.41\textwidth}
-    \scriptsize
-    \renewcommand{\arraystretch}{1.15}
-    \begin{tabular}{lcc}
-      \toprule
-      \textbf{News \bpb{}} & \textbf{zero-shot} & \textbf{adapted} \\
-      \midrule
-      GSM8K     & \goodw{0.836} & \warmw{0.727} \\
-      MMLU-Pro  & \goodw{0.855} & \warmw{0.764} \\
-      HellaSwag & 0.718 & \goodw{0.982} \\
-      \bottomrule
-    \end{tabular}
-    \vspace{0.8em}
-
-    \normalsize\small
-    Adaptation buys \keyw{HellaSwag} agreement and \warmw{gives back} GSM8K and MMLU-Pro.
-    Same direction on Reddit and Hacker News.
-    \vspace{0.5em}
-
-    {\footnotesize HellaSwag scores continuations by log-likelihood --- the same object \bpb{}
-    measures. That agreement is convergent validity, not proof the ranking got better.}
-  \end{column}
-  \end{columns}
+  \vspace{-0.3em}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{fig_downstream.pdf}
+  \end{center}
+  \vspace{-0.4em}
+  \small
+  Adapted \bpb{}, measured \emph{before} fine-tuning: \goodw{0.949} of pairs right ---
+  HellaSwag 0.872, MMLU-Pro 0.513, GSM8K 0.474. \keyw{Every model within one rank} of where it
+  finishes. Holds under a second, very different recipe (0.923).
 \end{frame}
 
 % ==================================================================== 11
-\begin{frame}[shrink]
-  \frametitle{Different tasks reveal different strengths}
-  \framesubtitle{\up{n}/\dn{n} $=$ ranks $n$ places higher/lower than \bpb{} puts it}
+\begin{frame}
+  \frametitle{4. It holds}
+  \framesubtitle{Seventeen models, the 40 hardest (similar-size) pairs, and four corpora}
 
-  \vspace{0.2em}
+  \vspace{-0.3em}
   \begin{center}
-  \renewcommand{\arraystretch}{1.02}
-  \scriptsize
-  \begin{tabular}{lcccc}
-    \toprule
-    & \textbf{Adapted \bpb{}} & \textbf{HellaSwag} & \textbf{MMLU-Pro} & \textbf{GSM8K} \\
-    \textbf{Model} & \textit{continuation} & \textit{continuation} & \textit{knowledge} & \textit{arithmetic} \\
-    \midrule
-    Gemma-4-31B        & 1 & 1\same    & 2\dn{1} & 3\dn{2} \\
-    Gemma-4-12B        & 2 & 3\dn{1}   & 7\dn{5} & 7\dn{5} \\
-    \rowcolor{wash} Qwen-3.5-35B-MoE   & 3 & 2\up{1}   & 1\up{2} & 1\up{2} \\
-    Ministral-3-14B    & 4 & 4\same    & 4\same  & 5\dn{1} \\
-    \rowcolor{wash} Qwen-3.5-9B        & 5 & 5\same    & 3\up{2} & 2\up{3} \\
-    \rowcolor{wash} Qwen-2.5-7B        & 6 & 6\same    & 6\same  & 4\up{2} \\
-    \rowcolor{wash} Qwen-3.5-4B        & 7 & 7\same    & 5\up{2} & 6\up{1} \\
-    Llama-3.2-1B       & 8 & 9\dn{1}   & 11\dn{3} & 11\dn{3} \\
-    \rowcolor{wash} Qwen-2.5-1.5B      & 9 & 8\up{1}   & 8\up{1} & 8\up{1} \\
-    LiquidAI-LFM2.5    & 10 & 10\same  & 10\same & 9\up{1} \\
-    \rowcolor{wash} Qwen-2.5-0.5B      & 11 & 11\same  & 9\up{2} & 10\up{1} \\
-    \midrule
-    \textbf{Ranks identical to \bpb{}} & --- & \goodw{7 / 11} & 3 / 11 & \warmw{0 / 11} \\
-    \textbf{Largest displacement}      & --- & \goodw{1}      & 5      & \warmw{5} \\
-    \bottomrule
-  \end{tabular}
+    \includegraphics[width=0.86\textwidth]{fig_selectors.pdf}
   \end{center}
-
-  \vspace{0.3em}
-  \scriptsize
-  HellaSwag preserves the entropy order; MMLU-Pro and GSM8K expose task-specific residuals.
+  \vspace{-0.4em}
+  \small
+  Adapted \bpb{} picks the better model \goodw{0.900} of the time (lenient), beats model size
+  by $+0.250$ $[+0.074, +0.500]$, and on news, Reddit, Hacker News and arXiv math
+  \keyw{never ranks below a public benchmark} under either scoring.
 \end{frame}
 
 % ==================================================================== 12
 \begin{frame}
-  \frametitle{The family pattern explains the shift}
-  \framesubtitle{GSM8K exposes math-specific ranking differences}
+  \frametitle{Using it}
 
-  \vspace{0.5em}
-  \begin{columns}[t]
-  \begin{column}{0.45\textwidth}
-    \small
-    Every \keyw{Qwen} model is unchanged or ranks \goodw{higher} on GSM8K than in the
-    \bpb{} ordering.
-    \vspace{0.4em}
+  \vspace{0.7em}
+  \begin{enumerate}\setlength\itemsep{0.7em}
+    \item Candidates more than $\sim$2$\times$ apart in size? The larger is usually better.
+    \item Otherwise: gather recent text from your domain, dated after every candidate shipped, and
+      screen it.
+    \item Adapt every finalist by the same procedure --- the per-model search where compute
+      allows, the hand-picked recipe where it does not --- and rank by adapted \bpb{}.
+    \item Treat a gap under \keyw{2\%} as a tie; then licence, latency or cost decide.
+    \item The zero-shot number is a free screen, not the selector.
+  \end{enumerate}
 
-    Both \keyw{Gemma} models and Llama move lower; Ministral moves one place lower.
-    \vspace{0.7em}
-
-    This is consistent with family-specific math/reasoning emphasis, but the observational
-    comparison does not identify a causal training ingredient.
-    \vspace{0.6em}
-
-    \bpb{} keeps \keyw{language modelling} separate from \keyw{arithmetic skill}, so the two
-    measurements can be used together.
-    \vspace{0.5em}
-
-    {\scriptsize\color{mute} The top-two GSM8K gap is only 0.53 points and is not decisive.}
-  \end{column}
-  \begin{column}{0.50\textwidth}
-    \setlength{\fboxsep}{10pt}
-    \colorbox{wash}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
-      \small\nohyph
-      \textbf{One pair, two capabilities}
-      \vspace{0.5em}
-
-      \renewcommand{\arraystretch}{1.15}
-      \scriptsize
-      \setlength{\tabcolsep}{5pt}
-      \begin{tabular}{lcc}
-        \toprule
-         & \textbf{Qwen-2.5-1.5B} & \textbf{Llama-3.2-1B} \\
-        \midrule
-        Adapted \bpb{} $\downarrow$ & 0.797 & \textbf{0.771} \\
-        HellaSwag $\uparrow$        & \textbf{0.678} & 0.658 \\
-        \midrule
-        GSM8K $\uparrow$            & \textbf{0.611} & 0.065 \\
-        \bottomrule
-      \end{tabular}
-      \vspace{0.6em}
-
-      Adjacent BPB ranks conceal a \textbf{54.6-point} GSM8K gap. HellaSwag differs by only
-      2.0 points in the other direction.
-      \vspace{0.5em}
-
-      The preferred model follows the capability the product needs.
-    }}
-  \end{column}
-  \end{columns}
+  \punch{\small No labels. No answer key. Text you own, that nobody could have trained on.}
 \end{frame}
 
 % ==================================================================== 13
-\begin{frame}
-  \frametitle{Adaptation changes the ranking --- then it transfers}
-  \framesubtitle{Within-domain reordering; cross-domain stability after adaptation}
-
-  \vspace{-0.15em}
-  \begin{center}
-    \includegraphics[width=0.90\textwidth]{fig_cross_corpus_slide.pdf}
-  \end{center}
-  \vspace{-0.55em}
-  \begin{columns}[c]
-  \begin{column}{0.48\textwidth}
-    \footnotesize
-    \warmw{Adaptation changes selection:} zero-shot$\rightarrow$adapted
-    $\rho=0.655/0.609/0.682$; maximum moves are \textbf{7/7/5 places}.
-  \end{column}
-  \begin{column}{0.48\textwidth}
-    \footnotesize
-    \goodw{Adapted ranks transfer:} cross-domain $\rho=+0.991/+0.955/+0.964$;
-    no model moves more than two places.
-  \end{column}
-  \end{columns}
-  \vspace{0em}
-  \punch{\scriptsize Gemma-4-31B moves from zero-shot rank \textbf{4/5/6} to adapted
-  rank \textbf{1/1/1} on news, Reddit, and Hacker News.}
-\end{frame}
-
-% ==================================================================== 14
-\begin{frame}[shrink]
-  \frametitle{Domain-matched adaptation narrows the GSM8K gap}
-  \framesubtitle{Same protocol, an independent math-domain corpus instead of news}
-
-  \vspace{0.3em}
-  \begin{center}
-  \renewcommand{\arraystretch}{1.08}
-  \small
-  \begin{tabular}{lcc}
-    \toprule
-    \textbf{Adaptation corpus} & \textbf{GSM8K $\rho$} & \textbf{Pairs correct} \\
-    \midrule
-    \emph{none} (zero-shot) & 0.836 & 46/55 \\
-    \midrule
-    News        & 0.727 & 43/55 \\
-    Reddit      & 0.691 & 42/55 \\
-    Hacker News & 0.791 & 45/55 \\
-    \rowcolor{wash} Math (arXiv) & \goodw{\textbf{0.936}} & \goodw{\textbf{50/55}} \\
-    \bottomrule
-  \end{tabular}
-  \end{center}
-
-  \vspace{0.4em}
-  \small
-  Three general-text corpora leave GSM8K \emph{at or below} the do-nothing baseline.
-  Only the topically matched corpus beats it --- and it is the best selector in the whole study.
-
-  \vspace{0.4em}
-  {\scriptsize\color{mute} Mechanistic: Gemma-4-31B/12B rank 1/2 under news-\bpb{} and fall to 4/7
-  under math-\bpb{} --- exactly the family GSM8K penalizes. Not a sharpened copy of the news order
-  ($\rho=0.755$); leave-one-out stable ($[0.915,0.952]$). But at $n{=}11$ the bootstrap interval on
-  the difference still spans zero --- the \emph{pattern} across four corpora is the evidence, not
-  any one contrast.}
-
-  \vspace{0.4em}
-  \punch{\scriptsize Not a free lunch: HellaSwag agreement falls $0.982\rightarrow0.818$ over the
-  same swap --- domain-matched adaptation trades general calibration for task-relevant calibration.}
-\end{frame}
-
-% ==================================================================== 15
-\begin{frame}[shrink]
-  \frametitle{We tried to break it. The ranking held.}
-  \framesubtitle{Adapted models scored directly on the benchmarks, every baseline re-measured on the same machine.}
-
-  \vspace{0.7em}
-  \small
-  \begin{columns}[t]
-  \begin{column}{0.47\textwidth}
-    \normalsize\textbf{The test}\\[0.6em]
-    \small
-    \begin{itemize}\setlength\itemsep{0.45em}
-      \item Everything so far infers behaviour from \emph{rank movement}. So we adapted the models,
-      kept the adapters, and scored them on the benchmarks directly.
-      \item Every baseline re-measured on the same host, because re-scoring the \emph{identical}
-      model on a different machine moves GSM8K by up to \keyw{0.7 points} --- wider than many
-      published gaps.
-    \end{itemize}
-  \end{column}
-  \begin{column}{0.47\textwidth}
-    \normalsize\textbf{The result}\\[0.6em]
-    \small
-    \begin{itemize}\setlength\itemsep{0.45em}
-      \item The ordering was \goodw{identical in all 20} model-corpus-benchmark cells ---
-      $\rho=1.00$ everywhere, not one inverted pair.
-      \item Random reordering reproduces that with probability $1/120$ per cell, so the result
-      holds at \goodw{$p<0.01$} on the most conservative reading available.
-      \item On the main study, scored as \keyw{head-to-head picks} with the uncertainty taken over
-      models: the metric picks the better model above chance in \goodw{23 of 24} settings.
-      \item Matched adaptation steered the ranking the predicted way in \goodw{93.6\%} of 20{,}000
-      resamples. We then re-ran it clustering by \keyw{publisher} --- the harder test, since
-      families are what move --- and \goodw{not one draw in 20{,}000} went the other way. The
-      direction is not in question; how \emph{much} one corpus steers is a bigger-cohort question.
-    \end{itemize}
-  \end{column}
-  \end{columns}
-
-  \vspace{0.35em}
-  \punch{\footnotesize\textbf{The claim we sell is the ranking. It survived a direct attack, and it
-  holds in 23 of 24 settings. Which corpus steers hardest is a bigger-cohort question.}}
-\end{frame}
-
-% ==================================================================== 15b
-\begin{frame}[shrink]
-  \frametitle{The hardest objection --- and the criterion we built to answer it}
-  \framesubtitle{``You validate an un-preparable metric against the very benchmarks you distrust.''}
-
-  \vspace{0.5em}
-  \small
-  \begin{columns}[t]
-  \begin{column}{0.40\textwidth}
-    \normalsize\textbf{So we stopped using them}\\[0.5em]
-    \small
-    \begin{itemize}\setlength\itemsep{0.4em}
-      \item A criterion from \emph{our own} held-out split: predict a hidden entity or number from
-      1{,}200 characters of context. 2{,}500 items, 11 models.
-      \item \keyw{Generate and string-match} --- never log-likelihood. A likelihood criterion would
-      agree with \bpb{} by construction and prove nothing.
-      \item Scored two ways, because base models ramble: answer \emph{anywhere} in a short window,
-      or as an exact prefix. Neither was pre-registered, so both ship.
-      \item \keyw{Then a second one} from the maths corpus, full 2$\times$2. Each corpus's ruler
-      wins on its own criterion (\goodw{0.982} vs 0.778 news, \goodw{0.926} vs 0.870 maths);
-      \goodw{none of 16 contrasts is negative} --- but every interaction interval contains zero.
-    \end{itemize}
-  \end{column}
-  \begin{column}{0.56\textwidth}
-    \normalsize\textbf{Four corpora, each judged on its own criterion}\\
-    {\footnotesize Candidates within 2$\times$ in size --- 10 or 11 pairs each}\\[0.4em]
-    \centering\footnotesize
-    \begin{tabular}{lccccc}
-      \toprule
-      \textbf{Criterion} & \textbf{adapt} & zero-shot & GSM8K & MMLU & size \\
-      \midrule
-      News        & \goodw{0.909}$^\star$ & 0.545 & 0.182 & 0.182 & 0.636 \\
-      Reddit      & 1.000$^\dagger$        & 0.636 & 0.273 & 0.273 & 0.727 \\
-      Mathematics & 0.900                  & 0.900 & 0.700 & 0.700 & 0.800 \\
-      Hacker News & 0.900                  & 0.800 & 0.500 & 0.600 & 1.000$^\dagger$ \\
-      \bottomrule
-    \end{tabular}
-    \vspace{0.4em}
-    \raggedright\scriptsize
-    $^\star$\,\goodw{the ONE interval in all 56 cells that excludes chance.}
-    $^\dagger$\,a perfect score collapses the bootstrap to $[1,1]$ --- not evidence, excluded.\\[0.25em]
-    \goodw{No benchmark clears chance on any of the four}, under either rule --- nor the zero-shot reading,
-    nor model size. At 10 pairs almost nothing is resolvable, so this is \keyw{a failure to reject},
-    not proof the suites are useless.\\[0.25em]
-    \keyw{So we enlarged the cohort} --- next slide.
-  \end{column}
-  \end{columns}
-
-  \vspace{0.3em}
-  \punch{\footnotesize\textbf{Four corpora, criteria no vendor could have prepared for --- and at
-  eleven models the one thing that separates from chance where the decision is hard is ours.}}
-\end{frame}
-
-% ==================================================================== 15c  (E9: forty pairs)
-\begin{frame}[shrink]
-  \frametitle{We said eleven models was too few to resolve this. So we tested that}
-  \framesubtitle{Nine more base models, preregistered before a single cell ran. In-band pairs
-  11 $\rightarrow$ 40.}
-
-  \vspace{0.4em}
-  \centering\footnotesize
-  \begin{tabular}{lcc}
-    \toprule
-    \textbf{Selector, 40 in-band pairs} & \textbf{anywhere-in-window} & \textbf{exact prefix} \\
-    \midrule
-    \goodw{Adapted \bpb{} (ours)}  & \goodw{0.900}\,$[0.733,1.000]$ & \goodw{0.850}\,$[0.591,1.000]$ \\
-    HellaSwag                      & 0.825\,$[0.593,0.984]$         & 0.825\,$[0.545,0.980]$ \\
-    Zero-shot \bpb{} (zero-shot reading)   & 0.750\,$[0.417,1.000]$         & 0.850\,$[0.595,1.000]$ \\
-    Parameter count                & 0.650\,$[0.379,0.841]$         & 0.750\,$[0.517,0.932]$ \\
-    MMLU-Pro                       & 0.400\,$[0.143,0.688]$         & 0.450\,$[0.172,0.744]$ \\
-    GSM8K                          & 0.359\,$[0.100,0.657]$         & 0.410\,$[0.143,0.718]$ \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.45em}
-  \raggedright\scriptsize
-  \goodw{We rank first under both rules}, and our margin over counting parameters is the only one
-  excluding zero: \goodw{$+0.250$, $[0.074,\,0.500]$}. Seed replication (17 models $\times$ 3 seeds)
-  moves that interval by $0.001$ --- not a lucky draw.\\[0.2em]
-  \warmw{The half that cuts against us, which we preregistered ourselves to report:} HellaSwag
-  \warmw{clears chance under both rules} where at 11 models nothing did, and our margin over the
-  best benchmark \warmw{does not exclude zero} ($+0.075$, $[0.000,\,0.286]$).
-
-  \punch{\scriptsize\textbf{The idea: \emph{stop asking how a new model scores on someone else's
-  exam, and measure how well it predicts your own text.} Bits per byte makes that comparable across
-  tokenizers; a fixed short adaptation is how you read it. Every alternative here fails at least one
-  of the three things that makes the idea work --- it must be impossible to prepare for, it must
-  hold under both of our scoring rules, and it must reproduce.}}
-\end{frame}
-
-% ==================================================================== 15d  (the honest boundary)
-\begin{frame}[shrink]
-  \frametitle{What we will not claim}
-  \framesubtitle{Written down before you ask, because the intervals are in the paper either way}
-
-  \vspace{0.6em}
-  \small
-  \begin{itemize}\setlength\itemsep{0.55em}
-    \item \warmw{``Adapting beats not adapting.''} The paired contrast spans zero under both rules
-      --- $+0.150$ $[-0.087,\,0.476]$ lenient, $+0.000$ $[-0.278,\,0.257]$ strict. Under strict the
-      two readings are \emph{the same number} ($0.850$). Computed after the fact and reported as
-      exploratory.
-    \item \warmw{``\bpb{} beats benchmarks.''} $+0.075$ $[0.000,\,0.286]$. Does not exclude zero.
-    \item \warmw{``Benchmarks are uninformative.''} HellaSwag clears chance under both rules.
-    \item \warmw{``Beats size.''} Lenient only; under strict, size clears chance too.
-  \end{itemize}
-
-  \vspace{0.5em}
-  \punch{\scriptsize\textbf{None of this touches the idea. Measuring a model against your own fresh
-  text is right whether you adapt first or not --- what we cannot yet tell you is which of the two
-  readings is sharper, and we say so rather than picking the flattering one. The criterion is
-  generated by \emph{released} weights, so nothing here forecasts a model after \emph{your}
-  fine-tune.}}
-\end{frame}
-
-% ==================================================================== 16
-\begin{frame}[shrink]
-  \frametitle{A simple decision rule}
-
-  \vspace{0.9em}
-  \small
-  \begin{columns}[t]
-  \begin{column}{0.47\textwidth}
-    \normalsize\textbf{What we learned}\\[0.6em]
-    \small
-    \begin{itemize}\setlength\itemsep{0.4em}
-      \item One coordinate system valid across tokenizers and architectures.
-      \item Adaptation does not improve the ranking --- it \keyw{rotates} it toward whatever the
-      adaptation corpus exercises.
-      \item The adapted ranking is stable across three corpora, and a 512-token adapter holds its
-      gain through 2{,}048-token inference.
-      \item So the adaptation corpus \emph{is} the question you are asking.
-    \end{itemize}
-  \end{column}
-  \begin{column}{0.47\textwidth}
-    \normalsize\textbf{How to use it}\\[0.6em]
-    \small
-    \begin{itemize}\setlength\itemsep{0.4em}
-      \item Collect \emph{recent} target-domain text --- freshness beats any contamination detector.
-      \item \warmw{More than $\sim2\times$ apart in size?} Take the bigger model and stop. Over a
-      70$\times$ range size selects as well as we do, and under the prefix rule it beats us.
-      \item \goodw{Otherwise:} adapt each finalist on that text under one budget and rank by
-      adapted \bpb{}. Minutes on one GPU --- 4 at 1B, 12 at 8B, 25 at 12B.
-      \item Match the corpus to the capability that decides it.
-      \item \keyw{The zero-shot number is a screen, not the selector} --- and the reason is
-      mechanical, not statistical. It reads a \emph{convention mismatch} as incapacity.
-      \goodw{LFM2.5-1.2B is last of eleven zero-shot} (1.34 bits/byte, behind a 0.5B model at
-      0.93) and \goodw{ahead of that model once adapted} (0.85 vs 0.90) --- and on our in-domain
-      criterion it really is ahead. The three models zero-shot under-rates most are exactly the
-      three with the largest adaptation gains. We used to recommend the free number.
-    \end{itemize}
-  \end{column}
-  \end{columns}
-
-  \vspace{0.05em}
-  \punch{\footnotesize\textbf{Bottom line:} one fair ruler, a screen and a selector, and a corpus
-  you choose deliberately --- because the corpus decides which capability the ranking tracks.}
-\end{frame}
-
-% ==================================================================== 17
 {
 \setbeamertemplate{footline}{}
 \begin{frame}[plain]
-  \vspace{2.6em}
+  \vspace{2.0em}
   \begin{center}
-  {\LARGE\bfseries Thank you}\\[1.0em]
-  {\large\color{mute} Questions?}\\[2.2em]
-  {\color{rule}\rule{0.5\textwidth}{0.6pt}}\\[1.2em]
-  {\small\color{mute} Backup slides follow: full benchmark scores, contamination
-  breakdown, adaptation protocol, longer-context transfer.}
+  {\Large\bfseries Evaluate language models as language models.}\\[1.2em]
+  {\large\color{mute} Questions?}\\[2.0em]
+  {\color{rule}\rule{0.5\textwidth}{0.6pt}}\\[1.0em]
+  {\small\color{mute} Backup: per-model \bpb{}, benchmark scores, contamination breakdown,
+  longer-context transfer.}
   \end{center}
 \end{frame}
 }
 
-% ==================================================================== 18
-\begin{frame}[shrink]
-  \frametitle{Backup: why this and not the alternatives}
-  \framesubtitle{Including where each alternative is the better instrument}
-
-  \vspace{0.3em}
-  \renewcommand{\arraystretch}{1.25}
-  \scriptsize
-  \setlength{\tabcolsep}{5pt}
-  \begin{tabular}{p{2.5cm}p{1.9cm}p{6.6cm}}
-    \toprule
-    \textbf{Option} & \textbf{Cost each} & \textbf{What it does and does not tell you} \\
-    \midrule
-    Read their scorecard & free &
-    \warmw{Three things go wrong at once.} It \warmw{does not predict what you need} --- among
-    candidates within 2$\times$, GSM8K picks the better model \warmw{0.359} of the time and
-    MMLU-Pro \warmw{0.400}, worse than a coin flip, neither clearing chance under either rule.
-    You \warmw{cannot tell what the score means} --- public exam, undisclosed mixture, so
-    \keyw{stronger} and \keyw{saw more of it} look identical. And the number \warmw{is not stable}
-    --- identical weights move 0.7 GSM8K points when only the inference build changes.
-    (HellaSwag does clear chance, 0.825, and we say so.) \\
-    Run the suite yourself & GPU-hours &
-    Removes host/harness drift (worth up to 0.7 pts here). Measures the same thing. \\
-    Arena / preference & indirect &
-    Rates instructed chat behaviour, not base models. Different question. \\
-    Pick the bigger model & free &
-    \goodw{As good as us over a 70$\times$ range} (0.855). Collapses to 0.545 within 2$\times$. \\
-    Label 500 in-house items & human hours &
-    \keyw{The sharpest objection.} But it answers a task you must name in advance, and $\pm$4.4 pts
-    at $n{=}500$ is wider than most gaps here. \\
-    Build an in-domain cloze set & $\sim$1 GPU-h &
-    The unlabelled form of the row above --- and the instrument we built to check ourselves.
-    \goodw{If you can build one, do:} it measures in-domain ability instead of predicting it. We
-    used it as the \emph{criterion}, so we cannot compare it against ourselves without circularity.
-    \\
-    Fine-tune \& test the task & highest &
-    \goodw{Strictly better evidence when the task is known.} Needs labels a new domain lacks. \\
-    \midrule
-    \textbf{This protocol} & \textbf{minutes} &
-    Text you own, dated after they shipped, so it cannot have been prepared for. \goodw{0.818}
-    among comparable-size candidates. \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.6em}
-  \punch{\footnotesize We are not the best answer to every version of the question. We are the right
-  one when the task is not yet a labelled benchmark and the candidates are close in size --- which
-  is where the scorecard, measured honestly, stops carrying signal.}
-\end{frame}
-
+% ==================================================================== backup
 \begin{frame}
   \frametitle{Backup: the adaptation results as a table}
-  \framesubtitle{Lower \bpb{} is better. The reduction is a calibration diagnostic, not plasticity --- see slide 9.}
+  \framesubtitle{Lower \bpb{} is better. Hand-picked recipe, 250 steps, news corpus.}
 
   \vspace{0.3em}
   \begin{center}
@@ -961,7 +443,7 @@
 % ==================================================================== 19
 \begin{frame}[shrink]
   \frametitle{Backup: full benchmark scores}
-  \framesubtitle{The ranks and displacements on slide 11 are derived from this table}
+  \framesubtitle{Eleven-model cohort, one host, one build}
 
   \vspace{0.3em}
   \begin{center}
@@ -972,27 +454,16 @@
     \textbf{Model} & \textbf{Adapted \bpb{}} & \textbf{MMLU-Pro} &
     \textbf{HellaSwag} & \textbf{GSM8K} \\
     \midrule
-    Gemma-4-31B      & \textbf{0.624} & 0.578 & \textbf{0.879} & 0.842 \\
-    Gemma-4-12B      & 0.653 & 0.447 & 0.843 & 0.636 \\
-    Qwen-3.5-35B-MoE & 0.678 & \textbf{0.620} & 0.855 & \textbf{0.865} \\
-    Ministral-3-14B  & 0.679 & 0.541 & 0.829 & 0.807 \\
-    Qwen-3.5-9B      & 0.708 & 0.562 & 0.816 & 0.860 \\
-    Qwen-2.5-7B      & 0.717 & 0.475 & 0.803 & 0.813 \\
-    Qwen-3.5-4B      & 0.749 & 0.525 & 0.772 & 0.804 \\
-    Llama-3.2-1B     & 0.771 & 0.117 & 0.658 & 0.065 \\
-    Qwen-2.5-1.5B    & 0.797 & 0.250 & 0.678 & 0.611 \\
-    LiquidAI-LFM2.5  & 0.852 & 0.155 & 0.609 & 0.550 \\
-    Qwen-2.5-0.5B    & 0.901 & 0.167 & 0.518 & 0.347 \\
+    \tabinput{../static_benchmark_table.tex}
     \bottomrule
   \end{tabular}
   \end{center}
 
   \vspace{0.5em}
   \footnotesize
-  Rank analysis uses the complete 11-model cohort. Harness:
-  \emph{lm-evaluation-harness}, vLLM backend, bf16, greedy decoding, each tokenizer's
-  native BOS. MMLU-Pro 5-shot CoT on a fixed 1{,}000-question subset; HellaSwag 10-shot
-  length-normalized; GSM8K 5-shot flexible-extract.
+  Percent, rank in parentheses; generated from the committed harness logs, the same table as the
+  paper's. \emph{lm-evaluation-harness} 0.4.12, bf16, greedy, native BOS; MMLU-Pro 5-shot CoT on a
+  fixed 1{,}000-question subset, HellaSwag 10-shot length-normalised, GSM8K 5-shot flexible-extract.
 \end{frame}
 
 % ==================================================================== 20
@@ -1030,45 +501,6 @@
 \end{frame}
 
 % ==================================================================== 21
-\begin{frame}
-  \frametitle{Backup: adaptation protocol}
-
-  \vspace{0.6em}
-  \footnotesize
-  \begin{columns}[t]
-  \begin{column}{0.47\textwidth}
-    \textbf{Data handling}
-    \begin{itemize}\setlength\itemsep{0.3em}
-      \item Google News slice, 8 June 2026: 119{,}054 articles, $\sim$361\,MB.
-      \item 80/10/10 train/val/test, seed 42, enforced zero intersection between splits.
-      \item Packed into contiguous 512-token blocks along EOS boundaries.
-    \end{itemize}
-    \vspace{0.9em}
-    \textbf{Scoring}
-    \begin{itemize}\setlength\itemsep{0.4em}
-      \item Corpus-wide cross-entropy over independent 512-token test blocks.
-      \item Context resets at block cuts; injected start markers are context, not targets.
-      \item Model-specific bytes-per-token factor estimated from the test text.
-    \end{itemize}
-  \end{column}
-  \begin{column}{0.47\textwidth}
-    \textbf{Per-model HPO}
-    \begin{itemize}\setlength\itemsep{0.4em}
-      \item 20-trial Optuna sweep, Successive Halving (top 33\% promoted).
-      \item LoRA rank $r\in\{8,16,32,64\}$; $\alpha$-multiplier $\in\{1,2,4\}$;
-      dropout; LR $10^{-6}$--$10^{-3}$ log-scale; effective batch to 128 via
-      gradient accumulation.
-      \item Adapters restricted to the language backbone.
-      \item Winner trained to convergence: cosine schedule to $0.1\times$ peak LR,
-      gradient clip 1.0.
-    \end{itemize}
-    \vspace{0.4em}
-    Hardware: A100/H100 multi-node under Slurm.
-  \end{column}
-  \end{columns}
-\end{frame}
-
-% ==================================================================== 22
 \begin{frame}
   \frametitle{Backup: 512-token adaptation transfers to longer contexts}
   \framesubtitle{Same held-out targets; only the available preceding context changes}
