@@ -204,7 +204,7 @@ intervals on one fine-tuned pair resample its $500$ evaluation articles.
 \subsection{Adaptation reorders the models}
 \label{sec:mechanism}
 Adapting every model before measuring does not just lower every score; it reorders the models
-(Figure~\ref{fig:headline}A). On
+(Figure~\ref{fig:headline}A, Table~\ref{tab:ranks}). On
 news the unadapted and adapted rankings of the eleven models agree only at Spearman $0.655$, on Reddit
 $0.609$ and on Hacker News $0.682$, and a model can move seven places. The movement is not spread
 evenly. Adaptation lowers loss by $3.6$--$5.4\%$ on news for every Qwen, Llama and Ministral model,
@@ -213,6 +213,28 @@ three are the only models that move up; every other model slips one or two place
 adapted, a $12$B model the unadapted reading puts below two models under $2$B; LFM2.5-1.2B, the one
 non-Transformer, is dead last unadapted at $1.34$ bits per byte against a $0.5$B Qwen's $0.93$, and
 ahead of it after adaptation.
+
+\begin{table}[t]
+\centering\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lrcccrccc}
+\toprule
+& & \multicolumn{2}{c}{\textbf{News BPB} (rank)} & & & \multicolumn{3}{c}{\textbf{Benchmark score, \%} (rank)} \\
+\cmidrule(lr){3-4}\cmidrule(lr){7-9}
+\textbf{Model} & \textbf{Params (B)} & unadapted & adapted & \textbf{Moves} & \textbf{Gain} & HellaSwag & GSM8K & MMLU-Pro \\
+\midrule
+\input{rank_table.tex}
+\bottomrule
+\end{tabular}
+}
+\caption{\textbf{The eleven models, ranked every way.} Ordered by adapted news BPB (lower is better).
+\emph{Moves} is how many places adaptation shifts a model; \emph{Gain} is the loss reduction it buys.
+Three models gain far more than the rest---the two Gemmas and the Liquid model---and they are the only
+three that climb. Once adapted, the order is HellaSwag's almost exactly, while GSM8K and MMLU-Pro
+scatter: Llama-3.2-1B, eighth by BPB and ninth on HellaSwag, is last on both. $^{*}$Qwen-3.5-35B-MoE
+activates $3$B of its $34.7$B parameters.}
+\label{tab:ranks}
+\end{table}
 
 The reason is familiarity. Zero-shot loss conflates two things that need separating: \emph{this model
 already writes like my corpus} and \emph{this model is a capable model}. Figure~\ref{fig:blockpos}
@@ -248,8 +270,7 @@ Of the three public benchmarks, HellaSwag is the one closest to language modelli
 ending of a passage is most natural, and the harness scores it by the likelihood of that ending.
 Before adaptation, BPB on news, Reddit and Hacker News ranks the eleven models at Spearman
 $0.63$--$0.72$ with HellaSwag; after adaptation the same rank correlation is $0.96$--$0.98$, and on
-news the adapted ranking orders $53$ of HellaSwag's $55$ pairs the same way (Table~\ref{tab:alignment};
-benchmark scores in Table~\ref{tab:static}). Three independently collected corpora arrive at the same
+news the adapted ranking orders $53$ of HellaSwag's $55$ pairs the same way (Tables~\ref{tab:ranks} and~\ref{tab:alignment}). Three independently collected corpora arrive at the same
 ordering once familiarity is removed, and it is the ordering of the benchmark that measures the same
 thing. Because HellaSwag and BPB are both likelihoods, this is consistency rather than a second
 opinion: measuring on fresh text of one's own gives up nothing the likelihood benchmark captures,
@@ -262,6 +283,25 @@ and $0.74$---and ranking by mathematics BPB picks GSM8K's own top model at zero 
 text points the measurement at a capability: the same instrument, fed news, recovers the language
 benchmark, and fed mathematics, recovers the reasoning ones. Benchmarks cannot be aimed this way,
 because each is fixed; a corpus is chosen by whoever is choosing the model.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{llcccc}
+\toprule
+& & \multicolumn{3}{c}{\textbf{Rank correlation ($\rho$) with}} & \textbf{Pairs ordered} \\
+\cmidrule(lr){3-5}
+\textbf{Corpus} & \textbf{Reading} & GSM8K & MMLU-Pro & HellaSwag & \textbf{as GSM8K} \\
+\midrule
+\input{alignment_matrix_table.tex}
+\bottomrule
+\end{tabular}
+\caption{\textbf{Adaptation turns the ranking toward the benchmark that matches the text.} Rank
+correlation of BPB with each benchmark over the eleven models, before and after adaptation, on every
+corpus. On the three general corpora adaptation lifts HellaSwag from $0.63$--$0.72$ to $0.96$--$0.98$
+while GSM8K falls; on arXiv mathematics it lifts GSM8K and MMLU-Pro instead. The last column counts
+the $55$ model pairs ordered the same way as GSM8K.}
+\label{tab:alignment}
+\end{table}
 
 \subsection{It is stable where benchmarks are not}
 \label{sec:stability}
@@ -333,6 +373,24 @@ fifteen on GSM8K and MMLU-Pro, builds the best system of the fifteen, beating Mi
 $+0.018$ $[+0.011, +0.025]$; and the $55.3$-point GSM8K gap between Llama-3.2-1B and Qwen-2.5-1.5B buys
 no measurable difference once both are fine-tuned. Every model improved on its own base weights and
 cleared what copying the article's first sentence scores ($0.125$).
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lcccc}
+\toprule
+& \textbf{All $39$ pairs} & \textbf{95\% CI} & \textbf{$22$ resolved pairs} & \textbf{Recipe B} \\
+\midrule
+\input{downstream_table.tex}
+\bottomrule
+\end{tabular}
+\caption{\textbf{Which selector predicts the fine-tuned system?} Fifteen models, each fine-tuned
+identically on the lede task; the outcome is each system's ROUGE-L on $500$ held-out articles. Each
+row is a selector's pairwise accuracy over every size-matched pair, with the model-level cluster
+bootstrap, and its accuracy on the $22$ pairs whose fine-tuned difference is itself resolved by a
+paired bootstrap over articles. The last column scores the same selectors against systems built with
+the deliberately different recipe B. GSM8K ties one pair and is scored on $38$.}
+\label{tab:downstream}
+\end{table}
 
 \section{Conclusion}
 \label{sec:using}
@@ -468,29 +526,12 @@ adaptation.}
 \end{table}
 \section{The Full Benchmark Alignment}
 \label{app:alignment}
-Table~\ref{tab:alignment} reports all twenty-four (corpus $\times$ reading $\times$ benchmark) cells
-over the full $55$ pairs; Table~\ref{tab:regret} prices each reading's top-1 pick against each
+Table~\ref{tab:alignment} (Section~\ref{sec:agreement}) reports all twenty-four (corpus $\times$ reading $\times$
+benchmark) cells over the full $55$ pairs; Table~\ref{tab:regret} prices each reading's top-1 pick against each
 benchmark's own.  The rotation (Appendix~\ref{app:robust}) is legible column by column: adapting on general
 text raises HellaSwag agreement and lowers the GSM8K column on every corpus and MMLU-Pro on two of
 the three general-text corpora; adapting on mathematics reverses the GSM8K half. The pairs-correct column---GSM8K only---shows how little of this is visible in a rank
 correlation: across its eight rows it spans $41/55$ to $49/55$.
-\begin{table}[t]
-\centering\small
-\begin{tabular}{llcccc}
-\toprule
-& & \multicolumn{3}{c}{\textbf{Rank correlation ($\rho$) with}} & \textbf{GSM8K pairs} \\
-\cmidrule(lr){3-5}
-\textbf{Corpus} & \textbf{Reading} & GSM8K & MMLU-Pro & HellaSwag & \textbf{correct} \\
-\midrule
-\input{alignment_matrix_table.tex}
-\bottomrule
-\end{tabular}
-\caption{\emph{Eleven-model cohort, all $55$ pairs (no size band).} All twenty-four (corpus
-$\times$ reading $\times$ benchmark) cells, recomputed from the committed cells. The rotation is visible column by column: adapting on general
-text raises HellaSwag agreement and lowers GSM8K everywhere, while adapting on mathematics
-reverses it.}
-\label{tab:alignment}
-\end{table}
 \begin{table}[t]
 \centering\small
 \begin{tabular}{llccc}
@@ -509,21 +550,6 @@ ranking selects Gemma-4-31B on every general-text corpus---the HellaSwag leader 
 GSM8K and $4.3$ MMLU-Pro points---while adapting on mathematics recovers the GSM8K and MMLU-Pro
 leader at zero regret. The corpus, not the metric, decides which column you pay in.}
 \label{tab:regret}
-\end{table}
-\begin{table}[t]
-\centering\small
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Model} & \textbf{Adapted BPB} & \textbf{MMLU-Pro} & \textbf{HellaSwag} & \textbf{GSM8K} \\
-\midrule
-\input{static_benchmark_table.tex}
-\bottomrule
-\end{tabular}
-\caption{\textbf{Where the readings disagree, in one place.} \emph{Eleven-model cohort, news.}
-Adapted news BPB (lower is better) beside the three benchmark scores, rank in parentheses. Gemma-4-12B is the case to look at: second by BPB,
-third on HellaSwag, and \emph{seventh} on both MMLU-Pro and GSM8K. Llama-3.2-1B and Qwen-2.5-1.5B are adjacent in BPB
-and $2.1$ HellaSwag points apart, yet $55$ GSM8K points apart.}
-\label{tab:static}
 \end{table}
 
 
@@ -705,23 +731,6 @@ $0.125$ against the reference and a random body sentence $0.111$. Unadapted base
 to copying---inspection confirms they largely do copy---while every fine-tuned system clears it,
 from $0.188$ (Qwen-2.5-0.5B) to $0.249$ (Gemma-4-12B).
 
-\begin{table}[h]
-\centering\small
-\begin{tabular}{lcccc}
-\toprule
-& \textbf{All $39$ pairs} & \textbf{95\% CI} & \textbf{$22$ resolved pairs} & \textbf{Recipe B} \\
-\midrule
-\input{downstream_table.tex}
-\bottomrule
-\end{tabular}
-\caption{\textbf{Which selector predicts the fine-tuned system?} Fifteen models, each fine-tuned
-identically on the lede task; the outcome is each system's ROUGE-L on $500$ held-out articles. Each
-row is a selector's pairwise accuracy over every size-matched pair, with the model-level cluster
-bootstrap, and its accuracy on the $22$ pairs whose fine-tuned difference is itself resolved by a
-paired bootstrap over articles. The last column scores the same selectors against systems built with
-the deliberately different recipe B. GSM8K ties one pair and is scored on $38$.}
-\label{tab:downstream}
-\end{table}
 
 \paragraph{How close the corpus has to be.} Exploratory, run after the result at a reader's request:
 scoring the news fine-tune with adapted BPB from each of the other corpora, on the ten size-matched pairs

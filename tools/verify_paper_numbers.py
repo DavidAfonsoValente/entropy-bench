@@ -1584,6 +1584,11 @@ require("unadapted corpora reach only about 0.6", all(0.55 <= v[2] <= 0.65 for v
 require("the paper states the cross-corpus answer", "Spearman $0.983$ each" in " ".join(tex.split()))
 require("LFM2.5-1.2B leaves last place on news", _rz["LiquidAI/LFM2.5-1.2B-Base"] == 10 and _ra["LiquidAI/LFM2.5-1.2B-Base"] == 9)
 
+# Table 1's caption: Llama-3.2-1B is eighth by adapted BPB, ninth on HellaSwag, last on GSM8K and MMLU-Pro.
+_rt = open("rank_table.tex").read()
+require("Table 1 Llama row: BPB 8th, HellaSwag 9th, last on GSM8K and MMLU-Pro",
+        "Llama-3.2-1B & 1.2 & 0.811 (7) & 0.771 (8) & $\\downarrow$1 & 4.9\\% & 65.8 (9) & 6.4 (11) & 11.2 (11)" in _rt)
+
 for figure in ("figures/fig_block_position.pdf", "figures/fig_cross_corpus.pdf",
                "figures/fig_context_length.pdf", "figures/fig_benchmark_alignment.tex",
                "figures/fig_headline.pdf"):
