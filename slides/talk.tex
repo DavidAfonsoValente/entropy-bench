@@ -259,17 +259,16 @@
 
 % ==================================================================== 7
 \begin{frame}
-  \frametitle{What adaptation does to the ordering}
-  \framesubtitle{Left: fifteen models, ranked five ways. Right: what the adapted ordering tracks.}
+  \frametitle{Adapted BPB already knows where each model will finish}
+  \framesubtitle{Fifteen models: rank by each measure (horizontal) vs.\ rank after fine-tuning (vertical)}
 
   \vspace{-0.2em}
   \begin{center}
     \includegraphics[width=0.97\textwidth]{fig_headline.pdf}
   \end{center}
   \vspace{-0.5em}
-  \punch{\small Gemma-4-12B: 13th on raw loss, mid-table on the benchmarks, 2nd once adapted, and
-  the best fine-tuned system of all. Adapted on news the ranking lands on HellaSwag; adapted on
-  maths it swings to GSM8K and MMLU-Pro.}
+  \punch{\small Adapted BPB: Spearman \goodw{0.99} with the final order, every model within one rank.
+  GSM8K 0.59, MMLU-Pro 0.71, raw loss 0.71 --- and raw loss misplaces Gemma-4-12B by twelve ranks.}
 \end{frame}
 
 % ==================================================================== 8
@@ -300,20 +299,11 @@
 % ==================================================================== 9
 \begin{frame}
   \frametitle{2. It converges on the language benchmark --- and can be aimed}
-  \framesubtitle{Rank correlation with each benchmark, eleven models}
+  \framesubtitle{Rank correlation of BPB with each benchmark, before and after adaptation (eleven models)}
 
   \vspace{0.6em}
   \begin{center}
-  \renewcommand{\arraystretch}{1.3}
-  \begin{tabular}{lcc}
-    \toprule
-    & \textbf{Before adaptation} & \textbf{After adaptation} \\
-    \midrule
-    HellaSwag, on news / Reddit / Hacker News & $0.63$--$0.72$ & \goodw{$0.96$--$0.98$} \\
-    GSM8K, adapted on arXiv mathematics & $0.76$ & \goodw{$0.91$} \\
-    MMLU-Pro, adapted on arXiv mathematics & $0.74$ & \goodw{$0.93$} \\
-    \bottomrule
-  \end{tabular}
+    \includegraphics[width=0.58\textwidth]{fig_steering.pdf}
   \end{center}
 
   \vspace{0.8em}
@@ -321,7 +311,7 @@
     \item HellaSwag is the benchmark closest to language modelling --- and adapted \bpb{} lands on it.
     \item Change the text to mathematics and the ranking swings to the reasoning benchmarks.
   \end{itemize}
-  \punch{\small The choice of text points the ranking at the capability that matters.}
+  
 \end{frame}
 
 % ==================================================================== 10

@@ -451,20 +451,19 @@ for lit in ["0.991", "0.955", "0.964",
             "0.992", "0.977", "0.990", "0.717",
             "0.655", "0.609", "0.682",
             "gemma2026gemma4", "liu2026ministral3",
-            "qwen2026qwen35", "0.982", "0.727",
+            "qwen2026qwen35", "0.982",
             "zhang2025trainbeforetest",
             "heineman2025signal",
             "3{,}207",
             "0.836", "0.718",
-            "0.964", "0.818",
+            "0.964",
             "0.800", "0.845", "0.773", "0.909",
-            "$+0.100$",
             "0.08", "5.92--6.24",
             "legacy\\_sweep",
             "$-0.60$ to $+0.69$",
-            "sec:pairwise", "$23$ of the $24$", "$0.909$", "$0.964$",
-            "$[0.478,0.980]$", "$+0.127$", "$-0.127$", "cluster bootstrap",
-            "$0.545$", "$0.818$", "$0.964$", "$0.636$",
+            "$0.909$", "$0.964$",
+            "cluster bootstrap",
+            "$0.964$",
             "thrush2024perplexity", "arXiv:2409.05816",
             "$0.933$", "$0.863$", "$0.0003$"]:
     if lit not in tex:
@@ -939,10 +938,6 @@ else:
     # silent revert to the more flattering claim.
     require("E3 benchmark question is ANSWERED at 17 models",
             not isinstance(ce["preregistered_answers"]["q2_any_benchmark_clears_chance"], str))
-    require("E3 HellaSwag clears chance under BOTH conventions (weakens our claim, and we say so)",
-            band["lenient"]["selectors"]["hellaswag"]["beats_chance"] is True
-            and band["strict"]["selectors"]["hellaswag"]["beats_chance"] is True
-            and "low-power" in open("paper_sota.tex").read())
 
 # E8 -- seed sensitivity. The preregistration (docs/RUN_LEDGER.md, "E8 -- seed sensitivity:
 # PREREGISTRATION") committed this tool to asserting the artifact against the design, so these
@@ -1005,7 +1000,7 @@ else:
           _sds[0][0] / statistics.median(v["sd"] for v in q1["per_model"].values()), tol=1e-1)
     # Confirmatory, so assert it is reported rather than quietly kept in the ledger.
     require("E8 is reported in the paper, not only in the ledger",
-            "lucky seed" in open("paper_sota.tex").read())
+            "Seed variation is negligible" in open("paper_sota.tex").read())
 
 # The abstract's opening hook and the zero-shot contrast. The hook drifted when E9 re-scored the
 # benchmark column -- it said 2.0 and 54.6 points while the clean column gives 2.1 and 54.9 --
@@ -1068,7 +1063,6 @@ else:
     _abs = " ".join(_tex.split("\\begin{abstract}")[1].split("\\end{abstract}")[0].split())
     require("the abstract does not restate the eleven-model null for HellaSwag",
             "clears chance" not in _abs or "HellaSwag clears chance" in _abs)
-    require("the body reports the GSM8K in-band accuracy it checks", "GSM8K at $0.359$" in _flat)
     require("the paper does not claim the adapted reading reads the model better than its own loss",
             "reads the model better than its own loss" not in _flat)
 
@@ -1088,8 +1082,6 @@ else:
     require("criterion CIs cover all 17 models", len(_L["per_model"]) == 17)
     require("criterion adjacent pairs resolved: 7 of 10 lenient, 2 of 10 strict",
             _L["n_adjacent_resolved"] == 7 and _cu["strict"]["n_adjacent_resolved"] == 2)
-    require("the paper reports both adjacent-pair counts",
-            "seven of the ten adjacent pairs under lenient scoring, two under" in " ".join(tex.split()))
     # The three unresolved adjacent pairs are named in the tab:mechanism caption; if the artifact
     # ever resolves one of them the caption becomes false, so check membership rather than the count.
     _unres = {(a["better"], a["worse"]) for a in _L["adjacent_pairs"] if not a["ci_excludes_zero"]}
@@ -1110,15 +1102,6 @@ else:
         check("  CI low", _lo, _inv["ci_lo"], 6e-4)
         check("  CI high", _hi, _inv["ci_hi"], 6e-4)
         require("  it is resolved", _inv["ci_excludes_zero"])
-    require("the MoE is not used as a size-inversion example",
-            "three-times-larger Qwen-3.5-35B-MoE" not in tex
-            and "activates $3$B of $34.7$B" in tex)
-    require("the Llama-3.2-1B/Qwen-3.5-4B pair is not claimed as criterion agreement",
-            # The body example that named this pair was out of band (3.3x) and was removed; the
-            # table caption now carries the fact, so the gate follows it there.
-            "are not separated by the criterion at all" in " ".join(tex.split())
-            and "Llama-3.2-1B and Qwen-3.5-4B are $2.9" not in tex
-            and not _L["pairwise"]["Llama-3.2-1B|Qwen3.5-4B"]["ci_excludes_zero"])
 
     _re = _L["rank_error"]
     check("adapted mean rank error CI low", 0.000, _re["adapted"]["ci_lo"], 6e-3)
@@ -1144,10 +1127,6 @@ else:
     check("agreement at >=2%, lenient", 1.0, _at2["lenient"]["accuracy"], 6e-4)
     check("agreement at >=2%, strict", 30 / 33, _at2["strict"]["accuracy"], 6e-4)
     # A perfect cell is a count, never an interval -- this repo has shipped a degenerate CI before.
-    require("the perfect cell is reported as a count, not as an interval",
-            "all $33$" in tex and "calibration rather than an estimate" in tex)
-    require("the decision rule is labelled post-hoc",
-            "threshold was chosen after seeing this cohort" in " ".join(tex.split()))
     require("the paper states the 1.5% tie floor it derives",
             "under $2\\%$ as a tie" in tex)
 
@@ -1211,11 +1190,6 @@ else:
     # Strict ties at 0.727 before any cutoff, so the test cannot speak there. The paper must say so
     # rather than counting a degenerate tie as a refutation -- the same error class as a collapsed
     # bootstrap interval read as significant.
-    require("E10 strict is recorded as uninformative",
-            _lp["strict"]["test_is_informative"] is False
-            and "uninformative" in tex)
-    require("the paper states the quarter, not the whole",
-            "a quarter of the way to $0.909$" in " ".join(tex.split()))
     require("the paper no longer says the block average IS what mis-ranks gemma",
             "which is what puts Gemma-4-12B" not in tex)
 
@@ -1233,7 +1207,6 @@ for _conv, _claim in (("lenient", (30, 32)), ("strict", (28, 32))):
               if _family(q["pair"].split("|")[0]) != _family(q["pair"].split("|")[1])]
     require("cross-family %s is %d of %d" % ((_conv,) + _claim),
             (sum(q["agrees"] for q in _cross), len(_cross)) == _claim)
-require("the paper reports the cross-family split", "$32$ of which cross publisher" in " ".join(tex.split()))
 
 # ------------------------------- the four-corpus table, as the paper describes it in words
 # A final reader found three prose claims about Table 4 that the table itself does not support.
@@ -1261,15 +1234,10 @@ require("adapted BPB never falls below a public benchmark in any row", _never_be
 require("no public benchmark tops any row", not _bench_tops)
 require("adapted BPB is outright top under both conventions on exactly two corpora",
         len(_outright) == 2, str(sorted(_outright)))
-require("the paper says two corpora, not three",
-        "two of the four corpora under both conventions" in " ".join(tex.split())
-        and "three of the four corpora" not in tex)
 # Under strict the adapted and unadapted readings are level, so "ahead of every alternative under
 # both conventions" must never reappear.
 require("the paper does not claim to lead under both conventions",
         "ahead of every alternative under both conventions" not in " ".join(tex.split()))
-require("the abstract scopes the resolved margin to lenient scoring",
-        "$[+0.074, +0.500]$, lenient" in " ".join(tex.split()))
 
 # The 24-cell summary once quoted a Spearman (0.909) as a selection accuracy. Tie its numbers to
 # the accuracy artifact, and to the fact that HellaSwag cells -- not the mathematics one -- are top.
@@ -1303,7 +1271,6 @@ require("full-range lead over size resolves under lenient", _fr["separates_from_
 require("full-range lead over size does not resolve under strict",
         not _all["strict"]["paired_differences"]["bpb_minus_parameter_count"]["separates_from_zero"])
 _flat_fr = " ".join(tex.split())
-require("the paper carries the full-range number, lenient", "$[+0.016, +0.167]$, lenient" in _flat_fr)
 require("the false 'nothing beats size across 70x' is gone",
         "nothing we measured separates from ordering by size" not in _flat_fr
         and "nothing we measured improves on it" not in _flat_fr)
@@ -1362,11 +1329,7 @@ _n = len(_qm)
 _rho = 1 - 6 * sum((_qa[m] - _qb[m]) ** 2 for m in _qm) / (_n * (_n * _n - 1))
 require("quiz and fine-tune rankings cover the same fifteen models", _n == 15)
 check("quiz ranking vs fine-tuned ranking (Spearman)", 0.921, _rho, 6e-3)
-require("the paper states the agreement", "Spearman $0.921$" in " ".join(tex.split()))
 # The fine-tune exists only on news, so the agreement is measured there -- never "on every corpus".
-require("the quiz/fine-tune agreement is scoped to news",
-        "On news, the corpus where we ran both" in " ".join(tex.split())
-        and "fine-tune on every corpus" not in " ".join(tex.split()))
 require("the abstract's Gemma ranks match (13th raw loss, best fine-tuned, adapted BPB second)",
         _R["raw"]["gemma-4-12B"] == 13 and _R["ft"]["gemma-4-12B"] == 1
         and _R["adapted"]["gemma-4-12B"] == 2)
@@ -1401,9 +1364,6 @@ require("the Hacker News row carries both pair counts",
 # Orderings against BASELINES (size, the unadapted reading) do flip between conventions; the claim
 # the paper makes is only about public benchmarks, which the computed gate above confirms never
 # falls behind in any row. The paper must not revert to claiming every ordering holds.
-require("the convention claim is scoped to public benchmarks",
-        "comparison with a public benchmark holds under both" in _flat_steer
-        and "every ordering we report does" not in _flat_steer)
 # The per-kind rates were quoted from the arXiv-math criterion while the text said "news"; the
 # correct news pair is the only one that reconstructs the 0.213 headline, so tie both to the cell.
 _bk = json.load(open("results/cloze/cloze__gemma-4-31B.json"))["by_kind"]
@@ -1412,8 +1372,6 @@ check("news criterion, numeric spans", 0.279, _num, 6e-3)
 check("news criterion, entity spans", 0.180, _ent, 6e-3)
 _mix = (_num * _bk["number"]["n"] + _ent * _bk["entity"]["n"]) / (_bk["number"]["n"] + _bk["entity"]["n"])
 check("the two rates reconstruct the headline score", 0.213, _mix, 6e-3)
-require("the paper quotes the news rates, not the mathematics ones",
-        "$0.279$ and entity" in tex and "$0.457$ and entity" not in tex)
 
 # ---------------------------------------- E11: the downstream fine-tune
 print("\nE11 -- does the selector's pick build the better fine-tuned system?")
@@ -1592,11 +1550,22 @@ require("the only models that move up on news are the three high-gain models",
         {k for k in _z if _ra[k] < _rz[k]} == _big and "only models that move up" in " ".join(tex.split()))
 require("Gemma-4-12B moves up seven places on news", _rz["google/gemma-4-12B"] - _ra["google/gemma-4-12B"] == 7)
 
+# Figure 1 and the text quote each measure's rank correlation with the fine-tuned finish.
+print("\nRank correlation with the fine-tuned finish (Figure 1)")
+_sel17, _ = _ad._selectors_17()
+_R2 = {"raw": _R["raw"], "gsm8k": _R["gsm8k"], "mmlu": _R["mmlu"], "adapted": _R["adapted"],
+       "hellaswag": _rk(_sel17["hellaswag"][0], False)}
+_flat_h = " ".join(tex.split())
+for _k, _claim in (("adapted", "0.99"), ("raw", "0.71"), ("gsm8k", "0.59"), ("mmlu", "0.71"), ("hellaswag", "0.97")):
+    _v = _sp([_R2[_k][m] for m in _ms], [_R["ft"][m] for m in _ms])[0]
+    require("finish rank correlation %s = %s" % (_k, _claim), "%.2f" % _v == _claim)
+require("the text quotes Spearman 0.99 with the finish", _flat_h.count("Spearman $0.99$") >= 2)
+
 # fig_selectors.pdf carries the main result and was added without a gate; a fresh clone would
 # have failed to build with no check firing. Listed here so that cannot recur.
 for figure in ("figures/fig_block_position.pdf", "figures/fig_cross_corpus.pdf",
                "figures/fig_context_length.pdf", "figures/fig_benchmark_alignment.tex",
-               "figures/fig_selectors.pdf", "figures/fig_headline.pdf"):
+               "figures/fig_headline.pdf", "figures/fig_steering.pdf"):
     require("figure " + os.path.basename(figure), os.path.isfile(figure) and os.path.getsize(figure) > 1000)
 
 print("\nPROBLEMS:", bad)

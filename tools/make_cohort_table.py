@@ -1,15 +1,9 @@
 #!/usr/bin/env python3
-"""Emit the 17-model extended-cohort roster as LaTeX rows.
+"""Emit the 17-model extended-cohort roster as LaTeX rows: every model with its parameter count,
+adapted news BPB and whether it belongs to the original eleven or the preregistered extension.
 
-The headline result (Figure 1, Section 4.1) is computed over 17 models, but until now only the
-original eleven had a table of numbers anywhere in the paper -- the six extension models appeared as
-names in prose and nowhere else, so a reader could not check the cohort behind the paper's central
-claim. This renders every model with its parameter count, adapted news BPB and in-domain criterion
-score with the criterion's own interval.
-
-Reads ``results/cohort_extension.json`` (which models), the domain-transfer and extension cells
-(adapted BPB and parameter counts) and ``results/criterion_uncertainty.json`` (criterion + CI).
-Nothing is recomputed here.
+Reads ``results/cohort_extension.json`` (which models) and the domain-transfer and extension cells
+(adapted BPB and parameter counts). Nothing is recomputed here.
 
 Usage:
     python tools/make_cohort_table.py            # -> cohort_table.tex
@@ -43,20 +37,14 @@ DISPLAY = {
 def render() -> str:
     bpb, params = _adapted_bpb_17()
     ext = json.loads((ROOT / "results" / "cohort_extension.json").read_text())
-    unc = json.loads((ROOT / "results" / "criterion_uncertainty.json").read_text())["lenient"]
     published = set(ext["published_cohort"])
-
-    models = sorted(unc["per_model"], key=lambda m: bpb[m])
+    cohort = published | set(ext["extension_cohort"])  # the loader also returns excluded cells
+    assert len(cohort) == ext["n_models"] == 17, cohort
     lines = []
-    for m in models:
-        c = unc["per_model"][m]
-        # The eleven-model cohort carries the mechanism and four-corpus analyses; the six additions
-        # enter only the headline selector comparison. The reader should be able to see which.
+    for m in sorted(cohort, key=bpb.get):
         origin = "original" if m in published else "\\textbf{added}"
-        lines.append("%s & %.1f & %.3f & %.3f & [%.3f, %.3f] & %s \\\\" % (
-            DISPLAY[m], params[m] / 1e9, bpb[m], c["accuracy"], c["ci_lo"], c["ci_hi"], origin))
+        lines.append("%s & %.1f & %.3f & %s \\\\" % (DISPLAY[m], params[m] / 1e9, bpb[m], origin))
     return "\n".join(lines) + "\n"
-
 
 if __name__ == "__main__":
     body = render()

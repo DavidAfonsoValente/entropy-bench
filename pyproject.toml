@@ -47,6 +47,7 @@ dependencies = [
   "huggingface-hub>=0.22",
   "datasets",
   "scikit-learn",
+  "scipy",
   "datasketch",
   "protobuf",
   "sentencepiece",

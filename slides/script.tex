@@ -151,14 +151,15 @@ the search by time, small models finish more trials and get tuned better.
 \end{say}
 
 % ================================================================ 7
-\slide{7}{What adaptation does to the ordering}{4:34--5:19}
+\slide{7}{Ranked before fine-tuning, adapted BPB already knows where each model finishes}{4:34--5:19}
 \begin{say}
-Here is the result on one slide. On the left, fifteen models ranked five ways: by raw loss, by GSM8K,
-by MMLU-Pro, by adapted bits per byte, and by where they finish after we fine-tune them. Follow the
-blue line. Gemma-4-12B is thirteenth on raw loss and mid-table on both benchmarks. Once adapted it is
-second, and after fine-tuning it builds the best system of all. On the right, what the adapted
-ordering tracks: on general text it lands on HellaSwag, and on maths it swings to the reasoning
-benchmarks.
+Here is the result on one slide. Fifteen models. Across, each is ranked before any fine-tuning ---
+by raw loss, GSM8K, MMLU-Pro, HellaSwag and adapted bits per byte. Down, where its system actually
+finishes once we fine-tune it on a news task. A perfect forecast is the diagonal. The benchmarks
+scatter: GSM8K gets none of the fifteen in the right place. Raw loss puts Gemma, circled, twelve
+places too low --- and Gemma builds the best system of all. Adapted bits per byte, measured with no
+task and no labels, is the diagonal: every model within one rank, eleven exactly, correlation zero
+point nine nine.
 \end{say}
 \cue{LAND THIS: one picture, the whole argument.}
 
