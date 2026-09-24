@@ -1563,9 +1563,30 @@ require("the text quotes Spearman 0.99 with the finish", _flat_h.count("Spearman
 
 # fig_selectors.pdf carries the main result and was added without a gate; a fresh clone would
 # have failed to build with no check firing. Listed here so that cannot recur.
+# Section 3.4: the fine-tune agreement is not news predicting news -- recompute the cross-corpus check.
+print("\nCross-corpus BPB against the news fine-tune")
+_fin = json.load(open("results/downstream.json"))["cohort"]["rouge_l"]
+_nm = lambda m: m.split("/")[-1].replace("-Base-2512", "").replace("-Base", "").lower()
+_F = {_nm(k): v for k, v in _fin.items()}
+_xc = {}
+for _c in ("news", "reddit", "hackernews"):
+    _za = {}
+    for _f in _g2.glob("results/domain_transfer/%s__*.json" % _c):
+        _d = json.load(open(_f)); _za[_nm(_d["model_id"])] = (_d["zero_shot_bpb"], _d["adapted_bpb"])
+    _o = sorted(set(_za) & set(_F))
+    _xc[_c] = (len(_o), _sp([-_za[m][1] for m in _o], [_F[m] for m in _o])[0],
+               _sp([-_za[m][0] for m in _o], [_F[m] for m in _o])[0])
+require("nine models overlap", all(v[0] == 9 for v in _xc.values()))
+require("news and Reddit adapted BPB both 0.983 against the fine-tune",
+        "%.3f" % _xc["news"][1] == "0.983" == "%.3f" % _xc["reddit"][1])
+require("Hacker News adapted 0.933", "%.3f" % _xc["hackernews"][1] == "0.933")
+require("unadapted corpora reach only about 0.6", all(0.55 <= v[2] <= 0.65 for v in _xc.values()))
+require("the paper states the cross-corpus answer", "Spearman $0.983$ each" in " ".join(tex.split()))
+require("LFM2.5-1.2B leaves last place on news", _rz["LiquidAI/LFM2.5-1.2B-Base"] == 10 and _ra["LiquidAI/LFM2.5-1.2B-Base"] == 9)
+
 for figure in ("figures/fig_block_position.pdf", "figures/fig_cross_corpus.pdf",
                "figures/fig_context_length.pdf", "figures/fig_benchmark_alignment.tex",
-               "figures/fig_headline.pdf", "figures/fig_steering.pdf"):
+               "figures/fig_headline.pdf"):
     require("figure " + os.path.basename(figure), os.path.isfile(figure) and os.path.getsize(figure) > 1000)
 
 print("\nPROBLEMS:", bad)

@@ -79,7 +79,7 @@ $2.1$ points apart on HellaSwag and $3.4\%$ apart in adapted bits per byte, yet 
 on GSM8K: two models that model fresh English almost identically well differ by nearly a factor of
 ten on one exam. The second reason is timing. Teams rarely deploy a base model exactly as it ships;
 they adapt it to their data first, so what matters is how good a model \emph{becomes}. A model that has simply never seen prose like the target domain's can look weak out of the box and
-still overtake one that looked stronger. Gemma-4-12B is the case in point (Figure~\ref{fig:headline}, circled): of fifteen models it is ninth
+still overtake one that looked stronger. Gemma-4-12B is the case in point (Figure~\ref{fig:headline}A): of fifteen models it is ninth
 on GSM8K, eighth on MMLU-Pro and thirteenth on raw predictive loss, second once adapted, and it builds
 the best fine-tuned system of all.
 
@@ -107,7 +107,7 @@ of prose into capability; the only models that climb are the three adaptation he
 (Section~\ref{sec:mechanism}). \textbf{The adapted ordering converges on the language benchmark, and
 can be aimed.} It matches HellaSwag at Spearman $0.96$--$0.98$ on news, Reddit and Hacker News, up
 from $0.63$--$0.72$, and adapted on mathematics it swings to GSM8K and MMLU-Pro ($0.91$ and $0.93$;
-Figure~\ref{fig:steering}, Section~\ref{sec:agreement}). \textbf{It is stable where benchmarks are
+Figure~\ref{fig:headline}B, Section~\ref{sec:agreement}). \textbf{It is stable where benchmarks are
 not.} Seed-to-seed variation is a thousandth of the spread between models, cells reproduce across
 hardware, and the ordering carries across domains, while identical weights move GSM8K by up to
 $0.69$ points when only the host changes (Section~\ref{sec:stability}). \textbf{Minutes of adaptation
@@ -115,18 +115,19 @@ anticipate hours of fine-tuning.} A team will fine-tune its chosen model anyway;
 task exists, adapted bits per byte ranks fifteen models at Spearman $0.99$ with where their fine-tuned systems
 finish---every model within one rank, eleven exactly. HellaSwag, the likelihood benchmark, follows at
 $0.97$; the reasoning benchmarks manage $0.59$ (GSM8K) and $0.71$ (MMLU-Pro)
-(Figure~\ref{fig:headline}, Section~\ref{sec:divergence}). Section~\ref{sec:protocol} gives the protocol
+(Section~\ref{sec:divergence}). Section~\ref{sec:protocol} gives the protocol
 and Section~\ref{sec:results} the results in this order. Every number recomputes from a committed
 artifact: \url{https://github.com/DavidAfonsoValente/entropy-bench}.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_headline.pdf}
-\caption{\textbf{Ranked before any fine-tuning, adapted bits per byte already knows where every
-model will finish.} Fifteen base models, each ranked five ways before training (horizontal axis) and
-by the quality of the system it becomes once fine-tuned on a news task (vertical axis). A perfect
-anticipation is the diagonal; the shaded band is within one rank. The reasoning benchmarks scatter, HellaSwag tracks the finish closely, and raw loss misplaces
-Gemma-4-12B (circled) by twelve ranks; adapted bits per byte, measured with no task
-and no labels, puts all fifteen within one rank of their finish and eleven exactly.}
+\caption{\textbf{Adaptation reorders the models, and the new order is the language benchmark's.}
+\textbf{A}: the eleven models ranked by unadapted news loss, by adapted news loss and by HellaSwag.
+Between the first two columns the lines cross: Gemma-4-12B climbs from ninth to second and the
+Liquid model leaves last place. Between the last two they run almost parallel. \textbf{B}: rank
+correlation between BPB and each benchmark before adaptation (hollow) and after (filled). Adapted on
+general text, the ordering converges on HellaSwag on all three corpora; adapted on arXiv mathematics,
+it swings to the reasoning benchmarks.}
 \label{fig:headline}
 \end{figure*}
 \section{The Protocol}
@@ -202,7 +203,8 @@ intervals on one fine-tuned pair resample its $500$ evaluation articles.
 
 \subsection{Adaptation reorders the models}
 \label{sec:mechanism}
-Adapting every model before measuring does not just lower every score; it reorders the models. On
+Adapting every model before measuring does not just lower every score; it reorders the models
+(Figure~\ref{fig:headline}A). On
 news the unadapted and adapted rankings of the eleven models agree only at Spearman $0.655$, on Reddit
 $0.609$ and on Hacker News $0.682$, and a model can move seven places. The movement is not spread
 evenly. Adaptation lowers loss by $3.6$--$5.4\%$ on news for every Qwen, Llama and Ministral model,
@@ -261,15 +263,6 @@ text points the measurement at a capability: the same instrument, fed news, reco
 benchmark, and fed mathematics, recovers the reasoning ones. Benchmarks cannot be aimed this way,
 because each is fixed; a corpus is chosen by whoever is choosing the model.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.72\textwidth]{figures/fig_steering.pdf}
-\caption{\textbf{The corpus aims the measurement.} Rank correlation between BPB and each benchmark
-over the eleven-model cohort, before adaptation (hollow) and after (filled). Adapted on general
-text, the ordering converges on HellaSwag on all three corpora; adapted on arXiv mathematics, it
-swings to the reasoning benchmarks.}
-\label{fig:steering}
-\end{figure}
 \subsection{It is stable where benchmarks are not}
 \label{sec:stability}
 A ranking is only as useful as it is repeatable. Three preregistered seed replicates of all $17$
@@ -326,11 +319,14 @@ while GSM8K and MMLU-Pro sit at $0.474$ and $0.513$---a coin (Figure~\ref{fig:do
 Table~\ref{tab:downstream}). On the pairs the fine-tune itself separates it agrees in $21$ of the
 $22$, and its ranking of the fifteen correlates with their final order at Spearman $0.99$, every model
 within one rank and eleven exactly, where raw loss manages $0.71$, GSM8K $0.59$, MMLU-Pro $0.71$ and
-HellaSwag $0.97$ (Figure~\ref{fig:headline}). The lead over ranking by size resolves under this recipe, $+0.231$
+HellaSwag $0.97$. The lead over ranking by size resolves under this recipe, $+0.231$
 $[+0.059, +0.452]$. A deliberately different recipe---four times the rank, three times the learning
 rate, half the batch, a new seed---leaves the systems' ordering almost unchanged (Spearman $0.982$) and
-adapted BPB still first at $0.923$, in agreement on all $20$ pairs that recipe separates. That the two
-agree is expected---both adapt the model to news---and it is the point: the few minutes of unlabelled
+adapted BPB still first at $0.923$, in agreement on all $20$ pairs that recipe separates. The two measurements share a domain, so their agreement could be suspected of being news predicting
+news. It is not: adapted on Reddit instead, BPB orders the nine models that both analyses cover
+exactly as well as news BPB does (Spearman $0.983$ each), Hacker News reaches $0.933$, and the same
+corpora unadapted reach only about $0.6$. What carries the prediction is the adaptation, not a shared
+domain, and that is the point: the few minutes of unlabelled
 adaptation behind a BPB number already contain most of what hours of labelled fine-tuning reveal, and
 the benchmarks read before choosing contain almost none of it. \textbf{Gemma-4-12B}, $9$th and $8$th of
 fifteen on GSM8K and MMLU-Pro, builds the best system of the fifteen, beating Ministral-3-14B by

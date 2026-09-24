@@ -259,16 +259,16 @@
 
 % ==================================================================== 7
 \begin{frame}
-  \frametitle{Adapted BPB already knows where each model will finish}
-  \framesubtitle{Fifteen models: rank by each measure (horizontal) vs.\ rank after fine-tuning (vertical)}
+  \frametitle{Adaptation reorders the models --- and lands on the language benchmark}
+  \framesubtitle{Left: eleven models ranked three ways on news. Right: what the adapted ordering tracks.}
 
   \vspace{-0.2em}
   \begin{center}
     \includegraphics[width=0.97\textwidth]{fig_headline.pdf}
   \end{center}
   \vspace{-0.5em}
-  \punch{\small Adapted BPB: Spearman \goodw{0.99} with the final order, every model within one rank.
-  GSM8K 0.59, MMLU-Pro 0.71, raw loss 0.71 --- and raw loss misplaces Gemma-4-12B by twelve ranks.}
+  \punch{\small Gemma-4-12B climbs from ninth to second; after adaptation the order is HellaSwag's
+  (Spearman \goodw{0.96--0.98}). Adapted on maths instead, it swings to GSM8K and MMLU-Pro.}
 \end{frame}
 
 % ==================================================================== 8
@@ -303,7 +303,16 @@
 
   \vspace{0.6em}
   \begin{center}
-    \includegraphics[width=0.58\textwidth]{fig_steering.pdf}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{lcc}
+    \toprule
+    & \textbf{Before adaptation} & \textbf{After adaptation} \\
+    \midrule
+    HellaSwag, on news / Reddit / Hacker News & $0.63$--$0.72$ & \goodw{$0.96$--$0.98$} \\
+    GSM8K, adapted on arXiv mathematics & $0.76$ & \goodw{$0.91$} \\
+    MMLU-Pro, adapted on arXiv mathematics & $0.74$ & \goodw{$0.93$} \\
+    \bottomrule
+  \end{tabular}
   \end{center}
 
   \vspace{0.8em}

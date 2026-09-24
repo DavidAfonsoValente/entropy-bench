@@ -10,12 +10,12 @@ predicting text. Entropy Bench measures exactly that — held-out loss in bits p
 decontaminated text from the domain of use, after every candidate has been adapted to it the same
 way — instead of reading a public scorecard.
 
-![Ranked before any fine-tuning, adapted bits per byte already knows where every model will finish](figures/fig_headline.png)
+![Adaptation reorders the models, and the new order is the language benchmark's](figures/fig_headline.png)
 
-*Fifteen base models, each ranked before any fine-tuning (horizontal) against where its system
-finishes once fine-tuned on a news task (vertical). The reasoning benchmarks scatter and HellaSwag
-tracks the finish closely (0.97); adapted bits per byte,
-measured with no task and no labels, puts every model within one rank of its finish (Spearman 0.99).*
+*Left: eleven base models ranked by loss on news before adaptation, after adaptation, and by
+HellaSwag. Adaptation reorders them — Gemma-4-12B climbs from ninth to second — and the adapted
+order runs almost parallel to HellaSwag's. Right: adapted on general text the ranking converges on
+HellaSwag on every corpus; adapted on arXiv mathematics it swings to GSM8K and MMLU-Pro.*
 
 **[Read the paper](paper_sota.pdf) · [Start in five minutes](docs/QUICKSTART.md) · [View the
 leaderboard](LEADERBOARD.md) · [Understand a result](docs/RESULTS.md) · [Check the
@@ -55,8 +55,10 @@ Across seventeen base models (0.5B–35B, eight families) and four corpora:
 - **It is stable where benchmarks are not.** Seed-to-seed variation is 0.0012× the spread between
   models; cells reproduce across hardware to within 0.0003. The same weights move GSM8K by up to
   0.69 points when only the evaluation host changes.
-- **Minutes of adaptation anticipate hours of fine-tuning.** Figure above: 0.949 of size-matched
-  pairs ordered as the fine-tune orders them, against 0.474 for GSM8K and 0.513 for MMLU-Pro.
+- **Minutes of adaptation anticipate hours of fine-tuning.** Ranked before any task exists, fifteen
+  models land within one rank of where their fine-tuned news systems finish (Spearman 0.99; GSM8K
+  0.59, MMLU-Pro 0.71). It is not news predicting news: BPB adapted on Reddit predicts the news
+  fine-tune exactly as well as news BPB does.
 
 ## The method
 

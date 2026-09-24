@@ -151,15 +151,14 @@ the search by time, small models finish more trials and get tuned better.
 \end{say}
 
 % ================================================================ 7
-\slide{7}{Ranked before fine-tuning, adapted BPB already knows where each model finishes}{4:34--5:19}
+\slide{7}{Adaptation reorders the models --- and lands on the language benchmark}{4:34--5:19}
 \begin{say}
-Here is the result on one slide. Fifteen models. Across, each is ranked before any fine-tuning ---
-by raw loss, GSM8K, MMLU-Pro, HellaSwag and adapted bits per byte. Down, where its system actually
-finishes once we fine-tune it on a news task. A perfect forecast is the diagonal. The benchmarks
-scatter: GSM8K gets none of the fifteen in the right place. Raw loss puts Gemma, circled, twelve
-places too low --- and Gemma builds the best system of all. Adapted bits per byte, measured with no
-task and no labels, is the diagonal: every model within one rank, eleven exactly, correlation zero
-point nine nine.
+Here is the result on one slide. On the left, eleven models ranked three ways on news: by loss before
+adaptation, by loss after, and by HellaSwag. Watch the lines. Between the first two columns they
+cross everywhere --- Gemma-4-12B, in blue, climbs from ninth to second, and the Liquid model leaves
+last place. Between the last two columns they run almost parallel: once familiarity is removed, the
+order is HellaSwag's. On the right, the same effect across corpora --- and adapted on maths, the
+ranking swings to the reasoning benchmarks instead.
 \end{say}
 \cue{LAND THIS: one picture, the whole argument.}
 
