@@ -84,7 +84,7 @@ def test_committed_artifacts_match_a_fresh_computation():
     """The same gate `make check` runs, so a stale table fails the suite too."""
     report = am.build()
     assert json.loads(am.OUTPUT_JSON.read_text()) == json.loads(
-        json.dumps(report, sort_keys=True)
+        json.dumps(am._portable(report), sort_keys=True)  # the same rounding the artifact is written with
     )
     assert am.OUTPUT_TEX.read_text() == am.render_matrix_tex(report)
     assert am.OUTPUT_REGRET_TEX.read_text() == am.render_regret_tex(report)

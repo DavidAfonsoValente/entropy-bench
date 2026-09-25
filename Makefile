@@ -92,6 +92,7 @@ check:
 	$(PYTHON) tools/make_coverage_table.py --check
 	$(PYTHON) tools/make_cohort_table.py --check
 	$(PYTHON) tools/make_rank_table.py --check
+	$(PYTHON) tools/make_crosscorpus_table.py --check
 	$(PYTHON) tools/repo_map.py --check
 	@if [ -f paper_sota.log ]; then \
 	  $(PYTHON) tools/check_paper_refs.py; \
@@ -107,7 +108,7 @@ slides: slides/talk.tex slides/script.tex figures/fig_headline.pdf figures/fig_d
 	cd slides && $(PDFLATEX) script.tex && $(PDFLATEX) script.tex
 	cd slides && rm -f *.aux *.log *.nav *.out *.snm *.toc
 
-paper_sota.pdf: paper_sota.tex dt_table.tex rank_table.tex figures/fig_benchmark_alignment.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf figures/fig_headline.pdf
+paper_sota.pdf: paper_sota.tex dt_table.tex rank_table.tex crosscorpus_table.tex figures/fig_benchmark_alignment.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf figures/fig_headline.pdf
 	@if command -v latexmk >/dev/null 2>&1; then \
 		$(LATEXMK) $<; \
 	else \

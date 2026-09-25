@@ -1589,6 +1589,22 @@ _rt = open("rank_table.tex").read()
 require("Table 1 Llama row: BPB 8th, HellaSwag 9th, last on GSM8K and MMLU-Pro",
         "Llama-3.2-1B & 1.2 & 0.811 (7) & 0.771 (8) & $\\downarrow$1 & 4.9\\% & 65.8 (9) & 6.4 (11) & 11.2 (11)" in _rt)
 
+# Section 3.3: why benchmarks move and BPB does not, and the cross-corpus table.
+print("\nStability explanation and cross-corpus table")
+_flat_s = " ".join(tex.split())
+_news_blocks = {json.load(open(f))["n_test_blocks_scored"] for f in _g2.glob("results/domain_transfer/news__*.json")}
+require("news test set is 2500 blocks of 512 tokens (about 1.3 million predictions)",
+        _news_blocks == {2500} and "about $1.3$ million token predictions" in _flat_s)
+require("each GSM8K question is worth 0.076 points", "%.3f" % (100 / 1319) == "0.076" and "worth $0.076$ points" in _flat_s)
+sys.path.insert(0, "tools")
+import make_crosscorpus_table as _mx
+_xrows = _mx.render().splitlines()
+_math = [r for r in _xrows if "arXiv maths" in r]
+_mz = [float(r.split("&")[1]) for r in _math]; _ma = [float(r.split("&")[2]) for r in _math]
+require("maths agreement 0.91-0.97 unadapted, 0.74-0.84 adapted",
+        ("%.2f" % min(_mz), "%.2f" % max(_mz), "%.2f" % min(_ma), "%.2f" % max(_ma)) == ("0.91", "0.97", "0.74", "0.84")
+        and "$0.91$--$0.97$ unadapted" in _flat_s and "$0.74$--$0.84$ adapted" in _flat_s)
+
 for figure in ("figures/fig_block_position.pdf", "figures/fig_cross_corpus.pdf",
                "figures/fig_context_length.pdf", "figures/fig_benchmark_alignment.tex",
                "figures/fig_headline.pdf"):

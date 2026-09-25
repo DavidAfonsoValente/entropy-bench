@@ -286,11 +286,11 @@ because each is fixed; a corpus is chosen by whoever is choosing the model.
 
 \begin{table}[t]
 \centering\small
-\begin{tabular}{llcccc}
+\begin{tabular}{llcccccc}
 \toprule
-& & \multicolumn{3}{c}{\textbf{Rank correlation ($\rho$) with}} & \textbf{Pairs ordered} \\
-\cmidrule(lr){3-5}
-\textbf{Corpus} & \textbf{Reading} & GSM8K & MMLU-Pro & HellaSwag & \textbf{as GSM8K} \\
+& & \multicolumn{3}{c}{\textbf{Rank correlation ($\rho$) with}} & \multicolumn{3}{c}{\textbf{Pairs ordered the same way, of 55}} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+\textbf{Corpus} & \textbf{Reading} & GSM8K & MMLU-Pro & HellaSwag & GSM8K & MMLU-Pro & HellaSwag \\
 \midrule
 \input{alignment_matrix_table.tex}
 \bottomrule
@@ -298,8 +298,8 @@ because each is fixed; a corpus is chosen by whoever is choosing the model.
 \caption{\textbf{Adaptation turns the ranking toward the benchmark that matches the text.} Rank
 correlation of BPB with each benchmark over the eleven models, before and after adaptation, on every
 corpus. On the three general corpora adaptation lifts HellaSwag from $0.63$--$0.72$ to $0.96$--$0.98$
-while GSM8K falls; on arXiv mathematics it lifts GSM8K and MMLU-Pro instead. The last column counts
-the $55$ model pairs ordered the same way as GSM8K.}
+while GSM8K falls; on arXiv mathematics it lifts GSM8K and MMLU-Pro instead. The last three columns count, of the $55$ model pairs, those that BPB orders
+the same way as each benchmark: adapted news BPB agrees with HellaSwag on $53$.}
 \label{tab:alignment}
 \end{table}
 
@@ -309,20 +309,32 @@ A ranking is only as useful as it is repeatable. Three preregistered seed replic
 news cells put the median within-model standard deviation of adapted BPB at $0.000087$ against a
 between-model spread of $0.074340$, a ratio of $0.0012$, and not one of the $40$ size-matched pairs (models within $2\times$ in parameters) reverses its order
 across seeds; the one model where seed noise is visible at all is Gemma-4-12B,
-by up to $1.24\%$. Re-running two cells weeks later on different hardware reproduced zero-shot BPB
+by up to $1.24\%$. Re-running two cells on different hardware reproduced zero-shot BPB
 exactly and adapted BPB to within $0.0003$, and a cell re-run through a different software stack
 reproduced to $0.01\%$. The ordering also carries across domains: adapted rankings agree at
 $\rho=0.991$ between news and Reddit, $0.955$ between news and Hacker News and $0.964$ between Reddit
-and Hacker News (Figure~\ref{fig:crosscorpus}). The unadapted ordering is just as stable across
+and Hacker News (Table~\ref{tab:crosscorpus}, Figure~\ref{fig:crosscorpus}). The unadapted ordering is just as stable across
 domains---$0.982$, $0.964$ and $0.973$---so adaptation does not buy stability; it buys a \emph{different}
 stable ordering, the one Section~\ref{sec:mechanism} explains and Section~\ref{sec:agreement} shows
-converging on the language benchmark.
+converging on the language benchmark. Only mathematics breaks from the rest, and only after
+adaptation: its agreement with the general corpora falls from $0.91$--$0.97$ unadapted to
+$0.74$--$0.84$ adapted, because adapting on mathematics exposes a different capability.
 
 Benchmark scores do not have this property. Identical released weights move $-0.60$ to $+0.69$ GSM8K
 points when only the host changes, A100 to H100, and one decoding setting a checkpoint ships with was
 worth $9.86$ GSM8K and $14.30$ MMLU-Pro points to Gemma-4-12B in our re-score
-(Appendix~\ref{app:rescore}). A generative benchmark measures the model, the harness, the decoding
-configuration and the hardware at once; bits per byte on a fixed corpus measures the model.
+(Appendix~\ref{app:rescore}). The difference is structural rather than a matter of care. Both measurements run on hardware with
+the same floating-point nondeterminism---GPU reductions are not associative, and their results can
+change with batch size and kernel choice \cite{he2025nondeterminism}---but they are exposed to it in
+opposite ways. A generative benchmark decodes greedily: a perturbation in the last bits of two nearly
+tied logits flips one token, the model then conditions on its own altered output, and the divergence
+compounds over a chain-of-thought answer until it flips a right-or-wrong verdict, with each of GSM8K's
+$1{,}319$ questions worth $0.076$ points. BPB is scored with teacher forcing: every prediction
+conditions on the true text rather than on the model's own earlier choices, so a perturbation shifts
+one log-probability slightly and never propagates, and it is averaged over about $1.3$ million token
+predictions on news. Decoding settings, which moved Gemma-4-12B by ten GSM8K points, do not enter at
+all, because nothing is generated. A generative benchmark measures the model, the harness, the
+decoding configuration and the hardware at once; bits per byte on a fixed corpus measures the model.
 
 \begin{figure}[ht]
 \centering
@@ -333,24 +345,47 @@ remain close to a monotone shared ordering: Pearson correlations between score v
 Qwen-3.5-35B-MoE; M14 is Ministral-3-14B.}
 \label{fig:crosscorpus}
 \end{figure}
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{\textbf{Rank agreement} (Spearman)} & \multicolumn{2}{c}{\textbf{Value agreement} (Pearson)} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{Corpora compared} & unadapted & adapted & unadapted & adapted \\
+\midrule
+\input{crosscorpus_table.tex}
+\bottomrule
+\end{tabular}
+\caption{\textbf{The ordering is a property of the models, not of one corpus.} Agreement between the
+eleven models' BPB on two corpora. The three general-text corpora rank the models almost identically
+before and after adaptation. Mathematics is the telling row: adaptation makes it agree \emph{less}
+with the general corpora, because adapted on mathematics the ranking follows a different capability
+(Section~\ref{sec:agreement}).}
+\label{tab:crosscorpus}
+\end{table}
 \subsection{Minutes of adaptation anticipate hours of fine-tuning}
 \label{sec:divergence}
 Whichever model a team chooses, it will then train that model for its task. The practical question is
-whether the cheap measurement already says how that will go. We fine-tuned fifteen of the seventeen
-models---every one that fits a single GPU---on a news task, writing the opening paragraph of an article
+whether the cheap measurement already says how that will go. We fine-tuned fifteen of the seventeen models of the extended cohort (Table~\ref{tab:cohort})---all
+but Gemma-4-31B and Qwen-3.5-35B-MoE, which do not fit one GPU---on a news task, writing the opening paragraph of an article
 from its body, with one identical LoRA recipe and ROUGE-L against the human-written lede on $500$ held-out
-articles from a split the BPB test blocks do not touch; the analysis was fixed in code before the jobs
-ran (Appendix~\ref{sec:downstream}).
+articles from a split the BPB test blocks do not touch; the analysis was fixed in code before the jobs ran (Appendix~\ref{sec:downstream}). The task is
+chosen so that every article supplies its own label: the journalist's opening paragraph is the
+reference, so no annotation is needed, and writing it requires reading the whole article and
+producing prose in the domain's style. ROUGE-L, the longest-common-subsequence overlap with that
+reference, is the standard automatic score for such summary generation \cite{lin2004rouge}.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_downstream.pdf}
-\caption{\textbf{Does each selector agree with the fine-tuned outcome?} Every size-matched pair of the
-fifteen fine-tuned models, oriented so the selector prefers the first: $x$ is how strongly it
-prefers it, $y$ how much better that model's fine-tuned system scored. Above the line is a pair the selector orders as the fine-tune does; filled markers are pairs the
-fine-tune itself resolves. Adapted BPB agrees on $37$ of the $39$ pairs, and on $21$ of the $22$ the
-fine-tune separates; HellaSwag follows at $34$. GSM8K agrees on $18$ of $38$, and every one of its
-eleven gaps between $15$ and $25$ points sits \emph{below} the line, on a pair where it favoured the
-model with the weaker system.}
+\caption{\textbf{Does each way of ranking agree with the fine-tuned outcome?} Each point is one pair
+of the fifteen fine-tuned models whose parameter counts are within $2\times$ of each other---$39$ such
+pairs, $38$ for GSM8K, on which two models tie. Each pair is oriented so that the ranking prefers its
+first model: $x$ is how strongly it prefers it (the gap in that measure), $y$ is how much higher the
+first model's fine-tuned system scores in ROUGE-L. Points above the line are pairs the ranking orders
+as the fine-tune does; filled markers are pairs whose ROUGE-L difference is itself resolved by a
+bootstrap over the $500$ articles. Adapted BPB agrees on $37$ of $39$, and on $21$ of the $22$
+resolved pairs; HellaSwag on $34$; GSM8K on $18$ of $38$, and every one of its eleven gaps between $15$
+and $25$ points sits below the line.}
 \label{fig:downstream}
 \end{figure}
 Over all $39$ size-matched pairs the fifteen systems form, adapted BPB, measured with no task and no
@@ -454,6 +489,8 @@ resolve every gap, and a larger, more diverse cohort is the next step.
 \bibitem{krause2019dynamictransformer} Krause, B., Kahembwe, E., Murray, I., and Renals, S. (2019). Dynamic Evaluation of Transformer Language Models. arXiv:1904.08378.
 \bibitem{gururangan2020dapt} Gururangan, S., et al. (2020). Don't Stop Pretraining: Adapt Language Models to Domains and Tasks. ACL. arXiv:2004.10964.
 \bibitem{akiba2019optuna} Akiba, T., Sano, S., Yanase, T., Ohta, T., and Koyama, M. (2019). Optuna: A Next-generation Hyperparameter Optimization Framework. KDD. arXiv:1907.10902.
+\bibitem{he2025nondeterminism} He, H., and Thinking Machines Lab (2025). Defeating Nondeterminism in LLM Inference. Thinking Machines Lab: Connectionism. \url{https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/}.
+\bibitem{lin2004rouge} Lin, C.-Y. (2004). ROUGE: A Package for Automatic Evaluation of Summaries. ACL Workshop on Text Summarization Branches Out.
 \bibitem{hu2021lora} Hu, E. J., et al. (2021). LoRA: Low-Rank Adaptation of Large Language Models. ICLR 2022. arXiv:2106.09685.
 \bibitem{dubey2024llama3} Dubey, A., et al. (2024). The Llama 3 Herd of Models. arXiv:2407.21783.
 \bibitem{yang2024qwen25} Yang, A., et al. (2024). Qwen2.5 Technical Report. arXiv:2412.15115.
@@ -530,8 +567,8 @@ Table~\ref{tab:alignment} (Section~\ref{sec:agreement}) reports all twenty-four 
 benchmark) cells over the full $55$ pairs; Table~\ref{tab:regret} prices each reading's top-1 pick against each
 benchmark's own.  The rotation (Appendix~\ref{app:robust}) is legible column by column: adapting on general
 text raises HellaSwag agreement and lowers the GSM8K column on every corpus and MMLU-Pro on two of
-the three general-text corpora; adapting on mathematics reverses the GSM8K half. The pairs-correct column---GSM8K only---shows how little of this is visible in a rank
-correlation: across its eight rows it spans $41/55$ to $49/55$.
+the three general-text corpora; adapting on mathematics reverses the GSM8K half. The pair columns show how little of this a rank correlation conveys: across its eight rows the
+GSM8K column spans $41$ to $49$ of $55$ pairs.
 \begin{table}[t]
 \centering\small
 \begin{tabular}{llccc}

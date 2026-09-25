@@ -44,6 +44,7 @@ Packaging, licence, citation metadata.
 | `paper_sota.pdf` | — |
 | `paper_sota.tex` | — |
 | `pyproject.toml` | — |
+| `rank_table.tex` | — |
 | `requirements.txt` | — |
 | `run_bench.sh` | Master Launcher (Heterogeneous GPU Resource-Aware Discovery) |
 | `selection_regret_table.tex` | — |
@@ -313,6 +314,7 @@ One-off analysis, data preparation and reporting scripts run against finished re
 | `tools/make_downstream_table.py` | Render the downstream fine-tune (E11) as LaTeX rows |
 | `tools/make_dt_table.py` | Emit the domain-transfer results table body as LaTeX rows, ordered by news adapted BPB |
 | `tools/make_mechanism_table.py` | Emit the rank-comparison table body as LaTeX rows, ordered by the in-domain criterion |
+| `tools/make_rank_table.py` | Emit Table 1: the eleven-model cohort on news, ranked every way the paper compares |
 | `tools/materialise_prefixed_text_model.py` | Write a plain causal-LM copy of a checkpoint whose text weights sit under a prefix |
 | `tools/merge_adapter.py` | Merge a LoRA adapter into its base model and write a standalone checkpoint |
 | `tools/normalize_block_position.py` | Add byte-normalized block-position metrics to token-gain JSON output |
