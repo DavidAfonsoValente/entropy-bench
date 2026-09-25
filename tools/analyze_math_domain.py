@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Answer docs/PLAN.md's math-domain question: does math-adapted BPB rank-agree with
+"""Answer the math-domain question: does math-adapted BPB rank-agree with
 GSM8K accuracy better than the paper's existing news-adapted-BPB baseline (rho=0.727)?
 
 Reuses the exact statistics (ranks, Pearson, Kendall tau_a) from

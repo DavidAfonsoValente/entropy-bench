@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Two discriminating checks flagged by advisor review before docs/PLAN.md's math-domain
+"""Two discriminating checks flagged by advisor review before the math-domain
 result (rho=0.727 -> 0.936 for GSM8K) gets treated as settled:
 
 1. Spearman(math-adapted-BPB ranks, news-adapted-BPB ranks) -- if this is already ~0.95+,

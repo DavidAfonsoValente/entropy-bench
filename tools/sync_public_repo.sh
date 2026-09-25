@@ -26,10 +26,11 @@ PUSH=0
 #   - agent instructions and internal state docs (routing, ledger, roadmap, sales positioning,
 #     and docs/STATUS.md, the session-to-session state file added after this list was written)
 #   - GCP runners: they hard-code our private GCS bucket and are useless to an outside reader
+#   - results/_council/: internal cross-model deliberation notes, which cite the internal docs above
 #   - per-example samples: ~370 MB of samples_*.jsonl(.gz). The public repo has never carried
 #     these; they live in gs://gpu-llm-training-gceval/token_gain/adapted_bench/. The scored
 #     results_*.json summaries ARE published, so every number in the paper stays greppable.
-EXCLUDE_RE='^(CLAUDE|AGENTS|GEMINI)\.md$|^docs/(POSITIONING|PROGRESS|RUN_LEDGER|PLAN|STATUS)\.md$|^tools/(gcp_[a-z_]*\.sh|gce_run_watchdog\.sh)$|samples_.*\.jsonl(\.gz)?$|^\.claude/'
+EXCLUDE_RE='^(CLAUDE|AGENTS|GEMINI)\.md$|^docs/(POSITIONING|PROGRESS|RUN_LEDGER|PLAN|STATUS)\.md$|^tools/(gcp_[a-z_]*\.sh|gce_run_watchdog\.sh)$|samples_.*\.jsonl(\.gz)?$|^\.claude/|^results/_council/'
 
 # Files that exist only in the public repo and must survive a sync rather than being deleted.
 KEEP_PUBLIC='^docs/TITLE_OPTIONS\.md$'
@@ -123,11 +124,12 @@ done < <(git ls-files | grep -E "$EXCLUDE_RE")
 echo "  clean"
 
 echo "==> running the full gate inside the staged public tree"
-# References from published docs to withheld internal files are expected to dangle; tell the map
-# check exactly which paths were withheld (outside the tree, so it is not itself published).
-WITHHELD="$WORK.withheld"
-git ls-files | grep -E "$EXCLUDE_RE" > "$WITHHELD" || true
-( cd "$WORK" && REPO_MAP_WITHHELD_FILE="$WITHHELD" make check PYTHON="$PYTHON" ) || {
+# The private docs/MAP.md describes files the public tree withholds; regenerate it here so the
+# public repository's own map (and its CI's dangling-reference check) matches what it contains.
+# repo_map reads `git ls-files`, so stage the new snapshot first or the map describes the old one.
+git -C "$WORK" add -A -- . ":!$(basename "$MARKER")"  # the marker is scaffolding, never content
+( cd "$WORK" && "$PYTHON" tools/repo_map.py >/dev/null )
+( cd "$WORK" && make check PYTHON="$PYTHON" ) || {
   echo "refusing to sync: the public tree does not pass its own gate." >&2
   echo "A file the gate reads is probably untracked here -- check .gitignore's results/ allowlist." >&2
   exit 1
