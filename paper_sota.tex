@@ -48,17 +48,15 @@
 Choosing a base model today means reading benchmark scores that vendors optimise for, that can leak
 into training data, and that score a model before the fine-tune it will receive. We show that a few
 minutes of unlabelled adaptation to the domain predict how the models rank once fine-tuned for a task,
-before the task's data exist. Every candidate is adapted
-the same way to fresh text from the target domain (minutes to an hour on one GPU) and ranked by how
-well it then predicts held-out text, in bits per byte (BPB). Ranked before any task exists, fifteen base
-models land within one rank of where they finish once fine-tuned on a news-writing task (Spearman
-rank correlation $0.99$); HellaSwag
-follows at $0.97$, while GSM8K and MMLU-Pro manage $0.59$ and $0.71$. Across seventeen models, eleven of
-them on four corpora (news, Reddit, Hacker News and arXiv mathematics), adaptation reorders the
-models, lifting some that look weak before adaptation to the top; the
-adapted ordering converges on HellaSwag, the likelihood-scored benchmark, turns toward GSM8K and
-MMLU-Pro when the text is mathematics, and stays stable across seeds, hardware and general-text
-corpora. The measurement needs no labels, no benchmark and no task. Code and artifacts are released.
+before the task's data exist. Every candidate is adapted the same way to fresh text from the target
+domain (minutes to an hour on one GPU) and ranked by how well it then predicts held-out text, in bits
+per byte (BPB). Ranked this way before any task exists, fifteen base models land within one rank of
+where they finish once fine-tuned on a news-writing task. Adaptation reorders the models, lifting some
+that look weak before adaptation to the top. The adapted ordering converges on HellaSwag, the
+likelihood-scored benchmark closest to language modelling. The text decides what the ranking measures:
+adapted on arXiv mathematics instead of news, Reddit or Hacker News, it turns to the reasoning
+benchmarks GSM8K and MMLU-Pro. The ordering is stable across seeds and hardware, and the measurement
+needs no labels, no benchmark and no task. Code and artifacts are released.
 \end{abstract}
 
 \section{Introduction}
@@ -426,31 +424,42 @@ the deliberately different recipe B. GSM8K ties one pair and is scored on $38$.}
 
 \section{Conclusion}
 \label{sec:using}
-Adapting to the domain predicts fine-tuning on the task: minutes of unlabelled adaptation tell which
-base model will fine-tune best. All fifteen fine-tuned
-systems finish within one rank of where adapted BPB placed their models (Spearman $0.99$), where the
-reasoning benchmarks manage $0.59$--$0.71$, and adapting on Reddit instead of news predicts the news
-fine-tune just as well. The principle explains why: there is no universal ground
-truth, the loss is the objective the adaptation minimises for every candidate, and its differences
-are differences in distance from the text. Adaptation removes familiarity with the text's style, the
-ordering that remains follows the capability the text exercises (language on general text,
-reasoning on mathematics), and it is stable where benchmark scores move with the host.
+Base models are chosen by public benchmarks, and benchmarks fail in three ways. They are
+\emph{expensive to run well}: a generative benchmark decodes every answer and its score moves with the
+host and the decoding settings, while the evaluation a team actually needs, fine-tuning every
+candidate on its task, costs a training run per model. They are \emph{not aligned with deployment}:
+they grade a fixed exam on a model as it ships, while teams adapt the model to their own text first.
+And they are \emph{contaminated}: they are public, vendors optimise for them, and their items can reach
+pre-training data.
 
-Fine-tuning every candidate evaluates one task once its data and budget exist; adapted BPB gives the
-fine-tune's ranking before either, in minutes per model, from text alone. The method tunes each model;
-for compute, the runs here share one recipe, and a fine-tune with four times the rank and three times
-the learning rate leaves the systems' order at Spearman $0.982$, with adapted BPB predicting it under
-both. HellaSwag comes close on news, but it is one fixed, public
-exam: on mathematics adapted BPB turns to the reasoning benchmarks, and the decontaminated text
-it is measured on is text no model has seen. Every checkpoint here is a base model; a post-trained one is
-adapted the same way, and the measurement runs on it unchanged.
+We introduce a dynamic evaluation that addresses all three. Every candidate is adapted the same way to
+fresh, decontaminated text from the domain of use and ranked by held-out bits per byte: the loss every
+candidate is adapted to minimise, counted in bytes so that every tokenizer shares one scale.
 
-Adaptation here is $4.1$M tokens per model, minutes to an hour on one A100. A different seed moves
-adapted BPB by up to $1.24\%$ (Gemma-4-12B; the median model, $0.01\%$), so we treat a gap under $2\%$ as a tie. The unadapted number costs one forward pass and
-mostly measures how familiar a model already is with the text. Results are comparable only when
-corpus, split, context, masking and adaptation all match, so the released benchmark keeps one
-leaderboard per corpus and recipe: a news track run by the maintainers, and a mathematics track on
-arXiv titles and abstracts whose corpus is public.
+\textbf{It is cheap.} Adaptation costs minutes to an hour per model on one GPU and needs no labels,
+yet it predicts the expensive evaluation. All fifteen fine-tuned systems finish within one rank of
+where adapted BPB placed their models (Spearman $0.99$), against $0.59$--$0.71$ for the reasoning
+benchmarks, and adapting on Reddit instead of news predicts the news fine-tune just as well. The
+method tunes each model; for compute, the runs here share one recipe, and a very different
+fine-tuning recipe leaves the systems' order at Spearman $0.982$.
+
+\textbf{It is aligned.} It measures each model after adaptation, on the text it will be used on.
+Adaptation removes familiarity with the text's style and reorders the models: Gemma-4-12B, ninth of
+eleven before adaptation, is second after and builds the best of the fifteen fine-tuned systems. The
+text aims the ranking: on general text it converges on HellaSwag (Spearman $0.96$--$0.98$), and on
+mathematics it turns to GSM8K and MMLU-Pro ($0.91$ and $0.93$).
+
+\textbf{It is clean.} The text is dated after release, deduplicated and screened for membership, so no
+model has seen it, and a new corpus can be drawn for every domain and every evaluation. Teacher
+forcing makes the number stable: seed-to-seed variation is a thousandth of the spread between models.
+A different seed moves adapted BPB by up to $1.24\%$ (Gemma-4-12B; the median model, $0.01\%$), so we
+treat a gap under $2\%$ as a tie, while identical weights move GSM8K by up to $0.69$ points when only
+the host changes.
+
+Every model here is a base checkpoint; a post-trained one is adapted the same way, and the
+measurement runs on it unchanged. The released benchmark keeps one leaderboard per corpus and
+recipe: a news track run by the maintainers, and a mathematics track on arXiv titles and abstracts
+whose corpus is public.
 
 {\small
 \bibliographystyle{plain}
