@@ -437,12 +437,12 @@ ordering that remains follows the capability the text exercises (language on gen
 reasoning on mathematics), and it is stable where benchmark scores move with the host.
 
 Fine-tuning every candidate evaluates one task once its data and budget exist; adapted BPB gives the
-fine-tune's ranking before either, in minutes per model, from text alone. Neither stage is tuned per
-model, and neither needs to be: a fine-tune with four times the rank and three times the learning
-rate leaves the systems' order at Spearman $0.982$, so that order belongs to the models rather than
-to one recipe, and adapted BPB predicts it under both. HellaSwag comes close on news, but it is one fixed, public
-exam: on mathematics adapted BPB turns to the reasoning benchmarks, and text dated after every
-release, as Reddit, Hacker News and arXiv are here, is text no model can have seen. Every checkpoint here is a base model; a post-trained one is
+fine-tune's ranking before either, in minutes per model, from text alone. The method tunes each model;
+for compute, the runs here share one recipe, and a fine-tune with four times the rank and three times
+the learning rate leaves the systems' order at Spearman $0.982$, with adapted BPB predicting it under
+both. HellaSwag comes close on news, but it is one fixed, public
+exam: on mathematics adapted BPB turns to the reasoning benchmarks, and the decontaminated text
+it is measured on is text no model has seen. Every checkpoint here is a base model; a post-trained one is
 adapted the same way, and the measurement runs on it unchanged.
 
 Adaptation here is $4.1$M tokens per model, minutes to an hour on one A100. A different seed moves
