@@ -5,10 +5,10 @@
 [![License](https://img.shields.io/badge/code-Apache--2.0-blue.svg)](LICENSE)
 [![Paper](https://img.shields.io/badge/paper-PDF-b31b1b.svg)](paper_sota.pdf)
 
-**Evaluate language models as language models.** Every ability a base model has, it learned by
-predicting text. Entropy Bench measures exactly that — held-out loss in bits per byte, on fresh,
-decontaminated text from the domain of use, after every candidate has been adapted to it the same
-way — instead of reading a public scorecard.
+**Adapting to the domain predicts fine-tuning on the task.** Every candidate base model is adapted
+the same way to unlabelled text from a domain — minutes to an hour per model on one GPU — and ranked
+by held-out loss in bits per byte. On fifteen models that ranking lands every one within one rank of where its fine-tuned system
+finishes (Spearman 0.99; HellaSwag 0.97, MMLU-Pro 0.71, GSM8K 0.59).
 
 ![Adaptation reorders the models, and the new order is the language benchmark's](figures/fig_headline.png)
 
@@ -35,7 +35,8 @@ on GSM8K and MMLU-Pro; once adapted it is second, and fine-tuned it builds the b
 ## Why loss
 
 There is no universal ground truth for which base model is better; a task only says which is better
-at that task. Loss is the principled yardstick: every base model was trained to minimise it, and on
+at that task. Loss is the principled yardstick: every base model was trained to minimise it, adaptation
+minimises it again on the domain, and on
 shared text the difference between two models' expected losses is exactly the difference in their
 KL divergence from the text's distribution. Dividing by UTF-8 bytes rather than tokens puts every
 tokenizer on one scale. The protocol adds what makes that usable: text dated after every model
@@ -45,6 +46,10 @@ shipped, deduplicated and screened for membership, and the same adaptation for e
 
 Across seventeen base models (0.5B–35B, eight families) and four corpora:
 
+- **Adapting to the domain predicts fine-tuning on the task.** Ranked before any task exists, fifteen
+  models land within one rank of where their fine-tuned news systems finish (Spearman 0.99; HellaSwag
+  0.97, MMLU-Pro 0.71, GSM8K 0.59). It is not news predicting news: BPB adapted on Reddit predicts the news
+  fine-tune exactly as well as news BPB does.
 - **Adaptation reorders the models.** Unadapted and adapted rankings agree only at Spearman
   0.61–0.68. Unadapted loss mixes familiarity with a style of prose into capability: the two Gemmas
   and the Liquid model gain 17–36% from adaptation where every other model gains 3.6–5.4%, and they are
@@ -55,18 +60,13 @@ Across seventeen base models (0.5B–35B, eight families) and four corpora:
 - **It is stable where benchmarks are not.** Seed-to-seed variation is 0.0012× the spread between
   models; cells reproduce across hardware to within 0.0003. The same weights move GSM8K by up to
   0.69 points when only the evaluation host changes.
-- **Minutes of adaptation anticipate hours of fine-tuning.** Ranked before any task exists, fifteen
-  models land within one rank of where their fine-tuned news systems finish (Spearman 0.99; GSM8K
-  0.59, MMLU-Pro 0.71). It is not news predicting news: BPB adapted on Reddit predicts the news
-  fine-tune exactly as well as news BPB does.
 
 ## The method
 
 Each candidate's adaptation hyperparameters come from its own Optuna search — the same number of
 trials for every model, no time cap — and the chosen configuration trains until validation loss
-plateaus: `python -m lm_adapt_bench.cli --hparams sweep --no-time-limit`. Searching seventeen models
-of up to 35B was beyond this study's compute, so the reported results use the pipeline's other mode,
-one hand-picked recipe for every model (`--hparams manual`: LoRA r=16, alpha=32, learning rate 1e-4,
+plateaus: `python -m lm_adapt_bench.cli --hparams sweep --no-time-limit`. For compute, the reported
+results use the pipeline's other mode, one hand-picked recipe for every model (`--hparams manual`: LoRA r=16, alpha=32, learning rate 1e-4,
 effective batch 32, 250 steps), which costs 3.7 GPU-minutes at 0.5B and about an hour at 31B. Every
 number in the paper recomputes from a committed artifact with `make check`.
 

@@ -95,9 +95,9 @@ show why the usual way of choosing a base model misleads, what we do instead, an
 % ================================================================ 2
 \slide{2}{How good is this model, for what we do?}{0:18--1:11}
 \begin{say}
-Every week a new base model ships, and the question is always the same: how good is it, for what
-we do? A language model is trained to do exactly one thing, predict text. So the direct question is
-how well it predicts our text. Instead, we read a scorecard. Look at these two small models. On
+Picture an engineer choosing a base model. The question is always the same: how good
+is it, for what we do? The direct answer is to fine-tune every candidate and compare, which costs
+labels and hours per model. So instead we read a scorecard. Look at these two small models. On
 HellaSwag they are two points apart. On our news text, after adaptation, they are three percent
 apart. On GSM8K they are fifty-five points apart. Two models that model English almost identically
 well differ by nearly a factor of ten on one exam. Which of these numbers describes the model?
@@ -195,14 +195,14 @@ measures the model, the harness, the decoding and the hardware at once.
 \end{say}
 
 % ================================================================ 11
-\slide{11}{4. Minutes of adaptation anticipate hours of fine-tuning}{7:29--8:14}
+\slide{11}{4. Adapting to the domain predicts fine-tuning on the task}{7:29--8:14}
 \begin{say}
 Fourth. Whatever model you choose, you will fine-tune it. So does the cheap number already tell you
 how that goes? We fine-tuned fifteen models on a news task. Adapted bits per byte, measured before
 the task existed, orders ninety-five percent of the pairs the way the fine-tune does. HellaSwag,
 eighty-seven. GSM8K and MMLU-Pro, a coin flip. Of course the two are related --- both adapt the model
 to news --- and that is the point: a few minutes of unlabelled adaptation already contain most of
-what hours of labelled fine-tuning reveal.
+what fine-tuning on the task reveals.
 \end{say}
 \cue{LAND THIS: 0.949 against a coin flip for the reasoning benchmarks.}
 
