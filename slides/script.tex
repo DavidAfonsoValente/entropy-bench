@@ -57,25 +57,25 @@
 % ================================================================ header
 {\color{rule}\rule{\textwidth}{0.9pt}}\\[0.9em]
 {\LARGE\bfseries Speaker script}\\[0.4em]
-{\large\color{mute} ``Back to entropy'' --- evaluating language models as language models}\\[0.9em]
+{\large\color{mute} ``Back to entropy'': evaluating language models as language models}\\[0.9em]
 {\color{rule}\rule{\textwidth}{0.9pt}}
 
 \vspace{0.6em}
 \begin{tabular}{@{}ll@{}}
-\textbf{Deck} & \texttt{slides/talk.pdf} --- 13 slides $+$ 4 backup slides \\
+\textbf{Deck} & \texttt{slides/talk.pdf}: 13 slides $+$ 4 backup slides \\
 \textbf{Target} & about 8:59 of talking at a relaxed 120\,wpm (under 10 minutes), then Q\&A \\
 \textbf{Goal} & The team leaves with one idea: judge a language model by the loss it was trained on \\
 \end{tabular}
 
 \vspace{1.0em}
-\textbf{How to use this document.} Italic text is what to say --- written to be spoken, not read
+\textbf{How to use this document.} Italic text is what to say, written to be spoken, not read
 verbatim. Orange brackets are delivery cues. Times are cumulative. The spoken length is checked by
 \texttt{python tools/script\_timing.py}, which fails the build if it passes ten minutes.
 
 \vspace{0.4em}
 \setlength{\fboxsep}{9pt}
 \colorbox{wash}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
-\textbf{The spine --- if only this lands, the talk worked:}
+\textbf{The spine: if only this lands, the talk worked:}
 \begin{enumerate}[leftmargin=1.4em,itemsep=0.15em,topsep=0.35em]
   \item Benchmarks are public and score a model before it is adapted.
   \item Loss is the principled yardstick: it is the objective every model was trained on, and in
@@ -111,7 +111,7 @@ vendors optimise for the ones they report, and their content can end up in the t
 high score might mean a stronger model, or a model that saw more of that exam, and nobody outside
 can tell which. Second, benchmarks score a model as it ships, but nobody deploys a base model as it
 ships. We adapt it first. Gemma-4-12B is ninth on GSM8K, eighth on MMLU-Pro, thirteenth of fifteen
-on raw loss --- and once fine-tuned, it builds the best system of all fifteen.
+on raw loss, and once fine-tuned, it builds the best system of all fifteen.
 \end{say}
 \cue{Land the Gemma example; it comes back on slide 10.}
 
@@ -146,18 +146,18 @@ rest, successive halving to prune weak trials, scored on the validation split, a
 the same number of trials. Then the winner trains until validation loss stops improving. That is
 the default in the released pipeline. Searching seventeen models up to 35 billion parameters was
 beyond our compute, so the results you will see use the pipeline's other mode: one hand-picked
-recipe for everyone, 250 steps --- minutes per model. And note the trap at the bottom: if you cap
+recipe for everyone, 250 steps, minutes per model. And note the trap at the bottom: if you cap
 the search by time, small models finish more trials and get tuned better.
 \end{say}
 
 % ================================================================ 7
-\slide{7}{Adaptation reorders the models --- and lands on the language benchmark}{4:34--5:19}
+\slide{7}{Adaptation reorders the models, and lands on the language benchmark}{4:34--5:19}
 \begin{say}
 Here is the result on one slide. On the left, eleven models ranked three ways on news: by loss before
 adaptation, by loss after, and by HellaSwag. Watch the lines. Between the first two columns they
-cross everywhere --- Gemma-4-12B, in blue, climbs from ninth to second, and the Liquid model leaves
+cross everywhere: Gemma-4-12B, in blue, climbs from ninth to second, and the Liquid model leaves
 last place. Between the last two columns they run almost parallel: once familiarity is removed, the
-order is HellaSwag's. On the right, the same effect across corpora --- and adapted on maths, the
+order is HellaSwag's. On the right, the same effect across corpora, and adapted on maths, the
 ranking swings to the reasoning benchmarks instead.
 \end{say}
 \cue{LAND THIS: one picture, the whole argument.}
@@ -168,14 +168,14 @@ ranking swings to the reasoning benchmarks instead.
 First finding. Adaptation reorders the models: the rankings before and after agree only at about
 zero point six five. And it is not spread evenly. Adaptation cuts loss by four or five percent for
 every Qwen, Llama and Ministral model, but by seventeen to thirty-six percent for the two Gemmas and
-the Liquid model --- and those three are the only ones that climb. The plot shows why: unadapted loss
+the Liquid model, and those three are the only ones that climb. The plot shows why: unadapted loss
 is mostly cold starts. Gemma opens each block far worse than a model eight times smaller and has
 passed it by the end. The unadapted number measures familiarity with this kind of prose; adaptation
 removes that.
 \end{say}
 
 % ================================================================ 9
-\slide{9}{2. It converges on the language benchmark --- and can be aimed}{6:12--6:49}
+\slide{9}{2. It converges on the language benchmark, and can be aimed}{6:12--6:49}
 \begin{say}
 Second. HellaSwag is the benchmark closest to language modelling. Before adaptation our ranking
 correlates with it at about zero point seven; after, zero point nine six to zero point nine eight,
@@ -200,14 +200,14 @@ measures the model, the harness, the decoding and the hardware at once.
 Fourth. Whatever model you choose, you will fine-tune it. So does the cheap number already tell you
 how that goes? We fine-tuned fifteen models on a news task. Adapted bits per byte, measured before
 the task existed, orders ninety-five percent of the pairs the way the fine-tune does. HellaSwag,
-eighty-seven. GSM8K and MMLU-Pro, a coin flip. Of course the two are related --- both adapt the model
-to news --- and that is the point: a few minutes of unlabelled adaptation already contain most of
+eighty-seven. GSM8K and MMLU-Pro, a coin flip. Of course the two are related: both adapt the model
+to news, and that is the point: a few minutes of unlabelled adaptation already contain most of
 what fine-tuning on the task reveals.
 \end{say}
 \cue{LAND THIS: 0.949 against a coin flip for the reasoning benchmarks.}
 
 % ================================================================ 12
-\slide{12}{Using it --- and adding your model}{8:14--8:52}
+\slide{12}{Using it, and adding your model}{8:14--8:52}
 \begin{say}
 In practice: if candidates are more than about two times apart in size, the bigger one usually
 wins. Otherwise, adapt every finalist the same way on recent domain text and rank by adapted bits
@@ -219,7 +219,7 @@ the exact corpus and recipe.
 % ================================================================ 13
 \slide{13}{Evaluate language models as language models}{8:52--8:59}
 \begin{say}
-So: evaluate language models as language models. Thank you --- happy to take questions.
+So: evaluate language models as language models. Thank you, happy to take questions.
 \end{say}
 
 % ================================================================ Q&A
@@ -228,7 +228,7 @@ So: evaluate language models as language models. Thank you --- happy to take que
 {\large\bfseries Q\&A preparation}
 
 \textbf{``Why not just fine-tune on the task?''} When you have the task, its labels and the budget,
-do --- it is the better evaluation for that task. A base model is usually chosen before any of
+do, it is the better evaluation for that task. A base model is usually chosen before any of
 those exist and has to serve many tasks; the loss is what every one of them is built on.
 
 \textbf{``Doesn't one hand-picked recipe favour some architectures?''} It suits none perfectly. The

@@ -26,7 +26,7 @@ SHORT = {
     "Qwen/Qwen3.5-4B-Base": "Qwen-3.5-4B",
     "meta-llama/Llama-3.2-1B": "Llama-3.2-1B",
     "Qwen/Qwen2.5-1.5B": "Qwen-2.5-1.5B",
-    "LiquidAI/LFM2.5-1.2B-Base": "LiquidAI-LFM2.5",
+    "LiquidAI/LFM2.5-1.2B-Base": "LFM2.5-1.2B",
     "Qwen/Qwen2.5-0.5B": "Qwen-2.5-0.5B",
 }
 FAMILY = {
@@ -41,7 +41,7 @@ LABELS = {
     "Gemma-4-12B": "G12",
     "Ministral-3-14B": "M14",
     "Qwen-3.5-35B-MoE": "Q35",
-    "LiquidAI-LFM2.5": "LFM",
+    "LFM2.5-1.2B": "LFM",
 }
 CORPUS_LABEL = {"news": "News", "reddit": "Reddit", "hackernews": "Hacker News"}
 PAIRS = (("news", "reddit"), ("news", "hackernews"), ("reddit", "hackernews"))

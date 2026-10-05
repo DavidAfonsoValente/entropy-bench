@@ -9,7 +9,7 @@ SHORT = {"google/gemma-4-31B": "Gemma-4-31B", "google/gemma-4-12B": "Gemma-4-12B
          "Qwen/Qwen3.5-35B-A3B-Base": "Qwen-3.5-35B-MoE", "Qwen/Qwen3.5-9B-Base": "Qwen-3.5-9B",
          "Qwen/Qwen2.5-7B": "Qwen-2.5-7B", "Qwen/Qwen3.5-4B-Base": "Qwen-3.5-4B",
          "meta-llama/Llama-3.2-1B": "Llama-3.2-1B", "Qwen/Qwen2.5-1.5B": "Qwen-2.5-1.5B",
-         "LiquidAI/LFM2.5-1.2B-Base": "LiquidAI-LFM2.5", "Qwen/Qwen2.5-0.5B": "Qwen-2.5-0.5B"}
+         "LiquidAI/LFM2.5-1.2B-Base": "LFM2.5-1.2B", "Qwen/Qwen2.5-0.5B": "Qwen-2.5-0.5B"}
 
 src = sys.argv[1] if len(sys.argv) > 1 else "results/domain_transfer"
 out = sys.argv[2] if len(sys.argv) > 2 else "dt_table.tex"

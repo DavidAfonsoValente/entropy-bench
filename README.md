@@ -6,16 +6,17 @@
 [![Paper](https://img.shields.io/badge/paper-PDF-b31b1b.svg)](paper_sota.pdf)
 
 **Adapting to the domain predicts fine-tuning on the task.** Every candidate base model is adapted
-the same way to unlabelled text from a domain — minutes to an hour per model on one GPU — and ranked
+the same way to unlabelled text from a domain (minutes to an hour per model on one GPU) and ranked
 by held-out loss in bits per byte. On fifteen models that ranking lands every one within one rank of where its fine-tuned system
 finishes (Spearman 0.99; HellaSwag 0.97, MMLU-Pro 0.71, GSM8K 0.59).
 
-![Adaptation reorders the models, and the new order is the language benchmark's](figures/fig_headline.png)
+![Adapting to the domain predicts fine-tuning on the task](figures/fig_headline.png)
 
-*Left: eleven base models ranked by loss on news before adaptation, after adaptation, and by
-HellaSwag. Adaptation reorders them — Gemma-4-12B climbs from ninth to second — and the adapted
-order runs almost parallel to HellaSwag's. Right: adapted on general text the ranking converges on
-HellaSwag on every corpus; adapted on arXiv mathematics it swings to GSM8K and MMLU-Pro.*
+*Left: the fifteen fine-tuned models, ordered by where their fine-tuned news system finishes; blue is
+the rank adapted BPB gave each model before any task existed, hollow grey its GSM8K rank. Every blue
+dot is within one rank (Spearman 0.99, against 0.59 for GSM8K). Right: eleven models ranked by
+unadapted BPB, adapted BPB and HellaSwag; adaptation reorders them, and the adapted order runs almost
+parallel to HellaSwag's.*
 
 **[Read the paper](paper_sota.pdf) · [Start in five minutes](docs/QUICKSTART.md) · [View the
 leaderboard](LEADERBOARD.md) · [Understand a result](docs/RESULTS.md) · [Check the
@@ -26,7 +27,7 @@ dataset](docs/DATASET.md)**
 **Benchmarks are public.** They were written before the model existed, vendors optimise for the
 ones they report, and their content can reach pre-training data, so a high score cannot distinguish a
 stronger model from one that saw more of that exam. Llama-3.2-1B and Qwen2.5-1.5B are 2.1 points
-apart on HellaSwag and 3.4% apart in adapted bits per byte — and 55.3 points apart on GSM8K.
+apart on HellaSwag and 3.4% apart in adapted bits per byte, yet 55.3 points apart on GSM8K.
 
 **Benchmarks score a model before it is adapted.** Teams adapt a base model before they use it, so
 what matters is how good it becomes. Gemma-4-12B is thirteenth of fifteen on raw loss and mid-table
@@ -63,8 +64,8 @@ Across seventeen base models (0.5B–35B, eight families) and four corpora:
 
 ## The method
 
-Each candidate's adaptation hyperparameters come from its own Optuna search — the same number of
-trials for every model, no time cap — and the chosen configuration trains until validation loss
+Each candidate's adaptation hyperparameters come from its own Optuna search (the same number of
+trials for every model, no time cap), and the chosen configuration trains until validation loss
 plateaus: `python -m lm_adapt_bench.cli --hparams sweep --no-time-limit`. For compute, the reported
 results use the pipeline's other mode, one hand-picked recipe for every model (`--hparams manual`: LoRA r=16, alpha=32, learning rate 1e-4,
 effective batch 32, 250 steps), which costs 3.7 GPU-minutes at 0.5B and about an hour at 31B. Every
@@ -138,8 +139,8 @@ chained jobs, so a job's walltime never cuts it short). On a machine with no job
 validation plateau with no wall-time budget and no epoch cap; the result records `stop_reason`, and
 only `"plateau"` means validation BPB converged.
 
-- `--hparams sweep` (default, the method): a per-model Optuna search — TPE sampler, successive
-  halving on validation BPB — with the same `--n-trials` for every model and no wall-time cap, so
+- `--hparams sweep` (default, the method): a per-model Optuna search (TPE sampler, successive
+  halving on validation BPB) with the same `--n-trials` for every model and no wall-time cap, so
   no model is better tuned than another. `--sweep-time-fraction` adds a cap when walltime forces
   one; it lets small models finish more trials than large ones, so use it only when necessary.
 - `--hparams manual`: skip the search and use `--hparams-file` (YAML/JSON of `TrainingConfig`
@@ -168,10 +169,10 @@ See [Understanding results](docs/RESULTS.md) before comparing scores.
 The [public leaderboard](LEADERBOARD.md) has two tracks over the same eleven base models, each its
 own benchmark:
 
-- **Mathematics** (`arxiv-math-2026-08-fixed-lora-v1`) — arXiv `math.*` titles and abstracts from
+- **Mathematics** (`arxiv-math-2026-08-fixed-lora-v1`): arXiv `math.*` titles and abstracts from
   9 June to 20 August 2026, CC0 metadata, published in
   [`data/corpora/`](data/corpora/arxiv-math-2026.jsonl.gz). **Anyone can run it** and submit a model.
-- **News** (`primary-news-2026-06-08-fixed-lora-v1`) — the paper's primary corpus; its text cannot be
+- **News** (`primary-news-2026-06-08-fixed-lora-v1`): the paper's primary corpus; its text cannot be
   redistributed, so the maintainers run requested models.
 
 Canonical boards are [`results/leaderboard.json`](results/leaderboard.json) and

@@ -22,7 +22,7 @@ SRC = ROOT / "results" / "downstream.json"
 
 LABELS = {
     "matched_adapted_bpb": "Adapted BPB", "hellaswag": "HellaSwag",
-    "zero_shot_bpb": "Zero-shot BPB", "parameter_count": "Parameter count",
+    "zero_shot_bpb": "Unadapted BPB", "parameter_count": "Parameter count",
     "mmlu_pro": "MMLU-Pro", "gsm8k": "GSM8K",
 }
 

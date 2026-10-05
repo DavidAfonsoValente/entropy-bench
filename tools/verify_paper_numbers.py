@@ -24,7 +24,7 @@ SHORT = {
     "Qwen/Qwen3.5-35B-A3B-Base": "Qwen-3.5-35B-MoE",
     "Qwen/Qwen3.5-9B-Base": "Qwen-3.5-9B", "Qwen/Qwen2.5-7B": "Qwen-2.5-7B",
     "Qwen/Qwen3.5-4B-Base": "Qwen-3.5-4B", "meta-llama/Llama-3.2-1B": "Llama-3.2-1B",
-    "Qwen/Qwen2.5-1.5B": "Qwen-2.5-1.5B", "LiquidAI/LFM2.5-1.2B-Base": "LiquidAI-LFM2.5",
+    "Qwen/Qwen2.5-1.5B": "Qwen-2.5-1.5B", "LiquidAI/LFM2.5-1.2B-Base": "LFM2.5-1.2B",
     "Qwen/Qwen2.5-0.5B": "Qwen-2.5-0.5B",
 }
 
@@ -1492,8 +1492,8 @@ require("adapted HellaSwag range " + _rng("adapted", "hellaswag"),
         _rng("adapted", "hellaswag") == "$0.96$--$0.98$" and _flat_ag.count("$0.96$--$0.98$") >= 3)
 require("zero-shot HellaSwag range " + _rng("zero_shot", "hellaswag"),
         _rng("zero_shot", "hellaswag") == "$0.63$--$0.72$" and _flat_ag.count("$0.63$--$0.72$") >= 2)
-require("news adapted orders 53 of HellaSwag's 55 pairs",
-        _am["news__adapted"]["alignment"]["hellaswag"]["pairs_correct"] == 53 and "$53$ of HellaSwag's $55$" in _flat_ag)
+require("news adapted orders 53 of the 55 pairs as HellaSwag does",
+        _am["news__adapted"]["alignment"]["hellaswag"]["pairs_correct"] == 53 and "$53$ of the $55$ model pairs" in _flat_ag)
 require("GSM8K correlation falls on all three general corpora",
         all(_rho(c, "adapted", "gsm8k") < _rho(c, "zero_shot", "gsm8k") for c in _gen))
 require("MMLU-Pro correlation falls on exactly two general corpora",

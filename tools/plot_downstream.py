@@ -79,6 +79,11 @@ def draw(out: Path) -> dict[str, tuple[int, int]]:
         ax.tick_params(labelsize=9.5)
         for side in ("top", "right"):
             ax.spines[side].set_visible(False)
+    axes[0].plot([], [], "o", ms=6.5, color=INK, label="filled: the fine-tune separates the pair")
+    axes[0].plot([], [], "o", ms=6.5, mec=INK, mfc="white", mew=1.4,
+                 label="hollow: the difference is within its noise")
+    fig.legend(fontsize=9, frameon=False, loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.1),
+               handletextpad=0.3)
     axes[0].set_ylabel("ROUGE-L, pick minus other", fontsize=10)
     lo = min(y for n, *_ in PANELS for _, y, _, _ in oriented_points(n))
     hi = max(y for n, *_ in PANELS for _, y, _, _ in oriented_points(n))

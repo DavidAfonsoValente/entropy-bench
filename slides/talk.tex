@@ -181,7 +181,7 @@
 % ==================================================================== 4
 \begin{frame}
   \frametitle{Why loss is the right quantity}
-  \framesubtitle{There is no universal ground truth for ``better'' --- so pick the principled yardstick}
+  \framesubtitle{There is no universal ground truth for ``better'', so pick the principled yardstick}
 
   \vspace{0.7em}
   \begin{itemize}\setlength\itemsep{0.8em}
@@ -216,9 +216,9 @@
   \small
   \textbf{Decontamination, three layers:}
   \begin{itemize}\setlength\itemsep{0.25em}
-    \item \keyw{Time} --- text dated after every model shipped (Reddit and Hacker News, most of arXiv).
-    \item \keyw{Hygiene} --- exact dedup, quality filter, MinHash near-dup removal, 80/10/10 split with no overlap.
-    \item \keyw{Membership screens} --- Min-K++, context sensitivity, perturbation; the union of
+    \item \keyw{Time}: text dated after every model shipped (Reddit and Hacker News, most of arXiv).
+    \item \keyw{Hygiene}: exact dedup, quality filter, MinHash near-dup removal, 80/10/10 split with no overlap.
+    \item \keyw{Membership screens}: Min-K++, context sensitivity, perturbation; the union of
       anything any model flags is quarantined for all (news snapshot).
   \end{itemize}
 \end{frame}
@@ -236,7 +236,7 @@
         LoRA rank, $\alpha$, dropout.
       \item Successive halving prunes weak trials from 50 steps.
       \item Scored on the \emph{validation} split; test never touched.
-      \item Same number of trials for every model --- no time cap.
+      \item Same number of trials for every model, no time cap.
       \item Winner trained until validation \bpb{} stops improving (\texttt{--no-time-limit}).
     \end{itemize}
   \end{column}
@@ -259,12 +259,12 @@
 
 % ==================================================================== 7
 \begin{frame}
-  \frametitle{Adaptation reorders the models --- and lands on the language benchmark}
+  \frametitle{Adaptation reorders the models, and lands on the language benchmark}
   \framesubtitle{Left: eleven models ranked three ways on news. Right: what the adapted ordering tracks.}
 
   \vspace{-0.2em}
   \begin{center}
-    \includegraphics[width=0.97\textwidth]{fig_headline.pdf}
+    \includegraphics[width=0.97\textwidth]{fig_reorder_slide.pdf}
   \end{center}
   \vspace{-0.5em}
   \punch{\small Gemma-4-12B climbs from ninth to second; after adaptation the order is HellaSwag's
@@ -285,7 +285,7 @@
     \small
     \begin{itemize}\setlength\itemsep{0.45em}
       \item Adaptation cuts loss by \textbf{3.6--5.4\%} for every Qwen, Llama and Ministral model \ldots
-      \item \ldots but by \goodw{17--36\%} for the two Gemmas and LFM --- the \emph{only} models that climb.
+      \item \ldots but by \goodw{17--36\%} for the two Gemmas and LFM: the \emph{only} models that climb.
       \item Gemma-4-12B: 9th $\to$ 2nd. Unadapted, it opens each block at 2.83 \bpb{} vs a 1.5B model's 2.04, and passes it by the end.
     \end{itemize}
   \end{column}
@@ -298,7 +298,7 @@
 
 % ==================================================================== 9
 \begin{frame}
-  \frametitle{2. It converges on the language benchmark --- and can be aimed}
+  \frametitle{2. It converges on the language benchmark, and can be aimed}
   \framesubtitle{Rank correlation of BPB with each benchmark, before and after adaptation (eleven models)}
 
   \vspace{0.6em}
@@ -317,7 +317,7 @@
 
   \vspace{0.8em}
   \begin{itemize}\setlength\itemsep{0.4em}
-    \item HellaSwag is the benchmark closest to language modelling --- and adapted \bpb{} lands on it.
+    \item HellaSwag is the benchmark closest to language modelling, and adapted \bpb{} lands on it.
     \item Change the text to mathematics and the ranking swings to the reasoning benchmarks.
   \end{itemize}
   
@@ -363,26 +363,26 @@
   \vspace{-0.4em}
   \small
   Adapted \bpb{}, measured \emph{before} any task existed, orders \goodw{0.949} of pairs as the
-  fine-tune does --- HellaSwag 0.872, MMLU-Pro 0.513, GSM8K 0.474. \keyw{Every model within one rank} of where it
+  fine-tune does, against HellaSwag 0.872, MMLU-Pro 0.513, GSM8K 0.474. \keyw{Every model within one rank} of where it
   finishes. Holds under a second, very different recipe (0.923).
 \end{frame}
 
 
 % ==================================================================== 12
 \begin{frame}
-  \frametitle{Using it --- and adding your model}
+  \frametitle{Using it, and adding your model}
 
   \vspace{0.5em}
   \begin{itemize}\setlength\itemsep{0.55em}
     \item Candidates more than $\sim$2$\times$ apart in size? The larger is usually better.
     \item Otherwise: recent domain text, decontaminated; adapt every finalist the same way; rank by adapted \bpb{}.
-    \item A gap under \keyw{2\%} is a tie --- let licence, latency or cost decide.
+    \item A gap under \keyw{2\%} is a tie: let licence, latency or cost decide.
     \item The zero-shot number is a free screen, not the choice.
   \end{itemize}
 
   \vspace{0.4em}
   \small
-  \textbf{Public leaderboard, two tracks:} \keyw{arXiv maths} (CC0 corpus in the repo --- anyone can run
+  \textbf{Public leaderboard, two tracks:} \keyw{arXiv maths} (CC0 corpus in the repo; anyone can run
   it and submit) and \keyw{news} (maintainers run requested models). Submissions are checked against
   the track's corpus hash and recipe.
 \end{frame}

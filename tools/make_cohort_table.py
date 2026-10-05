@@ -27,7 +27,7 @@ DISPLAY = {
     "Qwen3.5-35B-MoE": "Qwen-3.5-35B-MoE$^{*}$", "Ministral-3-14B": "Ministral-3-14B",
     "Qwen2.5-7B": "Qwen-2.5-7B", "Qwen3.5-9B": "Qwen-3.5-9B", "Llama-3.2-1B": "Llama-3.2-1B",
     "Qwen3.5-4B": "Qwen-3.5-4B", "Qwen2.5-1.5B": "Qwen-2.5-1.5B",
-    "LFM2.5-1.2B": "LiquidAI-LFM2.5", "Qwen2.5-0.5B": "Qwen-2.5-0.5B",
+    "LFM2.5-1.2B": "LFM2.5-1.2B", "Qwen2.5-0.5B": "Qwen-2.5-0.5B",
     "Qwen2.5-3B": "Qwen-2.5-3B", "Qwen2.5-14B": "Qwen-2.5-14B", "Falcon3-7B": "Falcon3-7B",
     "Falcon3-10B": "Falcon3-10B", "Mistral-Nemo-12B": "Mistral-Nemo-12B",
     "SmolLM2-1.7B": "SmolLM2-1.7B",
