@@ -1,24 +1,18 @@
-"""Figure 1 and the steering figure.
+"""Figure 1: what adaptation does to the ordering of base models, measured without any referee.
 
-Figure 1 (fig_headline):
-A (prediction): the fifteen fine-tuned models, each placed by its adapted-BPB rank (measured before
-   any task) against the rank its fine-tuned system finishes; GSM8K's ranks are drawn for contrast.
-B (slopegraph): the eleven-model cohort ranked three ways -- unadapted news BPB, adapted news BPB,
+A (slopegraph): the eleven-model cohort ranked three ways -- unadapted news BPB, adapted news BPB,
    HellaSwag. Lines cross between the first two columns (adaptation reorders the models) and run
    nearly parallel between the last two (the adapted order is the language benchmark's).
-Steering figure (fig_steering): rank correlation between BPB and each benchmark before and after
-   adaptation. General text pulls the ranking onto HellaSwag; arXiv mathematics onto GSM8K/MMLU-Pro.
+B (steering): rank correlation between BPB and each benchmark before and after adaptation. General
+   text pulls the ranking onto HellaSwag; arXiv mathematics pulls it onto GSM8K and MMLU-Pro.
 
-Fine-tune ranks come from results/downstream.json and the selectors from analyze_downstream, exactly
-as verify_paper_numbers.py reads them; BPB alignment from results/alignment_matrix.json, HellaSwag
-from results/combined_bpb_vs_static.json.
+BPB comes from results/alignment_matrix.json, HellaSwag from results/combined_bpb_vs_static.json;
+nothing is recomputed differently here.
 
 Usage:
-    python tools/plot_headline.py   # writes figures/fig_headline.{pdf,png}, fig_steering.pdf and
-                                    # fig_reorder_slide.pdf (the talk's two-panel version)
+    python tools/plot_headline.py        # writes figures/fig_headline.pdf and .png (for the README)
 """
 import json
-import sys
 from pathlib import Path
 
 import matplotlib
@@ -27,8 +21,6 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 HEADLINE = ROOT / "figures" / "fig_headline.pdf"
-STEERING = ROOT / "figures" / "fig_steering.pdf"
-REORDER_SLIDE = ROOT / "figures" / "fig_reorder_slide.pdf"
 BLUE, ORANGE, GRAY, INK, MUTED = "#2E6DB4", "#D2762A", "#B3BAC3", "#1C2733", "#6B7785"
 HIGHLIGHT = {"gemma-4-12B": BLUE, "LFM2.5-1.2B": ORANGE}
 NAMES = {"gemma-4-31B": "Gemma-4-31B", "gemma-4-12B": "Gemma-4-12B", "Qwen3.5-35B-MoE": "Qwen-3.5-35B-MoE",
@@ -60,60 +52,7 @@ def news_ranks():
     return [rank(zero, True), rank(adapted, True), rank(hellaswag, False)]
 
 
-def finetune_ranks():
-    """Rank (1 = best) of the fifteen fine-tuned models by adapted BPB, GSM8K and fine-tuned ROUGE-L."""
-    sys.path.insert(0, str(ROOT / "tools"))
-    from analyze_downstream import _selectors_17
-    sel, _ = _selectors_17()
-    ft = json.load(open(ROOT / "results" / "downstream.json"))["cohort"]["rouge_l"]
-    models = sorted(ft)
-
-    def rank(vals, lower):
-        order = sorted(models, key=lambda m: vals[m] if lower else -vals[m])
-        return {m: i + 1 for i, m in enumerate(order)}
-
-    return (rank(sel["matched_adapted_bpb"][0], True), rank(sel["gsm8k"][0], False),
-            rank(ft, False))
-
-
-def _spearman(a, b):
-    n = len(a)
-    return 1 - 6 * sum((a[m] - b[m]) ** 2 for m in a) / (n * (n * n - 1))
-
-
-def panel_prediction(ax):
-    """One row per model, ordered by where its fine-tuned system finishes. A blue dot on the diagonal
-    means the measure, taken before any task, put the model exactly where the fine-tune did."""
-    bpb, gsm, ft = finetune_ranks()
-    n = len(ft)
-    rows = sorted(ft, key=lambda m: ft[m])
-    ax.fill_between([0.5, n + 0.5], [-0.5, n - 0.5], [1.5, n + 1.5], color="#E8F0F9", zorder=0, lw=0)
-    for m in rows:
-        y = ft[m]
-        ax.plot([bpb[m], gsm[m]], [y, y], color="#D5DAE0", lw=1.2, zorder=1)
-        ax.plot(gsm[m], y, "o", ms=6, mfc="white", mec=GRAY, mew=1.4, zorder=2)
-        ax.plot(bpb[m], y, "o", ms=7, color=BLUE, mec="white", mew=0.8, zorder=3)
-    ax.set_yticks([ft[m] for m in rows], [f"{ft[m]}. {NAMES[m]}" for m in rows], fontsize=8.2)
-    for lab, m in zip(ax.get_yticklabels(), rows):
-        if m == "gemma-4-12B":
-            lab.set_color(BLUE); lab.set_fontweight("bold")
-    ax.plot([], [], "o", color=BLUE, label=f"adapted BPB  ($\\rho$ = {_spearman(bpb, ft):.2f})")
-    ax.plot([], [], "o", mfc="white", mec=GRAY, label=f"GSM8K  ($\\rho$ = {_spearman(gsm, ft):.2f})")
-    ax.legend(fontsize=8.5, frameon=False, loc="lower left", bbox_to_anchor=(0.0, 0.03),
-              handletextpad=0.3)
-    ax.set_xlim(0.3, n + 0.7)
-    ax.set_ylim(n + 0.7, 0.3)
-    ax.set_xticks([1, 5, 10, 15])
-    ax.set_xlabel("Rank the measure gives the model (1 = best); shaded = within one rank", fontsize=8.5,
-                  color=MUTED)
-    ax.tick_params(length=0, labelsize=8.5, colors=MUTED)
-    for side in ("top", "right", "left"):
-        ax.spines[side].set_visible(False)
-    ax.set_title("A.  Fifteen models, ordered by their fine-tuned finish", fontsize=10.5, loc="left",
-                 color=INK)
-
-
-def panel_slope(ax, title="B.  Eleven models on news, ranked three ways"):
+def panel_slope(ax, title="A.  Eleven models on news, ranked three ways"):
     cols = news_ranks()
     models = sorted(cols[0])
     for m in sorted(models, key=lambda m: m in HIGHLIGHT):  # highlighted lines drawn last, on top
@@ -137,7 +76,7 @@ def panel_slope(ax, title="B.  Eleven models on news, ranked three ways"):
     ax.set_title(title, fontsize=10.5, loc="left", color=INK)
 
 
-def panel_steering(ax, title="The text aims the ranking"):
+def panel_steering(ax, title="B.  The text aims the ranking"):
     cells = _cells()
     for i, (corpus, bench, label) in enumerate(ROWS):
         before = cells[f"{corpus}__zero_shot"]["alignment"][bench]["spearman"]
@@ -164,27 +103,14 @@ def panel_steering(ax, title="The text aims the ranking"):
 
 def main():
     plt.rcParams.update({"font.family": "DejaVu Sans", "axes.edgecolor": "#C9CED4"})
-    fig, (a, b) = plt.subplots(1, 2, figsize=(10, 4.6), gridspec_kw={"width_ratios": [1, 1.1]})
-    panel_prediction(a)
-    panel_slope(b)
-    fig.tight_layout(w_pad=2.5)
+    fig, (a, b) = plt.subplots(1, 2, figsize=(11, 4.0), gridspec_kw={"width_ratios": [1.05, 1]})
+    panel_slope(a)
+    panel_steering(b)
+    fig.tight_layout(w_pad=3.0)
     fig.savefig(HEADLINE)
     fig.savefig(HEADLINE.with_suffix(".png"), dpi=200)  # for the README, which cannot show a PDF
     plt.close(fig)
-    fig, ax = plt.subplots(figsize=(6.2, 2.8))
-    panel_steering(ax)
-    fig.tight_layout()
-    fig.savefig(STEERING)
-    plt.close(fig)
-    # The talk keeps reordering and steering on one slide; the paper splits them across figures.
-    fig, (a, b) = plt.subplots(1, 2, figsize=(11, 4.0), gridspec_kw={"width_ratios": [1.05, 1]})
-    panel_slope(a, "A.  Eleven models on news, ranked three ways")
-    panel_steering(b, "B.  The text aims the ranking")
-    fig.tight_layout(w_pad=3.0)
-    fig.savefig(REORDER_SLIDE)
-    plt.close(fig)
-    print(f"wrote {HEADLINE.relative_to(ROOT)}, its .png, {STEERING.relative_to(ROOT)} and "
-          f"{REORDER_SLIDE.relative_to(ROOT)}")
+    print(f"wrote {HEADLINE.relative_to(ROOT)} and its .png")
 
 
 if __name__ == "__main__":

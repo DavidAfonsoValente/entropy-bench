@@ -24,9 +24,9 @@ BUCKETS = {"0-0": (0.5, 1), "1-1": (1.5, 1), "2-3": (3, 2), "4-7": (6, 4), "8-15
            "128-255": (192, 128), "256-510": (384, 255)}
 
 STYLE = {
-    "google/gemma-4-12B":        dict(color="#3B6FA0", marker="o", label="Gemma-4-12B (28.7% gain)"),
-    "LiquidAI/LFM2.5-1.2B-Base": dict(color="#C07C33", marker="s", label="LFM2.5-1.2B (36.5% gain)"),
-    "Qwen/Qwen2.5-1.5B":         dict(color="#3F8457", marker="^", label="Qwen-2.5-1.5B (3.2% gain)"),
+    "google/gemma-4-12B":        dict(color="#3B6FA0", marker="o", label="Gemma-4-12B"),
+    "LiquidAI/LFM2.5-1.2B-Base": dict(color="#C07C33", marker="s", label="LFM2.5-1.2B"),
+    "Qwen/Qwen2.5-1.5B":         dict(color="#3F8457", marker="^", label="Qwen-2.5-1.5B"),
 }
 
 

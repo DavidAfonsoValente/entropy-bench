@@ -29,7 +29,7 @@ BLUE, ORANGE, INK, GRID = "#3B6FA0", "#C07C33", "#555555", "#DDDDDD"
 GREEN = "#3F8457"
 # HellaSwag is the benchmark the paper does NOT separate from, so it belongs in the picture beside
 # the one it does: a reader deciding what to trust needs to see both comparisons, not the easy one.
-PANELS = [("matched_adapted_bpb", "Adapted BPB", "Adapted-BPB gap (% of better)", BLUE),
+PANELS = [("matched_adapted_bpb", "Adapted BPB", "Adapted-BPB gap (% of the better BPB)", BLUE),
           ("hellaswag", "HellaSwag", "HellaSwag gap (points)", GREEN),
           ("gsm8k", "GSM8K", "GSM8K gap (points)", ORANGE)]
 

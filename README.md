@@ -8,15 +8,15 @@
 **Adapting to the domain predicts fine-tuning on the task.** Every candidate base model is adapted
 the same way to unlabelled text from a domain (minutes to an hour per model on one GPU) and ranked
 by held-out loss in bits per byte. On fifteen models that ranking lands every one within one rank of where its fine-tuned system
-finishes (Spearman 0.99; HellaSwag 0.97, MMLU-Pro 0.71, GSM8K 0.59).
+finishes (Spearman 0.99; HellaSwag 0.97, MMLU-Pro 0.71, GSM8K 0.59). It is not news predicting news:
+adapted on Reddit instead, BPB predicts the news fine-tune just as well.
 
-![Adapting to the domain predicts fine-tuning on the task](figures/fig_headline.png)
+![Adaptation reorders the models, and the text aims the new order](figures/fig_headline.png)
 
-*Left: the fifteen fine-tuned models, ordered by where their fine-tuned news system finishes; blue is
-the rank adapted BPB gave each model before any task existed, hollow grey its GSM8K rank. Every blue
-dot is within one rank (Spearman 0.99, against 0.59 for GSM8K). Right: eleven models ranked by
-unadapted BPB, adapted BPB and HellaSwag; adaptation reorders them, and the adapted order runs almost
-parallel to HellaSwag's.*
+*Left: eleven base models ranked by loss on news before adaptation, after adaptation, and by
+HellaSwag. Adaptation reorders them (Gemma-4-12B climbs from ninth to second), and the adapted
+order runs almost parallel to HellaSwag's. Right: adapted on general text the ranking converges on
+HellaSwag on every corpus; adapted on arXiv mathematics it swings to GSM8K and MMLU-Pro.*
 
 **[Read the paper](paper_sota.pdf) · [Start in five minutes](docs/QUICKSTART.md) · [View the
 leaderboard](LEADERBOARD.md) · [Understand a result](docs/RESULTS.md) · [Check the
