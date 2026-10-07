@@ -40,7 +40,7 @@ at that task. Loss is the principled yardstick: every base model was trained to 
 minimises it again on the domain, and on
 shared text the difference between two models' expected losses is exactly the difference in their
 KL divergence from the text's distribution. Dividing by UTF-8 bytes rather than tokens puts every
-tokenizer on one scale. The protocol adds what makes that usable: text dated after every model
+tokenizer on one scale. The method adds what makes that usable: text dated after every model
 shipped, deduplicated and screened for membership, and the same adaptation for every candidate.
 
 ## What it shows
