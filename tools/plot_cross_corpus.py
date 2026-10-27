@@ -113,7 +113,7 @@ def draw(cells, out, figsize, font_scale=1.0):
 
         offsets = {
             ("news", "reddit"): {"G31": (4, -11), "G12": (-18, 6), "M14": (4, -13),
-                                 "Q35": (5, 6), "LFM": (4, 5)},
+                                 "Q35": (-19, 3), "LFM": (4, 5)},
             ("news", "hackernews"): {"G31": (4, -11), "G12": (-18, 7),
                                      "M14": (-20, -15), "Q35": (5, -13), "LFM": (4, 5)},
             ("reddit", "hackernews"): {"G31": (4, -11), "G12": (-18, 7),
@@ -151,7 +151,7 @@ def main():
     p.add_argument("--slide-out", default="figures/fig_cross_corpus_slide.pdf")
     a = p.parse_args()
     cells = load_cells(a.input)
-    draw(cells, a.out, (10.0, 3.25), 1.0)
+    draw(cells, a.out, (6.9, 2.45), 0.9)  # drawn at its printed width (\textwidth)
     draw(cells, a.slide_out, (10.8, 3.15), 1.08)
 
 

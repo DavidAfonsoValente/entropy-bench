@@ -108,7 +108,7 @@ slides: slides/talk.tex slides/script.tex figures/fig_headline.pdf figures/fig_d
 	cd slides && $(PDFLATEX) script.tex && $(PDFLATEX) script.tex
 	cd slides && rm -f *.aux *.log *.nav *.out *.snm *.toc
 
-paper_sota.pdf: paper_sota.tex dt_table.tex rank_table.tex crosscorpus_table.tex figures/fig_benchmark_alignment.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf figures/fig_headline.pdf
+paper_sota.pdf: paper_sota.tex dt_table.tex rank_table.tex crosscorpus_table.tex figures/fig_benchmark_alignment.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf figures/fig_headline.pdf figures/fig_downstream.pdf
 	@if command -v latexmk >/dev/null 2>&1; then \
 		$(LATEXMK) $<; \
 	else \
@@ -135,3 +135,6 @@ clean:
 
 distclean: clean
 	$(RM) paper_sota.pdf slides/talk.pdf slides/script.pdf
+
+# Extension work kept out of the public release (tools/sync_public_repo.sh): absent there.
+-include b1.mk

@@ -55,6 +55,8 @@ AREAS: list[tuple[str, str, str, bool]] = [
 
     ("eval/*",                  "eval/",      "Standalone MMLU-Pro / HellaSwag / GSM8K harness (separate from the BPB pipeline).", False),
     ("slurm/*",                 "slurm/",     "Leonardo batch scripts. Never run these on the login node.", False),
+    ("slurm/gcp/*",             "slurm/gcp/", "Batch scripts for the GCP Slurm cluster (RTX PRO 6000 nodes, /shared storage).", False),
+    ("slurm/gcp/patches/*",     "slurm/gcp/patches/", "Local patches to pinned third-party code (caveman, tau2-bench, byte-sampler), applied by slurm/gcp/apply_patches.sh.", False),
 
     ("results/legacy_*/**",     "results/ superseded", "Superseded runs, kept because the paper reports them alongside the current answer.", True),
     ("results/_council/*",      "results/ review",     "Adjudicated council and review documents cited by the state files.", False),

@@ -17,6 +17,12 @@ results/*
 !results/combined_bpb_vs_static.json
 !results/leaderboard.json
 !results/leaderboard_math.json
+!results/corpus_affinity.json
+!results/b1_alignment_*.json
+!results/b1/
+!results/b1/**
+!results/ensemble/
+!results/ensemble/*.json
 !results/domain_transfer/
 !results/domain_transfer/*.json
 !results/token_gain/

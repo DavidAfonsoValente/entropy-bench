@@ -58,7 +58,7 @@ def draw(out: Path) -> dict[str, tuple[int, int]]:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(1, len(PANELS), figsize=(10.2, 2.35), sharey=True)
+    fig, axes = plt.subplots(1, len(PANELS), figsize=(6.9, 2.05), sharey=True)
     counts = {}
     for ax, (name, title, xlabel, colour) in zip(axes, PANELS):
         pts = oriented_points(name)
@@ -67,31 +67,31 @@ def draw(out: Path) -> dict[str, tuple[int, int]]:
         ax.axhline(0, color=INK, lw=1.0, ls="--", zorder=1)
         ax.axhspan(-1, 0, color="#F3F3F3", zorder=0)
         for x, y, res, _ in pts:
-            ax.plot(x, y, "o", ms=6.5, mec=colour, mew=1.4,
+            ax.plot(x, y, "o", ms=4.5, mec=colour, mew=1.1,
                     mfc=colour if res else "white", zorder=3)
-        ax.set_title(title, fontsize=11, loc="left")
+        ax.set_title(title, fontsize=9, loc="left")
         # A white plate: the count sits in the corner and a mark can land under it.
         ax.text(0.97, 0.95, f"{right} of {len(pts)} right", transform=ax.transAxes,
-                ha="right", va="top", fontsize=9, color=INK, zorder=4,
+                ha="right", va="top", fontsize=7.5, color=INK, zorder=4,
                 bbox=dict(facecolor="white", edgecolor="none", alpha=0.9, pad=1.5))
-        ax.set_xlabel(xlabel, fontsize=10)
+        ax.set_xlabel(xlabel, fontsize=8)
         ax.grid(color=GRID, lw=0.6, zorder=0)
-        ax.tick_params(labelsize=9.5)
+        ax.tick_params(labelsize=7.5)
         for side in ("top", "right"):
             ax.spines[side].set_visible(False)
-    axes[0].plot([], [], "o", ms=6.5, color=INK, label="filled: the fine-tune separates the pair")
-    axes[0].plot([], [], "o", ms=6.5, mec=INK, mfc="white", mew=1.4,
+    axes[0].plot([], [], "o", ms=4.5, color=INK, label="filled: the fine-tune separates the pair")
+    axes[0].plot([], [], "o", ms=4.5, mec=INK, mfc="white", mew=1.1,
                  label="hollow: the difference is within its noise")
-    fig.legend(fontsize=9, frameon=False, loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.1),
+    fig.legend(fontsize=7.5, frameon=False, loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.08),
                handletextpad=0.3)
-    axes[0].set_ylabel("ROUGE-L, pick minus other", fontsize=10)
+    axes[0].set_ylabel("ROUGE-L, pick minus other", fontsize=8)
     lo = min(y for n, *_ in PANELS for _, y, _, _ in oriented_points(n))
     hi = max(y for n, *_ in PANELS for _, y, _, _ in oriented_points(n))
     pad = 0.1 * (hi - lo)
     axes[0].set_ylim(lo - pad, hi + pad)
     axes[0].text(0.03, 0.05, "below the line:\nthe pick built the worse system",
-                 transform=axes[0].transAxes, ha="left", va="bottom", fontsize=8, color=INK)
-    fig.tight_layout(w_pad=1.5)
+                 transform=axes[0].transAxes, ha="left", va="bottom", fontsize=6.5, color=INK)
+    fig.tight_layout(w_pad=1.0)
     fig.savefig(out, bbox_inches="tight")
     fig.savefig(out.with_suffix(".png"), dpi=150, bbox_inches="tight")
     plt.close(fig)

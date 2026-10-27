@@ -60,6 +60,8 @@ def parse_args():
                         "model in the paper was ever scored on a task benchmark. Pass this "
                         "for any run whose adapters you may want to evaluate downstream "
                         "(see docs/PLAN.md, experiment E2).")
+    p.add_argument("--tokenizer", default=None,
+                   help="tokenizer directory to use instead of the model's (when transformers loads the wrong class)")
     p.add_argument("--device", default="cuda", help="cuda, or cpu for smoke tests")
     p.add_argument("--seed", type=int, default=None,
                    help="Seed torch/numpy/random before adapter init and training. The\n                        published cells ran with this UNSET: DataConfig.seed fixes the\n                        splits, but LoRA A/B init and dropout drew from the unseeded\n                        global torch RNG. Pass an int to make a cell reproducible and to\n                        run seed replicates (experiment E8); leave unset to reproduce the\n                        published protocol exactly.")
@@ -83,10 +85,26 @@ def load_model(model_id, device_map="auto"):
       Mistral3Config, which AutoModelForCausalLM refuses -- so fall back to the
       image-text-to-text auto class and score its language backbone. This mirrors the
       pipeline's own note that adapters are restricted to the language backbone.
+    * A checkpoint's own modelling code is used only when transformers has no native class for
+      it: the bundled code of Phi-3.5 (DynamicCache API) and Nemotron-3-Nano (hard mamba-ssm
+      import) no longer runs under transformers v5, while the native classes do.
+    * Mixture-of-experts layers use the eager expert loop where torch's grouped matmul cannot
+      run: before torch 2.9 it is SM90-only, and transformers' check also admits newer GPUs.
     """
     import transformers
-    from transformers import AutoModelForCausalLM
-    common = dict(device_map=device_map, trust_remote_code=True)
+    from transformers import AutoConfig, AutoModelForCausalLM
+    try:
+        cfg = AutoConfig.from_pretrained(model_id, trust_remote_code=False)
+        native = True
+    except (ValueError, KeyError):
+        cfg, native = AutoConfig.from_pretrained(model_id, trust_remote_code=True), False
+    common = dict(device_map=device_map, trust_remote_code=not native)
+    text_cfg = getattr(cfg, "text_config", None) or cfg
+    if (any(getattr(text_cfg, k, None) for k in ("num_experts", "n_routed_experts", "num_local_experts"))
+            and torch.cuda.is_available() and torch.cuda.get_device_capability() != (9, 0)
+            and not hasattr(torch.nn.functional, "grouped_mm")
+            and tuple(int(x) for x in torch.__version__.split(".")[:2]) < (2, 9)):
+        common["experts_implementation"] = "eager"
 
     def _try(cls):
         for kw in ("dtype", "torch_dtype"):
@@ -130,7 +148,7 @@ def main():
         print(f"[info] seeded torch/numpy/random with {a.seed}", flush=True)
 
     t0 = time.time()
-    tok = AutoTokenizer.from_pretrained(a.model_id, trust_remote_code=True)
+    tok = AutoTokenizer.from_pretrained(a.tokenizer or a.model_id, trust_remote_code=True)
 
     cfg = DataConfig(dataset_path=a.dataset, max_seq_len=a.max_seq_len,
                      max_samples=a.max_samples, mask_injected_special_tokens=True)

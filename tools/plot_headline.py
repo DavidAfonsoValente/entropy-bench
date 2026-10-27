@@ -59,21 +59,21 @@ def panel_slope(ax, title="A.  Eleven models on news, ranked three ways"):
         ys = [c[m] for c in cols]
         color = HIGHLIGHT.get(m, GRAY)
         strong = m in HIGHLIGHT
-        ax.plot(range(3), ys, color=color, lw=2.8 if strong else 1.3, zorder=3 if strong else 1,
-                marker="o", ms=6.5 if strong else 4.5, mec="white", mew=0.9, solid_capstyle="round")
+        ax.plot(range(3), ys, color=color, lw=2.2 if strong else 1.0, zorder=3 if strong else 1,
+                marker="o", ms=5 if strong else 3.5, mec="white", mew=0.9, solid_capstyle="round")
         for x, y, ha in ((0, ys[0], "right"), (2, ys[2], "left")):
             ax.text(x + (-0.09 if ha == "right" else 0.09), y, NAMES[m], ha=ha, va="center",
-                    fontsize=8.2, color=color if strong else MUTED, fontweight="bold" if strong else None)
-    ax.set_xticks(range(3), ["Unadapted\nBPB", "Adapted\nBPB", "HellaSwag"], fontsize=9.5, color=INK)
-    ax.set_xlim(-1.05, 3.05)
+                    fontsize=7, color=color if strong else MUTED, fontweight="bold" if strong else None)
+    ax.set_xticks(range(3), ["Unadapted\nBPB", "Adapted\nBPB", "HellaSwag"], fontsize=7.5, color=INK)
+    ax.set_xlim(-1.0, 3.0)
     ax.set_ylim(len(models) + 0.6, -0.4)
     ax.set_yticks([])
     for side in ("top", "right", "left", "bottom"):
         ax.spines[side].set_visible(False)
     ax.tick_params(length=0)
     for x, text in ((0.5, "reorders"), (1.5, "converges")):
-        ax.text(x, -0.25, text, ha="center", va="center", fontsize=8, color=BLUE, style="italic")
-    ax.set_title(title, fontsize=10.5, loc="left", color=INK)
+        ax.text(x, -0.25, text, ha="center", va="center", fontsize=7, color=BLUE, style="italic")
+    ax.set_title(title, fontsize=9, loc="left", color=INK)
 
 
 def panel_steering(ax, title="B.  The text aims the ranking"):
@@ -83,31 +83,31 @@ def panel_steering(ax, title="B.  The text aims the ranking"):
         after = cells[f"{corpus}__adapted"]["alignment"][bench]["spearman"]
         y = len(ROWS) - 1 - i
         ax.annotate("", xy=(after, y), xytext=(before, y),
-                    arrowprops=dict(arrowstyle="-|>", color=BLUE, lw=1.8, shrinkA=4, shrinkB=4))
-        ax.plot(before, y, "o", ms=8, mfc="white", mec=MUTED, mew=1.4, zorder=3)
-        ax.plot(after, y, "o", ms=8, color=BLUE, mec="white", mew=0.8, zorder=3)
-        ax.text(after + 0.022, y, f"{after:.2f}", va="center", fontsize=8, color=INK, fontweight="bold")
+                    arrowprops=dict(arrowstyle="-|>", color=BLUE, lw=1.4, shrinkA=4, shrinkB=4))
+        ax.plot(before, y, "o", ms=6, mfc="white", mec=MUTED, mew=1.2, zorder=3)
+        ax.plot(after, y, "o", ms=6, color=BLUE, mec="white", mew=0.8, zorder=3)
+        ax.text(after + 0.022, y, f"{after:.2f}", va="center", fontsize=7, color=INK, fontweight="bold")
     ax.axhline(1.5, color="#DDE1E6", lw=0.8)  # general text above, mathematics below
-    ax.set_yticks(range(len(ROWS)), [lab for _, _, lab in reversed(ROWS)], fontsize=8)
+    ax.set_yticks(range(len(ROWS)), [lab for _, _, lab in reversed(ROWS)], fontsize=7)
     ax.set_xlim(0.4, 1.07)
-    ax.set_xlabel("Rank agreement of BPB with the benchmark (Spearman, 11 models)", fontsize=9,
+    ax.set_xlabel("Spearman $\\rho$ with the benchmark", fontsize=7.5,
                   color=MUTED)
     ax.plot([], [], "o", mfc="white", mec=MUTED, label="before adaptation")
     ax.plot([], [], "o", color=BLUE, label="after adaptation")
-    ax.legend(fontsize=7.5, frameon=False, loc="lower left")
+    ax.legend(fontsize=7, frameon=False, loc="upper center", bbox_to_anchor=(0.45, -0.2), ncol=2)
     ax.spines[["top", "right"]].set_visible(False)
-    ax.tick_params(length=0, labelsize=8, colors=MUTED)
+    ax.tick_params(length=0, labelsize=7, colors=MUTED)
     ax.grid(axis="x", color="#EEF0F3", lw=0.6)
-    ax.set_title(title, fontsize=10.5, loc="left", color=INK)
+    ax.set_title(title, fontsize=9, loc="left", color=INK)
 
 
 def main():
     plt.rcParams.update({"font.family": "DejaVu Sans", "axes.edgecolor": "#C9CED4"})
-    fig, (a, b) = plt.subplots(1, 2, figsize=(11, 4.0), gridspec_kw={"width_ratios": [1.05, 1]})
+    fig, (a, b) = plt.subplots(1, 2, figsize=(6.9, 2.9), gridspec_kw={"width_ratios": [1.2, 1]})
     panel_slope(a)
     panel_steering(b)
-    fig.tight_layout(w_pad=3.0)
-    fig.savefig(HEADLINE)
+    fig.tight_layout(w_pad=1.5)
+    fig.savefig(HEADLINE, bbox_inches="tight")
     fig.savefig(HEADLINE.with_suffix(".png"), dpi=200)  # for the README, which cannot show a PDF
     plt.close(fig)
     print(f"wrote {HEADLINE.relative_to(ROOT)} and its .png")
