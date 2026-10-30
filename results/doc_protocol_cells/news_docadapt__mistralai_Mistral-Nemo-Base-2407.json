@@ -1,0 +1,46 @@
+{
+  "model_id": "mistralai/Mistral-Nemo-Base-2407",
+  "dataset": "corpora/news.jsonl",
+  "corpus": "news",
+  "dataset_sha256": "279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162",
+  "avg_bytes_per_token": 4.689020141243317,
+  "n_train_blocks": 40042,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.6868430319280301,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1997,
+    "zero_shot": {
+      "bpb": 0.6186901493282522,
+      "nats": 2574027.0375976562,
+      "bytes": 6002255,
+      "tokens": 1270229,
+      "windows": 2094
+    },
+    "adapted": {
+      "bpb": 0.5872616756535377,
+      "nats": 2443270.5659179688,
+      "bytes": 6002255,
+      "tokens": 1270229,
+      "windows": 2094
+    }
+  },
+  "trainable_params": 57016320,
+  "total_params": 12304798720,
+  "trainable_pct": 0.4633665393268619,
+  "adapted_bpb": 0.6462564855304156,
+  "reduction_pct": 5.909144376653923,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1718.4510304927826
+}

@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this framework or leaderboard, please cite the paper and code."
 title: "Entropy Bench"
 type: software
-version: "3.1.0"
-date-released: "2026-10-28"
+version: "3.2.0"
+date-released: "2026-10-30"
 license: "Apache-2.0"
 authors:
   - family-names: "Valente"

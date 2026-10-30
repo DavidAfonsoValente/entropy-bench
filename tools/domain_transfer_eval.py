@@ -62,6 +62,14 @@ def parse_args():
                         "(see docs/PLAN.md, experiment E2).")
     p.add_argument("--tokenizer", default=None,
                    help="tokenizer directory to use instead of the model's (when transformers loads the wrong class)")
+    p.add_argument("--doc-context", type=int, default=0, metavar="N",
+                   help="Also score whole test documents in N-token windows that start at the "
+                        "document's own BOS (compute_doc_bpb), before and after adaptation. 0 = off")
+    p.add_argument("--doc-bytes", type=int, default=6_000_000,
+                   help="Score the first test documents up to this many UTF-8 bytes, so every "
+                        "model is scored on the same text")
+    p.add_argument("--score-tokens", type=int, default=16384,
+                   help="Token budget per forward pass for --doc-context")
     p.add_argument("--device", default="cuda", help="cuda, or cpu for smoke tests")
     p.add_argument("--seed", type=int, default=None,
                    help="Seed torch/numpy/random before adapter init and training. The\n                        published cells ran with this UNSET: DataConfig.seed fixes the\n                        splits, but LoRA A/B init and dropout drew from the unseeded\n                        global torch RNG. Pass an int to make a cell reproducible and to\n                        run seed replicates (experiment E8); leave unset to reproduce the\n                        published protocol exactly.")
@@ -137,7 +145,7 @@ def main():
     from transformers import AutoTokenizer
     from lm_adapt_bench.config import DataConfig
     from lm_adapt_bench.data import DataModule
-    from lm_adapt_bench.evaluate import compute_bpb
+    from lm_adapt_bench.evaluate import compute_bpb, compute_doc_bpb
 
     # Seed before anything stochastic runs, so the recorded seed is always the one applied.
     # This covers LoRA A/B initialisation, dropout and DataLoader batch order; the split and
@@ -169,8 +177,27 @@ def main():
     model = load_model(a.model_id, "auto" if a.device == "cuda" else None)
     if a.device != "cuda":
         model = model.to(device)
-    zs = compute_bpb(model, test_subset, avg_bpt, device, a.eval_batch_size)
-    print(f"[result] zero-shot BPB = {zs:.4f}  ({time.time()-t0:.0f}s)", flush=True)
+    # --eval-blocks 0 skips the packed-block reading, for document-protocol-only runs.
+    assert a.eval_blocks or a.zero_shot_only, "adaptation needs the packed-block reading"
+    zs = compute_bpb(model, test_subset, avg_bpt, device, a.eval_batch_size) if a.eval_blocks else None
+    if zs is not None:
+        print(f"[result] zero-shot BPB = {zs:.4f}  ({time.time()-t0:.0f}s)", flush=True)
+
+    doc_texts = []
+    if a.doc_context:
+        n = 0
+        for t in dm.test_texts:
+            if n >= a.doc_bytes:
+                break
+            doc_texts.append(t)
+            n += len(t.encode("utf-8"))
+
+    def doc_bpb(tag):
+        r = compute_doc_bpb(model, tok, doc_texts, device, a.doc_context, a.doc_context // 2,
+                            a.score_tokens)
+        print(f"[result] {tag} document BPB = {r['bpb']:.4f} over {r['bytes']:,} bytes "
+              f"({r['windows']} windows, {time.time()-t0:.0f}s)", flush=True)
+        return r
 
     result = {
         "model_id": a.model_id,
@@ -186,6 +213,9 @@ def main():
         "zero_shot_bpb": zs,
         "seed": a.seed,
     }
+    if a.doc_context:
+        result["doc_protocol"] = {"context": a.doc_context, "stride": a.doc_context // 2,
+                                  "n_docs": len(doc_texts), "zero_shot": doc_bpb("zero-shot")}
 
     if not a.zero_shot_only:
         from peft import LoraConfig, get_peft_model
@@ -241,6 +271,8 @@ def main():
         red = 100.0 * (zs - ad) / zs
         print(f"[result] adapted BPB = {ad:.4f}   reduction = {red:.2f}%  "
               f"({time.time()-t0:.0f}s)", flush=True)
+        if a.doc_context:
+            result["doc_protocol"]["adapted"] = doc_bpb("adapted")
         result.update({"adapted_bpb": ad, "reduction_pct": red,
                        "train_steps": step,
                        "lora": {"r": a.lora_r, "alpha": a.lora_alpha,

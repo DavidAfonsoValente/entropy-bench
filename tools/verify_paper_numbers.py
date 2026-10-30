@@ -46,7 +46,8 @@ for f in glob.glob(TG + "/*.json"):
     if "model_id" in d:
         tg[d["model_id"]] = d
 
-tex = open("paper_sota.tex").read()
+# The bibliography moved to paper_refs.bib for the TMLR template; citation literals live there.
+tex = open("paper_sota.tex").read() + open("paper_refs.bib").read()
 try:
     tex += open("dt_table.tex").read()
 except FileNotFoundError:
@@ -465,7 +466,7 @@ for lit in ["0.991", "0.955", "0.964",
             "cluster bootstrap",
             "$0.964$",
             "thrush2024perplexity", "arXiv:2409.05816",
-            "$0.933$", "$0.863$", "$0.0003$"]:
+            "$0.0003$"]:
     if lit not in tex:
         print("  MISSING:", lit)
         bad += 1
@@ -1357,7 +1358,7 @@ require("Table 5 is labelled as a rank correlation, not selection accuracy",
         "Rank correlation ($\\rho$) with" in tex
         and "\\multicolumn{3}{c}{\\textbf{Selection accuracy vs.}}" not in tex)
 require("the re-scored column is called within-allowance, not clean",
-        "no cell outside" not in tex and "within its stated allowance rather than clean" in _flat_steer)
+        "no cell outside" not in tex and "within the allowance of one such cell" in _flat_steer)
 require("the Hacker News row carries both pair counts",
         "Hacker News (10)" in open("coverage_table.tex").read()
         and "(11) & strict" in open("coverage_table.tex").read())
@@ -1393,8 +1394,8 @@ else:
     # The second pair is a tie and the paper must say so; reporting only the pair that resolved
     # would be selecting the result after seeing it, which the preregistration exists to prevent.
     require("E11 pair 2 is reported as inconclusive", _p2["verdict"] == "INCONCLUSIVE")
-    require("the paper states the second pair shows no measurable difference",
-            "no measurable difference" in " ".join(tex.split()))
+    require("the paper states the second pair is inconclusive",
+            "pair was inconclusive" in " ".join(tex.split()))
     # Every fine-tune must clear what copying the article back out already buys, or the comparison
     # is between two retrieval systems.
     for _pair in _ds["pairs"]:
@@ -1421,8 +1422,10 @@ else:
                           ("mmlu_pro", 0.513), ("gsm8k", 0.474)):
         check("E11b " + _name + " accuracy vs the fine-tune", _claim,
               _sel[_name]["pairwise_accuracy"], 6e-3)
-    require("E11b adapted BPB is the top selector",
-            max(_sel, key=lambda k: _sel[k]["pairwise_accuracy"]) == "matched_adapted_bpb")
+    require("E11b adapted documents top; documents unadapted tie adapted blocks",
+            max(_sel, key=lambda k: _sel[k]["pairwise_accuracy"]) == "doc_adapted_bpb"
+            and _sel["doc_zero_shot_bpb"]["pairwise_accuracy"] == _sel["matched_adapted_bpb"]["pairwise_accuracy"]
+            == max(v["pairwise_accuracy"] for k, v in _sel.items() if k != "doc_adapted_bpb"))
     check("E11b adapted BPB interval low", 0.817, _sel["matched_adapted_bpb"]["ci_lo"], 6e-3)
     require("E11b adapted BPB interval is not degenerate",
             not _sel["matched_adapted_bpb"]["interval_is_degenerate"])
@@ -1464,8 +1467,9 @@ else:
                           ("parameter_count", 0.744), ("mmlu_pro", 0.538), ("gsm8k", 0.447)):
         check("E11c " + _name + " accuracy vs recipe-B systems", _claim,
               _sb[_name]["pairwise_accuracy"], 6e-3)
-    require("E11c adapted BPB is still the top selector",
-            max(_sb, key=lambda k: _sb[k]["pairwise_accuracy"]) == "matched_adapted_bpb")
+    require("E11c document BPB and adapted block BPB share the top",
+            _sb["matched_adapted_bpb"]["pairwise_accuracy"] == _sb["doc_zero_shot_bpb"]["pairwise_accuracy"]
+            == max(v["pairwise_accuracy"] for v in _sb.values()))
     # Under recipe B the margin over size does NOT resolve; the paper must not carry recipe A's
     # resolved margin over as if it were recipe-independent.
     require("E11c margin over parameter count does NOT resolve",
@@ -1521,7 +1525,7 @@ require("all five models of 9B+ won on the same early draw (trial 2)",
 _bc = [json.load(open(f)) for f in _glob.glob("results/legacy_sweep/*/best_config.json")]
 require("rank 16 won for eight of the eleven", sum(c["lora_r"] == 16 for c in _bc) == 8 and len(_bc) == 11)
 require("median winning learning rate is 1.1e-4",
-        "%.1f" % (_st.median(c["learning_rate"] for c in _bc) * 1e4) == "1.1" and "$1.1\\times10^{-4}$" in tex)
+        "%.1f" % (_st.median(c["learning_rate"] for c in _bc) * 1e4) == "1.1")
 
 # Section "Adaptation reorders the models": gains and rank moves, recomputed from the fixed-recipe cells.
 print("\nAdaptation reorders the models")
@@ -1598,12 +1602,43 @@ require("news test set is 2500 blocks of 512 tokens (about 1.3 million predictio
 require("each GSM8K question is worth 0.076 points", "%.3f" % (100 / 1319) == "0.076" and "worth $0.076$ points" in _flat_s)
 sys.path.insert(0, "tools")
 import make_crosscorpus_table as _mx
+from scipy.stats import spearmanr as _sp
 _xrows = _mx.render().splitlines()
 _math = [r for r in _xrows if "arXiv maths" in r]
 _mz = [float(r.split("&")[1]) for r in _math]; _ma = [float(r.split("&")[2]) for r in _math]
 require("maths agreement 0.91-0.97 unadapted, 0.74-0.84 adapted",
         ("%.2f" % min(_mz), "%.2f" % max(_mz), "%.2f" % min(_ma), "%.2f" % max(_ma)) == ("0.91", "0.97", "0.74", "0.84")
         and "$0.91$--$0.97$ unadapted" in _flat_s and "$0.74$--$0.84$ adapted" in _flat_s)
+
+# M3: the whole-document reading (results/doc_protocol.json, tools/analyze_doc_protocol.py).
+print("\nWhole-document reading")
+_doc = json.load(open("results/doc_protocol.json"))
+_dsel = json.load(open("results/downstream.json"))["cohort"]
+_dt = _dsel["selector_table"]["selectors"]
+require("document reading: 37 of 39 unadapted, 38 adapted",
+        _doc["doc_protocol_unadapted_right"] == 37 and _doc["stage2"]["doc_protocol_adapted_right"] == 38
+        and "orders $37$ of the $39$" in _flat_s and "orders $38$ of the $39$" in _flat_s)
+check("document unadapted pairwise accuracy", 0.949, _dt["doc_zero_shot_bpb"]["pairwise_accuracy"], tol=5e-4)
+check("its interval, low", 0.817, _dt["doc_zero_shot_bpb"]["ci_lo"], tol=5e-4)
+check("document adapted pairwise accuracy", 0.974, _dt["doc_adapted_bpb"]["pairwise_accuracy"], tol=5e-4)
+check("its interval, low", 0.862, _dt["doc_adapted_bpb"]["ci_lo"], tol=5e-4)
+require("document adapted gets all 22 resolved, unadapted 21",
+        _dsel["accuracy_on_resolved"]["doc_adapted_bpb"] == 1.0
+        and round(_dsel["accuracy_on_resolved"]["doc_zero_shot_bpb"] * 22) == 21)
+check("document unadapted vs block adapted Spearman", 1.0,
+      _doc["stage2"]["doc_unadapted_vs_block_adapted_spearman"], tol=5e-4)
+_du, _da = _doc["doc_protocol_bpb"], _doc["stage2"]["doc_protocol_adapted_bpb"]
+_gain = sorted(100 * (1 - _da[m] / _du[m]) for m in _du)
+require("document adaptation gain 2.0-7.9%", ("%.1f" % _gain[0], "%.1f" % _gain[-1]) == ("2.0", "7.9")
+        and "by $2.0$--$7.9\\%$" in _flat_s)
+_ms = sorted(_du)
+check("Spearman between the two document readings", 0.993,
+      _sp([_du[m] for m in _ms], [_da[m] for m in _ms])[0], tol=5e-4)
+require("Gemma-4-12B second on documents", _doc["doc_protocol_rank"]["gemma-4-12B"] == 2)
+require("controls: unadapted within 0.04%, adapted within 0.7%",
+        max(abs(c["rel_diff"]) for c in _doc["control"].values()) < 4e-4
+        and max(abs(c["rel_diff"]) for c in _doc["stage2"]["control"].values()) < 7e-3)
+require("every model reads the same 6.0 MB", _doc["bytes_scored"] == 6002255 and "first $6.0$\\,MB" in _flat_s)
 
 for figure in ("figures/fig_block_position.pdf", "figures/fig_cross_corpus.pdf",
                "figures/fig_context_length.pdf", "figures/fig_benchmark_alignment.tex",

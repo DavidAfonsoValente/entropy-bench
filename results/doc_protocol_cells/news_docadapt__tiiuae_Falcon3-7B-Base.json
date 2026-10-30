@@ -1,0 +1,46 @@
+{
+  "model_id": "tiiuae/Falcon3-7B-Base",
+  "dataset": "corpora/news.jsonl",
+  "corpus": "news",
+  "dataset_sha256": "279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162",
+  "avg_bytes_per_token": 4.576902198793999,
+  "n_train_blocks": 40927,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.8015379977000523,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1997,
+    "zero_shot": {
+      "bpb": 0.7165845086698165,
+      "nats": 2981311.24609375,
+      "bytes": 6002255,
+      "tokens": 1297649,
+      "windows": 2100
+    },
+    "adapted": {
+      "bpb": 0.6876573470883125,
+      "nats": 2860961.3486328125,
+      "bytes": 6002255,
+      "tokens": 1297649,
+      "windows": 2100
+    }
+  },
+  "trainable_params": 44269568,
+  "total_params": 7499820032,
+  "trainable_pct": 0.5902750707498577,
+  "adapted_bpb": 0.7578819821982533,
+  "reduction_pct": 5.446530997540521,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1237.4631478786469
+}

@@ -1,0 +1,26 @@
+{
+  "model_id": "HuggingFaceTB/SmolLM2-1.7B",
+  "dataset": "corpora/news.jsonl",
+  "corpus": "news",
+  "dataset_sha256": "279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162",
+  "avg_bytes_per_token": 4.436778439241493,
+  "n_train_blocks": 42225,
+  "n_test_blocks_scored": 0,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": null,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1997,
+    "zero_shot": {
+      "bpb": 0.7381099998504832,
+      "nats": 3070866.892578125,
+      "bytes": 6002255,
+      "tokens": 1338324,
+      "windows": 2101
+    }
+  },
+  "wall_seconds": 98.90515732765198
+}

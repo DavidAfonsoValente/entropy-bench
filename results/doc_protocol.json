@@ -1,0 +1,97 @@
+{
+ "bytes_scored": 6002255,
+ "control": {
+  "Qwen2.5-7B": {
+   "packed_block": 0.757715486326801,
+   "published": 0.758,
+   "rel_diff": -0.00037534785382453695
+  },
+  "gemma-4-12B": {
+   "packed_block": 0.8658932430988361,
+   "published": 0.866,
+   "rel_diff": -0.0001232758673948009
+  }
+ },
+ "control_passes": true,
+ "doc_protocol_bpb": {
+  "Falcon3-10B": 0.6900286074454237,
+  "Falcon3-7B": 0.7165845086698165,
+  "LFM2.5-1.2B": 0.8254717659918944,
+  "Llama-3.2-1B": 0.7334825927113756,
+  "Ministral-3-14B": 0.6407522987717754,
+  "Mistral-Nemo-12B": 0.6186901493282522,
+  "Qwen2.5-0.5B": 0.8514772712956492,
+  "Qwen2.5-1.5B": 0.750679596299767,
+  "Qwen2.5-14B": 0.6384363467673435,
+  "Qwen2.5-3B": 0.7122864156732566,
+  "Qwen2.5-7B": 0.6777239272785214,
+  "Qwen3.5-4B": 0.6960570873801241,
+  "Qwen3.5-9B": 0.6570923511571499,
+  "SmolLM2-1.7B": 0.7381099998504832,
+  "gemma-4-12B": 0.6368083637852308
+ },
+ "doc_protocol_rank": {
+  "Falcon3-10B": 7,
+  "Falcon3-7B": 10,
+  "LFM2.5-1.2B": 14,
+  "Llama-3.2-1B": 11,
+  "Ministral-3-14B": 4,
+  "Mistral-Nemo-12B": 1,
+  "Qwen2.5-0.5B": 15,
+  "Qwen2.5-1.5B": 13,
+  "Qwen2.5-14B": 3,
+  "Qwen2.5-3B": 9,
+  "Qwen2.5-7B": 6,
+  "Qwen3.5-4B": 8,
+  "Qwen3.5-9B": 5,
+  "SmolLM2-1.7B": 12,
+  "gemma-4-12B": 2
+ },
+ "doc_protocol_unadapted_right": 37,
+ "n_pairs": 39,
+ "published_right": {
+  "hellaswag": 34,
+  "matched_adapted_bpb": 37,
+  "zero_shot_bpb": 30
+ },
+ "question": "Does unadapted BPB on whole documents from their own BOS, 2,048-token context, equal bytes, rank the 15 fine-tuned systems as well as adapted BPB?",
+ "spearman_vs_rouge": {
+  "doc_protocol_unadapted": 0.9928571428571428
+ },
+ "stage2": {
+  "claim_changes": true,
+  "control": {
+   "Qwen2.5-7B": {
+    "packed_block": 0.7169882903126377,
+    "published": 0.7170081839948478,
+    "rel_diff": -2.774540466088382e-05
+   },
+   "gemma-4-12B": {
+    "packed_block": 0.6574997776870215,
+    "published": 0.6531732218371196,
+    "rel_diff": 0.006623902672759696
+   }
+  },
+  "doc_protocol_adapted_bpb": {
+   "Falcon3-10B": 0.6577477280256121,
+   "Falcon3-7B": 0.6876573470883125,
+   "LFM2.5-1.2B": 0.7895111585863567,
+   "Llama-3.2-1B": 0.7130082315742098,
+   "Ministral-3-14B": 0.6166968183881417,
+   "Mistral-Nemo-12B": 0.5872616756535377,
+   "Qwen2.5-0.5B": 0.8345649126618911,
+   "Qwen2.5-1.5B": 0.7312592091393919,
+   "Qwen2.5-14B": 0.6122558414510405,
+   "Qwen2.5-3B": 0.690735866614213,
+   "Qwen2.5-7B": 0.6535583824984621,
+   "Qwen3.5-4B": 0.6794199585706618,
+   "Qwen3.5-9B": 0.6403914630580493,
+   "SmolLM2-1.7B": 0.7196491866719334,
+   "gemma-4-12B": 0.586523609769862
+  },
+  "doc_protocol_adapted_right": 38,
+  "doc_unadapted_vs_block_adapted_spearman": 1.0,
+  "spearman_vs_rouge": 0.9928571428571428
+ },
+ "verdict": "run the adapted arm (stage 2)"
+}

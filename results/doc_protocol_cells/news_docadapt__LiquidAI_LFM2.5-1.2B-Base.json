@@ -1,0 +1,46 @@
+{
+  "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+  "dataset": "corpora/news.jsonl",
+  "corpus": "news",
+  "dataset_sha256": "279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162",
+  "avg_bytes_per_token": 4.626540791939786,
+  "n_train_blocks": 40675,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.3397503241785267,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1997,
+    "zero_shot": {
+      "bpb": 0.8254717659918944,
+      "nats": 3434330.814453125,
+      "bytes": 6002255,
+      "tokens": 1290400,
+      "windows": 2096
+    },
+    "adapted": {
+      "bpb": 0.7895111585863567,
+      "nats": 3284718.64453125,
+      "bytes": 6002255,
+      "tokens": 1290400,
+      "windows": 2096
+    }
+  },
+  "trainable_params": 11108352,
+  "total_params": 1181448960,
+  "trainable_pct": 0.9402312225151055,
+  "adapted_bpb": 0.8517396375186628,
+  "reduction_pct": 36.42549494877634,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 285.1239800453186
+}

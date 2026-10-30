@@ -21,8 +21,9 @@ OUT = ROOT / "downstream_table.tex"
 SRC = ROOT / "results" / "downstream.json"
 
 LABELS = {
-    "matched_adapted_bpb": "Adapted BPB", "hellaswag": "HellaSwag",
-    "zero_shot_bpb": "Unadapted BPB", "parameter_count": "Parameter count",
+    "matched_adapted_bpb": "Adapted BPB, blocks", "hellaswag": "HellaSwag",
+    "zero_shot_bpb": "Unadapted BPB, blocks", "parameter_count": "Parameter count",
+    "doc_zero_shot_bpb": "Unadapted BPB, documents", "doc_adapted_bpb": "Adapted BPB, documents",
     "mmlu_pro": "MMLU-Pro", "gsm8k": "GSM8K",
 }
 

@@ -1,0 +1,26 @@
+{
+  "model_id": "google/gemma-4-12B",
+  "dataset": "corpora/news.jsonl",
+  "corpus": "news",
+  "dataset_sha256": "279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162",
+  "avg_bytes_per_token": 4.7193449189746906,
+  "n_train_blocks": 39712,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.8658932430988361,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1997,
+    "zero_shot": {
+      "bpb": 0.6368083637852308,
+      "nats": 2649406.8928222656,
+      "bytes": 6002255,
+      "tokens": 1259998,
+      "windows": 2093
+    }
+  },
+  "wall_seconds": 419.04457116127014
+}

@@ -1,0 +1,26 @@
+{
+  "model_id": "Qwen/Qwen3.5-9B-Base",
+  "dataset": "corpora/news.jsonl",
+  "corpus": "news",
+  "dataset_sha256": "279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162",
+  "avg_bytes_per_token": 4.69882733684942,
+  "n_train_blocks": 39774,
+  "n_test_blocks_scored": 0,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": null,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1997,
+    "zero_shot": {
+      "bpb": 0.6570923511571499,
+      "nats": 2733797.3295898438,
+      "bytes": 6002255,
+      "tokens": 1263104,
+      "windows": 2094
+    }
+  },
+  "wall_seconds": 254.2853331565857
+}

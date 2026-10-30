@@ -285,6 +285,10 @@ def _selectors_17():
                 accs[key][label] = bench[label][r]
     sel = {"matched_adapted_bpb": (adapt, True), "zero_shot_bpb": (zero, True),
            "parameter_count": (params, False)}
+    # The whole-document readings of the fifteen fine-tuned models (M3, tools/analyze_doc_protocol.py).
+    doc = json.loads((ROOT / "results" / "doc_protocol.json").read_text())
+    sel["doc_zero_shot_bpb"] = (doc["doc_protocol_bpb"], True)
+    sel["doc_adapted_bpb"] = (doc["stage2"]["doc_protocol_adapted_bpb"], True)
     sel.update({b: (accs[b], False) for b in ("gsm8k", "mmlu_pro", "hellaswag")})
     return sel, params
 

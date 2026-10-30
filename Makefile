@@ -75,6 +75,8 @@ check:
 # is unit-tested rather than trusted; the test needs no artifacts and always runs.
 	$(PYTHON) tools/test_downstream_metric.py
 	$(PYTHON) tools/plot_downstream.py --check
+	$(PYTHON) tools/analyze_doc_protocol.py --check
+	$(PYTHON) tools/make_downstream_table.py --check
 # E11's raw generations live in SCRATCH alongside the task data, same purge rule as E10.
 	@if [ -f "$${E11_DIR:-$$SCRATCH/e11_downstream}/eval.jsonl" ]; then \
 	  $(PYTHON) tools/analyze_downstream.py --check; \
@@ -108,11 +110,11 @@ slides: slides/talk.tex slides/script.tex figures/fig_headline.pdf figures/fig_d
 	cd slides && $(PDFLATEX) script.tex && $(PDFLATEX) script.tex
 	cd slides && rm -f *.aux *.log *.nav *.out *.snm *.toc
 
-paper_sota.pdf: paper_sota.tex dt_table.tex rank_table.tex crosscorpus_table.tex figures/fig_benchmark_alignment.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf figures/fig_headline.pdf figures/fig_downstream.pdf
+paper_sota.pdf: paper_sota.tex paper_refs.bib tmlr.sty dt_table.tex rank_table.tex crosscorpus_table.tex figures/fig_benchmark_alignment.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf figures/fig_headline.pdf figures/fig_downstream.pdf
 	@if command -v latexmk >/dev/null 2>&1; then \
 		$(LATEXMK) $<; \
 	else \
-		$(PDFLATEX) $< && $(PDFLATEX) $<; \
+		$(PDFLATEX) $< && bibtex $(basename $<) && $(PDFLATEX) $< && $(PDFLATEX) $<; \
 	fi
 
 figures/fig_selectors.pdf: tools/plot_selectors.py results/cohort_extension.json

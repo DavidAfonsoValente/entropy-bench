@@ -5,11 +5,13 @@
 [![License](https://img.shields.io/badge/code-Apache--2.0-blue.svg)](LICENSE)
 [![Paper](https://img.shields.io/badge/paper-PDF-b31b1b.svg)](paper_sota.pdf)
 
-**Adapting to the domain predicts fine-tuning on the task.** Every candidate base model is adapted
-the same way to unlabelled text from a domain (minutes to an hour per model on one GPU) and ranked
-by held-out loss in bits per byte. On fifteen models that ranking lands every one within one rank of where its fine-tuned system
-finishes (Spearman 0.99; HellaSwag 0.97, MMLU-Pro 0.71, GSM8K 0.59). It is not news predicting news:
-adapted on Reddit instead, BPB predicts the news fine-tune just as well.
+**Loss on the domain's text anticipates fine-tuning on the task.** Every candidate base model is
+ranked by its loss in bits per byte on fresh, unlabelled text from the domain, each document scored
+whole from its own beginning. On fifteen models that ranking, with no training at all, lands every
+one within one rank of where its fine-tuned system finishes (Spearman 0.99; HellaSwag 0.97,
+MMLU-Pro 0.71, GSM8K 0.59). How the text is cut matters: scored on fixed-length blocks cut from
+concatenated text, the same loss misranks several models (Spearman 0.71) until each model is
+briefly adapted to the domain.
 
 ![Adaptation reorders the models, and the text aims the new order](figures/fig_headline.png)
 
@@ -30,8 +32,9 @@ stronger model from one that saw more of that exam. Llama-3.2-1B and Qwen2.5-1.5
 apart on HellaSwag and 3.4% apart in adapted bits per byte, yet 55.3 points apart on GSM8K.
 
 **Benchmarks score a model before it is adapted.** Teams adapt a base model before they use it, so
-what matters is how good it becomes. Gemma-4-12B is thirteenth of fifteen on raw loss and mid-table
-on GSM8K and MMLU-Pro; once adapted it is second, and fine-tuned it builds the best system of all.
+what matters is how good it becomes. Gemma-4-12B is thirteenth of fifteen on loss over
+blocks and mid-table on GSM8K and MMLU-Pro; scored on whole documents, or adapted first, it is
+second, and fine-tuned it builds the best system of all.
 
 ## Why loss
 
@@ -41,20 +44,22 @@ minimises it again on the domain, and on
 shared text the difference between two models' expected losses is exactly the difference in their
 KL divergence from the text's distribution. Dividing by UTF-8 bytes rather than tokens puts every
 tokenizer on one scale. The method adds what makes that usable: text dated after every model
-shipped, deduplicated and screened for membership, and the same adaptation for every candidate.
+shipped, deduplicated and screened for membership, and every document read from the start the
+model was trained to see, on the same bytes for every candidate.
 
 ## What it shows
 
 Across seventeen base models (0.5B–35B, eight families) and four corpora:
 
-- **Adapting to the domain predicts fine-tuning on the task.** Ranked before any task exists, fifteen
-  models land within one rank of where their fine-tuned news systems finish (Spearman 0.99; HellaSwag
-  0.97, MMLU-Pro 0.71, GSM8K 0.59). It is not news predicting news: BPB adapted on Reddit predicts the news
-  fine-tune exactly as well as news BPB does.
-- **Adaptation reorders the models.** Unadapted and adapted rankings agree only at Spearman
-  0.61–0.68. Unadapted loss mixes familiarity with a style of prose into capability: the two Gemmas
-  and the Liquid model gain 17–36% from adaptation where every other model gains 3.6–5.4%, and they are
-  the only models that climb.
+- **Loss on the domain's text anticipates fine-tuning on the task.** Ranked on whole news documents
+  before any task exists, fifteen models land within one rank of where their fine-tuned news systems
+  finish (Spearman 0.99; HellaSwag 0.97, MMLU-Pro 0.71, GSM8K 0.59). Adapting every model first and
+  scoring blocks gives the identical order; adapting and scoring whole documents gains one pair of 39.
+- **How the text is cut can reorder the models.** Blocks cut from concatenated text start
+  mid-document, without the beginning-of-document token some models rely on. On blocks the
+  unadapted and adapted rankings agree only at Spearman 0.61–0.68, and the two Gemmas and the Liquid
+  model gain 17–36% from adaptation where every other model gains 3.6–5.4%. On whole documents
+  adaptation gains every model 2.0–7.9% and barely moves the order.
 - **The adapted ordering converges on the language benchmark, and can be aimed.** It matches
   HellaSwag at Spearman 0.96–0.98 on news, Reddit and Hacker News, up from 0.63–0.72; adapted on
   arXiv mathematics it swings to GSM8K (0.91) and MMLU-Pro (0.93).
@@ -64,7 +69,10 @@ Across seventeen base models (0.5B–35B, eight families) and four corpora:
 
 ## The method
 
-Each candidate's adaptation hyperparameters come from its own Optuna search (the same number of
+The headline reading needs only forward passes: each held-out document is scored from its
+tokenizer's beginning-of-document token with a 2,048-token context (`compute_doc_bpb` in
+`lm_adapt_bench/evaluate.py`). The adapted reading, used for the cross-corpus and stability
+results, adapts each candidate first. Each candidate's adaptation hyperparameters come from its own Optuna search (the same number of
 trials for every model, no time cap), and the chosen configuration trains until validation loss
 plateaus: `python -m lm_adapt_bench.cli --hparams sweep --no-time-limit`. For compute, the reported
 results use the pipeline's other mode, one hand-picked recipe for every model (`--hparams manual`: LoRA r=16, alpha=32, learning rate 1e-4,
@@ -247,7 +255,7 @@ BPB = (cross_entropy_nats / ln(2)) × (scored_tokens / source_utf8_bytes)
 ```
 
 Lower BPB means the model assigned more probability to held-out text. The leaderboard ranks
-**adapted BPB**. The zero-shot-to-adapted reduction is reported separately as a corpus-calibration
+**adapted BPB** on blocks, the reading every corpus has. The zero-shot-to-adapted reduction is reported separately as a corpus-calibration
 diagnostic; a large reduction is not automatically a better final model.
 
 ## Project layout

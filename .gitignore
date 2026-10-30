@@ -14,6 +14,9 @@ dist/
 
 # Project Results and Reports
 results/*
+!results/doc_protocol.json
+!results/doc_protocol_cells/
+!results/doc_protocol_cells/*.json
 !results/combined_bpb_vs_static.json
 !results/leaderboard.json
 !results/leaderboard_math.json

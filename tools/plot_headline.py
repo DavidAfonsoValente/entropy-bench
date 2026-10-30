@@ -29,9 +29,13 @@ NAMES = {"gemma-4-31B": "Gemma-4-31B", "gemma-4-12B": "Gemma-4-12B", "Qwen3.5-35
          "LFM2.5-1.2B": "LFM2.5-1.2B", "Qwen2.5-0.5B": "Qwen-2.5-0.5B", "Falcon3-10B": "Falcon3-10B",
          "Falcon3-7B": "Falcon3-7B", "Mistral-Nemo-12B": "Mistral-Nemo-12B", "Qwen2.5-14B": "Qwen-2.5-14B",
          "Qwen2.5-3B": "Qwen-2.5-3B", "SmolLM2-1.7B": "SmolLM2-1.7B"}
+# Every cell a reader needs to judge the shift, including the ones that move against it: GSM8K
+# falls on news, and HellaSwag rises on arXiv too.
 ROWS = [("news", "hellaswag", "HellaSwag · news"), ("reddit", "hellaswag", "HellaSwag · Reddit"),
-        ("hackernews", "hellaswag", "HellaSwag · Hacker News"),
-        ("math", "gsm8k", "GSM8K · arXiv maths"), ("math", "mmlu_pro", "MMLU-Pro · arXiv maths")]
+        ("hackernews", "hellaswag", "HellaSwag · Hacker News"), ("news", "gsm8k", "GSM8K · news"),
+        ("math", "gsm8k", "GSM8K · arXiv maths"), ("math", "mmlu_pro", "MMLU-Pro · arXiv maths"),
+        ("math", "hellaswag", "HellaSwag · arXiv maths")]
+N_GENERAL = 4  # rows above the divider
 
 
 def _cells():
@@ -64,6 +68,8 @@ def panel_slope(ax, title="A.  Eleven models on news, ranked three ways"):
         for x, y, ha in ((0, ys[0], "right"), (2, ys[2], "left")):
             ax.text(x + (-0.09 if ha == "right" else 0.09), y, NAMES[m], ha=ha, va="center",
                     fontsize=7, color=color if strong else MUTED, fontweight="bold" if strong else None)
+        ax.text(1, ys[1] - 0.32, str(ys[1]), ha="center", va="bottom", fontsize=5.5,
+                color=color if strong else MUTED)
     ax.set_xticks(range(3), ["Unadapted\nBPB", "Adapted\nBPB", "HellaSwag"], fontsize=7.5, color=INK)
     ax.set_xlim(-1.0, 3.0)
     ax.set_ylim(len(models) + 0.6, -0.4)
@@ -76,7 +82,7 @@ def panel_slope(ax, title="A.  Eleven models on news, ranked three ways"):
     ax.set_title(title, fontsize=9, loc="left", color=INK)
 
 
-def panel_steering(ax, title="B.  The text aims the ranking"):
+def panel_steering(ax, title="B.  Agreement with each benchmark"):
     cells = _cells()
     for i, (corpus, bench, label) in enumerate(ROWS):
         before = cells[f"{corpus}__zero_shot"]["alignment"][bench]["spearman"]
@@ -86,8 +92,9 @@ def panel_steering(ax, title="B.  The text aims the ranking"):
                     arrowprops=dict(arrowstyle="-|>", color=BLUE, lw=1.4, shrinkA=4, shrinkB=4))
         ax.plot(before, y, "o", ms=6, mfc="white", mec=MUTED, mew=1.2, zorder=3)
         ax.plot(after, y, "o", ms=6, color=BLUE, mec="white", mew=0.8, zorder=3)
-        ax.text(after + 0.022, y, f"{after:.2f}", va="center", fontsize=7, color=INK, fontweight="bold")
-    ax.axhline(1.5, color="#DDE1E6", lw=0.8)  # general text above, mathematics below
+        ax.text(max(after, before) + 0.022, y, f"{after:.2f}", va="center", fontsize=7, color=INK,
+                fontweight="bold")
+    ax.axhline(len(ROWS) - N_GENERAL - 0.5, color="#DDE1E6", lw=0.8)  # general text above, maths below
     ax.set_yticks(range(len(ROWS)), [lab for _, _, lab in reversed(ROWS)], fontsize=7)
     ax.set_xlim(0.4, 1.07)
     ax.set_xlabel("Spearman $\\rho$ with the benchmark", fontsize=7.5,
@@ -103,7 +110,7 @@ def panel_steering(ax, title="B.  The text aims the ranking"):
 
 def main():
     plt.rcParams.update({"font.family": "DejaVu Sans", "axes.edgecolor": "#C9CED4"})
-    fig, (a, b) = plt.subplots(1, 2, figsize=(6.9, 2.9), gridspec_kw={"width_ratios": [1.2, 1]})
+    fig, (a, b) = plt.subplots(1, 2, figsize=(6.9, 3.2), gridspec_kw={"width_ratios": [1.2, 1]})
     panel_slope(a)
     panel_steering(b)
     fig.tight_layout(w_pad=1.5)

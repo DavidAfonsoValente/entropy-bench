@@ -38,7 +38,9 @@ Packaging, licence, citation metadata.
 | `decision_rule_table.tex` | — |
 | `downstream_table.tex` | — |
 | `dt_table.tex` | — |
+| `fancyhdr.sty` | — |
 | `mechanism_table.tex` | — |
+| `paper_refs.bib` | — |
 | `paper_sota.pdf` | — |
 | `paper_sota.tex` | — |
 | `pyproject.toml` | — |
@@ -47,6 +49,8 @@ Packaging, licence, citation metadata.
 | `run_bench.sh` | Master Launcher (Heterogeneous GPU Resource-Aware Discovery) |
 | `selection_regret_table.tex` | — |
 | `static_benchmark_table.tex` | — |
+| `tmlr.bst` | — |
+| `tmlr.sty` | — |
 
 ## benchmarks/
 
@@ -172,7 +176,7 @@ The six-stage audit (near-dup, split leakage, Min-K++, CoDeC, DCQ, MAD calibrati
 
 Pytest suite for the pipeline; run by `make check`.
 
-- `lm_adapt_bench/tests/` — 25 files.
+- `lm_adapt_bench/tests/` — 26 files.
 
 ## reports/
 
@@ -184,7 +188,7 @@ Rendered HTML/PDF report of the superseded 11-model sweep.
 
 Raw result cells and harness logs, per experiment.
 
-- `results/` — 304 files.
+- `results/` — 334 files.
 
 ## results/ artifacts
 
@@ -201,6 +205,7 @@ Committed analysis artifacts. Each is written by one `tools/analyze_*.py` and as
 | `results/combined_bpb_vs_static.json` | — |
 | `results/criterion_uncertainty.json` | — |
 | `results/decision_rule.json` | — |
+| `results/doc_protocol.json` | — |
 | `results/downstream.json` | — |
 | `results/downstream_task.json` | — |
 | `results/e2_confound_audit.json` | — |
@@ -334,6 +339,7 @@ Turn finished result cells into a committed JSON artifact. All support `--check`
 | `tools/analyze_cohort_extension.py` | E3: does the in-band conclusion survive a cohort large enough to resolve anything? |
 | `tools/analyze_criterion_uncertainty.py` | How well is the in-domain criterion itself known? |
 | `tools/analyze_decision_rule.py` | What a practitioner with two or three candidates should do with a BPB gap |
+| `tools/analyze_doc_protocol.py` | M3: does a clean unadapted reading rank the fine-tuned systems as well as adapted BPB? |
 | `tools/analyze_downstream.py` | Does the selector's pick actually build the better fine-tuned system? |
 | `tools/analyze_late_position.py` | Does discarding each block's cold start make the free reading as good as the adapted one? |
 | `tools/analyze_math_domain.py` | Answer the math-domain question: does math-adapted BPB rank-agree with |

@@ -1,0 +1,26 @@
+{
+  "model_id": "mistralai/Ministral-3-14B-Base-2512",
+  "dataset": "corpora/news.jsonl",
+  "corpus": "news",
+  "dataset_sha256": "279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162",
+  "avg_bytes_per_token": 4.689020141243317,
+  "n_train_blocks": 40042,
+  "n_test_blocks_scored": 0,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": null,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1997,
+    "zero_shot": {
+      "bpb": 0.6407522987717754,
+      "nats": 2665815.421875,
+      "bytes": 6002255,
+      "tokens": 1270229,
+      "windows": 2094
+    }
+  },
+  "wall_seconds": 287.69638872146606
+}
