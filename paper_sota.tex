@@ -38,6 +38,16 @@
 
 \newcommand{\bpb}{\text{BPB}}
 \newcommand{\loss}{\mathcal{L}}
+% Where a released file backs a claim, \artifact{path} footnotes it: a link into the public repository
+% in the preprint, its path inside the supplementary material in the anonymous submission.
+\newcommand{\repourl}{https://github.com/DavidAfonsoValente/entropy-bench}
+% \url reads its argument verbatim, so the address is expanded and detokenised before it sees it.
+\newcommand{\repolink}[1]{\expandafter\url\expandafter{\detokenize\expandafter{\repourl#1}}}
+\ifanon
+\newcommand{\artifact}[1]{\footnote{Supplementary material, \texttt{\detokenize{#1}}.}}
+\else
+\newcommand{\artifact}[1]{\footnote{\repolink{/tree/main/#1}}}
+\fi
 
 \title{Back to Entropy: Evaluating Base Language Models\\ Beyond Perplexity and Benchmarks}
 \author{\name David Afonso Valente \email dvalente@bottlecapai.com \\ \addr Bottlecap AI}
@@ -61,7 +71,8 @@ strongest models look weak. Adapting every model briefly to the domain repairs t
 on whole documents the reading needs no adaptation. The
 adapted ranking agrees with HellaSwag on general text, and on arXiv mathematics it agrees more
 closely with GSM8K and MMLU-Pro than with HellaSwag. It is stable across adaptation seeds and
-hardware. Code and artifacts are released.
+hardware. \ifanon Code and artifacts are provided as supplementary material.\else Code and artifacts:
+\repolink{}.\fi
 \end{abstract}
 
 \section{Introduction}
@@ -157,10 +168,12 @@ MMLU-Pro than with HellaSwag (Figure~\ref{fig:headline}B, Section~\ref{sec:agree
 and re-runs on other hardware reproduce the numbers (Section~\ref{sec:stability}).
 \end{itemize}
 \ifanon
-Code and artifacts are provided as supplementary material.
+Code and artifacts are provided as supplementary material, and every number in the paper can be
+recomputed from them with \texttt{make check}.
 \else
-All numbers in the paper can be recomputed from the released artifacts at
-\begin{center}\url{https://github.com/DavidAfonsoValente/entropy-bench}\end{center}
+All numbers in the paper can be recomputed from the released artifacts with \texttt{make check}:
+\begin{center}\repolink{}\end{center}
+The paper and its artifacts are also attached to each release (\repolink{/releases/latest}).
 \fi
 
 \section{Related Work}
@@ -252,14 +265,17 @@ for having seen it. Min-K\%++ \citep{zhang2025minkpp} flags passages whose least
 unusually likely for the model, and a context-sensitivity test flags passages whose loss drops more
 than expected when the model is shown other text from the same corpus. We remove every passage
 flagged for any model, $80$ in total, so all candidates are measured on the same corpus
-(Appendix~\ref{app:robust}).
+(Appendix~\ref{app:robust}). The corpora, their manifests and record fingerprints are
+released.\artifact{docs/DATASET.md}
 
 \paragraph{Phase 2: whole documents.} Each test document is read on its own, starting from its
 tokenizer's beginning-of-document token, if it adds one, with up to $2{,}048$ tokens of
 context. A document longer than that is read in overlapping windows with a stride of $1{,}024$, and
 each token is scored once. The beginning-of-document token is
 never scored. Every model reads the same first $6.0$\,MB of test documents, so the text is
-identical byte for byte.
+identical byte for byte. The implementation is
+released.\artifact{lm_adapt_bench/evaluate.py} The per-model scores are
+released with the analysis that turns them into the numbers below.\artifact{results/doc_protocol_cells}
 
 \paragraph{Phase 3: bits per byte.} Let $\loss$ be the total cross-entropy, in nats, over the
 scored tokens of the test text, and $|B|$ the UTF-8 byte length of the text those tokens cover:
@@ -283,7 +299,8 @@ batch size, warm-up, weight decay, LoRA rank, $\alpha$ and dropout; successive h
 BPB on the validation split, never on the test split. Every model gets the same number of trials
 and no time limit, because with a wall-clock limit small models complete more trials than large
 ones and end up better tuned (Appendix~\ref{app:robust}). The best configuration is then trained
-until validation BPB stops improving. The released pipeline implements this procedure. Every
+until validation BPB stops improving. The released pipeline implements this
+procedure.\artifact{lm_adapt_bench} Every
 adapted number in this paper uses a single shared configuration instead, for compute reasons
 (Section~\ref{sec:setup}). Adapted models can also read whole documents, and we report that too.
 
@@ -796,7 +813,8 @@ disagree most (Gemma-4-12B against Ministral-3-14B, Llama-3.2-1B against Qwen-2.
 cohort model that fits one GPU, so that no pair is hand-picked. Gemma-4-31B and Qwen-3.5-35B-MoE need
 more than one GPU for this fine-tune, because its $1{,}280$-token sequences and its generation pass
 cost far more memory than the $512$-token adaptation (Section~\ref{sec:setup}), and are excluded by
-that rule, which costs one size-matched pair of forty.
+that rule, which costs one size-matched pair of forty. The fine-tuned scores, pairs and rankings
+are released.\artifact{results/downstream.json}
 
 \paragraph{The task.} Journalistic convention makes a news article's first paragraph a standalone
 summary of it, so the corpus supplies its own supervision: the input is the article with its opening
@@ -896,7 +914,8 @@ total.}
 }
 \caption{\textbf{BPB of the eleven models on the general-text corpora.} Lower is better.
 Beginning-of-document tokens are context only and never scored. Rows are ordered by adapted news
-BPB.}
+BPB. \ifanon The leaderboard is in the supplementary material, \texttt{LEADERBOARD.md}.\else The
+leaderboard is maintained at \repolink{/blob/main/LEADERBOARD.md}.\fi}
 \label{tab:leaderboard}
 \end{table}
 
@@ -911,7 +930,8 @@ scores. The third, Qwen-2.5-32B, did not finish its $250$ steps inside the run w
 stratified $1{,}000$-question subset (seed 42); HellaSwag is 10-shot length-normalised
 multiple-choice accuracy on all $10{,}042$ validation examples; GSM8K is 5-shot chain-of-thought with
 flexible numeric extraction on all $1{,}319$ test examples. All bf16, greedy, with each tokenizer's
-own beginning-of-sequence token.
+own beginning-of-sequence token. The raw harness logs for all three
+benchmarks are released.\artifact{results}
 
 \paragraph{One host.} Generative scores do not pool across hosts: identical released weights move
 $-0.60$ to $+0.69$ GSM8K points when only the GPU changes from A100 to H100. The benchmark columns were therefore scored again in full on one host
