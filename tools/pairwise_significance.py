@@ -38,6 +38,7 @@ from _artifact_check import _diff  # noqa: E402
 
 OUTPUT_JSON = ROOT / "results" / "pairwise_significance.json"
 DT = ROOT / "results" / "domain_transfer"
+DOC_DIR = ROOT / "results" / "doc_protocol_cells"
 CORPORA = ("news", "reddit", "hackernews", "math")
 TIERS = ("zero_shot", "adapted")
 BENCHES = ("gsm8k", "mmlu_pro", "hellaswag")
@@ -119,6 +120,9 @@ def _load_bpb() -> dict:
             d = json.loads((DT / f"{corpus}__{slug}.json").read_text())
             out[(corpus, "zero_shot", label)] = d["zero_shot_bpb"]
             out[(corpus, "adapted", label)] = d["adapted_bpb"]
+            # The document reading (ledger M3/M4), the paper's main one.
+            doc = json.loads((DOC_DIR / f"{corpus}_doc__{model_id.replace('/', '_')}.json").read_text())
+            out[(corpus, "document", label)] = doc["doc_protocol"]["zero_shot"]["bpb"]
     return out
 
 
@@ -150,7 +154,7 @@ def cluster_ci(stat, labels, reps, rng):
             "n_draws": len(draws)}
 
 
-def steering_did(bpb, acc, models, general: str):
+def steering_did(bpb, acc, models, general: str, tier: str = "adapted"):
     """Joint movement: (GSM8K minus HellaSwag) under math adaptation, minus the same under `general`.
 
     The steering hypothesis predicts a *pair* of movements -- toward the matched benchmark and away
@@ -158,7 +162,7 @@ def steering_did(bpb, acc, models, general: str):
     and it is the statistic the paper leads with.
     """
     def pa(corpus, bench):
-        return pairwise_accuracy(bpb, acc, models, corpus, "adapted", bench)
+        return pairwise_accuracy(bpb, acc, models, corpus, tier, bench)
     parts = [pa("math", "gsm8k"), pa("math", "hellaswag"),
              pa(general, "gsm8k"), pa(general, "hellaswag")]
     if any(p is None for p in parts):
@@ -166,8 +170,8 @@ def steering_did(bpb, acc, models, general: str):
     return (parts[0] - parts[1]) - (parts[2] - parts[3])
 
 
-def pooled_did(bpb, acc, models):
-    values = [steering_did(bpb, acc, models, g) for g in GENERAL_CORPORA]
+def pooled_did(bpb, acc, models, tier: str = "adapted"):
+    values = [steering_did(bpb, acc, models, g, tier) for g in GENERAL_CORPORA]
     return None if any(v is None for v in values) else sum(values) / len(values)
 
 
@@ -209,7 +213,7 @@ def sign_split(stat, units: dict, reps: int, rng) -> dict:
     }
 
 
-def build_steering_did(bpb, acc, reps: int) -> dict:
+def build_steering_did(bpb, acc, reps: int, tier: str = "adapted") -> dict:
     """The DiD, its per-corpus values, and its stability under both resampling units.
 
     Takes its own seeded generator rather than sharing the caller's. Sharing one stream makes every
@@ -219,8 +223,8 @@ def build_steering_did(bpb, acc, reps: int) -> dict:
     """
     rng = random.Random(SEED)
     labels = list(MODEL_IDS)
-    per_corpus = {g: steering_did(bpb, acc, labels, g) for g in GENERAL_CORPORA}
-    stat = lambda m: pooled_did(bpb, acc, m)  # noqa: E731
+    per_corpus = {g: steering_did(bpb, acc, labels, g, tier) for g in GENERAL_CORPORA}
+    stat = lambda m: pooled_did(bpb, acc, m, tier)  # noqa: E731
 
     identity = {m: m for m in labels}
     resampling = {
@@ -234,14 +238,15 @@ def build_steering_did(bpb, acc, reps: int) -> dict:
     jackknife = {}
     for family in sorted(set(PUBLISHER.values())):
         kept = [m for m in labels if PUBLISHER[m] != family]
-        jackknife[family] = {"n_models_kept": len(kept), "pooled_did": pooled_did(bpb, acc, kept)}
+        jackknife[family] = {"n_models_kept": len(kept),
+                             "pooled_did": pooled_did(bpb, acc, kept, tier)}
     carried = min(jackknife, key=lambda f: jackknife[f]["pooled_did"])
 
     return {
         "statistic": "(gsm8k - hellaswag selection accuracy | math-adapted) minus the same "
                      "| general-text-adapted, pooled over news, reddit, hackernews",
         "per_corpus": per_corpus,
-        "pooled": pooled_did(bpb, acc, labels),
+        "pooled": pooled_did(bpb, acc, labels, tier),
         "resampling": resampling,
         "leave_one_family_out": jackknife,
         "most_load_bearing_family": carried,
@@ -253,6 +258,24 @@ def build_steering_did(bpb, acc, reps: int) -> dict:
             "does not, and the leave-one-family-out column shows it is concentrated in one family."
         ),
     }
+
+
+def build_document(bpb, acc, labels, reps: int) -> dict:
+    """The same selection accuracies and steering test on the document reading.
+
+    Its own seeded generator, so adding it leaves every block-reading draw above unchanged.
+    """
+    rng = random.Random(SEED)
+    selection = {}
+    for corpus in CORPORA:
+        for bench in BENCHES:
+            obs = pairwise_accuracy(bpb, acc, labels, corpus, "document", bench)
+            ci = cluster_ci(lambda m, c=corpus, b=bench:
+                            pairwise_accuracy(bpb, acc, m, c, "document", b), labels, reps, rng)
+            selection[f"{corpus}__{bench}"] = {"accuracy": obs, "ci_lo": ci["lo"],
+                                              "ci_hi": ci["hi"], "beats_chance": ci["lo"] > 0.5}
+    return {"selection_accuracy": selection,
+            "steering_difference_in_differences": build_steering_did(bpb, acc, reps, "document")}
 
 
 def build(reps: int = REPS) -> dict:
@@ -312,6 +335,7 @@ def build(reps: int = REPS) -> dict:
         "cells_total": len(selection),
         "corpus_steering_contrast": steering,
         "steering_difference_in_differences": build_steering_did(bpb, acc, reps),
+        "document": build_document(bpb, acc, labels, reps),
         "adaptation_vs_doing_nothing": beats_nothing,
     }
 

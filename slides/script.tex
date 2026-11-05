@@ -57,14 +57,14 @@
 % ================================================================ header
 {\color{rule}\rule{\textwidth}{0.9pt}}\\[0.9em]
 {\LARGE\bfseries Speaker script}\\[0.4em]
-{\large\color{mute} ``Back to entropy'': evaluating language models as language models}\\[0.9em]
+{\large\color{mute} ``Back to entropy'': choosing a base model by how well it reads your text}\\[0.9em]
 {\color{rule}\rule{\textwidth}{0.9pt}}
 
 \vspace{0.6em}
 \begin{tabular}{@{}ll@{}}
-\textbf{Deck} & \texttt{slides/talk.pdf}: 13 slides $+$ 4 backup slides \\
-\textbf{Target} & about 8:59 of talking at a relaxed 120\,wpm (under 10 minutes), then Q\&A \\
-\textbf{Goal} & The team leaves with one idea: judge a language model by the loss it was trained on \\
+\textbf{Deck} & \texttt{slides/talk.pdf}: 11 slides $+$ 4 backup slides \\
+\textbf{Target} & about 7 minutes with pauses (600 words), then Q\&A \\
+\textbf{Goal} & The team leaves with one idea: to choose a base model, score it on the domain's own documents \\
 \end{tabular}
 
 \vspace{1.0em}
@@ -77,149 +77,110 @@ verbatim. Orange brackets are delivery cues. Times are cumulative. The spoken le
 \colorbox{wash}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
 \textbf{The spine: if only this lands, the talk worked:}
 \begin{enumerate}[leftmargin=1.4em,itemsep=0.15em,topsep=0.35em]
-  \item Benchmarks are public and score a model before it is adapted.
-  \item Loss is the principled yardstick: it is the objective every model was trained on, and in
-  bytes it is comparable across models.
-  \item Adapt every candidate the same way on fresh, decontaminated text, then measure bits per byte.
-  \item Adaptation reorders the models; the new ordering converges on HellaSwag, can be aimed at
-  maths, is stable where benchmarks are not, and anticipates how fine-tuning will go.
+  \item Bits per byte on whole documents of the domain's text, before any training, anticipates
+  which base model fine-tunes best; GSM8K and MMLU-Pro do not.
+  \item Two details decide it: the text has to be the task's, and each document has to be read
+  whole from its start.
+  \item No labels, no task and no training are needed.
 \end{enumerate}}}
 
 % ================================================================ 1
-\slide{1}{Back to entropy}{0:00--0:18}
+\slide{1}{Back to entropy}{0:00--0:15}
 \begin{say}
-This talk is about one idea: that we should evaluate language models as language models. I will
-show why the usual way of choosing a base model misleads, what we do instead, and what we found.
+This talk is about one question: which base model will fine-tune best on our data, and how to
+know before we fine-tune anything.
 \end{say}
 
 % ================================================================ 2
-\slide{2}{How good is this model, for what we do?}{0:18--1:11}
+\slide{2}{Which base model will fine-tune best on our data?}{0:15--1:00}
 \begin{say}
-Picture an engineer choosing a base model. The question is always the same: how good
-is it, for what we do? The direct answer is to fine-tune every candidate and compare, which costs
-labels and hours per model. So instead we read a scorecard. Look at these two small models. On
-HellaSwag they are two points apart. On our news text, after adaptation, they are three percent
-apart. On GSM8K they are fifty-five points apart. Two models that model English almost identically
-well differ by nearly a factor of ten on one exam. Which of these numbers describes the model?
+Fine-tuning every candidate would settle it, but that needs a task, labels and a training run per
+model. So we read a scorecard instead: MMLU-Pro, GSM8K, HellaSwag. Those grade a model before the
+fine-tuning it will get. Look at these two small models. Two points apart on HellaSwag, two percent
+apart on our news text, fifty-five points apart on GSM8K. Fine-tuned on news, they cannot be told
+apart.
 \end{say}
 
 % ================================================================ 3
-\slide{3}{Two reasons the scorecard misleads}{1:11--2:02}
+\slide{3}{Read the domain's documents; the fine-tuned order follows}{1:00--1:55}
 \begin{say}
-There are two reasons. First, benchmarks are public. They were written before the model existed,
-vendors optimise for the ones they report, and their content can end up in the training data. A
-high score might mean a stronger model, or a model that saw more of that exam, and nobody outside
-can tell which. Second, benchmarks score a model as it ships, but nobody deploys a base model as it
-ships. We adapt it first. Gemma-4-12B is ninth on GSM8K, eighth on MMLU-Pro, thirteenth of fifteen
-on raw loss, and once fine-tuned, it builds the best system of all fifteen.
+Here is the result. Fifteen base models, each fine-tuned on the same news-writing task. Each line
+joins a model's rank before fine-tuning to its rank after. On GSM8K and MMLU-Pro the lines cross
+everywhere. On the right we rank by bits per byte on whole news documents, with no training at
+all, and the lines run almost flat: every model lands within one rank of where it finishes. The
+blue line is Gemma-4-12B, ninth on GSM8K, and it builds the best fine-tuned system of the fifteen.
 \end{say}
-\cue{Land the Gemma example; it comes back on slide 10.}
+\cue{LAND THIS: one forward pass, and the fine-tuned order is already there.}
 
 % ================================================================ 4
-\slide{4}{Why loss is the right quantity}{2:02--2:59}
+\slide{4}{Pair by pair}{1:55--2:40}
 \begin{say}
-So what should we measure? There is no universal ground truth for which model is better, so we need
-a principled yardstick, and loss is the one. Every base model was trained to minimise cross-entropy.
-Held-out loss is its own objective, measured on text it has not seen. And cross-entropy splits
-cleanly: the entropy of the text, which is the same for every model, plus the model's distance from
-the text's true distribution. So a difference in loss is exactly a difference in how close each
-model is to the text. The only thing stopping a direct comparison is that each model counts in its
-own tokens. Divide by bytes and that goes away.
+The fair test is pairs of models of similar size, because between very different sizes the bigger
+one usually wins. There are thirty-nine such pairs. Document bits per byte orders thirty-seven of
+them the way the fine-tune does. HellaSwag thirty-four, size twenty-eight, and GSM8K and MMLU-Pro
+are a coin flip. So is each model's own score on the task before any training: fine-tuning
+reorders the models, and the document reading predicts the new order. A second, very different fine-tuning recipe gives the same picture.
 \end{say}
-\cue{LAND THIS: bits per byte is the training objective on a common scale.}
 
 % ================================================================ 5
-\slide{5}{Taking that seriously: three requirements}{2:59--3:38}
+\slide{5}{Why this is not already how it is done}{2:40--3:25}
 \begin{say}
-Taking loss seriously asks three things. Bytes, so every tokenizer is on one scale. Fresh,
-decontaminated text, so no model has trained on it: we use text dated after every model shipped,
-we deduplicate and split with no overlap, and on the news snapshot we run three membership tests
-and remove anything any model flags. And equal adaptation: every candidate adapted to the domain
-by the same procedure, because we want to measure the model we will actually use.
+If this sounds obvious, the literature says the opposite. The closest test we know of fine-tuned
+fifty one-billion models and found that perplexity ordered them worse than chance. Two details
+explain the difference, and the usual practice gets both wrong: which text you score, and how you
+cut it.
 \end{say}
 
 % ================================================================ 6
-\slide{6}{Equal adaptation: the procedure, and what we ran}{3:38--4:34}
+\slide{6}{Detail 1: blocks cut from a stream misrank strong models}{3:25--4:15}
 \begin{say}
-The procedure is a per-model Optuna search: a TPE sampler over learning rate, batch, rank and the
-rest, successive halving to prune weak trials, scored on the validation split, and every model gets
-the same number of trials. Then the winner trains until validation loss stops improving. That is
-the default in the released pipeline. Searching seventeen models up to 35 billion parameters was
-beyond our compute, so the results you will see use the pipeline's other mode: one hand-picked
-recipe for everyone, 250 steps, minutes per model. And note the trap at the bottom: if you cap
-the search by time, small models finish more trials and get tuned better.
+The common way to compute perplexity joins the test set into one stream and cuts it into blocks.
+Most blocks then start in the middle of a document, with no start token. Some models pay heavily
+for that. Gemma opens each block far worse than a model eight times smaller and has passed it by
+the end. On blocks Gemma comes thirteenth of fifteen; on whole documents, second; fine-tuned,
+first.
 \end{say}
 
 % ================================================================ 7
-\slide{7}{Adaptation reorders the models, and lands on the language benchmark}{4:34--5:19}
+\slide{7}{Detail 2: the text has to be like the task's}{4:15--5:05}
 \begin{say}
-Here is the result on one slide. On the left, eleven models ranked three ways on news: by loss before
-adaptation, by loss after, and by HellaSwag. Watch the lines. Between the first two columns they
-cross everywhere: Gemma-4-12B, in blue, climbs from ninth to second, and the Liquid model leaves
-last place. Between the last two columns they run almost parallel: once familiarity is removed, the
-order is HellaSwag's. On the right, the same effect across corpora, and adapted on maths, the
-ranking swings to the reasoning benchmarks instead.
+Second, the text. Score the same models on arXiv mathematics and use that to predict the news
+fine-tune, and you get twenty-three of thirty-nine pairs, worse than ranking by size. And which
+benchmark the ranking agrees with follows the text: on news, Reddit and Hacker News it is
+HellaSwag; on mathematics it is GSM8K and MMLU-Pro. We wrote that rule down before reading the new
+corpora.
 \end{say}
-\cue{LAND THIS: one picture, the whole argument.}
 
 % ================================================================ 8
-\slide{8}{1. Adaptation reorders the models}{5:19--6:12}
+\slide{8}{No training, and no noise}{5:05--5:50}
 \begin{say}
-First finding. Adaptation reorders the models: the rankings before and after agree only at about
-zero point six five. And it is not spread evenly. Adaptation cuts loss by four or five percent for
-every Qwen, Llama and Ministral model, but by seventeen to thirty-six percent for the two Gemmas and
-the Liquid model, and those three are the only ones that climb. The plot shows why: unadapted loss
-is mostly cold starts. Gemma opens each block far worse than a model eight times smaller and has
-passed it by the end. The unadapted number measures familiarity with this kind of prose; adaptation
-removes that.
+We started by adapting every model briefly to the domain first, and on blocks that is a repair. On
+whole documents it lowers every model's loss but barely changes the order: one pair in thirty-nine.
+So no training is needed. And the reading is deterministic: run it again and you get the same
+number to the last digit, where the same weights on a new machine move GSM8K by more than half a
+point.
 \end{say}
 
 % ================================================================ 9
-\slide{9}{2. It converges on the language benchmark, and can be aimed}{6:12--6:49}
+\slide{9}{Why loss is the right quantity}{5:50--6:30}
 \begin{say}
-Second. HellaSwag is the benchmark closest to language modelling. Before adaptation our ranking
-correlates with it at about zero point seven; after, zero point nine six to zero point nine eight,
-on three different corpora. And adapt on mathematics instead, and the ranking swings toward GSM8K
-and MMLU-Pro. A benchmark is fixed; a corpus is chosen by whoever is choosing the model. So you can
-point this measurement at the capability you care about.
+Why should this work? A base model learns everything it knows by minimising this loss, and
+fine-tuning minimises it again on the task. The loss splits into the entropy of the text, the same
+for every model, plus the model's distance from the text. Per byte, every tokenizer is on one
+scale, and on fresh text no model has trained on it.
 \end{say}
 
 % ================================================================ 10
-\slide{10}{3. It is stable where benchmarks are not}{6:49--7:29}
+\slide{10}{Using it, and adding your model}{6:30--7:00}
 \begin{say}
-Third. Seed-to-seed variation is about a thousandth of the spread between models, and not one of
-forty close pairs flips. Re-run weeks later on different hardware, cells match to the fourth decimal.
-Benchmarks do not behave like that: the same weights move GSM8K by more than half a point when only
-the host changes, and one decoding setting was worth ten points for Gemma. A generative benchmark
-measures the model, the harness, the decoding and the hardware at once.
+The pipeline reports this number for every candidate in one forward pass. The leaderboard now ranks
+by it, on news and on a public maths corpus anyone can run.
 \end{say}
 
 % ================================================================ 11
-\slide{11}{4. Adapting to the domain predicts fine-tuning on the task}{7:29--8:14}
+\slide{11}{Score the candidates on your own documents}{7:00--7:08}
 \begin{say}
-Fourth. Whatever model you choose, you will fine-tune it. So does the cheap number already tell you
-how that goes? We fine-tuned fifteen models on a news task. Adapted bits per byte, measured before
-the task existed, orders ninety-five percent of the pairs the way the fine-tune does. HellaSwag,
-eighty-seven. GSM8K and MMLU-Pro, a coin flip. Of course the two are related: both adapt the model
-to news, and that is the point: a few minutes of unlabelled adaptation already contain most of
-what fine-tuning on the task reveals.
-\end{say}
-\cue{LAND THIS: 0.949 against a coin flip for the reasoning benchmarks.}
-
-% ================================================================ 12
-\slide{12}{Using it, and adding your model}{8:14--8:52}
-\begin{say}
-In practice: if candidates are more than about two times apart in size, the bigger one usually
-wins. Otherwise, adapt every finalist the same way on recent domain text and rank by adapted bits
-per byte; treat anything under two percent as a tie. And the leaderboard is open: the maths track's
-corpus is public, so anyone can run a model and submit it, and the submission is checked against
-the exact corpus and recipe.
-\end{say}
-
-% ================================================================ 13
-\slide{13}{Evaluate language models as language models}{8:52--8:59}
-\begin{say}
-So: evaluate language models as language models. Thank you, happy to take questions.
+So: score the candidates on your own documents. Thank you, happy to take questions.
 \end{say}
 
 % ================================================================ Q&A
@@ -228,21 +189,19 @@ So: evaluate language models as language models. Thank you, happy to take questi
 {\large\bfseries Q\&A preparation}
 
 \textbf{``Why not just fine-tune on the task?''} When you have the task, its labels and the budget,
-do, it is the better evaluation for that task. A base model is usually chosen before any of
-those exist and has to serve many tasks; the loss is what every one of them is built on.
+do. A base model is usually chosen before any of those exist.
 
-\textbf{``Doesn't one hand-picked recipe favour some architectures?''} It suits none perfectly. The
-full method searches each model; we could not afford it at 35B. A second, very different fine-tune
-recipe left the system ordering at Spearman 0.982.
+\textbf{``Does it beat HellaSwag?''} It has the top point estimate, 37 against 34 pairs, but with
+fifteen models the intervals overlap. HellaSwag is close on news; on mathematics text the ranking
+follows GSM8K and MMLU-Pro instead, so HellaSwag is not a general substitute.
 
-\textbf{``Does it beat HellaSwag?''} It has the top point estimate everywhere and never falls below it,
-but at seventeen models the gap is not statistically resolved. We say so in the paper.
+\textbf{``Only one task?''} Yes, one fine-tuned task. We tried two on mathematics; on both a 0.5B and
+a 12B model finished within 0.012 ROUGE-L, so the tasks could not rank models and we stopped them
+by a rule fixed in advance.
 
-\textbf{``What about contamination of our own text?''} Three layers: dated after every release,
-deduplicated with no split overlap, and membership screens with a quarantine of anything any model
-flags.
+\textbf{``What about contamination of our own text?''} Text dated after every release, deduplicated
+with no split overlap, and membership screens with a quarantine of anything any model flags.
 
-\textbf{``What does it cost?''} With the hand-picked recipe, 3.7 GPU-minutes at 0.5B up to about an
-hour at 31B on one A100. The corpus is the main cost.
+\textbf{``What does it cost?''} One forward pass over about six megabytes of text per model.
 
 \end{document}

@@ -87,6 +87,18 @@ def doc_windows(token_docs, context: int, stride: int):
     return out
 
 
+def first_documents(texts, max_bytes: int) -> list:
+    """The leading test documents up to ``max_bytes`` UTF-8 bytes (the document that crosses the cap
+    is kept), so every model is scored on the same text whatever its tokenizer."""
+    out, n = [], 0
+    for t in texts:
+        if n >= max_bytes:
+            break
+        out.append(t)
+        n += len(t.encode("utf-8"))
+    return out
+
+
 def compute_doc_bpb(model, tokeniser, texts, device, context: int = 2048, stride: int = 1024,
                     token_budget: int = 16384) -> dict:
     """BPB over whole documents, each in its own windows, with the tokenizer's own document start.

@@ -1,0 +1,26 @@
+{
+  "model_id": "tiiuae/Falcon3-10B-Base",
+  "dataset": "corpora/reddit.jsonl",
+  "corpus": "reddit",
+  "dataset_sha256": "1ac8b70f3ae5f21fda98f38b15c050b89d2e837f35b1465fc2f85c71761c2e56",
+  "avg_bytes_per_token": 4.028851714749248,
+  "n_train_blocks": 58522,
+  "n_test_blocks_scored": 0,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": null,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1606,
+    "zero_shot": {
+      "bpb": 0.9961269509771845,
+      "nats": 4144703.9873046875,
+      "bytes": 6002793,
+      "tokens": 1497088,
+      "windows": 1621
+    }
+  },
+  "wall_seconds": 299.0147943496704
+}

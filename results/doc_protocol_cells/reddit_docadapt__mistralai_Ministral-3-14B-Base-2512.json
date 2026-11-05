@@ -1,0 +1,46 @@
+{
+  "model_id": "mistralai/Ministral-3-14B-Base-2512",
+  "dataset": "corpora/reddit.jsonl",
+  "corpus": "reddit",
+  "dataset_sha256": "1ac8b70f3ae5f21fda98f38b15c050b89d2e837f35b1465fc2f85c71761c2e56",
+  "avg_bytes_per_token": 4.238031005915003,
+  "n_train_blocks": 55778,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.0075170056629057,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1606,
+    "zero_shot": {
+      "bpb": 0.9639479838129538,
+      "nats": 4010813.1279296875,
+      "bytes": 6002793,
+      "tokens": 1420843,
+      "windows": 1614
+    },
+    "adapted": {
+      "bpb": 0.9206776895804076,
+      "nats": 3830773.263671875,
+      "bytes": 6002793,
+      "tokens": 1420843,
+      "windows": 1614
+    }
+  },
+  "trainable_params": 70336512,
+  "total_params": 14015368192,
+  "trainable_pct": 0.5018527593170775,
+  "adapted_bpb": 0.9474036023451815,
+  "reduction_pct": 5.966490191217367,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1919.3269047737122
+}

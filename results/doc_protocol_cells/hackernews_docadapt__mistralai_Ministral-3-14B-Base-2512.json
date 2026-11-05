@@ -1,0 +1,46 @@
+{
+  "model_id": "mistralai/Ministral-3-14B-Base-2512",
+  "dataset": "corpora/hackernews.jsonl",
+  "corpus": "hackernews",
+  "dataset_sha256": "869af808717d6cb82fe6e6fab09434039ac417f77a6090d15af998e898263803",
+  "avg_bytes_per_token": 4.495357347462274,
+  "n_train_blocks": 16400,
+  "n_test_blocks_scored": 1942,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.8762322023793377,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 608,
+    "zero_shot": {
+      "bpb": 0.7854757505325134,
+      "nats": 2416213.2724609375,
+      "bytes": 4437895,
+      "tokens": 993977,
+      "windows": 930
+    },
+    "adapted": {
+      "bpb": 0.7610522970385901,
+      "nats": 2341083.9353027344,
+      "bytes": 4437895,
+      "tokens": 993977,
+      "windows": 930
+    }
+  },
+  "trainable_params": 70336512,
+  "total_params": 14015368192,
+  "trainable_pct": 0.5018527593170775,
+  "adapted_bpb": 0.8348643997018106,
+  "reduction_pct": 4.7211004760149455,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 1805.8491349220276
+}

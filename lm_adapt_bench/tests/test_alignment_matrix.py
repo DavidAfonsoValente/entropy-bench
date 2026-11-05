@@ -92,7 +92,7 @@ def test_committed_artifacts_match_a_fresh_computation():
 
 def test_every_corpus_and_tier_is_present_and_complete():
     report = am.build()
-    assert len(report["cells"]) == len(am.CORPORA) * len(am.TIERS) == 8
+    assert len(report["cells"]) == len(am.CORPORA) * len(am.TIERS) == 16
     for name, cell in report["cells"].items():
         assert len(cell["bpb"]) == 11, f"{name} is missing models"
         for task, stats in cell["alignment"].items():

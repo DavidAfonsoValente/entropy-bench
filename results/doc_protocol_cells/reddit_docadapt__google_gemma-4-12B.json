@@ -1,0 +1,46 @@
+{
+  "model_id": "google/gemma-4-12B",
+  "dataset": "corpora/reddit.jsonl",
+  "corpus": "reddit",
+  "dataset_sha256": "1ac8b70f3ae5f21fda98f38b15c050b89d2e837f35b1465fc2f85c71761c2e56",
+  "avg_bytes_per_token": 4.180413680261972,
+  "n_train_blocks": 56467,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.1716829943583735,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1606,
+    "zero_shot": {
+      "bpb": 0.948420032364142,
+      "nats": 3946204.1318359375,
+      "bytes": 6002793,
+      "tokens": 1438235,
+      "windows": 1613
+    },
+    "adapted": {
+      "bpb": 0.902795136093926,
+      "nats": 3756367.194580078,
+      "bytes": 6002793,
+      "tokens": 1438235,
+      "windows": 1613
+    }
+  },
+  "trainable_params": 65935360,
+  "total_params": 12025665536,
+  "trainable_pct": 0.5482886564790621,
+  "adapted_bpb": 0.94097165957693,
+  "reduction_pct": 19.690593436306006,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 2385.0905306339264
+}

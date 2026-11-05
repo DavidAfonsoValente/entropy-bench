@@ -35,6 +35,236 @@
       "excludes_zero": false
     }
   },
+  "document": {
+    "selection_accuracy": {
+      "hackernews__gsm8k": {
+        "accuracy": 0.8,
+        "beats_chance": true,
+        "ci_hi": 0.9375,
+        "ci_lo": 0.6346153846153846
+      },
+      "hackernews__hellaswag": {
+        "accuracy": 0.9636363636363636,
+        "beats_chance": true,
+        "ci_hi": 1.0,
+        "ci_lo": 0.875
+      },
+      "hackernews__mmlu_pro": {
+        "accuracy": 0.8363636363636363,
+        "beats_chance": true,
+        "ci_hi": 0.9574468085106383,
+        "ci_lo": 0.68
+      },
+      "math__gsm8k": {
+        "accuracy": 0.8727272727272727,
+        "beats_chance": true,
+        "ci_hi": 0.9791666666666666,
+        "ci_lo": 0.7346938775510204
+      },
+      "math__hellaswag": {
+        "accuracy": 0.8545454545454545,
+        "beats_chance": true,
+        "ci_hi": 1.0,
+        "ci_lo": 0.6470588235294118
+      },
+      "math__mmlu_pro": {
+        "accuracy": 0.9090909090909091,
+        "beats_chance": true,
+        "ci_hi": 1.0,
+        "ci_lo": 0.7647058823529411
+      },
+      "news__gsm8k": {
+        "accuracy": 0.7818181818181819,
+        "beats_chance": true,
+        "ci_hi": 0.94,
+        "ci_lo": 0.5833333333333334
+      },
+      "news__hellaswag": {
+        "accuracy": 0.9818181818181818,
+        "beats_chance": true,
+        "ci_hi": 1.0,
+        "ci_lo": 0.9148936170212766
+      },
+      "news__mmlu_pro": {
+        "accuracy": 0.8181818181818182,
+        "beats_chance": true,
+        "ci_hi": 0.9591836734693877,
+        "ci_lo": 0.64
+      },
+      "reddit__gsm8k": {
+        "accuracy": 0.7454545454545455,
+        "beats_chance": true,
+        "ci_hi": 0.9130434782608695,
+        "ci_lo": 0.5490196078431373
+      },
+      "reddit__hellaswag": {
+        "accuracy": 0.9454545454545454,
+        "beats_chance": true,
+        "ci_hi": 1.0,
+        "ci_lo": 0.84
+      },
+      "reddit__mmlu_pro": {
+        "accuracy": 0.7818181818181819,
+        "beats_chance": true,
+        "ci_hi": 0.9375,
+        "ci_lo": 0.6
+      }
+    },
+    "steering_difference_in_differences": {
+      "leave_one_family_out": {
+        "Gemma": {
+          "n_models_kept": 9,
+          "pooled_did": 0.05555555555555558
+        },
+        "LiquidAI": {
+          "n_models_kept": 10,
+          "pooled_did": 0.2518518518518518
+        },
+        "Llama": {
+          "n_models_kept": 10,
+          "pooled_did": 0.2518518518518518
+        },
+        "Mistral": {
+          "n_models_kept": 10,
+          "pooled_did": 0.1777777777777777
+        },
+        "Qwen": {
+          "n_models_kept": 5,
+          "pooled_did": 0.1333333333333333
+        }
+      },
+      "most_load_bearing_family": "Gemma",
+      "note": "The model-level split is the published figure. The family-level splits are the conservative reading and the one this project's own family narrative implies: models within a publisher are not exchangeable draws. Direction survives both -- the publisher-level resampling produces no negative draws at all -- while the magnitude does not, and the leave-one-family-out column shows it is concentrated in one family.",
+      "per_corpus": {
+        "hackernews": 0.18181818181818177,
+        "news": 0.21818181818181814,
+        "reddit": 0.21818181818181814
+      },
+      "pooled": 0.20606060606060603,
+      "resampling": {
+        "model": {
+          "ci_hi": 0.5751633986928104,
+          "ci_lo": 0.0,
+          "clusters": {
+            "LFM2.5-1.2B": [
+              "LFM2.5-1.2B"
+            ],
+            "Llama-3.2-1B": [
+              "Llama-3.2-1B"
+            ],
+            "Ministral-3-14B": [
+              "Ministral-3-14B"
+            ],
+            "Qwen2.5-0.5B": [
+              "Qwen2.5-0.5B"
+            ],
+            "Qwen2.5-1.5B": [
+              "Qwen2.5-1.5B"
+            ],
+            "Qwen2.5-7B": [
+              "Qwen2.5-7B"
+            ],
+            "Qwen3.5-35B-MoE": [
+              "Qwen3.5-35B-MoE"
+            ],
+            "Qwen3.5-4B": [
+              "Qwen3.5-4B"
+            ],
+            "Qwen3.5-9B": [
+              "Qwen3.5-9B"
+            ],
+            "gemma-4-12B": [
+              "gemma-4-12B"
+            ],
+            "gemma-4-31B": [
+              "gemma-4-31B"
+            ]
+          },
+          "frac_negative": 0.01405,
+          "frac_positive": 0.91825,
+          "frac_zero": 0.0677,
+          "n_clusters": 11,
+          "n_draws": 20000,
+          "p_one_sided_mid_p": 0.0479,
+          "p_one_sided_ties_against": 0.08175,
+          "p_one_sided_ties_ignored": 0.01405
+        },
+        "publisher_and_generation": {
+          "ci_hi": 0.5027322404371585,
+          "ci_lo": -3.700743415417188e-17,
+          "clusters": {
+            "Gemma": [
+              "gemma-4-12B",
+              "gemma-4-31B"
+            ],
+            "LiquidAI": [
+              "LFM2.5-1.2B"
+            ],
+            "Llama": [
+              "Llama-3.2-1B"
+            ],
+            "Mistral": [
+              "Ministral-3-14B"
+            ],
+            "Qwen2.5": [
+              "Qwen2.5-0.5B",
+              "Qwen2.5-1.5B",
+              "Qwen2.5-7B"
+            ],
+            "Qwen3.5": [
+              "Qwen3.5-35B-MoE",
+              "Qwen3.5-4B",
+              "Qwen3.5-9B"
+            ]
+          },
+          "frac_negative": 0.030803080308030802,
+          "frac_positive": 0.8598359835983599,
+          "frac_zero": 0.10936093609360936,
+          "n_clusters": 6,
+          "n_draws": 19998,
+          "p_one_sided_mid_p": 0.08548354835483549,
+          "p_one_sided_ties_against": 0.14016401640164017,
+          "p_one_sided_ties_ignored": 0.030803080308030802
+        },
+        "publisher_family": {
+          "ci_hi": 0.3461538461538461,
+          "ci_lo": 0.0,
+          "clusters": {
+            "Gemma": [
+              "gemma-4-12B",
+              "gemma-4-31B"
+            ],
+            "LiquidAI": [
+              "LFM2.5-1.2B"
+            ],
+            "Llama": [
+              "Llama-3.2-1B"
+            ],
+            "Mistral": [
+              "Ministral-3-14B"
+            ],
+            "Qwen": [
+              "Qwen2.5-0.5B",
+              "Qwen2.5-1.5B",
+              "Qwen2.5-7B",
+              "Qwen3.5-35B-MoE",
+              "Qwen3.5-4B",
+              "Qwen3.5-9B"
+            ]
+          },
+          "frac_negative": 0.010309278350515464,
+          "frac_positive": 0.8183865478931038,
+          "frac_zero": 0.17130417375638074,
+          "n_clusters": 5,
+          "n_draws": 19982,
+          "p_one_sided_mid_p": 0.09596136522870584,
+          "p_one_sided_ties_against": 0.1816134521068962,
+          "p_one_sided_ties_ignored": 0.010309278350515464
+        }
+      },
+      "statistic": "(gsm8k - hellaswag selection accuracy | math-adapted) minus the same | general-text-adapted, pooled over news, reddit, hackernews"
+    }
+  },
   "method": "cluster bootstrap over the 11 models, 20000 draws, seed 20260829; percentile intervals. Pairs are NOT resampled -- they are dependent within a model.",
   "parameter_counts": {
     "LFM2.5-1.2B": 1181448960,

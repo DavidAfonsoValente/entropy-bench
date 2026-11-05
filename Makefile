@@ -83,6 +83,7 @@ check:
 	else \
 	  echo "downstream: raw generations absent (SCRATCH purged); results/downstream.json is asserted by verify_paper_numbers.py"; \
 	fi
+	$(PYTHON) tools/make_doc_leaderboards.py --check
 	$(PYTHON) -m lm_adapt_bench.leaderboard validate
 	$(PYTHON) -m lm_adapt_bench.leaderboard render --check
 	$(PYTHON) -m lm_adapt_bench.dataset_manifest validate-manifest
@@ -110,7 +111,7 @@ slides: slides/talk.tex slides/script.tex figures/fig_headline.pdf figures/fig_d
 	cd slides && $(PDFLATEX) script.tex && $(PDFLATEX) script.tex
 	cd slides && rm -f *.aux *.log *.nav *.out *.snm *.toc
 
-paper_sota.pdf: paper_sota.tex paper_refs.bib tmlr.sty dt_table.tex rank_table.tex crosscorpus_table.tex figures/fig_benchmark_alignment.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf figures/fig_headline.pdf figures/fig_downstream.pdf
+paper_sota.pdf: paper_sota.tex paper_refs.bib tmlr.sty dt_table.tex rank_table.tex crosscorpus_table.tex downstream_table.tex doc_alignment_table.tex figures/fig_benchmark_alignment.tex figures/fig_block_position.pdf figures/fig_cross_corpus.pdf figures/fig_context_length.pdf figures/fig_headline.pdf figures/fig_downstream.pdf
 	@if command -v latexmk >/dev/null 2>&1; then \
 		$(LATEXMK) $<; \
 	else \
@@ -120,7 +121,7 @@ paper_sota.pdf: paper_sota.tex paper_refs.bib tmlr.sty dt_table.tex rank_table.t
 figures/fig_selectors.pdf: tools/plot_selectors.py results/cohort_extension.json
 	$(PYTHON) tools/plot_selectors.py
 
-figures/fig_headline.pdf: tools/plot_headline.py results/alignment_matrix.json results/combined_bpb_vs_static.json
+figures/fig_headline.pdf: tools/plot_headline.py results/downstream.json results/doc_protocol.json results/combined_bpb_vs_static.json
 	$(PYTHON) tools/plot_headline.py
 
 # Rewrite docs/MAP.md from the tree. `make check` fails if it is stale.

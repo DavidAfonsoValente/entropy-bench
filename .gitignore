@@ -20,6 +20,8 @@ results/*
 !results/combined_bpb_vs_static.json
 !results/leaderboard.json
 !results/leaderboard_math.json
+!results/leaderboard_news_documents.json
+!results/leaderboard_math_documents.json
 !results/corpus_affinity.json
 !results/b1_alignment_*.json
 !results/b1/
@@ -77,6 +79,11 @@ results/mmlu_pro_1k/**/samples_*.jsonl
 # the manifest and the verdict land here.
 !results/downstream.json
 !results/downstream_task.json
+# E13: the maths title fine-tune. Task data stays in $SCRATCH/e13_title; manifest and verdict here.
+!results/downstream_math_abstract.json
+!results/downstream_math_abstract_task.json
+!results/downstream_math.json
+!results/downstream_math_task.json
 # E12: the non-generative downstream task (in-domain multiple choice). Task data (2,500 questions)
 # stays in $SCRATCH/e12_mcq; the manifest and the verdict land here.
 !results/mcq.json

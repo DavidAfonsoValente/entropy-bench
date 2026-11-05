@@ -1,0 +1,46 @@
+{
+  "model_id": "google/gemma-4-31B",
+  "dataset": "corpora/news.jsonl",
+  "corpus": "news",
+  "dataset_sha256": "279ccc65a7f562e438cbe74827d41e51e41ac8783345250b6f85f607ea1a0162",
+  "avg_bytes_per_token": 4.7193449189746906,
+  "n_train_blocks": 39712,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.7521343442363819,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1997,
+    "zero_shot": {
+      "bpb": 0.5697985164325031,
+      "nats": 2370616.0327148438,
+      "bytes": 6002255,
+      "tokens": 1259998,
+      "windows": 2093
+    },
+    "adapted": {
+      "bpb": 0.5505063236552536,
+      "nats": 2290351.903930664,
+      "bytes": 6002255,
+      "tokens": 1259998,
+      "windows": 2093
+    }
+  },
+  "trainable_params": 133616896,
+  "total_params": 31406703408,
+  "trainable_pct": 0.4254406910021787,
+  "adapted_bpb": 0.622496657196346,
+  "reduction_pct": 17.23597493366069,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 5369.900228023529
+}

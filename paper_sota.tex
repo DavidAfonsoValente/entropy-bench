@@ -59,114 +59,113 @@
 
 \maketitle
 \begin{abstract}
-Base models are usually chosen by public benchmark scores, which vendors optimise for, which can
-leak into training data, and which grade a model before the fine-tuning it will receive. We study a
-label-free alternative: rank the candidates by how well they predict fresh, unlabelled text from the
-target domain, in bits per byte. How the text is scored decides whether this works. Scored on whole
-documents, each read from its own beginning, the ranking places all fifteen base models within one
-rank of where they finish once fine-tuned on a news-writing task (Spearman $0.99$), against $0.97$
-for HellaSwag and $0.59$--$0.71$ for GSM8K and MMLU-Pro. Scored the common way, on fixed-length
-blocks cut from concatenated text, it misranks several models (Spearman $0.71$), and some of the
-strongest models look weak. Adapting every model briefly to the domain repairs the block reading;
-on whole documents the reading needs no adaptation. The
-adapted ranking agrees with HellaSwag on general text, and on arXiv mathematics it agrees more
-closely with GSM8K and MMLU-Pro than with HellaSwag. It is stable across adaptation seeds and
-hardware. \ifanon Code and artifacts are provided as supplementary material.\else Code and artifacts:
-\repolink{}.\fi
+Base models are chosen for fine-tuning by their benchmark scores. We test a label-free alternative:
+score each candidate's bits per byte on whole documents of fresh, unlabelled text from the target
+domain. For fifteen base models fine-tuned on a news-writing task, this ranking places every model
+within one rank of where it finishes and orders $37$ of $39$ size-matched pairs as the fine-tuned
+systems do. GSM8K and MMLU-Pro order the same pairs at chance, and so do the models' own scores on
+the task before any training: fine-tuning reorders the models, and the document reading predicts
+the order they end in. HellaSwag orders $34$. Two details decide the result. The text must come
+from the task's domain, or close to it: the same measurement on arXiv mathematics orders $23$ of
+the $39$ pairs. And each document must be read whole, from its beginning: scored on fixed-length
+blocks cut from concatenated text, as perplexity is often computed, the ranking puts the model
+that fine-tunes best thirteenth of fifteen. Read this way, the measurement needs no labels, no
+task and no training, and adapting the models to the domain first barely changes it. Which
+benchmark the ranking resembles follows the text: HellaSwag on general prose, GSM8K and MMLU-Pro
+on mathematics. \ifanon Code and artifacts are provided as
+supplementary material.\else Code and artifacts: \repolink{}.\fi
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
-Suppose an engineer has to pick a base model for a product. They have plenty of text from the
-product's domain and a shortlist of a dozen open checkpoints, and the model they pick will be
-fine-tuned and shipped. The most reliable way to choose would be to fine-tune every candidate and
-compare the results, but that needs a task definition, labelled data and a training run for each
-model. In practice the choice is made from benchmark scores instead: MMLU-Pro
-\citep{wang2024mmlupro}, multiple-choice questions across academic subjects; HellaSwag
-\citep{zellers2019hellaswag}, which asks for the most natural ending of a passage and is scored by
-likelihood; and GSM8K \citep{cobbe2021gsm8k}, grade-school maths word problems. In this paper we show
-that, on a news-writing task, the fine-tuning ranking can be anticipated before any task exists,
-from unlabelled text alone. We rank the candidates by how well they predict held-out text from the
-domain, scoring each document whole, from its own beginning. The resulting ranking matches the
-ranking after fine-tuning almost exactly. Of the benchmarks, only HellaSwag comes close.
+An engineer choosing a base model for a product usually has plenty of text from the product's
+domain and a shortlist of open checkpoints, and the model they pick will be fine-tuned before it
+ships. Fine-tuning every candidate would settle the choice, but it needs a task definition,
+labelled data and a training run per model. So the choice is made from benchmark tables. Model
+reports compare base models on MMLU-Pro \citep{wang2024mmlupro}, GSM8K \citep{cobbe2021gsm8k},
+HellaSwag \citep{zellers2019hellaswag} and similar suites \citep{yang2024qwen25}, and the Open LLM
+Leaderboard ranks pretrained models on six benchmarks \citep{fourrier2024leaderboard}.
+
+We find that the fine-tuned ranking can be read off before any task exists, from unlabelled text
+alone. For each candidate we compute its loss in bits per byte (BPB) on whole documents of fresh
+text from the domain, each document read from its own beginning. On a news-writing task, this
+ranking places all fifteen fine-tuned models within one rank of where they finish
+(Figure~\ref{fig:headline}). GSM8K and MMLU-Pro misjudge several of the same models, and order
+size-matched pairs of them at chance. So do the models' own scores on the task before any
+training: fine-tuning reorders the models, and the document reading predicts the order they end in.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_headline.pdf}
-\caption{\textbf{Adaptation reorders the block reading, and the text determines what the ranking
-follows.} \textbf{A}: the eleven models evaluated on all four corpora, ranked by news bits per byte
-(BPB; lower is better) scored on $512$-token blocks before adaptation, after adaptation (rank shown
-above each point), and by HellaSwag. Many lines cross between the first two columns, as Gemma-4-12B moves from ninth to second
-and LFM2.5-1.2B leaves last place. Between the last two columns the lines are almost parallel.
-\textbf{B}: rank agreement (Spearman $\rho$; $1$ means lower BPB goes with a higher score) between
-BPB and a benchmark, before adaptation (hollow) and after (filled). On general text adaptation
-raises agreement with HellaSwag and lowers it with GSM8K. On arXiv mathematics it raises agreement
-with all three benchmarks, and the ranking ends closer to GSM8K and MMLU-Pro than to HellaSwag. The
-full matrix is Table~\ref{tab:alignment} in Appendix~\ref{app:alignment}.}
+\caption{\textbf{Which ranking, taken before fine-tuning, says how the models finish?} Fifteen base
+models, each fine-tuned on the same news-writing task. In each panel a line joins a model's rank on
+a measure taken before fine-tuning (left) to its rank after fine-tuning, by ROUGE-L on $500$
+held-out articles (right); rank $1$ is best. Crossing lines are models the measure misjudges. BPB on
+whole news documents, with no training, places every model within one rank of its finish, and
+eleven exactly. Gemma-4-12B (blue), ninth on GSM8K and eighth on MMLU-Pro, builds the best
+fine-tuned system; Llama-3.2-1B (orange), last on both, finishes eleventh.}
 \label{fig:headline}
 \end{figure}
 
-Benchmark scores can mislead for two reasons. The first is that benchmarks are public. They were
-written for other purposes and released before the models they now evaluate, vendors optimise for
-the ones they report, and their questions can end up in pre-training data. A high score may come
-from a stronger model or from a model that has seen more of the test, and because pre-training data
-is rarely disclosed, a reader cannot tell which. Benchmarks can also disagree sharply with how well
-a model handles ordinary text. Llama-3.2-1B and Qwen-2.5-1.5B are $2.1$ points apart on HellaSwag
-and their loss on news text after adaptation differs by only $3.4\%$, but they are $55.3$ points apart on GSM8K (accuracy, in percentage points).
+That held-out loss predicts fine-tuning is not the received view. The most direct test we know of
+fine-tunes fifty 1B models and finds that perplexity on a general held-out set orders pairs of the
+fine-tuned systems worse than chance, while few-shot accuracy on the task does best
+\citep{zeng2025indicators}. Besides the cohort, two details separate that measurement from ours,
+and each is often got wrong.
 
-The second reason is that models are rarely used as they ship. Teams fine-tune a base model on
-their own data, so what matters is how good it becomes, and a benchmark score taken before that
-can misjudge it. Loss on the domain's text can misjudge it too, depending on how the text is
-scored. Gemma-4-12B is an example. Among the fifteen fine-tuned models it ranks ninth on GSM8K,
-eighth on MMLU-Pro and thirteenth on loss scored the common way, on fixed-length blocks cut from
-concatenated text. It ranks second on loss scored on whole documents, and it produces the best of
-the fifteen fine-tuned systems (Table~\ref{tab:outofbox}).
+The first is which text. When we score the same fifteen models on arXiv mathematics instead of news,
+the ranking orders only $23$ of $39$ size-matched pairs as the news fine-tune does, against $37$
+with news text, and falls below ranking by model size (Section~\ref{sec:owntext}). Which benchmark
+the ranking agrees with follows the text too. On news, Reddit and Hacker News it agrees with
+HellaSwag; on mathematics it agrees more with GSM8K and MMLU-Pro.
 
-Loss is a natural measure for this choice. There is no universal ground truth for which base model
-is better: a benchmark tells us which model is better at that benchmark, and different benchmarks
-disagree. A base model acquires its capabilities by minimising cross-entropy on text, and adaptation
-minimises the same loss on the domain. Held-out loss is therefore the objective each candidate was
-last trained on, measured on text it was not trained on. Cross-entropy is also a strictly proper
-scoring rule \citep{gneiting2007scoring}. If $p$ is the distribution that generated the domain's
-text and $q$ is a model, the model's expected loss is
+The second is how the text is cut. A common convention joins the test set into one stream and
+scores fixed-length blocks cut from it \citep{hfperplexity}, so most blocks begin mid-document.
+Scored that way, the same news text misranks several strong models, and Gemma-4-12B, which builds
+the best fine-tuned system of the fifteen, comes thirteenth (Section~\ref{sec:mechanism}). Reading
+each document from its own start fixes this with no training. Adapting every model briefly to the
+domain repairs the block reading as well, which is how we found the problem, but on whole documents
+it changes almost nothing (Section~\ref{sec:noadapt}).
+
+Loss is a natural measure for this choice. A base model acquires its capabilities by minimising
+cross-entropy on text, and fine-tuning minimises it again on the task. Cross-entropy is also a
+strictly proper scoring rule \citep{gneiting2007scoring}. If $p$ is the distribution that generated
+the domain's text and $q$ is a model, the model's expected loss is
 \begin{equation}
 H(p,q) = H(p) + \mathrm{KL}(p\,\|\,q),
 \label{eq:ce}
 \end{equation}
-where $H(p)$, the entropy of the text, is the same for every model, and $\mathrm{KL}(p\,\|\,q)$
-measures how far the model's predictions are from the text's distribution \citep{cover2006elements}.
-The difference between two models' expected losses is therefore the difference in their KL
-divergence from the text, and held-out loss estimates it. Equation~\ref{eq:ce} says which model fits
-the domain's text best; whether that predicts usefulness on a task is an empirical question, and
-Section~\ref{sec:divergence} tests it on one task.
+where $H(p)$, the entropy of the text, is the same for every model \citep{cover2006elements}. The
+difference between two models' held-out losses therefore estimates the difference in how far each is
+from the domain's text. Whether that predicts usefulness on a task is an empirical question, which
+Section~\ref{sec:divergence} tests. We count the loss per byte, because each model has its own
+tokenizer but they all read the same bytes, and we compute it on fresh text: Reddit, Hacker News
+and arXiv were collected after every candidate was released, and the news snapshot, which predates
+some releases, is screened for membership (Section~\ref{sec:protocol}). Benchmarks offer neither
+guarantee: vendors optimise for the ones they report, and their questions can leak into
+pre-training data.
 
-Three design choices keep the comparison fair. We count the loss per byte instead of per token,
-because each model has its own tokenizer but they all read the same bytes; we call the result
-\emph{bits per byte} (BPB). We compute it on fresh, decontaminated text that none of the candidates
-has trained on. And we score each document whole, from the start the model was trained to see, on
-exactly the same bytes for every model. We began with a different third choice: adapting every
-candidate in the same way to the domain before scoring fixed-length blocks. That reading ranks the
-fine-tuned models just as well, and we report both, because comparing them shows what adaptation
-was correcting.
-
-We evaluate seventeen base models from eight families, from 0.5B to 35B parameters. Eleven are
-evaluated on four corpora (news, Reddit, Hacker News and arXiv mathematics), and fifteen are also
-fine-tuned on a news task, writing an article's opening paragraph from its body.
-Table~\ref{tab:cohort} lists which model enters which analysis. Our main findings are:
+We evaluate seventeen base models from 0.5B to 35B parameters. Fifteen are fine-tuned on the news
+task, writing an article's opening paragraph from its body, and eleven are scored on all four
+corpora under the block readings too (Table~\ref{tab:cohort}). Our main findings are:
 \begin{itemize}[leftmargin=1.2em,itemsep=2pt,topsep=3pt]
-\item \textbf{BPB on the domain's text anticipates fine-tuning on the task.} When the models are
-ranked by BPB on whole documents before any fine-tuning, every one of the fifteen ends up within one
-rank of its position after fine-tuning. Adapting the models first and scoring blocks does as well.
-HellaSwag comes close, and GSM8K and MMLU-Pro are at chance (Figure~\ref{fig:downstream},
-Section~\ref{sec:divergence}).
-\item \textbf{How the text is cut can reorder the models.} Scored on blocks cut mid-document, some
-strong models look weak, Gemma-4-12B most of all. Adaptation repairs this, and so does scoring each
-document from its own start, with no adaptation (Section~\ref{sec:mechanism}).
-\item \textbf{The choice of text changes what the ranking follows.} On general text the adapted
-ranking agrees closely with HellaSwag; on arXiv mathematics it agrees more closely with GSM8K and
-MMLU-Pro than with HellaSwag (Figure~\ref{fig:headline}B, Section~\ref{sec:agreement}).
-\item \textbf{The ranking is stable.} No size-matched pair changes order across adaptation seeds,
-and re-runs on other hardware reproduce the numbers (Section~\ref{sec:stability}).
+\item \textbf{BPB on whole documents of the domain's text anticipates the fine-tuned ranking.} It
+orders $37$ of $39$ size-matched pairs as the fine-tuned systems do and places every model within one
+rank of its finish. HellaSwag orders $34$; GSM8K, MMLU-Pro and the models' own untrained scores on
+the task are at chance (Section~\ref{sec:divergence}).
+\item \textbf{Blocks cut from a stream misrank strong models.} Scored on fixed-length blocks,
+Gemma-4-12B falls from second to thirteenth, and the ranking orders $30$ of the $39$ pairs
+(Section~\ref{sec:mechanism}).
+\item \textbf{No training is needed.} Adapting every model to the domain before reading the
+documents lowers each model's loss but barely changes the order, on all four corpora
+(Section~\ref{sec:noadapt}).
+\item \textbf{The text has to be like the task's.} Reddit text orders $34$ of the $39$ news pairs,
+Hacker News $31$ and mathematics $23$.
+Across corpora, the ranking agrees with HellaSwag on general text and with GSM8K and MMLU-Pro on
+mathematics (Section~\ref{sec:owntext}).
 \end{itemize}
+The measurement is deterministic: re-running it reproduces every model's BPB exactly
+(Section~\ref{sec:stability}).
 \ifanon
 Code and artifacts are provided as supplementary material, and every number in the paper can be
 recomputed from them with \texttt{make check}.
@@ -178,6 +177,19 @@ The paper and its artifacts are also attached to each release (\repolink{/releas
 
 \section{Related Work}
 \label{sec:related}
+\textbf{How base models are chosen.} Base models are released and compared through benchmark
+tables. The Qwen-2.5 report, for one, compares its base models with others on MMLU, MMLU-Pro, GSM8K,
+HellaSwag and a dozen more benchmarks \citep{yang2024qwen25}, and the Open LLM Leaderboard ranks
+pretrained models on six benchmarks, MMLU-Pro and MATH among them \citep{fourrier2024leaderboard}.
+Whether these scores say which base model will be best once fine-tuned is rarely tested. The closest
+test is that of Zeng et al.\ \citep{zeng2025indicators}, who fine-tune fifty 1B models pre-trained with varied objectives and data
+and find that perplexity on the Pile development set orders pairs of the fine-tuned systems worse
+than chance (pairwise accuracy $0.33$--$0.38$); among their unsupervised indicators, few-shot
+accuracy on the target task does best. The
+received view is therefore that loss does not predict fine-tuning. We measure loss on the target
+domain's own text, across families and sizes, and it predicts the fine-tuned order closely; text
+from another domain predicts it less well (Section~\ref{sec:owntext}).
+
 \textbf{Loss, compression and capability.} Language modelling was grounded in the entropy of text
 from the start \citep{shannon1951prediction}. Token-level perplexity depends on each model's
 vocabulary \citep{mielke2019perplexity,ahia2023languages}; normalising by UTF-8 bytes restores a
@@ -186,28 +198,27 @@ less noise than accuracy across hundreds of models \citep{heineman2025signal}. L
 is equivalent to compression \citep{deletang2024compression}, and compression of fresh text
 correlates linearly with benchmark scores across about thirty models
 \citep{huang2024compression}. UncheatableEval \citep{uncheatableeval} maintains a leaderboard of
-compression on recently published text for the same reason we use fresh text. These works, like our
-main reading, measure models as they ship. We check the ranking against fine-tuned systems rather
-than against benchmarks alone, and show that how the text is cut into evaluation windows can change
-it. The metric is not new; the contribution is the protocol around it and what it shows.
+compression on recently published text for the same reason we use fresh text. These works check
+loss against benchmarks; we check it against fine-tuned systems, and find it predicts them at least
+as well as the closest benchmark and far better than GSM8K and MMLU-Pro.
+
+\textbf{How loss is computed.} The Hugging Face guide to perplexity joins a test set into one stream
+and scores it with a sliding window \citep{hfperplexity}; lm-evaluation-harness scores each document
+separately, from a beginning-of-sequence token \citep{gao2024lmeval}. Both are in common use, and
+the choice is treated as a detail. We show that it reorders models, and which choice predicts fine-tuning.
 
 \textbf{Choosing a model to fine-tune.} Lin et al.\ predict which LLM will fine-tune best by fitting
 a rectified scaling law to small fine-tuning runs on the target task \citep{lin2024rectified}; this
-needs task data, where our measurement needs only unlabelled text. Transferability estimators such
+needs task data and training, where our measurement needs neither. Transferability estimators such
 as LEEP and LogME \citep{nguyen2020leep,you2021logme} score a pre-trained model from its features on
 labelled target data. Train-before-test \citep{zhang2025trainbeforetest} gives 61 models identical
-supervised preparation across 24 tasks and raises cross-benchmark agreement; the idea of preparing
-every candidate identically before comparing them is theirs, and we do it without labels, on fresh
-text, in a unit that compares tokenizers. Observational scaling laws relate benchmark performance
-across model families to a few capability measures \citep{ruan2024observational}, and loss predicts
-downstream error within controlled families \citep{gadre2025scales}. Thrush et al.\ use the
-varying correlation between per-domain perplexity and benchmark scores to select pre-training data
-\citep{thrush2024perplexity}.
-
-\textbf{Adapting before measuring.} Dynamic evaluation updates a model on the recent history of the
-sequence it is being evaluated on \citep{krause2018dynamic}; domain-adaptive pre-training improves
-fit to a target distribution \citep{gururangan2020dapt}. Our adapted reading adapts once, on a
-training split, before any test text is scored.
+supervised preparation across 24 tasks and raises cross-benchmark agreement. Observational scaling
+laws relate benchmark performance across model families to a few capability measures
+\citep{ruan2024observational}, and loss predicts downstream error within controlled families
+\citep{gadre2025scales}. Thrush et al.\ use the varying correlation between per-domain perplexity
+and benchmark scores to select pre-training data \citep{thrush2024perplexity}. Domain-adaptive
+pre-training \citep{gururangan2020dapt} and dynamic evaluation \citep{krause2018dynamic} adapt a
+model before measuring it; for ranking, we find this unnecessary once documents are read whole.
 
 \textbf{Contamination.} Models memorise duplicated pre-training text
 \citep{carlini2021extracting,carlini2023quantifying}, so deduplication and contamination analysis
@@ -220,10 +231,8 @@ the same idea to labelled questions.
 \section{Method}
 \label{sec:protocol}
 The method has three phases (Figure~\ref{fig:protocol}). The corpus is collected and screened
-before any model is run on it, then every candidate reads the held-out documents whole, and its
-loss is counted in bits per byte. We also report a second reading, in which every candidate is
-first adapted in the same way and then scored on fixed-length blocks. We scored both readings on
-news; the adapted block reading is the one we have on all four corpora.
+before any model is run on it, every candidate then reads the held-out documents whole, and its
+loss is counted in bits per byte. There is no training and no label at any point.
 
 \begin{figure}[t]
 \centering
@@ -239,16 +248,13 @@ news; the adapted block reading is the one we have on all four corpora.
   \footnotesize held-out loss per UTF-8 byte; lower is better};
 \node[box, draw=cInLine, fill=cInFill, dashed, below=0.55cm of p3, minimum height=1.0cm]
   (ft) {\footnotesize checked against: each model fine-tuned on a task (Section~\ref{sec:divergence})};
-\node[box, draw=cAdLine, fill=cAdFill, dashed, below=0.55cm of p2, minimum height=1.0cm]
-  (ad) {\footnotesize second reading: equal adaptation, then $512$-token blocks};
 \draw[arr] (p1) -- (p2);
 \draw[arr] (p2) -- (p3);
 \draw[arr, dashed] (p3) -- (ft);
 \end{tikzpicture}
 \caption{\textbf{The method.} The corpus is fixed and screened first; every candidate then reads
-the held-out documents whole and is scored in bits per byte. The second reading adapts every
-candidate in the same way before scoring blocks. The fine-tuning experiment of
-Section~\ref{sec:divergence} is not part of the method. We use it only to check the method's
+the held-out documents whole and is scored in bits per byte. The fine-tuning experiments of
+Section~\ref{sec:divergence} are not part of the method; we use them only to check its
 predictions.}
 \label{fig:protocol}
 \end{figure}
@@ -272,8 +278,8 @@ released.\artifact{docs/DATASET.md}
 tokenizer's beginning-of-document token, if it adds one, with up to $2{,}048$ tokens of
 context. A document longer than that is read in overlapping windows with a stride of $1{,}024$, and
 each token is scored once. The beginning-of-document token is
-never scored. Every model reads the same first $6.0$\,MB of test documents, so the text is
-identical byte for byte. The implementation is
+never scored. On each corpus every model reads the same test documents, up to $6.0$\,MB, so the
+text is identical byte for byte. The implementation is
 released.\artifact{lm_adapt_bench/evaluate.py} The per-model scores are
 released with the analysis that turns them into the numbers below.\artifact{results/doc_protocol_cells}
 
@@ -286,46 +292,20 @@ scored tokens of the test text, and $|B|$ the UTF-8 byte length of the text thos
 A model with a larger vocabulary predicts fewer, longer tokens; dividing by bytes rather than tokens
 removes the penalty per-token perplexity would give it.
 
-\paragraph{The adapted block reading.} Every candidate is adapted to the retained training text,
-packed into contiguous $512$-token blocks, using LoRA \citep{hu2022lora} on all linear layers, and
-then scored on non-overlapping $512$-token test blocks cut from the packed test stream, each read
-with no earlier context. Beginning-of-document tokens inside a block are used as context but never
-scored. Because blocks are cut in tokens, each model covers a slightly different amount of text,
-$5$--$10\%$ apart (Appendix~\ref{app:robust}). The same block reading without adaptation is the
-\emph{unadapted block} reading. For adaptation, each candidate can get its own hyperparameter search with Optuna \citep{akiba2019optuna}.
-A Tree-structured Parzen Estimator (TPE; \citealp{bergstra2011tpe}) proposes the learning rate,
-batch size, warm-up, weight decay, LoRA rank, $\alpha$ and dropout; successive halving
-\citep{jamieson2016successive} prunes weak trials from $50$ steps on; and every trial is scored by
-BPB on the validation split, never on the test split. Every model gets the same number of trials
-and no time limit, because with a wall-clock limit small models complete more trials than large
-ones and end up better tuned (Appendix~\ref{app:robust}). The best configuration is then trained
-until validation BPB stops improving. The released pipeline implements this
-procedure.\artifact{lm_adapt_bench} Every
-adapted number in this paper uses a single shared configuration instead, for compute reasons
-(Section~\ref{sec:setup}). Adapted models can also read whole documents, and we report that too.
-
 \section{Experimental Setup}
 \label{sec:setup}
 \paragraph{Models.} Eleven base checkpoints between 0.5B and 35B parameters are evaluated on all
-four corpora (Table~\ref{tab:leaderboard}). Most are dense Transformers; one is a sparse
-mixture-of-experts, and LiquidAI's LFM2.5-1.2B is a hybrid of convolution and attention blocks. For
-the news corpus we add six more models, chosen before they were run to fill gaps in model size and
-to add publishers, for 17 in total (Table~\ref{tab:cohort}). They come from the Llama, Qwen, Gemma,
+four corpora, on blocks as well as whole documents (Table~\ref{tab:cohort}). Most are dense Transformers; one is a sparse
+mixture-of-experts, and LiquidAI's LFM2.5-1.2B is a hybrid of convolution and attention blocks. On
+news and on arXiv mathematics we add six more models, chosen before they were run to fill gaps in model size and
+to add publishers, for 17 in total (Table~\ref{tab:cohort}); their whole documents are also
+scored on Reddit and Hacker News. They come from the Llama, Qwen, Gemma,
 Ministral, Mistral-NeMo, Falcon, SmolLM and LFM families
 \citep{dubey2024llama3,meta2024llama32,yang2024qwen25,qwen2026qwen35,gemma2026gemma4,liu2026ministral3,mistral2024nemo,tii2024falcon3,benallal2025smollm2,liquid2026lfm25}.
-Seven of the seventeen are Qwen models.
+Eight of the seventeen are Qwen models.
 
 \paragraph{Corpora.} We use four corpora: news, Reddit, Hacker News and arXiv mathematics.
 Table~\ref{tab:corpora} gives their sizes and how each was screened.
-
-\paragraph{Adaptation runs.} Because of limited compute, all runs reported here use one shared
-configuration instead of the per-model search: LoRA rank 16, $\alpha{=}32$, dropout $0.05$, learning
-rate $10^{-4}$, effective batch size 32 and $250$ update steps, a common LoRA setting. The runs are a
-fixed budget, not trained to convergence. This is $4.1$M training tokens per candidate and costs
-$3.7$ GPU-minutes on one A100 at $0.5$B parameters, $11.6$ at $7.7$B, $24.7$ at $12$B and $62.7$ at
-$31$B; at $512$ tokens per sequence every model's adaptation fits on one 64\,GB GPU. The budget is
-matched in tokens, so models with larger vocabularies see a few percent more bytes of text. Its
-results are stable across seeds and hardware (Section~\ref{sec:stability}).
 
 \paragraph{Benchmarks.} For comparison, we score every model on MMLU-Pro (a stratified
 $1{,}000$-question subset, so one question is $0.1$ points), HellaSwag (all $10{,}042$ validation
@@ -338,7 +318,7 @@ cards, and we publish the harness logs.
 (Table~\ref{tab:cohort}), each starting from its base weights, to write an article's opening
 paragraph, its lede, from the rest of the article. Gemma-4-31B and Qwen-3.5-35B-MoE are left out
 because the fine-tune's $1{,}280$-token sequences and generation pass do not fit them on one GPU.
-All fifteen use the same LoRA recipe as the adaptation and are scored by ROUGE-L, an F-measure based
+All fifteen use one shared LoRA recipe (Appendix~\ref{sec:downstream}) and are scored by ROUGE-L, an F-measure based
 on the longest common subsequence with the reference \citep{lin2004rouge}, on $500$ held-out
 articles that are not part of the BPB test set. The pairs to compare and the statistic were fixed
 in code before the fine-tuning jobs ran (Appendix~\ref{sec:downstream}). We chose this task because
@@ -358,10 +338,10 @@ and we say so where it matters.
 \section{Results}
 \label{sec:results}
 
-\subsection{BPB on the domain's text anticipates fine-tuning on the task}
+\subsection{BPB on the domain's documents anticipates the fine-tuned ranking}
 \label{sec:divergence}
-A team will fine-tune whichever model it chooses, so the practical question is whether the cheap
-measurement can anticipate how that fine-tuning will turn out.
+A team will fine-tune whichever model it chooses, so the question is whether a measurement taken
+before any task exists can say how that fine-tuning will turn out.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_downstream.pdf}
@@ -371,55 +351,39 @@ where two models tie). For each pair, $x$ is how strongly the ranking prefers on
 that measure) and $y$ is how much better that model's fine-tuned system scores in ROUGE-L. Points
 above the line are pairs the ranking orders correctly. Filled markers are \emph{resolved} pairs,
 whose ROUGE-L difference has a $95\%$ bootstrap interval over the $500$ articles that excludes zero.
-BPB on whole documents gets $37$ of $39$ pairs right, including $21$ of the $22$ resolved pairs,
-and adapted block BPB, plotted here, orders the pairs identically; HellaSwag gets $34$; GSM8K gets
-$18$ of $38$, and all eleven of its pairs with gaps between $15$ and $25$ points
-fall below the line.}
+BPB on whole documents gets $37$ of $39$ pairs right, including $21$ of the $22$ resolved pairs;
+HellaSwag gets $34$; GSM8K gets $18$ of $38$, and all eleven of its pairs with gaps between $15$ and
+$25$ points fall below the line.}
 \label{fig:downstream}
 \end{figure}
-Measured with no task, no labels and no training, BPB on whole documents orders $37$ of the $39$
-size-matched pairs ($0.949$, $95\%$ interval $[0.817, 1.000]$) in the same way as the fine-tuned
-systems. HellaSwag orders $34$ ($0.872$, $[0.640, 1.000]$), BPB on blocks without adaptation $30$
-($0.769$), and GSM8K and MMLU-Pro are at chance with $0.474$ and $0.513$
-(Figure~\ref{fig:downstream}, Table~\ref{tab:downstream}). The intervals of BPB and HellaSwag
-overlap, so the data do not separate these two. On the $22$ pairs that the fine-tuning results
-themselves resolve, the document reading gets $21$ right. Adapted block BPB, the reading we started
-with, ranks the fifteen models in exactly the same order, so every ordering statistic in this
-section is the same for both. Adapting the models and then reading whole documents orders $38$ of
-the $39$ ($0.974$, $[0.862, 1.000]$) and all $22$ resolved pairs; Section~\ref{sec:mechanism} gives
-the one pair it changes. One pair out of $39$, with intervals that do not separate the two
-readings, does not pay for training every candidate, so the unadapted document reading is our main
-one. Seven of the $39$ pairs differ by less than $2\%$ in adapted block BPB, inside the range we treat as a tie
-(Section~\ref{sec:stability}); the band comes from the seed noise of adaptation, so it does not apply
-to the document reading, which has none. Outside that band adapted block BPB orders $31$ of $32$, and its miss there
-(Ministral-3-14B against Qwen-3.5-9B) is a pair the fine-tuned systems do not resolve. Its one
-resolved miss, Mistral-Nemo-12B against Gemma-4-12B, is a $1.1\%$ gap inside the band. Over all
-fifteen models the document ranking agrees with the final order at Spearman $0.99$: every model is
-within one rank of its final position, and eleven are exactly in place. For comparison, unadapted
-block BPB reaches $0.71$, GSM8K $0.59$, MMLU-Pro $0.71$ and HellaSwag $0.97$. BPB also beats ranking
-by model size, by $+0.231$ in pairwise accuracy $[+0.059, +0.452]$.
+Measured with no task, no labels and no training, BPB on whole news documents orders $37$ of the
+$39$ size-matched pairs ($0.949$, $95\%$ interval $[0.817, 1.000]$) in the same way as the
+fine-tuned systems, and $21$ of the $22$ pairs that the fine-tuning results themselves resolve
+(Figure~\ref{fig:downstream}, Table~\ref{tab:downstream}). HellaSwag orders $34$ ($0.872$,
+$[0.640, 1.000]$); the difference, $+0.077$ $[0.000, 0.300]$, does not separate the two. GSM8K and
+MMLU-Pro are at chance, with $0.474$ and $0.513$. So is the strongest label-free baseline, the
+models' own scores on the task before any training (the few-shot baseline that Zeng et al.\ found
+best): it orders $20$ of the $39$ pairs and agrees with the fine-tuned order at Spearman $0.53$.
+Fine-tuning reorders the models, and the document reading predicts the order they end in. Ranking
+by size agrees with the finish at Spearman $0.92$ over the fifteen, because large models beat
+small ones, but orders $28$ of the $39$ size-matched pairs; BPB beats it by $+0.231$ in pairwise
+accuracy $[+0.059, +0.452]$. Over all fifteen models the document ranking agrees with the final
+order at Spearman $0.99$: every model is within one rank of its final position, and eleven are
+exactly in place. GSM8K reaches $0.59$, MMLU-Pro $0.71$ and HellaSwag $0.97$. On the $32$ pairs
+whose models come from different publishers, document BPB orders $30$ and HellaSwag $27$.
 
-A natural objection to the adapted reading is that the fine-tune reuses the adaptation's own
-recipe, so a model that adapts quickly under it could win both. The objection does not apply to the
-document reading, which involves no training. With a deliberately different fine-tuning recipe, recipe B (LoRA
-rank $64$ and $\alpha{=}128$, three times the learning rate, half the batch size, $400$ steps and a new
-seed), the order of the fine-tuned systems hardly changes (Spearman $0.982$). Document BPB and
-adapted block BPB are still the best predictors at $0.923$, and they order correctly all $20$ pairs
-that recipe B separates.
+Table~\ref{tab:outofbox} shows the models the benchmarks misjudge most. Gemma-4-12B, ninth on GSM8K
+and eighth on MMLU-Pro among the fifteen, produces the best fine-tuned system; in the pair fixed in
+advance it beats Ministral-3-14B by $+0.018$ ROUGE-L $[+0.011, +0.025]$. The $55.3$-point GSM8K gap
+between Llama-3.2-1B and Qwen-2.5-1.5B did not separate their fine-tuned systems: that pair was
+inconclusive. Every model improved on its own base weights and beat the score of copying the
+article's first body sentence (ROUGE-L $0.125$).
 
-Since the adaptation and the fine-tuning both use news, one might suspect that news is just
-predicting news. An exploratory check, run after the main result, suggests otherwise. For the nine
-models that were both fine-tuned and adapted on all four corpora ($10$ size-matched pairs), BPB
-adapted on Reddit orders $9$ of the $10$ pairs like the news fine-tune, the same as news BPB (Spearman $0.983$ each); Hacker
-News orders $7$ and arXiv mathematics $6$, and the unadapted readings $5$--$6$
-(Appendix~\ref{sec:downstream}). Ten pairs support no interval, so this is a direction, not a
-result.
-
-Table~\ref{tab:outofbox} shows three models that the benchmarks misjudge. Gemma-4-12B, ninth on
-GSM8K and eighth on MMLU-Pro among the fifteen, produces the best fine-tuned system; in the pair
-fixed in advance it beats Ministral-3-14B by $+0.018$ ROUGE-L $[+0.011, +0.025]$. The $55.3$-point GSM8K gap between Llama-3.2-1B and Qwen-2.5-1.5B did not separate their fine-tuned systems: that
-pair was inconclusive. Every model improved on its own base weights and beat the score of copying
-the article's first body sentence (ROUGE-L $0.125$).
+The prediction does not depend on the fine-tuning recipe. With a deliberately different recipe,
+recipe B (LoRA rank $64$ and $\alpha{=}128$, three times the learning rate, half the batch size, $400$
+steps and a new seed), the order of the fine-tuned systems hardly changes (Spearman $0.982$), and
+document BPB is still the best predictor at $0.923$, ordering correctly all $20$ pairs that recipe B
+separates; its margin over size no longer resolves ($+0.179$ $[-0.036, +0.441]$).
 
 \begin{table}[t]
 \centering\small
@@ -434,8 +398,11 @@ the article's first body sentence (ROUGE-L $0.125$).
 with the same recipe on the lede task and scored by ROUGE-L on $500$ held-out articles. Each row gives
 the pairwise accuracy of one ranking over all size-matched pairs, with a bootstrap interval over
 models, and its accuracy on the $22$ pairs whose fine-tuned difference is resolved by a bootstrap
-over articles. The last column scores the same rankings against systems trained with recipe B. GSM8K
-ties on one pair and is scored on $38$.}
+over articles. The last column scores the same rankings against systems trained with recipe B.
+BPB rows use news text unless marked, and the bold row is the paper's reading; the block and
+adapted readings are defined in Appendix~\ref{app:readings}. ``Base weights scored on the task
+itself'' is each model's own ROUGE-L on the task before any training. GSM8K ties on one pair and
+is scored on $38$.}
 \label{tab:downstream}
 \end{table}
 
@@ -453,170 +420,143 @@ LFM2.5-1.2B & 15 & 12 & 13 & \textbf{14} & 14 \\
 \bottomrule
 \end{tabular}
 \caption{\textbf{Three models the benchmarks misjudge.} Rank among the fifteen fine-tuned models
-($1$ is best). Gemma-4-12B is mid-table on both benchmarks and near the bottom on unadapted block
-BPB, then builds the best system of all; Llama-3.2-1B is last on both benchmarks and finishes
-eleventh. BPB on whole documents, with no adaptation, places every model within a single rank of
-where it finishes: all fifteen, and eleven exactly. Adapted block BPB gives the same ranks.}
+($1$ is best). Gemma-4-12B is mid-table on both benchmarks and near the bottom on block BPB, then
+builds the best system of all; Llama-3.2-1B is last on both benchmarks and finishes eleventh. BPB on
+whole documents places every model within a single rank of where it finishes: all fifteen, and
+eleven exactly.}
 \label{tab:outofbox}
 \end{table}
 
-\subsection{How the text is cut reorders the models}
+\subsection{Blocks cut from a stream misrank strong models}
 \label{sec:mechanism}
-The block reading without adaptation ranks the models differently, and adaptation changes that
-order (Figure~\ref{fig:headline}A, Table~\ref{tab:ranks}). For the eleven models, the block rankings
-before and after adaptation have a Spearman correlation of only $0.655$ on news, $0.609$ on Reddit
-and $0.682$ on Hacker News, and one model moves seven places. The changes are uneven. On news,
-adaptation lowers block loss by $3.6$--$5.4\%$ for every Qwen, Llama and Ministral model, but by
-$17.0\%$ for Gemma-4-31B, $24.5\%$ for Gemma-4-12B and $36.4\%$ for LFM2.5-1.2B. These three are the
-only models that move up, and every other model drops one or two places. Gemma-4-12B is ninth of
-eleven before adaptation and second after; before adaptation it ranks below two models with fewer
-than $2$B parameters. LFM2.5-1.2B is last before adaptation at $1.34$ bits per byte, behind a $0.5$B
-Qwen at $0.93$, and ahead of it after adaptation.
+The same news text, scored the common way, gives a different ranking. Cut into non-overlapping
+$512$-token blocks from the concatenated test set, each block read with no earlier context, it
+orders $30$ of the $39$ pairs ($0.769$) and agrees with the fine-tuned order at Spearman only $0.71$.
+Gemma-4-12B, second on whole documents, is thirteenth of fifteen on blocks, behind models with
+fewer than $2$B parameters, and LFM2.5-1.2B is last (Table~\ref{tab:outofbox}).
 
-\begin{table}[t]
-\centering\small
-\fitwidth{
-\begin{tabular}{lrcccrccc}
-\toprule
-& & \multicolumn{2}{c}{\textbf{News BPB} (rank)} & & & \multicolumn{3}{c}{\textbf{Benchmark score, \%} (rank)} \\
-\cmidrule(lr){3-4}\cmidrule(lr){7-9}
-\textbf{Model} & \textbf{Params (B)} & unadapted & adapted & \textbf{Moves} & \textbf{Gain} & HellaSwag & GSM8K & MMLU-Pro \\
-\midrule
-\input{rank_table.tex}
-\bottomrule
-\end{tabular}
-}
-\caption{\textbf{The eleven models ranked by every measure.} Sorted by adapted news BPB (lower is
-better). \emph{Moves} is the number of places a model gains or loses with adaptation, and \emph{Gain}
-is the reduction in loss. Three models gain far more than the rest (the two Gemmas and LFM2.5-1.2B),
-and they are the only ones that move up. After adaptation the order is almost the same as
-HellaSwag's, while GSM8K and MMLU-Pro differ: Llama-3.2-1B, eighth by BPB and ninth on HellaSwag, is
-last on both. $^{*}$Qwen-3.5-35B-MoE activates $3$B of its $34.7$B parameters.}
-\label{tab:ranks}
-\end{table}
+Figure~\ref{fig:blockpos} shows why. Gemma-4-12B starts a block at $2.83$ bits per byte, while
+Qwen-2.5-1.5B, eight times smaller, starts at $2.04$. Gemma stays behind for most of the block and
+is ahead by the end, $0.72$ against $0.77$. The early positions have the highest loss, so they
+contribute most of the difference between the two block averages. Blocks are cut from a packed
+stream, so most start in the middle of a document, without the beginning-of-document token that
+models such as Gemma are trained to see first.
 
-Figure~\ref{fig:blockpos} shows where the block reading goes wrong. Before adaptation, Gemma-4-12B
-starts a block at $2.83$ bits per byte, while Qwen-2.5-1.5B, eight times smaller, starts at $2.04$.
-Gemma stays behind for most of the block and is ahead by the end, $0.72$ against $0.77$. The early
-positions have the highest loss, so they contribute most of the difference between the two block
-averages. Blocks are cut from a packed stream, so most start in the middle of a document, without
-the beginning-of-document token that models such as Gemma are trained to see first.
-
-Two tests, with the decision rule fixed before they ran, separate the cut from the model. First,
-scoring only positions $64$, $128$ or $256$ onwards of each block removes the first tokens of the
-block but not the mid-document start; on the $10$ size-matched fine-tuned pairs whose models we
-scored this way, it leaves unadapted block BPB at $6$ correct, unchanged, against $9$ for adapted
-block BPB. Second, we read every test document whole, as in Section~\ref{sec:protocol}. Without any
-adaptation this ranks the fifteen fine-tuned models in exactly the order adapted block BPB does
-(Spearman $1.00$), and Gemma-4-12B moves from thirteenth of fifteen to second. Most of what
-adaptation did to the block reading was teaching the models to read text that starts mid-document.
-We did not separate the beginning-of-document token, the document boundary and the longer context;
-together, they amount to reading the text as the model was trained to see it.
-
-On whole documents, adaptation still lowers every model's loss, by $2.0$--$7.9\%$, but it hardly
-changes the order (Spearman $0.993$ between the two document readings). Gemma-4-12B again gains
-the most, and its $7.9\%$ moves it past Mistral-Nemo-12B into first place, which is the one change
-and the one resolved pair it corrects. The control models reproduce the published block readings on
-the new host: unadapted to within $0.04\%$, and adapted to within $0.7\%$, inside the largest gap seed noise can open
-(Section~\ref{sec:stability}).
+Two tests, with their decision rules fixed before they ran, point at the cut rather than the model.
+Scoring
+only positions $64$, $128$ or $256$ onwards of each block removes the first tokens of the block but
+not the mid-document start, and on the $10$ size-matched fine-tuned pairs whose models we scored
+this way it leaves the block reading at $6$ correct, unchanged. Reading every test document whole,
+from its own start, ranks the fifteen models as in Section~\ref{sec:divergence}, and Gemma-4-12B
+moves from thirteenth to second. The document reading is how lm-evaluation-harness scores text,
+with no parameter to tune; we added it after the fine-tuning results were known, with its rule
+fixed before it ran. We did not separate the beginning-of-document token, the document boundary
+and the longer context; together, they amount to reading the text as the model was trained to see
+it.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\columnwidth]{figures/fig_block_position.pdf}
-\caption{\textbf{Before adaptation, the start of each block costs some models far more than others.}
-\emph{Left:} loss before adaptation by position within a $512$-token evaluation block, for
-Gemma-4-12B, Qwen-2.5-1.5B and LFM2.5-1.2B. Gemma-4-12B starts a block at $2.83$ bits per byte,
-against $2.04$ for Qwen-2.5-1.5B, and ends it at $0.72$ against $0.77$. \emph{Right:} the loss
-reduction from adaptation at each position. It is largest at the start of the block but stays
-positive later. This panel uses adapters from the earlier per-model search
-(Appendix~\ref{app:robust}), so its gains differ from the shared-recipe gains in
-Table~\ref{tab:ranks}; only the pattern across positions matters here.}
+\caption{\textbf{The start of each block costs some models far more than others.}
+Loss by position within a $512$-token evaluation block, for Gemma-4-12B, Qwen-2.5-1.5B and
+LFM2.5-1.2B. Gemma-4-12B starts a block at $2.83$ bits per byte, against $2.04$ for Qwen-2.5-1.5B,
+and ends it at $0.72$ against $0.77$.}
 \label{fig:blockpos}
 \end{figure}
 
-\subsection{The choice of text changes what the ranking follows}
-\label{sec:agreement}
-This section and the next use the adapted block reading, the one we ran on all four corpora. On
-news it orders the fifteen fine-tuned models exactly as the document reading does (Spearman
-$1.00$); whether the document reading follows the same corpus dependence is untested.
+\subsection{No training is needed}
+\label{sec:noadapt}
+Adapting every model briefly to the domain before scoring it is a natural precaution, and on blocks
+it is a repair: adapted block BPB ranks the fifteen models exactly as whole documents do, because
+the models that gain most from adaptation are the ones blocks misrank (Appendix~\ref{app:readings}).
+On whole documents it changes little. Adapting each model with the same recipe and then reading
+the documents lowers every model's news loss, by $2.0$--$7.9\%$, but the two document rankings agree
+at Spearman $0.993$: two neighbouring pairs swap. In the one that is size-matched, Gemma-4-12B,
+which gains the most, moves past Mistral-Nemo-12B into first place; the adapted documents order
+$38$ of the $39$ pairs, one more than the unadapted reading, inside the same interval. The same holds on the other corpora: for the eleven
+original models, the adapted and unadapted document rankings agree at Spearman $0.982$
+on Reddit, on Hacker News and on arXiv mathematics, with adaptation lowering loss by $1.9$--$11.2\%$.
+We fixed the threshold for this claim, $0.95$, before the adapted runs.
 
-Of the three benchmarks, HellaSwag is the closest to language modelling. It asks which ending of a
-passage is most natural, and the harness scores each ending by its likelihood. Before adaptation, BPB
-on news, Reddit and Hacker News has a Spearman correlation of $0.63$--$0.72$ with HellaSwag across the
-eleven models; after adaptation it is $0.96$--$0.98$. On news, the adapted ranking orders $53$ of the
-$55$ model pairs the same way as HellaSwag, counting all pairs and not only size-matched ones
-(Table~\ref{tab:alignment} in Appendix~\ref{app:alignment}). Since both HellaSwag and BPB are based
-on likelihood, some agreement is expected; adaptation is what makes it close. On general text,
-adaptation also lowers the correlation with GSM8K on all three corpora and with MMLU-Pro on two.
+\subsection{The text has to be like the task's}
+\label{sec:owntext}
+The document reading predicts the news fine-tune when it reads news. Reading arXiv mathematics
+instead, the same fifteen models are ordered correctly on $23$ of the $39$ pairs ($0.590$,
+$[0.260, 0.929]$) and on $12$ of the $22$ resolved pairs, below ranking by model size
+(Table~\ref{tab:downstream}). Text close to news does better. Reddit and Hacker News are general
+prose like news, and on the same fifteen models Reddit orders $34$ of the $39$ pairs ($0.872$,
+$[0.659, 1.000]$) and Hacker News $31$ ($0.795$, $[0.481, 1.000]$). The order is news $37$, Reddit
+$34$, Hacker News $31$, model size $28$, mathematics $23$. The three general corpora also rank the
+eleven original models almost alike (Spearman $0.982$ and $0.973$ with news; mathematics
+$0.818$; Table~\ref{tab:crosscorpus}).
 
-When the models are adapted on arXiv mathematics instead, agreement rises with all three benchmarks:
-with GSM8K from $0.76$ to $0.91$, with MMLU-Pro from $0.74$ to $0.93$, and with HellaSwag from $0.48$
-to $0.82$. The rise is therefore not specific to the reasoning benchmarks. What changes is which
-benchmark the ranking sits closest to: arXiv mathematics is the only corpus on which the adapted
-ranking agrees more with GSM8K and MMLU-Pro than with HellaSwag, and ranking by mathematics BPB
-selects GSM8K's top model. This shift is suggestive rather than established. A difference in
-differences that tests it directly is positive in $93.7\%$ of model resamples (one-sided
-$p \approx 0.06$) and in $80.9\%$ when whole publisher families are resampled ($p \approx 0.19$), and
-it depends on the two Gemma models (Appendix~\ref{app:robust}).
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lccc}
+\toprule
+& \multicolumn{3}{c}{\textbf{Rank correlation ($\rho$) with}} \\
+\cmidrule(lr){2-4}
+\textbf{Text scored} & GSM8K & MMLU-Pro & HellaSwag \\
+\midrule
+\input{doc_alignment_table.tex}
+\bottomrule
+\end{tabular}
+\caption{\textbf{Which benchmark the document ranking agrees with depends on the text.} Rank
+correlation between BPB on whole documents and each benchmark, over the eleven original
+models; $\rho$ is signed so that $1$ means lower BPB goes with a higher score. On the
+three general corpora the ranking is closest to HellaSwag; on arXiv mathematics it is closer to
+GSM8K and MMLU-Pro. The rule was fixed before the document reading of the three new corpora ran.}
+\label{tab:docalign}
+\end{table}
 
-\subsection{BPB rankings are stable}
+Which benchmark the ranking agrees with also follows the text (Table~\ref{tab:docalign}). On news,
+Reddit and Hacker News, document BPB agrees with HellaSwag at Spearman $0.97$--$0.99$, and with
+GSM8K at $0.69$--$0.78$. On arXiv mathematics the order reverses: $0.92$ with GSM8K, $0.95$ with
+MMLU-Pro and $0.84$ with HellaSwag. We wrote this rule down before reading the three new corpora as
+whole documents; the block readings had already shown the same pattern (Appendix~\ref{app:readings}).
+HellaSwag is close on news; on mathematics text the ranking follows GSM8K and MMLU-Pro instead, so
+no one benchmark stands in for the domain's own text.
+
+\subsection{The measurement is deterministic}
 \label{sec:stability}
-A ranking is only useful if it is repeatable. The document reading involves no randomness: the
-adapted jobs re-read every unadapted model and reproduced its document BPB exactly. The adapted
-reading depends on the adaptation's seed, so we ran three seed replicates of all $17$ news
-adaptations; the seed sets the adapter's initialisation, dropout and batch order, and the data
-splits and test set stay fixed. None of the $40$ size-matched pairs changes order across seeds. The
-median standard deviation of adapted BPB within a model is $0.0001$, against $0.074$ between models.
-The largest gap seed noise could open between two runs is $1.24\%$ of the median BPB ($2\sqrt{2}$ standard deviations of the noisiest model, Gemma-4-12B; the median model, under $0.04\%$), so we treat a gap under $2\%$ as a tie. Re-running one model, Ministral-3-14B, on different hardware weeks later
-reproduced unadapted BPB exactly and adapted BPB to within $0.0003$, and repeating a run with a
-different software stack reproduced it to within $0.01\%$. Rankings also carry over across general
-text: adapted rankings agree at $\rho=0.991$ between news and Reddit, $0.955$ between news and
-Hacker News and $0.964$ between Reddit and Hacker News (Table~\ref{tab:crosscorpus} and
-Figure~\ref{fig:crosscorpus}, Appendix~\ref{app:robust}). The unadapted ranking is just as
-consistent across these corpora ($0.982$, $0.964$ and $0.973$). One might expect that adaptation buys stability, and it does not: it produces a different consistent ranking, the one that anticipates the
-fine-tuned order in Section~\ref{sec:divergence}.
+The document reading involves no randomness: the adapted jobs re-read every unadapted model and
+reproduced its document BPB exactly, and the control models reproduce the published unadapted block
+readings on a second host to within $0.04\%$.
 
 BPB has a structural advantage over generative benchmarks here. Floating-point addition is not
 associative, so results on a GPU can change with batch size and kernel choice
 \citep{he2025nondeterminism}. A generative benchmark decodes greedily, so a tiny change in two
 nearly tied logits can flip a token, and the model then continues from its own changed output.
 BPB is computed with teacher forcing: every prediction is conditioned on the true text, so a small
-perturbation changes one log-probability slightly and does not propagate, and it is averaged over
-about $1.3$ million token predictions. Generative scores are also sensitive to decoding settings that
-BPB does not use: dropping a single decoding setting shipped with Gemma-4-12B changed its GSM8K
-score by $9.86$ points and its MMLU-Pro score by $14.30$ (Appendix~\ref{app:rescore}). On hardware
-alone the effect is small: the same weights move by $-0.60$ to $+0.69$ GSM8K points between an A100
-and an H100, within the benchmark's sampling error (each of its $1{,}319$ questions is worth $0.076$ points).
+perturbation changes one log-probability slightly and does not propagate. Generative scores are
+also sensitive to decoding settings that BPB does not use: dropping a single decoding setting
+shipped with Gemma-4-12B changed its GSM8K score by $9.86$ points and its MMLU-Pro score by $14.30$
+(Appendix~\ref{app:rescore}).
 
 \section{Limitations}
 \label{sec:limits}
-We test one downstream task, lede writing in news, with two fine-tuning recipes; other task types
-and domains may behave differently. The document reading was run on news only, for the fifteen
-fine-tuned models, and on one host; the results across corpora, seeds and hardware are for the
-adapted block reading. The cohort has fifteen fine-tuned models, seven of them Qwen, so
-the intervals are wide and BPB and HellaSwag are not separated. The two largest models were
-not fine-tuned, so the top of the ranking is not checked against a fine-tuned system. All
-adapted runs use one shared adaptation recipe rather than a per-model search.
-The shift towards GSM8K and MMLU-Pro under mathematics adaptation rests mainly on two Gemma models.
-Membership screens cannot prove that a proprietary training set excludes a text; the dates of the
-Reddit, Hacker News and arXiv corpora are the stronger guarantee.
+The fine-tuned evidence is one task, lede writing in news, with two LoRA recipes at a small fixed
+budget and fifteen models, seven of them Qwen, so the intervals are wide and BPB and HellaSwag are
+not separated. We piloted
+two fine-tuning tasks on arXiv mathematics, writing a title from its abstract and the reverse; on
+both, a 0.5B and a 12B model finished within $0.012$ ROUGE-L of each other, so by a rule fixed in
+advance neither task could rank models and neither was run further. The two largest models were not
+fine-tuned. Membership screens cannot prove that a proprietary training set excludes a text; the
+dates of the Reddit, Hacker News and arXiv corpora are the stronger guarantee.
 
 \section{Conclusion}
 \label{sec:using}
-Public benchmarks are a convenient way to choose a base model, but they are public, so they can be
-optimised for and can leak into training data, and they grade a model before the adaptation it will
-receive. We ranked candidates instead by their loss, in bits per byte, on fresh, decontaminated
-text from the target domain, with each document read whole from its own start. It needs no labels,
-no task definition and no training, only a forward pass over a few megabytes of text.
+Base models are chosen by benchmark scores, but those scores grade abilities the task may not use. We ranked candidates instead by their loss, in bits per byte, on fresh text from the
+target domain, with each document read whole from its own start. It needs no labels, no task
+definition and no training, only a forward pass over a few megabytes of text.
 
-On a news-writing task, this ranking placed all fifteen fine-tuned systems within one rank of where
-they finished (Spearman $0.99$), against $0.59$--$0.71$ for GSM8K and MMLU-Pro and $0.97$ for
-HellaSwag. How the text is scored matters as much as which text. Cut into fixed-length blocks, the
-same text misranks several models, and adapting every model first repairs that reading. Gemma-4-12B is thirteenth of fifteen on blocks, second on whole documents, and
-produces the best of the fifteen fine-tuned systems. The choice of text changes which benchmark the
-adapted ranking resembles: HellaSwag on general text (Spearman $0.96$--$0.98$), GSM8K and MMLU-Pro on mathematics. The ranking is
-repeatable across seeds and hardware. A new corpus can be collected for every domain and every
-evaluation, so the text it is measured on stays unseen.
+On a news-writing task this ranking placed all fifteen fine-tuned systems within one rank of where
+they finished and ordered $37$ of $39$ size-matched pairs correctly. GSM8K and MMLU-Pro were at
+chance, as were the models' own scores on the task before training; HellaSwag ordered $34$. Two choices decide whether the measurement works. Text from
+another domain, arXiv mathematics, ordered only $23$ of the pairs. Text cut into fixed-length blocks
+put Gemma-4-12B, the model that fine-tunes best, thirteenth of fifteen. With the domain's own
+documents read whole, adapting the models first changed almost nothing. A new corpus can be
+collected for every domain and every evaluation, so the text the measurement reads stays unseen.
 
 \bibliography{paper_refs}
 \bibliographystyle{tmlr}
@@ -644,10 +584,86 @@ membership screens ran on the news corpus, whose 8 June 2026 snapshot predates p
 release window; Reddit and Hacker News were scraped after every model shipped, as was most of the
 arXiv set. Reddit comments are concatenated within a subreddit, and Hacker News items in sequence,
 into documents of about $600$ words, which is why they have fewer documents than raw records.
-$^{\dagger}$Four days are available in the stated range. $^{\ddagger}$Used only for the mathematics
+$^{\dagger}$Four days are available in the stated range. $^{\ddagger}$Used for the mathematics
 adaptation.}
 \label{tab:corpora}
 \end{table}
+
+\section{The Block and Adapted Readings}
+\label{app:readings}
+Sections~\ref{sec:mechanism} and~\ref{sec:noadapt} compare the document reading with these.
+
+\paragraph{Blocks, unadapted and adapted.} Every candidate is adapted to the retained training text,
+packed into contiguous $512$-token blocks, using LoRA \citep{hu2022lora} on all linear layers, and
+then scored on non-overlapping $512$-token test blocks cut from the packed test stream, each read
+with no earlier context. Beginning-of-document tokens inside a block are used as context but never
+scored. Because blocks are cut in tokens, each model covers a slightly different amount of text,
+$5$--$10\%$ apart (Appendix~\ref{app:robust}). The same block reading without adaptation is the
+\emph{unadapted block} reading. For adaptation, each candidate can get its own hyperparameter search with Optuna \citep{akiba2019optuna}.
+A Tree-structured Parzen Estimator (TPE; \citealp{bergstra2011tpe}) proposes the learning rate,
+batch size, warm-up, weight decay, LoRA rank, $\alpha$ and dropout; successive halving
+\citep{jamieson2016successive} prunes weak trials from $50$ steps on; and every trial is scored by
+BPB on the validation split, never on the test split. Every model gets the same number of trials
+and no time limit, because with a wall-clock limit small models complete more trials than large
+ones and end up better tuned (Appendix~\ref{app:robust}). The best configuration is then trained
+until validation BPB stops improving. The released pipeline implements this
+procedure.\artifact{lm_adapt_bench} Every
+adapted number in this paper uses a single shared configuration instead, for compute reasons,
+described next. Adapted models can also read whole documents (Section~\ref{sec:noadapt}).
+
+\paragraph{Adaptation runs.} Because of limited compute, all runs reported here use one shared
+configuration instead of the per-model search: LoRA rank 16, $\alpha{=}32$, dropout $0.05$, learning
+rate $10^{-4}$, effective batch size 32 and $250$ update steps, a common LoRA setting. The runs are a
+fixed budget, not trained to convergence. This is $4.1$M training tokens per candidate and costs
+$3.7$ GPU-minutes on one A100 at $0.5$B parameters, $11.6$ at $7.7$B, $24.7$ at $12$B and $62.7$ at
+$31$B; at $512$ tokens per sequence every model's adaptation fits on one 64\,GB GPU. The budget is
+matched in tokens, so models with larger vocabularies see a few percent more bytes of text.
+
+\paragraph{What adaptation does to the block reading.} For the eleven models, the block rankings
+before and after adaptation have a Spearman correlation of only $0.655$ on news, $0.609$ on Reddit
+and $0.682$ on Hacker News, and one model moves seven places (Table~\ref{tab:ranks}). The changes are
+uneven. On news, adaptation lowers block loss by $3.6$--$5.4\%$ for every Qwen, Llama and Ministral
+model, but by $17.0\%$ for Gemma-4-31B, $24.5\%$ for Gemma-4-12B and $36.4\%$ for LFM2.5-1.2B. These
+three are the only models that move up, and they are the models the block reading misranks. For the
+fifteen fine-tuned models, adapted block BPB ranks them exactly as the unadapted document reading
+does (Spearman $1.00$). Most of what adaptation did to the block reading was teaching the models to
+read text that starts mid-document.
+
+\begin{table}[t]
+\centering\small
+\fitwidth{
+\begin{tabular}{lrcccrccc}
+\toprule
+& & \multicolumn{2}{c}{\textbf{News BPB, blocks} (rank)} & & & \multicolumn{3}{c}{\textbf{Benchmark score, \%} (rank)} \\
+\cmidrule(lr){3-4}\cmidrule(lr){7-9}
+\textbf{Model} & \textbf{Params (B)} & unadapted & adapted & \textbf{Moves} & \textbf{Gain} & HellaSwag & GSM8K & MMLU-Pro \\
+\midrule
+\input{rank_table.tex}
+\bottomrule
+\end{tabular}
+}
+\caption{\textbf{The eleven models on the block readings.} Sorted by adapted news block BPB (lower
+is better). \emph{Moves} is the number of places a model gains or loses with adaptation, and
+\emph{Gain} is the reduction in loss. Three models gain far more than the rest (the two Gemmas and
+LFM2.5-1.2B), and they are the only ones that move up. $^{*}$Qwen-3.5-35B-MoE activates $3$B of its
+$34.7$B parameters.}
+\label{tab:ranks}
+\end{table}
+
+\paragraph{Adapted blocks and the benchmarks.} Before adaptation, block BPB on news, Reddit and
+Hacker News has a Spearman correlation of $0.63$--$0.72$ with HellaSwag across the eleven models;
+after adaptation it is $0.96$--$0.98$, close to the document reading's $0.97$--$0.99$. Adapted on
+arXiv mathematics instead, block agreement rises with all three benchmarks: with GSM8K from $0.76$
+to $0.91$, with MMLU-Pro from $0.74$ to $0.93$, and with HellaSwag from $0.48$ to $0.82$
+(Table~\ref{tab:alignment}).
+
+\paragraph{Seeds.} The adapted readings depend on the adaptation's seed, so we ran three seed
+replicates of all $17$ news adaptations; the seed sets the adapter's initialisation, dropout and
+batch order, and the data splits and test set stay fixed. None of the $40$ size-matched pairs
+changes order across seeds. The median standard deviation of adapted block BPB within a model is
+$0.0001$, against $0.074$ between models; the largest gap seed noise could open between two runs is
+$1.24\%$ of the median BPB ($2\sqrt{2}$ standard deviations of the noisiest model,
+Gemma-4-12B; the median model, under $0.04\%$).
 
 \section{The Full Benchmark Alignment}
 \label{app:alignment}
@@ -663,21 +679,23 @@ adaptation.}
 \bottomrule
 \end{tabular}
 \caption{\textbf{Agreement of each BPB reading with each benchmark.} Rank correlation of BPB with
-each benchmark over the eleven models, before (zero-shot) and after adaptation, on every corpus;
+each benchmark over the eleven models, before (zero-shot) and after adaptation, on blocks and on
+whole documents, on every corpus;
 $\rho$ is signed so that $1$ means lower BPB goes with a higher score. On the three general corpora
-adaptation lifts HellaSwag from $0.63$--$0.72$ to $0.96$--$0.98$ while GSM8K falls; on arXiv
+adapting the block reading lifts HellaSwag from $0.63$--$0.72$ to $0.96$--$0.98$ while GSM8K falls; on arXiv
 mathematics it lifts all three, and GSM8K and MMLU-Pro end above HellaSwag. The last three columns
 count, of all $55$ pairs of the eleven (not only size-matched ones), those that BPB orders the same
 way as each benchmark: adapted news BPB agrees with HellaSwag on $53$.}
 \label{tab:alignment}
 \end{table}
-Table~\ref{tab:alignment} reports all twenty-four (corpus $\times$ reading $\times$ benchmark)
+Table~\ref{tab:alignment} reports all forty-eight (corpus $\times$ reading $\times$ benchmark)
 cells over the full $55$ pairs, and Table~\ref{tab:regret} gives, for each reading, how many
-benchmark points its top-ranked model gives up against each benchmark's own top model. Adapting on
+benchmark points its top-ranked model gives up against each benchmark's own top model. On blocks, adapting on
 general text raises HellaSwag agreement on every corpus and lowers GSM8K agreement on every corpus
 and MMLU-Pro agreement on two of the three. Adapting on mathematics raises all three. Rank
-correlations hide how close these are in pair counts: across its eight rows the GSM8K column spans
-only $41$ to $49$ of $55$ pairs.
+correlations hide how close these are in pair counts: across its sixteen rows the GSM8K column spans
+only $41$ to $50$ of $55$ pairs. Adapting barely moves the document reading: on the three
+general corpora its adapted rows equal the adapted block rows.
 \begin{table}[t]
 \centering\small
 \fitwidth{
@@ -693,9 +711,10 @@ only $41$ to $49$ of $55$ pairs.
 }
 \caption{\textbf{The cost of the top-1 pick on each benchmark.} For every corpus and reading, the
 model the ranking puts first and how many accuracy points that model is below each benchmark's own
-top model. Only three distinct picks occur in eight rows. Adapted BPB on every general-text corpus
+top model. Only three distinct picks occur in sixteen rows, and both document readings pick the same model
+as adapted block BPB on every corpus. Adapted BPB on every general-text corpus
 picks Gemma-4-31B, the HellaSwag leader, at $1.6$ GSM8K and $4.3$ MMLU-Pro points. Adapted
-mathematics BPB picks Qwen-3.5-35B-MoE, the GSM8K and MMLU-Pro leader, which unadapted BPB on news,
+mathematics BPB picks Qwen-3.5-35B-MoE, the GSM8K and MMLU-Pro leader, which unadapted block BPB on news,
 Hacker News and arXiv also picks.}
 \label{tab:regret}
 \end{table}
@@ -705,35 +724,35 @@ Hacker News and arXiv also picks.}
 
 \begin{table}[ht]
 \centering\small
-\begin{tabular}{lcccc}
+\begin{tabular}{lccccc}
 \toprule
-& \multicolumn{2}{c}{\textbf{Rank agreement} (Spearman)} & \multicolumn{2}{c}{\textbf{Value agreement} (Pearson)} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-\textbf{Corpora compared} & unadapted & adapted & unadapted & adapted \\
+& \multicolumn{3}{c}{\textbf{Rank agreement} (Spearman)} & \multicolumn{2}{c}{\textbf{Value agreement} (Pearson)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-6}
+\textbf{Corpora compared} & documents & blocks & adapted blocks & blocks & adapted blocks \\
 \midrule
 \input{crosscorpus_table.tex}
 \bottomrule
 \end{tabular}
 \caption{\textbf{Agreement between corpora.} Agreement between the eleven models' BPB on two
-corpora. The three general-text corpora rank the models almost identically before and after
-adaptation. Mathematics agrees less with the general corpora after adaptation ($0.74$--$0.84$ adapted) than before ($0.91$--$0.97$ unadapted).}
+corpora. The three general-text corpora rank the models almost identically under every reading
+($0.96$--$0.98$ on whole documents). Mathematics agrees less with the general corpora
+($0.76$--$0.88$ on documents), most of all after adaptation on blocks.}
 \label{tab:crosscorpus}
 \end{table}
 \paragraph{Consistency across domains.}\label{sec:domains} All eleven models ran on three
-independently collected general-text corpora under the same recipe (Tables~\ref{tab:corpora}
-and~\ref{tab:leaderboard}). Adaptation changes the ranking: unadapted and adapted rankings agree only
-at Spearman $\rho = 0.655$ on news, $0.609$ on Reddit and $0.682$ on Hacker News, with models moving
-up to seven places. The adapted ranking then holds across corpora. News and Reddit agree on nine of
-eleven exact ranks ($\rho = 0.991$, maximum displacement one), news and Hacker News give $0.955$ and
-Reddit and Hacker News $0.964$, and the values agree as well as the ranks
-(Figure~\ref{fig:crosscorpus}). The unadapted ranking is as consistent ($0.982$, $0.964$ and $0.973$).
-Adaptation produces a different consistent ranking, and Section~\ref{sec:divergence} shows it is the
-one closer to the fine-tuned order.
+independently collected general-text corpora (Tables~\ref{tab:corpora} and~\ref{tab:leaderboard}).
+Every reading ranks them almost identically across these corpora. On whole documents news and Reddit
+agree at $\rho = 0.982$, news and Hacker News at $0.973$ and Reddit and Hacker News at $0.964$. The
+block readings are as consistent, before adaptation ($0.982$, $0.964$, $0.973$) and after ($0.991$,
+$0.955$, $0.964$), although on each corpus adaptation reorders the blocks (Spearman $0.655$ on news,
+$0.609$ on Reddit and $0.682$ on Hacker News between the two block rankings,
+Appendix~\ref{app:readings}). The adapted block values agree as well as the ranks
+(Figure~\ref{fig:crosscorpus}).
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\columnwidth]{figures/fig_cross_corpus.pdf}
-\caption{\textbf{Adapted BPB across domains.} Each point is one model, its adapted BPB on two
+\caption{\textbf{Adapted block BPB across domains.} Each point is one model, its adapted BPB on two
 corpora. Absolute difficulty changes, but points remain close to a monotone shared ordering:
 Pearson correlations between the values are $0.992$ (news--Reddit), $0.977$ (news--Hacker News) and
 $0.990$ (Reddit--Hacker News). G31/G12 denote Gemma-4-31B/12B, Q35 Qwen-3.5-35B-MoE, M14
@@ -741,7 +760,7 @@ Ministral-3-14B and LFM LFM2.5-1.2B.}
 \label{fig:crosscorpus}
 \end{figure}
 
-\paragraph{Why the search gives every model the same number of trials.} The search of Phase~2 uses
+\paragraph{Why the search gives every model the same number of trials.} The per-model search (Appendix~\ref{app:readings}) uses
 a multivariate TPE sampler (seed $42$) over learning rate ($10^{-6}$--$10^{-3}$, log), physical batch
 ($2$, $4$, $8$), gradient accumulation ($1$--$16$), warm-up ratio ($0$--$0.2$), weight decay
 ($10^{-5}$--$10^{-1}$, log), LoRA rank ($8$--$64$), $\alpha$ as a multiple of rank ($1$, $2$, $4$) and
@@ -812,7 +831,7 @@ two stages, each fixed in code before its job returned: first the two pairs on w
 disagree most (Gemma-4-12B against Ministral-3-14B, Llama-3.2-1B against Qwen-2.5-1.5B), then every
 cohort model that fits one GPU, so that no pair is hand-picked. Gemma-4-31B and Qwen-3.5-35B-MoE need
 more than one GPU for this fine-tune, because its $1{,}280$-token sequences and its generation pass
-cost far more memory than the $512$-token adaptation (Section~\ref{sec:setup}), and are excluded by
+cost far more memory than the $512$-token adaptation (Appendix~\ref{app:readings}), and are excluded by
 that rule, which costs one size-matched pair of forty. The fine-tuned scores, pairs and rankings
 are released.\artifact{results/downstream.json}
 
@@ -871,9 +890,9 @@ largely do copy), while every fine-tuned system clears it, from $0.188$ (Qwen-2.
 (Gemma-4-12B).
 
 \paragraph{How close the corpus has to be.} Exploratory, run after the result: on the ten
-size-matched pairs of the nine fine-tuned models that have all four corpora, adapted BPB orders the
+size-matched pairs of the nine fine-tuned models adapted on all four corpora, adapted BPB orders the
 news fine-tune with pairwise accuracy $0.900$ for news and for Reddit, $0.700$ for Hacker News and
-$0.600$ for arXiv mathematics; the unadapted block readings reach $0.500$--$0.600$. Ten pairs support no interval, so this is a direction, not a result.
+$0.600$ for arXiv mathematics; the unadapted block readings reach $0.500$--$0.600$. Ten pairs support no interval, so this is a direction, not a result. The unadapted document reading on all fifteen models and $39$ pairs is in Table~\ref{tab:downstream}.
 
 \section{The Cohorts}
 \label{app:eleven}
@@ -890,7 +909,7 @@ three general corpora and both readings.
 \bottomrule
 \end{tabular}
 \caption{\textbf{The seventeen models.} Ordered by adapted news BPB. ``original'' marks the eleven
-models evaluated on all four corpora (Figure~\ref{fig:headline}, Tables~\ref{tab:ranks},
+models evaluated on all four corpora under the block readings too (Tables~\ref{tab:ranks}, \ref{tab:docalign},
 \ref{tab:alignment} and~\ref{tab:leaderboard}); ``added'' marks the six models added for the news
 corpus on size-adjacency and publisher-spread criteria fixed before they ran. All seventeen enter the
 seed replicates; all except Gemma-4-31B and Qwen-3.5-35B-MoE enter the fine-tuning experiment.

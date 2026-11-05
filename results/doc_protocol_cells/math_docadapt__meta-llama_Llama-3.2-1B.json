@@ -1,0 +1,46 @@
+{
+  "model_id": "meta-llama/Llama-3.2-1B",
+  "dataset": "corpora/math.jsonl",
+  "corpus": "math",
+  "dataset_sha256": "78e19669d0a569a5f16905509ca058da199480ef7b98a8f3f5c3af4e12ac9bf0",
+  "avg_bytes_per_token": 4.636498155742117,
+  "n_train_blocks": 5183,
+  "n_test_blocks_scored": 635,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.7978984871589082,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 320,
+    "zero_shot": {
+      "bpb": 0.7444771536275441,
+      "nats": 777740.0546875,
+      "bytes": 1507154,
+      "tokens": 325063,
+      "windows": 320
+    },
+    "adapted": {
+      "bpb": 0.7143313643463693,
+      "nats": 746247.365234375,
+      "bytes": 1507154,
+      "tokens": 325063,
+      "windows": 320
+    }
+  },
+  "trainable_params": 11272192,
+  "total_params": 1247086592,
+  "trainable_pct": 0.9038820617838861,
+  "adapted_bpb": 0.7500649044972794,
+  "reduction_pct": 5.994945902448164,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 210.82236766815186
+}

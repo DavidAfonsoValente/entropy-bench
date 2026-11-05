@@ -145,7 +145,7 @@ def main():
     from transformers import AutoTokenizer
     from lm_adapt_bench.config import DataConfig
     from lm_adapt_bench.data import DataModule
-    from lm_adapt_bench.evaluate import compute_bpb, compute_doc_bpb
+    from lm_adapt_bench.evaluate import compute_bpb, compute_doc_bpb, first_documents
 
     # Seed before anything stochastic runs, so the recorded seed is always the one applied.
     # This covers LoRA A/B initialisation, dropout and DataLoader batch order; the split and
@@ -183,14 +183,7 @@ def main():
     if zs is not None:
         print(f"[result] zero-shot BPB = {zs:.4f}  ({time.time()-t0:.0f}s)", flush=True)
 
-    doc_texts = []
-    if a.doc_context:
-        n = 0
-        for t in dm.test_texts:
-            if n >= a.doc_bytes:
-                break
-            doc_texts.append(t)
-            n += len(t.encode("utf-8"))
+    doc_texts = first_documents(dm.test_texts, a.doc_bytes) if a.doc_context else []
 
     def doc_bpb(tag):
         r = compute_doc_bpb(model, tok, doc_texts, device, a.doc_context, a.doc_context // 2,

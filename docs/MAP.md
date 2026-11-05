@@ -27,7 +27,7 @@ Packaging, licence, citation metadata.
 | `.gitignore` | — |
 | `CITATION.cff` | — |
 | `CONTRIBUTING.md` | Contributions are welcome as focused pull requests with tests and an evidence trail |
-| `LEADERBOARD.md` | Models are ranked by adapted Bits Per Byte  on fresh, decontaminated target-domain text: |
+| `LEADERBOARD.md` | Models are ranked by bits per byte  on whole documents of fresh, decontaminated text from |
 | `LICENSE` | — |
 | `Makefile` | — |
 | `README.md` | !CI |
@@ -36,6 +36,7 @@ Packaging, licence, citation metadata.
 | `coverage_table.tex` | — |
 | `crosscorpus_table.tex` | — |
 | `decision_rule_table.tex` | — |
+| `doc_alignment_table.tex` | — |
 | `downstream_table.tex` | — |
 | `dt_table.tex` | — |
 | `fancyhdr.sty` | — |
@@ -58,7 +59,9 @@ Published leaderboard submissions.
 
 | path | what it is |
 |---|---|
+| `benchmarks/arxiv-math-2026-08-documents-v1.json` | — |
 | `benchmarks/arxiv-math-2026-08-fixed-lora-v1.json` | — |
+| `benchmarks/primary-news-2026-06-08-documents-v1.json` | — |
 | `benchmarks/primary-news-2026-06-08-fixed-lora-v1.json` | — |
 | `benchmarks/primary-news-2026-06-08.json` | — |
 
@@ -176,7 +179,7 @@ The six-stage audit (near-dup, split leakage, Min-K++, CoDeC, DCQ, MAD calibrati
 
 Pytest suite for the pipeline; run by `make check`.
 
-- `lm_adapt_bench/tests/` — 26 files.
+- `lm_adapt_bench/tests/` — 27 files.
 
 ## reports/
 
@@ -188,7 +191,7 @@ Rendered HTML/PDF report of the superseded 11-model sweep.
 
 Raw result cells and harness logs, per experiment.
 
-- `results/` — 334 files.
+- `results/` — 422 files.
 
 ## results/ artifacts
 
@@ -207,11 +210,15 @@ Committed analysis artifacts. Each is written by one `tools/analyze_*.py` and as
 | `results/decision_rule.json` | — |
 | `results/doc_protocol.json` | — |
 | `results/downstream.json` | — |
+| `results/downstream_math_abstract_task.json` | — |
+| `results/downstream_math_task.json` | — |
 | `results/downstream_task.json` | — |
 | `results/e2_confound_audit.json` | — |
 | `results/late_position.json` | — |
 | `results/leaderboard.json` | — |
 | `results/leaderboard_math.json` | — |
+| `results/leaderboard_math_documents.json` | — |
+| `results/leaderboard_news_documents.json` | — |
 | `results/math_domain_benchmark_analysis.json` | — |
 | `results/mcq.json` | — |
 | `results/mcq_task.json` | — |
@@ -286,6 +293,8 @@ One-off analysis, data preparation and reporting scripts run against finished re
 | `tools/build_domain_cloze.py` | Build an in-domain cloze set: the outcome criterion this study does not otherwise have |
 | `tools/build_lede_task.py` | Build the downstream fine-tuning task: write the lede of a news article from its body |
 | `tools/build_mcq_task.py` | Build the in-domain multiple-choice task: which continuation belongs to this article? |
+| `tools/build_release_packages.sh` | Build every deliverable of a paper release from one committed revision: |
+| `tools/build_title_task.py` | Build the second downstream fine-tuning task: write a mathematics paper's title from its abstract |
 | `tools/collect_e9.py` | Collect the E9 benchmark column and validate it before anything downstream reads it |
 | `tools/context_length_eval.py` | Measure whether a 512-token LoRA adapter transfers to longer inference contexts |
 | `tools/data/gsm8k_test_shingles.json` | — |
@@ -297,6 +306,7 @@ One-off analysis, data preparation and reporting scripts run against finished re
 | `tools/make_cohort_table.py` | Emit the 17-model extended-cohort roster as LaTeX rows: every model with its parameter count, |
 | `tools/make_coverage_table.py` | Emit the four-corpus selector table as LaTeX rows, one block per corpus |
 | `tools/make_crosscorpus_table.py` | Emit the cross-corpus agreement table: how closely the eleven models' BPB on one corpus matches |
+| `tools/make_doc_leaderboards.py` | Build the two document-reading leaderboards (news and arXiv maths) from the committed cells |
 | `tools/make_downstream_table.py` | Render the downstream fine-tune (E11) as LaTeX rows |
 | `tools/make_dt_table.py` | Emit the domain-transfer results table body as LaTeX rows, ordered by news adapted BPB |
 | `tools/make_mechanism_table.py` | Emit the rank-comparison table body as LaTeX rows, ordered by the in-domain criterion |
@@ -307,6 +317,7 @@ One-off analysis, data preparation and reporting scripts run against finished re
 | `tools/pairwise_significance.py` | Selection accuracy with uncertainty computed at the MODEL level, where the dependence lives |
 | `tools/prepare_math_corpus.py` | Build the math-domain corpus for the domain-adaptation model-selection experiment |
 | `tools/prepare_scraped_corpus.py` | Turn the raw scraped Reddit / Hacker News dumps into a corpus the pipeline can adapt on |
+| `tools/public_exclude.sh` | The public snapshot's exclusion list, shared by tools/sync_public_repo.sh (the public repository) |
 | `tools/rebuild_hf_cache.py` | Recreate the HuggingFace cache symlinks after a GCS transfer |
 | `tools/refresh_static_table.py` | Refresh results/combined_bpb_vs_static.json from the staged benchmark column |
 | `tools/regenerate_leaderboard.py` | Regenerate each track's public leaderboard from the committed fixed-recipe result cells |
@@ -341,6 +352,7 @@ Turn finished result cells into a committed JSON artifact. All support `--check`
 | `tools/analyze_decision_rule.py` | What a practitioner with two or three candidates should do with a BPB gap |
 | `tools/analyze_doc_protocol.py` | M3: does a clean unadapted reading rank the fine-tuned systems as well as adapted BPB? |
 | `tools/analyze_downstream.py` | Does the selector's pick actually build the better fine-tuned system? |
+| `tools/analyze_downstream_math.py` | E13: which signal, read before fine-tuning, predicts the fine-tuned maths title writers? |
 | `tools/analyze_late_position.py` | Does discarding each block's cold start make the free reading as good as the adapted one? |
 | `tools/analyze_math_domain.py` | Answer the math-domain question: does math-adapted BPB rank-agree with |
 | `tools/analyze_mcq.py` | E12: does adapted BPB predict a downstream task that is NOT prose overlap? |
@@ -373,5 +385,6 @@ Figure generators. Every figure in the paper is produced by one of these.
 | `tools/plot_context_length.py` | Plot fixed-target BPB as the available inference context increases |
 | `tools/plot_cross_corpus.py` | Plot pairwise agreement of adapted BPB across the three evaluation corpora |
 | `tools/plot_downstream.py` | Figure: does the selector's pick build the better fine-tuned system? One point per in-band pair |
-| `tools/plot_headline.py` | Figure 1: what adaptation does to the ordering of base models, measured without any referee |
+| `tools/plot_headline.py` | Figure 1: which signal, read before fine-tuning, predicts how the fifteen models finish? |
 | `tools/plot_selectors.py` | Figure: how often each selector picks the better of two similarly-sized models, and which of |
+| `tools/plot_steering.py` | Figure 1: what adaptation does to the ordering of base models, measured without any referee |

@@ -1,0 +1,46 @@
+{
+  "model_id": "google/gemma-4-31B",
+  "dataset": "corpora/math.jsonl",
+  "corpus": "math",
+  "dataset_sha256": "78e19669d0a569a5f16905509ca058da199480ef7b98a8f3f5c3af4e12ac9bf0",
+  "avg_bytes_per_token": 4.840691052863168,
+  "n_train_blocks": 4963,
+  "n_test_blocks_scored": 608,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.7978968673554401,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 320,
+    "zero_shot": {
+      "bpb": 0.6095166666762976,
+      "nats": 636749.5944824219,
+      "bytes": 1507154,
+      "tokens": 311351,
+      "windows": 320
+    },
+    "adapted": {
+      "bpb": 0.5836935497316621,
+      "nats": 609772.7124023438,
+      "bytes": 1507154,
+      "tokens": 311351,
+      "windows": 320
+    }
+  },
+  "trainable_params": 133616896,
+  "total_params": 31406703408,
+  "trainable_pct": 0.4254406910021787,
+  "adapted_bpb": 0.6306924808695369,
+  "reduction_pct": 20.955638921116158,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 4205.1850481033325
+}

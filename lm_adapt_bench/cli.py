@@ -25,7 +25,7 @@ from .utils import (
     library_versions, get_lora_target_modules
 )
 from .data import DataModule, BlockDataset
-from .evaluate import compute_zero_shot_bpb, compute_bpb
+from .evaluate import compute_bpb, compute_doc_bpb, compute_zero_shot_bpb, first_documents
 from .sweep import SweepRunner
 from .trainer import Trainer
 from .plot import (
@@ -94,6 +94,11 @@ def main():
     parser.add_argument("--no-pdf", action="store_true")
     parser.add_argument("--force-rerun", action="store_true")
     parser.add_argument("--baseline-only", action="store_true")
+    parser.add_argument("--doc-context", type=int, default=2048, metavar="N",
+                        help="Score whole test documents, each from its own start, in N-token "
+                             "windows (doc_bpb, the reading to rank candidates by). 0 = off")
+    parser.add_argument("--doc-bytes", type=int, default=6_000_000,
+                        help="Score the leading test documents up to this many UTF-8 bytes")
     
     # Contamination Flags
     parser.add_argument("--check-contamination", action="store_true", help="Enable contamination detection")
@@ -425,6 +430,11 @@ def main():
             
             zero_shot_bpb = compute_zero_shot_bpb(model, test_ds, avg_bpt, device, args.eval_batch_size)
             logger.info(f"Model: {model_id} - Zero-shot BPB (Test Set): {zero_shot_bpb:.4f}")
+            doc_bpb = None
+            if args.doc_context:
+                doc_bpb = compute_doc_bpb(model, tokeniser, first_documents(test_texts, args.doc_bytes),
+                                          device, args.doc_context, args.doc_context // 2)["bpb"]
+                logger.info(f"Model: {model_id} - Document BPB (Test Set): {doc_bpb:.4f}")
             
             # AGGRESSIVE CLEANUP: Free base model memory before the sweep
             del model
@@ -434,6 +444,7 @@ def main():
             if args.baseline_only:
                 res = {
                     "model_id": model_id, "model_slug": slug, "zero_shot_bpb": zero_shot_bpb,
+                    "doc_bpb": doc_bpb,
                     "total_params": stats["total_params"], "trainable_pct": stats["trainable_pct"],
                     "contamination_scores": [dataclasses.asdict(s) for s in model_contam_scores],
                     "best_bpb": zero_shot_bpb,
@@ -616,6 +627,7 @@ def main():
                 "trainable_pct": stats["trainable_pct"],
                 "model_size_gb": stats["model_size_gb"],
                 "zero_shot_bpb": zero_shot_bpb,
+                "doc_bpb": doc_bpb,
                 "best_bpb": final_bpb,
                 "delta_bpb": final_bpb - zero_shot_bpb,
                 "pct_improvement": pct_imp,
@@ -981,6 +993,7 @@ def main():
     table.add_column("Rank", justify="right", style="cyan")
     table.add_column("Model", style="magenta")
     table.add_column("Params(M)", justify="right")
+    table.add_column("Document BPB", justify="right", style="bold")
     table.add_column("Zero-shot BPB", justify="right")
     table.add_column("Fine-tuned BPB", justify="right")
     table.add_column("% Imp.", justify="right", style="green")
@@ -991,6 +1004,7 @@ def main():
             str(r.get("rank", "-")),
             r["model_id"],
             f"{r.get('total_params', 0)/1e6:.1f}",
+            "-" if r.get("doc_bpb") is None else f"{r['doc_bpb']:.4f}",
             f"{r.get('zero_shot_bpb', 0):.4f}",
             f"{r.get('best_bpb', 0.0):.4f}",
             f"{r.get('pct_improvement', 0.0):.1f}%",

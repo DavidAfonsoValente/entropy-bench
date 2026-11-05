@@ -39,6 +39,7 @@ from analyze_static_benchmarks import (  # noqa: E402
 
 OUTPUT_JSON = ROOT / "results" / "alignment_matrix.json"
 OUTPUT_TEX = ROOT / "alignment_matrix_table.tex"
+OUTPUT_DOC_TEX = ROOT / "doc_alignment_table.tex"
 OUTPUT_REGRET_TEX = ROOT / "selection_regret_table.tex"
 
 # Ordered so the table reads free-tier first, then paid-tier, and news (the primary corpus)
@@ -46,7 +47,13 @@ OUTPUT_REGRET_TEX = ROOT / "selection_regret_table.tex"
 CORPORA = ["news", "reddit", "hackernews", "math"]
 CORPUS_LABEL = {"news": "News", "reddit": "Reddit", "hackernews": "Hacker News",
                 "math": "Math (arXiv)"}
-TIERS = [("zero_shot_bpb", "zero-shot"), ("adapted_bpb", "adapted")]
+TIERS = [("zero_shot_bpb", "zero-shot"), ("adapted_bpb", "adapted"),
+         ("doc_bpb", "document"), ("doc_adapted_bpb", "document-adapted")]
+# The document reading (compute_doc_bpb, ledger M3/M4): <corpus>_doc__ and <corpus>_docadapt__
+# cells written by slurm/gcp/doc_bpb.sbatch. News also holds the fine-tuned models outside the
+# eleven, which are skipped here.
+DOC_DIR = ROOT / "results" / "doc_protocol_cells"
+DOC_TIERS = {"doc_bpb": ("doc", "zero_shot"), "doc_adapted_bpb": ("docadapt", "adapted")}
 
 BOOTSTRAP_RESAMPLES = 20000
 BOOTSTRAP_SEED = 20260827
@@ -59,8 +66,11 @@ BOOTSTRAP_SEED = 20260827
 BPB_PER_CONTEXT_DOUBLING = 0.032
 
 
-def load_bpb_matrix() -> dict[str, dict[str, dict[str, float]]]:
-    """{corpus: {tier_key: {display_label: value}}} plus per-corpus tokenizer metadata."""
+def load_bpb_matrix(documents: bool = False) -> dict[str, dict[str, dict[str, float]]]:
+    """{corpus: {tier_key: {display_label: value}}} plus per-corpus tokenizer metadata.
+
+    The block tiers always; the whole-document tiers (DOC_TIERS) only with ``documents=True``, so
+    analyses of the block readings do not depend on the document cells."""
     matrix: dict[str, dict[str, dict[str, float]]] = {}
     meta: dict[str, dict[str, dict[str, float]]] = {}
     by_model_id = {model_id: label for label, model_id in MODEL_IDS.items()}
@@ -70,7 +80,8 @@ def load_bpb_matrix() -> dict[str, dict[str, dict[str, float]]]:
             raise SystemExit(
                 f"{corpus}: expected {len(MODEL_IDS)} cells, found {len(cells)}"
             )
-        tiers: dict[str, dict[str, float]] = {key: {} for key, _ in TIERS}
+        tiers: dict[str, dict[str, float]] = {key: {} for key, _ in TIERS
+                                              if documents or key not in DOC_TIERS}
         tokenizer: dict[str, dict[str, float]] = {}
         for path in cells:
             row = json.loads(path.read_text())
@@ -78,12 +89,21 @@ def load_bpb_matrix() -> dict[str, dict[str, dict[str, float]]]:
             if label is None:
                 raise SystemExit(f"{path.name}: unexpected model id {row['model_id']}")
             for key, _ in TIERS:
-                tiers[key][label] = row[key]
+                if key not in DOC_TIERS:
+                    tiers[key][label] = row[key]
             tokenizer[label] = {
                 "avg_bytes_per_token": row["avg_bytes_per_token"],
                 "n_test_blocks_scored": row["n_test_blocks_scored"],
                 "n_train_blocks": row["n_train_blocks"],
             }
+        for key, (prefix, reading) in (DOC_TIERS.items() if documents else ()):
+            for path in sorted(DOC_DIR.glob(f"{corpus}_{prefix}__*.json")):
+                row = json.loads(path.read_text())
+                label = by_model_id.get(row["model_id"])
+                if label is not None:
+                    tiers[key][label] = row["doc_protocol"][reading]["bpb"]
+            if set(tiers[key]) != set(MODEL_IDS):
+                raise SystemExit(f"{corpus} {key}: missing {sorted(set(MODEL_IDS) - set(tiers[key]))}")
         matrix[corpus] = tiers
         meta[corpus] = tokenizer
     return matrix, meta
@@ -232,7 +252,7 @@ def build() -> dict[str, object]:
     static = json.loads(STATIC_PATH.read_text())
     if set(static) != set(MODEL_IDS):
         raise SystemExit("static benchmark model set does not match the 11-model cohort")
-    matrix, meta = load_bpb_matrix()
+    matrix, meta = load_bpb_matrix(documents=True)
 
     cells: dict[str, dict[str, dict[str, object]]] = {}
     for corpus in CORPORA:
@@ -258,6 +278,9 @@ def build() -> dict[str, object]:
         "math_adapted_vs_hackernews_adapted": ("hackernews", "adapted_bpb",
                                                "math", "adapted_bpb"),
         "math_adapted_vs_reddit_adapted": ("reddit", "adapted_bpb", "math", "adapted_bpb"),
+        "math_doc_vs_news_doc": ("news", "doc_bpb", "math", "doc_bpb"),
+        "math_doc_vs_reddit_doc": ("reddit", "doc_bpb", "math", "doc_bpb"),
+        "math_doc_vs_hackernews_doc": ("hackernews", "doc_bpb", "math", "doc_bpb"),
     }
     deltas = {
         name: {
@@ -324,6 +347,16 @@ def render_matrix_tex(report: dict[str, object]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def render_doc_tex(report: dict[str, object]) -> str:
+    """The main text's table: the unadapted whole-document reading against each benchmark."""
+    lines = ["% generated by tools/analyze_alignment_matrix.py"]
+    for corpus in CORPORA:
+        a = report["cells"][f"{corpus}__document"]["alignment"]
+        lines.append(" & ".join([CORPUS_LABEL[corpus], *(f"{a[b]['spearman']:.3f}" for b in
+                                 ("gsm8k", "mmlu_pro", "hellaswag"))]) + " \\\\")
+    return "\n".join(lines) + "\n"
+
+
 def render_regret_tex(report: dict[str, object]) -> str:
     lines = ["% generated by tools/analyze_alignment_matrix.py"]
     for corpus in CORPORA:
@@ -351,12 +384,13 @@ def main() -> None:
     report = build()
     matrix_tex = render_matrix_tex(report)
     regret_tex = render_regret_tex(report)
+    doc_tex = render_doc_tex(report)
     payload = json.dumps(_portable(report), indent=2, sort_keys=True) + "\n"
 
     if args.check:
         problems = []
         for path, fresh in ((OUTPUT_JSON, payload), (OUTPUT_TEX, matrix_tex),
-                            (OUTPUT_REGRET_TEX, regret_tex)):
+                            (OUTPUT_REGRET_TEX, regret_tex), (OUTPUT_DOC_TEX, doc_tex)):
             if not path.exists():
                 problems.append(f"{path.relative_to(ROOT)} is missing")
             elif path.read_text() != fresh:
@@ -374,6 +408,7 @@ def main() -> None:
     OUTPUT_JSON.write_text(payload)
     OUTPUT_TEX.write_text(matrix_tex)
     OUTPUT_REGRET_TEX.write_text(regret_tex)
+    OUTPUT_DOC_TEX.write_text(doc_tex)
 
     print("=== Rank alignment, every corpus and cost tier (Spearman rho) ===")
     print(f"{'variant':<26}{'GSM8K':>9}{'MMLU-Pro':>10}{'HellaSwag':>11}{'GSM8K pairs':>14}")
@@ -407,7 +442,7 @@ def main() -> None:
     bias = report["tokenizer_bias_bound"]
     print(f"Token-blocking bias bound: at most {bias['max_bias_over_gap']:.2f} x the adjacent "
           f"rank gap; overturns a rank: {bias['overturns_any_rank']}")
-    for path in (OUTPUT_JSON, OUTPUT_TEX, OUTPUT_REGRET_TEX):
+    for path in (OUTPUT_JSON, OUTPUT_TEX, OUTPUT_REGRET_TEX, OUTPUT_DOC_TEX):
         print(f"wrote {path.relative_to(ROOT)}")
 
 

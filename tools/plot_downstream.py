@@ -3,7 +3,7 @@
 
 For every size-matched pair of the fifteen fine-tuned models (E11b), the pair is oriented so the
 selector prefers the first model: x is how strongly it prefers it, y is how much better that model's
-fine-tuned system actually scored. A point above zero is a pair the selector got right. Adapted BPB is
+fine-tuned system actually scored. A point above zero is a pair the selector got right. Document BPB is
 drawn beside GSM8K, the benchmark a practitioner is most likely to read instead.
 
 Filled markers are pairs the fine-tune itself resolves (paired bootstrap over articles); hollow ones
@@ -29,7 +29,7 @@ BLUE, ORANGE, INK, GRID = "#3B6FA0", "#C07C33", "#555555", "#DDDDDD"
 GREEN = "#3F8457"
 # HellaSwag is the benchmark the paper does NOT separate from, so it belongs in the picture beside
 # the one it does: a reader deciding what to trust needs to see both comparisons, not the easy one.
-PANELS = [("matched_adapted_bpb", "Adapted BPB", "Adapted-BPB gap (% of the better BPB)", BLUE),
+PANELS = [("doc_zero_shot_bpb", "BPB, whole documents", "BPB gap (% of the better BPB)", BLUE),
           ("hellaswag", "HellaSwag", "HellaSwag gap (points)", GREEN),
           ("gsm8k", "GSM8K", "GSM8K gap (points)", ORANGE)]
 
@@ -44,7 +44,7 @@ def oriented_points(name: str) -> list[tuple[float, float, bool, str]]:
         if vals[a] == vals[b]:
             continue                                   # a tie orders nothing
         pick_a = vals[a] < vals[b] if lower else vals[a] > vals[b]
-        if name == "matched_adapted_bpb":
+        if name.endswith("bpb"):
             gap = abs(vals[a] - vals[b]) / min(vals[a], vals[b]) * 100
         else:
             gap = abs(vals[a] - vals[b]) * 100
@@ -104,7 +104,7 @@ def main() -> None:
     a = ap.parse_args()
     if a.check:
         problems = []
-        for name, expect in (("matched_adapted_bpb", (37, 39)), ("hellaswag", HELLASWAG_EXPECT),
+        for name, expect in (("doc_zero_shot_bpb", (37, 39)), ("hellaswag", HELLASWAG_EXPECT),
                             ("gsm8k", (18, 38))):
             pts = oriented_points(name)
             got = (sum(1 for _, y, _, _ in pts if y > 0), len(pts))

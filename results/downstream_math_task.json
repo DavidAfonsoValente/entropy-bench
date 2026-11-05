@@ -1,0 +1,41 @@
+{
+  "corpus": "math.jsonl",
+  "counts": {
+    "dropped_paragraph_in_test_split": 10,
+    "n_eval": 500,
+    "n_train": 2000,
+    "pairs_found": 12728,
+    "usable": 12560
+  },
+  "disjointness": {
+    "eval_or_train_paragraph_in_test_split": false,
+    "method": "sha256 of whitespace-normalised lowercased paragraphs",
+    "train_eval_overlap": 0
+  },
+  "limits": {
+    "abstract_at_least_x_title": 3,
+    "abstract_chars": [
+      200,
+      2000
+    ],
+    "title_chars": [
+      10,
+      250
+    ]
+  },
+  "prompt_template": "Mathematics paper abstract\n{body}\n\nTitle\n",
+  "schema_version": 1,
+  "source_splits": [
+    "train",
+    "validation"
+  ],
+  "split": {
+    "n_test_docs": 320,
+    "n_train_docs": 2567,
+    "n_val_docs": 320,
+    "note": "lm_adapt_bench.data.DataModule, the loader the BPB cells used",
+    "test_bytes": 1507154
+  },
+  "task": "title generation: write a mathematics paper's title from its abstract",
+  "task_seed": 20261103
+}

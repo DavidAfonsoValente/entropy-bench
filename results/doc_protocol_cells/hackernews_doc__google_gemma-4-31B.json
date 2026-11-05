@@ -1,0 +1,26 @@
+{
+  "model_id": "google/gemma-4-31B",
+  "dataset": "corpora/hackernews.jsonl",
+  "corpus": "hackernews",
+  "dataset_sha256": "869af808717d6cb82fe6e6fab09434039ac417f77a6090d15af998e898263803",
+  "avg_bytes_per_token": 4.461380844372856,
+  "n_train_blocks": 16636,
+  "n_test_blocks_scored": 0,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": null,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 608,
+    "zero_shot": {
+      "bpb": 0.7406006897098024,
+      "nats": 2278172.4513549805,
+      "bytes": 4437895,
+      "tokens": 1001124,
+      "windows": 928
+    }
+  },
+  "wall_seconds": 608.8424775600433
+}

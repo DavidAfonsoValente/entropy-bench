@@ -1,0 +1,26 @@
+{
+  "model_id": "Qwen/Qwen3.5-9B-Base",
+  "dataset": "corpora/math.jsonl",
+  "corpus": "math",
+  "dataset_sha256": "78e19669d0a569a5f16905509ca058da199480ef7b98a8f3f5c3af4e12ac9bf0",
+  "avg_bytes_per_token": 4.59953917753872,
+  "n_train_blocks": 5220,
+  "n_test_blocks_scored": 0,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": null,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 320,
+    "zero_shot": {
+      "bpb": 0.610366838840862,
+      "nats": 637637.751953125,
+      "bytes": 1507154,
+      "tokens": 327355,
+      "windows": 320
+    }
+  },
+  "wall_seconds": 165.73199462890625
+}

@@ -1,0 +1,26 @@
+{
+  "model_id": "google/gemma-4-31B",
+  "dataset": "corpora/math.jsonl",
+  "corpus": "math",
+  "dataset_sha256": "78e19669d0a569a5f16905509ca058da199480ef7b98a8f3f5c3af4e12ac9bf0",
+  "avg_bytes_per_token": 4.840691052863168,
+  "n_train_blocks": 4963,
+  "n_test_blocks_scored": 0,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": null,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 320,
+    "zero_shot": {
+      "bpb": 0.6095166666762976,
+      "nats": 636749.5944824219,
+      "bytes": 1507154,
+      "tokens": 311351,
+      "windows": 320
+    }
+  },
+  "wall_seconds": 304.5808446407318
+}

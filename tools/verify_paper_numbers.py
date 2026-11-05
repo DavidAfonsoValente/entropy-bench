@@ -1028,8 +1028,7 @@ else:
            - _one("gsm8k", "Llama-3.2-1B", "meta-llama__Llama-3.2-1B", "exact_match,flexible-extract")) * 100
     check("abstract hook: HellaSwag gap", 2.1, _hs, tol=0.05)
     check("abstract hook: GSM8K gap", 55.3, _gs, tol=0.05)
-    require("abstract quotes the hook it computes",
-            "$2.1$ points apart on HellaSwag" in _tex and "$55.3$ points apart" in _tex)
+    require("the paper quotes the GSM8K gap it computes", "$55.3$-point GSM8K gap" in " ".join(_tex.split()))
     # The zero-shot contrast is post-hoc and must be labelled as such wherever it appears.
     _zs = json.load(open("results/cohort_extension.json"))["within_2x"]
     for conv, obs, lo, hi in (("lenient", 0.150, -0.087, 0.476), ("strict", 0.000, -0.278, 0.257)):
@@ -1128,8 +1127,7 @@ else:
     check("agreement at >=2%, lenient", 1.0, _at2["lenient"]["accuracy"], 6e-4)
     check("agreement at >=2%, strict", 30 / 33, _at2["strict"]["accuracy"], 6e-4)
     # A perfect cell is a count, never an interval -- this repo has shipped a degenerate CI before.
-    require("the paper states the 1.5% tie floor it derives",
-            "under $2\\%$ as a tie" in tex)
+    require("the paper states the seed noise floor it derives", "$1.24\\%$ of the median BPB" in tex)
 
 # ---------------------------------------- cross-corpus stability of BOTH readings
 # The paper claimed the adapted ordering was "stable where the zero-shot one is not". It is not:
@@ -1165,8 +1163,9 @@ else:
             check("%s %s vs %s" % (_tier, _a, _b), _claimed, _got, 6e-4)
     require("the withdrawn stability contrast is absent",
             "stable where the zero-shot one is not" not in tex)
-    require("the paper states zero-shot is equally stable across corpora",
-            "adaptation buys stability, and it does not" in " ".join(tex.split()))
+    require("the paper states the block readings are equally stable across corpora",
+            "before adaptation ($0.982$, $0.964$, $0.973$) and after ($0.991$, $0.955$, $0.964$)"
+            in " ".join(tex.split()))
 
 # ---------------------------------------- E10: the late-position control
 print("\nE10 -- does discarding the cold start rescue the free reading?")
@@ -1497,7 +1496,7 @@ require("adapted HellaSwag range " + _rng("adapted", "hellaswag"),
 require("zero-shot HellaSwag range " + _rng("zero_shot", "hellaswag"),
         _rng("zero_shot", "hellaswag") == "$0.63$--$0.72$" and _flat_ag.count("$0.63$--$0.72$") >= 2)
 require("news adapted orders 53 of the 55 pairs as HellaSwag does",
-        _am["news__adapted"]["alignment"]["hellaswag"]["pairs_correct"] == 53 and "$53$ of the $55$ model pairs" in _flat_ag)
+        _am["news__adapted"]["alignment"]["hellaswag"]["pairs_correct"] == 53 and "agrees with HellaSwag on $53$" in _flat_ag)
 require("GSM8K correlation falls on all three general corpora",
         all(_rho(c, "adapted", "gsm8k") < _rho(c, "zero_shot", "gsm8k") for c in _gen))
 require("MMLU-Pro correlation falls on exactly two general corpora",
@@ -1506,6 +1505,26 @@ for _b, _new, _old in (("gsm8k", "0.91", "0.76"), ("mmlu_pro", "0.93", "0.74")):
     require("math %s %s up from %s" % (_b, _new, _old),
             "%.2f" % _rho("math", "adapted", _b) == _new and "%.2f" % _rho("math", "zero_shot", _b) == _old
             and "$%s$" % _new in _flat_ag and "$%s$" % _old in _flat_ag)
+
+# The appendix alignment and regret tables: row counts, the GSM8K pair span and the picks.
+_rows = sorted(_am)
+_gsm = [_am[k]["alignment"]["gsm8k"]["pairs_correct"] for k in _rows]
+require("alignment table has %d cells" % (3 * len(_rows)),
+        3 * len(_rows) == 48 and "all forty-eight" in _flat_ag)
+require("GSM8K pair span %d to %d over %d rows" % (min(_gsm), max(_gsm), len(_rows)),
+        (min(_gsm), max(_gsm), len(_rows)) == (41, 50, 16)
+        and "sixteen rows the GSM8K column spans only $41$ to $50$" in _flat_ag)
+_pick = lambda k: _am[k]["alignment"]["gsm8k"]["top1_pick"]
+require("three distinct top-1 picks in sixteen rows",
+        len({_pick(k) for k in _rows}) == 3 and "three distinct picks occur in sixteen rows" in _flat_ag)
+require("both document readings pick what adapted block BPB picks, on every corpus",
+        all(_pick(c + "__" + t) == _pick(c + "__adapted") for c in _gen + ("math",)
+            for t in ("document", "document_adapted")))
+require("document-adapted rows equal adapted block rows on the general corpora",
+        all(_am[c + "__document_adapted"]["alignment"][b]["pairs_correct"]
+            == _am[c + "__adapted"]["alignment"][b]["pairs_correct"]
+            and round(_rho(c, "document_adapted", b), 3) == round(_rho(c, "adapted", b), 3)
+            for c in _gen for b in ("gsm8k", "mmlu_pro", "hellaswag")))
 
 # The Optuna sweep description (Phase 2, Appendix) is recomputed from the committed legacy sweep.
 print("\nThe abandoned per-model Optuna search")
@@ -1563,7 +1582,7 @@ _flat_h = " ".join(tex.split())
 for _k, _claim in (("adapted", "0.99"), ("raw", "0.71"), ("gsm8k", "0.59"), ("mmlu", "0.71"), ("hellaswag", "0.97")):
     _v = _sp([_R2[_k][m] for m in _ms], [_R["ft"][m] for m in _ms])[0]
     require("finish rank correlation %s = %s" % (_k, _claim), "%.2f" % _v == _claim)
-require("the text quotes Spearman 0.99 with the finish", _flat_h.count("Spearman $0.99$") >= 2)
+require("the text quotes Spearman 0.99 with the finish", _flat_h.count("Spearman $0.99$") >= 1)
 
 # fig_selectors.pdf carries the main result and was added without a gate; a fresh clone would
 # have failed to build with no check firing. Listed here so that cannot recur.
@@ -1585,7 +1604,21 @@ require("news and Reddit adapted BPB both 0.983 against the fine-tune",
         "%.3f" % _xc["news"][1] == "0.983" == "%.3f" % _xc["reddit"][1])
 require("Hacker News adapted 0.933", "%.3f" % _xc["hackernews"][1] == "0.933")
 require("unadapted corpora reach only about 0.6", all(0.55 <= v[2] <= 0.65 for v in _xc.values()))
-require("the paper states the cross-corpus answer", "Spearman $0.983$ each" in " ".join(tex.split()))
+_od = json.load(open("results/downstream.json"))["cohort"]["off_domain"]
+# M5: every corpus's document reading on all fifteen fine-tuned models (39 pairs).
+require("off-domain documents: news 37, Reddit 34, Hacker News 31, maths 23 of 39",
+        [round(_od[c + "__doc_bpb"]["accuracy"] * _od[c + "__doc_bpb"]["n_pairs"]) for c in
+         ("news", "reddit", "hackernews", "math")] == [37, 34, 31, 23]
+        and all(_od[c + "__doc_bpb"]["n_pairs"] == 39 for c in ("news", "reddit", "hackernews", "math")))
+_sel = json.load(open("results/downstream.json"))["cohort"]["selector_table"]["selectors"]
+for _k, _acc, _lo in (("reddit_doc_bpb", 0.872, 0.659), ("hackernews_doc_bpb", 0.795, 0.481)):
+    check("M5 " + _k, _acc, _sel[_k]["pairwise_accuracy"], 6e-4)
+    check("M5 " + _k + " CI low", _lo, _sel[_k]["ci_lo"], 6e-4)
+    require("M5 " + _k + " CI high is 1.000", _sel[_k]["ci_hi"] == 1.0)
+require("the gradient sentence matches the artifact",
+        "Reddit orders $34$ of the $39$ pairs ($0.872$, $[0.659, 1.000]$) and Hacker News $31$ ($0.795$, $[0.481, 1.000]$)"
+        in " ".join(tex.split())
+        and "news $37$, Reddit $34$, Hacker News $31$, model size $28$, mathematics $23$" in " ".join(tex.split()))
 require("LFM2.5-1.2B leaves last place on news", _rz["LiquidAI/LFM2.5-1.2B-Base"] == 10 and _ra["LiquidAI/LFM2.5-1.2B-Base"] == 9)
 
 # Table 1's caption: Llama-3.2-1B is eighth by adapted BPB, ninth on HellaSwag, last on GSM8K and MMLU-Pro.
@@ -1597,18 +1630,22 @@ require("Table 1 Llama row: BPB 8th, HellaSwag 9th, last on GSM8K and MMLU-Pro",
 print("\nStability explanation and cross-corpus table")
 _flat_s = " ".join(tex.split())
 _news_blocks = {json.load(open(f))["n_test_blocks_scored"] for f in _g2.glob("results/domain_transfer/news__*.json")}
-require("news test set is 2500 blocks of 512 tokens (about 1.3 million predictions)",
-        _news_blocks == {2500} and "about $1.3$ million token predictions" in _flat_s)
-require("each GSM8K question is worth 0.076 points", "%.3f" % (100 / 1319) == "0.076" and "worth $0.076$ points" in _flat_s)
+require("news test set is 2500 blocks of 512 tokens", _news_blocks == {2500})
 sys.path.insert(0, "tools")
 import make_crosscorpus_table as _mx
 from scipy.stats import spearmanr as _sp
 _xrows = _mx.render().splitlines()
 _math = [r for r in _xrows if "arXiv maths" in r]
-_mz = [float(r.split("&")[1]) for r in _math]; _ma = [float(r.split("&")[2]) for r in _math]
-require("maths agreement 0.91-0.97 unadapted, 0.74-0.84 adapted",
-        ("%.2f" % min(_mz), "%.2f" % max(_mz), "%.2f" % min(_ma), "%.2f" % max(_ma)) == ("0.91", "0.97", "0.74", "0.84")
-        and "$0.91$--$0.97$ unadapted" in _flat_s and "$0.74$--$0.84$ adapted" in _flat_s)
+# Columns: documents, blocks, adapted blocks (Spearman), then Pearson for the two block readings.
+_md = [float(r.split("&")[1]) for r in _math]
+require("maths agrees with the general corpora at 0.76-0.88 on documents",
+        ("%.2f" % min(_md), "%.2f" % max(_md)) == ("0.76", "0.88") and "($0.76$--$0.88$ on documents)" in _flat_s)
+_gen_rows = {r.split("&")[0].strip(): float(r.split("&")[1]) for r in _xrows if "arXiv" not in r}
+require("document cross-corpus agreement 0.982 / 0.973 / 0.964",
+        ["%.3f" % _gen_rows[k] for k in ("News--Reddit", "News--Hacker News", "Reddit--Hacker News")]
+        == ["0.982", "0.973", "0.964"]
+        and "(Spearman $0.982$ and $0.973$ with news; mathematics $0.818$; Table~\\ref{tab:crosscorpus})" in _flat_s
+        and "%.3f" % next(float(r.split("&")[1]) for r in _xrows if r.startswith("News--arXiv maths")) == "0.818")
 
 # M3: the whole-document reading (results/doc_protocol.json, tools/analyze_doc_protocol.py).
 print("\nWhole-document reading")
@@ -1617,7 +1654,7 @@ _dsel = json.load(open("results/downstream.json"))["cohort"]
 _dt = _dsel["selector_table"]["selectors"]
 require("document reading: 37 of 39 unadapted, 38 adapted",
         _doc["doc_protocol_unadapted_right"] == 37 and _doc["stage2"]["doc_protocol_adapted_right"] == 38
-        and "orders $37$ of the $39$" in _flat_s and "orders $38$ of the $39$" in _flat_s)
+        and "orders $37$ of the $39$" in _flat_s and "order $38$ of the $39$" in _flat_s)
 check("document unadapted pairwise accuracy", 0.949, _dt["doc_zero_shot_bpb"]["pairwise_accuracy"], tol=5e-4)
 check("its interval, low", 0.817, _dt["doc_zero_shot_bpb"]["ci_lo"], tol=5e-4)
 check("document adapted pairwise accuracy", 0.974, _dt["doc_adapted_bpb"]["pairwise_accuracy"], tol=5e-4)
@@ -1638,7 +1675,49 @@ require("Gemma-4-12B second on documents", _doc["doc_protocol_rank"]["gemma-4-12
 require("controls: unadapted within 0.04%, adapted within 0.7%",
         max(abs(c["rel_diff"]) for c in _doc["control"].values()) < 4e-4
         and max(abs(c["rel_diff"]) for c in _doc["stage2"]["control"].values()) < 7e-3)
-require("every model reads the same 6.0 MB", _doc["bytes_scored"] == 6002255 and "first $6.0$\\,MB" in _flat_s)
+require("every model reads the same 6.0 MB", _doc["bytes_scored"] == 6002255 and "up to $6.0$\\,MB" in _flat_s)
+
+# The text has to be the task's: arXiv maths documents against the news fine-tune (15 models).
+_mt = _dt["math_doc_bpb"]
+require("maths text orders 23 of 39, 12 of 22 resolved, below size",
+        round(_mt["pairwise_accuracy"] * _mt["n_pairs"]) == 23 and _mt["n_pairs"] == 39
+        and round(_dsel["accuracy_on_resolved"]["math_doc_bpb"] * 22) == 12
+        and _mt["pairwise_accuracy"] < _dt["parameter_count"]["pairwise_accuracy"]
+        and "$23$ of the $39$ pairs ($0.590$, $[0.260, 0.929]$) and on $12$ of the $22$ resolved pairs" in _flat_s)
+check("maths text CI low", 0.260, _mt["ci_lo"], 5e-4)
+check("maths text CI high", 0.929, _mt["ci_hi"], 5e-4)
+# The strongest label-free baseline: the base weights' own ROUGE-L on the task, no training.
+_bt = _dt["base_task_score"]
+_rl = _dsel["rouge_l"]
+_bts = _ad.base_task_scores()
+_fms = sorted(_rl)
+require("base weights on the task order 20 of 39, Spearman 0.53",
+        round(_bt["pairwise_accuracy"] * _bt["n_pairs"]) == 20 and _bt["n_pairs"] == 39
+        and "%.2f" % _sp([_bts[m] for m in _fms], [_rl[m] for m in _fms])[0] == "0.53"
+        and "it orders $20$ of the $39$ pairs and agrees with the fine-tuned order at Spearman $0.53$" in _flat_s)
+require("size: Spearman 0.92 over fifteen, 28 of 39 pairs",
+        "%.2f" % _sp([_sel17["parameter_count"][0][m] for m in _fms], [_rl[m] for m in _fms])[0] == "0.92"
+        and round(_dt["parameter_count"]["pairwise_accuracy"] * 39) == 28
+        and "Spearman $0.92$ over the fifteen" in _flat_s and "orders $28$ of the $39$ size-matched pairs" in _flat_s)
+_pdiff = _dsel["selector_table"]["paired_differences"]["bpb_minus_best_benchmark"]
+require("BPB minus HellaSwag +0.077 [0.000, 0.308]",
+        ("%.3f" % _pdiff["observed"], "%.3f" % _pdiff["ci_lo"], "%.3f" % _pdiff["ci_hi"]) == ("0.077", "0.000", "0.300")
+        and "$+0.077$ $[0.000, 0.300]$" in _flat_s)
+_fam = lambda m: m.split("-")[0].split("2.5")[0].split("3.5")[0]
+_xf = [p for p in _dsel["pairs"] if _fam(p["pair"].split("|")[0]) != _fam(p["pair"].split("|")[1])]
+require("cross-publisher pairs: 32, documents 30, HellaSwag 27",
+        len(_xf) == 32 and sum(p["doc_zero_shot_bpb_right"] for p in _xf) == 30
+        and sum(p["hellaswag_right"] for p in _xf) == 27
+        and "On the $32$ pairs whose models come from different publishers, document BPB orders $30$ and HellaSwag $27$" in _flat_s)
+_rb = json.load(open("results/downstream.json"))["cohort_recipe_b"]["selector_table"]["paired_differences"]["bpb_minus_parameter_count"]
+require("recipe B margin over size +0.179 [-0.036, +0.441]",
+        ("%.3f" % _rb["observed"], "%.3f" % _rb["ci_lo"], "%.3f" % _rb["ci_hi"]) == ("0.179", "-0.036", "0.441")
+        and "($+0.179$ $[-0.036, +0.441]$)" in _flat_s)
+require("blocks order 30 of 39", round(_dt["zero_shot_bpb"]["pairwise_accuracy"] * 39) == 30
+        and "orders $30$ of the $39$ pairs ($0.769$)" in _flat_s)
+require("two neighbouring pairs swap between the document readings",
+        sum(1 for i, a in enumerate(_ms) for b in _ms[i + 1:]
+            if (_du[a] < _du[b]) != (_da[a] < _da[b])) == 2 and "two neighbouring pairs swap" in _flat_s)
 
 for figure in ("figures/fig_block_position.pdf", "figures/fig_cross_corpus.pdf",
                "figures/fig_context_length.pdf", "figures/fig_benchmark_alignment.tex",

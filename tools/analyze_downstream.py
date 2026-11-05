@@ -226,6 +226,7 @@ def build() -> dict:
         result["pairs"].append(row)
 
     result["cohort"] = build_cohort()
+    result["base_task_scores"] = base_task_scores()
     # E11c: the same fifteen models fine-tuned with recipe B (rank 64, lr 3e-4, batch 16, 400
     # steps, new seed), so the downstream outcome no longer shares the selector's recipe.
     result["cohort_recipe_b"] = build_cohort("sftB__")
@@ -259,6 +260,34 @@ PAIR_BOOT = 2_000   # per-pair resolution only; the headline interval uses the f
 BAND = 2.0
 
 
+def doc_bpb(corpus: str) -> dict[str, float]:
+    """Unadapted whole-document BPB on one corpus, {short label: bpb}, for every model with a cell."""
+    from analyze_doc_protocol import short_name
+    return {short_name(d["model_id"]): d["doc_protocol"]["zero_shot"]["bpb"]
+            for d in (json.loads(p.read_text())
+                      for p in sorted((ROOT / "results" / "doc_protocol_cells").glob(
+                          f"{corpus}_doc__*.json")))}
+
+
+CELL_MODELS = tuple(p.stem[len("sft__"):] for p in sorted(CELLS.glob("sft__*.json")))
+
+
+def base_task_scores(prefix: str = "sft__") -> dict[str, float]:
+    """Mean ROUGE-L of each model's BASE weights on the lede task (``base_generations`` in the
+    fine-tune cells), for every model with a cell."""
+    out = {}
+    for path in sorted(CELLS.glob(f"{prefix}*.json")):
+        scores = score_cell(json.loads(path.read_text()), "base_generations")
+        out[path.stem[len(prefix):]] = sum(scores.values()) / len(scores)
+    # The raw generations live in SCRATCH and are not released, so a release tree (or a node
+    # holding only some of them) reads the per-model scores committed in results/downstream.json.
+    if prefix == "sft__" and OUTPUT_JSON.exists():
+        committed = json.loads(OUTPUT_JSON.read_text()).get("base_task_scores")
+        if committed and not set(committed) <= set(out):
+            return committed
+    return out
+
+
 def _selectors_17():
     """Every selector for the 17-model cohort, loaded the way analyze_cohort_extension does."""
     sys.path.insert(0, str(ROOT / "tools"))
@@ -289,6 +318,16 @@ def _selectors_17():
     doc = json.loads((ROOT / "results" / "doc_protocol.json").read_text())
     sel["doc_zero_shot_bpb"] = (doc["doc_protocol_bpb"], True)
     sel["doc_adapted_bpb"] = (doc["stage2"]["doc_protocol_adapted_bpb"], True)
+    # The same reading on other corpora: does the text have to be the task's? Maths is distant
+    # from news; Reddit and Hacker News are general prose like it. A corpus enters only once every
+    # fine-tuned model has a cell on it (M5), so the table never scores a corpus on a subset.
+    for corpus in ("math", "reddit", "hackernews"):
+        vals = doc_bpb(corpus)
+        if all(m in vals for m in CELL_MODELS):
+            sel[f"{corpus}_doc_bpb"] = (vals, True)
+    # The base weights' own score on the task, no training: the strongest no-label baseline, and
+    # the test of whether fine-tuning reorders the models at all.
+    sel["base_task_score"] = (base_task_scores(), False)
     sel.update({b: (accs[b], False) for b in ("gsm8k", "mmlu_pro", "hellaswag")})
     return sel, params
 
@@ -304,8 +343,11 @@ def _off_domain(target: dict[str, float], params: dict[str, float]) -> dict:
     out = {"note": "exploratory, post hoc, point estimates over the in-band pairs of the "
                    "fine-tuned models that have all four corpora"}
     for corpus, tiers in bpb.items():
-        for tier in ("adapted_bpb", "zero_shot_bpb"):
-            vals = tiers.get(tier, {})
+        tiers = {**tiers, "doc_bpb": doc_bpb(corpus)}
+        for tier in ("adapted_bpb", "zero_shot_bpb", "doc_bpb"):
+            # Block tiers exist for the eleven original models only; the document tier for every
+            # model with a cell, so its pair count grows as corpora are completed (M5).
+            vals = dict(tiers[tier])
             ms = sorted(m for m in vals if m in target)
             right = total = 0
             for i, a in enumerate(ms):
@@ -321,24 +363,32 @@ def _off_domain(target: dict[str, float], params: dict[str, float]) -> dict:
     return out
 
 
-def build_cohort(prefix: str = "sft__") -> dict:
+def build_cohort(prefix: str = "sft__", cells: Path | None = None, score=None,
+                 selectors=None, compared: str = "matched_adapted_bpb",
+                 off_domain: bool = True) -> dict:
     """``prefix`` selects the recipe: ``sft__`` is the paper's own adaptation recipe (E11/E11b),
-    ``sftB__`` the deliberately different recipe B (E11c), scored with the identical statistic."""
+    ``sftB__`` the deliberately different recipe B (E11c), scored with the identical statistic.
+    ``cells``, ``score`` and ``selectors`` let another task (tools/analyze_downstream_math.py) reuse
+    the same pair construction and bootstrap."""
     from analyze_cloze_validity import _bootstrap_tables
-    selectors, params = _selectors_17()
+    cells = cells or CELLS
+    score = score or score_cell
+    base_selectors, params = _selectors_17()
+    selectors = selectors or base_selectors
     cohort = sorted(set(json.loads((ROOT / "results" / "criterion_uncertainty.json").read_text())
                         ["cohort_17"]) - set(EXCLUDED_MULTI_GPU))
-    missing = [m for m in cohort if not (CELLS / f"{prefix}{m}.json").exists()]
+    missing = [m for m in cohort if not (cells / f"{prefix}{m}.json").exists()]
     out = {"cohort": cohort, "excluded_multi_gpu": list(EXCLUDED_MULTI_GPU),
            "models_missing": missing}
     if missing:
         out["verdict"] = "INCOMPLETE"
         return out
-    scored = {m: score_cell(load_cell(m, prefix), "generations") for m in cohort}
+    scored = {m: score(json.loads((cells / f"{prefix}{m}.json").read_text()), "generations")
+              for m in cohort}
     target = {m: sum(v.values()) / len(v) for m, v in scored.items()}
     out["rouge_l"] = target
     out["selector_table"] = _bootstrap_tables(selectors, target, cohort, params, BAND,
-                                              compared="matched_adapted_bpb")
+                                              compared=compared)
 
     # Which in-band pairs the fine-tune itself can order, and how each selector does on those.
     rng = random.Random(SEED)
@@ -364,7 +414,8 @@ def build_cohort(prefix: str = "sft__") -> dict:
             pairs.append(row)
     resolved = [p for p in pairs if p["resolved"]]
     out["pairs"] = pairs
-    out["off_domain"] = _off_domain(target, params)
+    if off_domain:
+        out["off_domain"] = _off_domain(target, params)
     out["n_in_band_pairs"] = len(pairs)
     out["n_resolved"] = len(resolved)
     out["accuracy_on_resolved"] = {

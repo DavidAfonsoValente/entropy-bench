@@ -79,6 +79,116 @@
       "corpus": "hackernews",
       "tier": "adapted"
     },
+    "hackernews__document": {
+      "alignment": {
+        "gsm8k": {
+          "exact_ranks": 2,
+          "kendall_tau": 0.6,
+          "max_shift": 3.0,
+          "mean_shift": 1.81818181818,
+          "pairs_comparable": 55,
+          "pairs_correct": 44,
+          "spearman": 0.781818181818,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 1.59
+        },
+        "hellaswag": {
+          "exact_ranks": 7,
+          "kendall_tau": 0.927272727273,
+          "max_shift": 1.0,
+          "mean_shift": 0.363636363636,
+          "pairs_comparable": 55,
+          "pairs_correct": 53,
+          "spearman": 0.981818181818,
+          "top1_oracle": "gemma-4-31B",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 0.0
+        },
+        "mmlu_pro": {
+          "exact_ranks": 3,
+          "kendall_tau": 0.672727272727,
+          "max_shift": 3.0,
+          "mean_shift": 1.27272727273,
+          "pairs_comparable": 55,
+          "pairs_correct": 46,
+          "spearman": 0.872727272727,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 4.3
+        }
+      },
+      "bpb": {
+        "LFM2.5-1.2B": 1.07236177005,
+        "Llama-3.2-1B": 0.926386221393,
+        "Ministral-3-14B": 0.785475750533,
+        "Qwen2.5-0.5B": 1.02064903603,
+        "Qwen2.5-1.5B": 0.9182598118,
+        "Qwen2.5-7B": 0.833826748573,
+        "Qwen3.5-35B-MoE": 0.776364555816,
+        "Qwen3.5-4B": 0.840805477619,
+        "Qwen3.5-9B": 0.803391473245,
+        "gemma-4-12B": 0.799800286036,
+        "gemma-4-31B": 0.74060068971
+      },
+      "corpus": "hackernews",
+      "tier": "document"
+    },
+    "hackernews__document_adapted": {
+      "alignment": {
+        "gsm8k": {
+          "exact_ranks": 1,
+          "kendall_tau": 0.6,
+          "max_shift": 4.0,
+          "mean_shift": 2.0,
+          "pairs_comparable": 55,
+          "pairs_correct": 44,
+          "spearman": 0.745454545455,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 1.59
+        },
+        "hellaswag": {
+          "exact_ranks": 8,
+          "kendall_tau": 0.927272727273,
+          "max_shift": 2.0,
+          "mean_shift": 0.363636363636,
+          "pairs_comparable": 55,
+          "pairs_correct": 53,
+          "spearman": 0.972727272727,
+          "top1_oracle": "gemma-4-31B",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 0.0
+        },
+        "mmlu_pro": {
+          "exact_ranks": 2,
+          "kendall_tau": 0.672727272727,
+          "max_shift": 3.0,
+          "mean_shift": 1.45454545455,
+          "pairs_comparable": 55,
+          "pairs_correct": 46,
+          "spearman": 0.854545454545,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 4.3
+        }
+      },
+      "bpb": {
+        "LFM2.5-1.2B": 0.983307189218,
+        "Llama-3.2-1B": 0.90457019415,
+        "Ministral-3-14B": 0.761052297039,
+        "Qwen2.5-0.5B": 0.998658665216,
+        "Qwen2.5-1.5B": 0.896677378444,
+        "Qwen2.5-7B": 0.808840078923,
+        "Qwen3.5-35B-MoE": 0.761528225096,
+        "Qwen3.5-4B": 0.821680190107,
+        "Qwen3.5-9B": 0.784934760664,
+        "gemma-4-12B": 0.763917152781,
+        "gemma-4-31B": 0.719842471236
+      },
+      "corpus": "hackernews",
+      "tier": "document-adapted"
+    },
     "hackernews__zero_shot": {
       "alignment": {
         "gsm8k": {
@@ -188,6 +298,116 @@
       },
       "corpus": "math",
       "tier": "adapted"
+    },
+    "math__document": {
+      "alignment": {
+        "gsm8k": {
+          "exact_ranks": 2,
+          "kendall_tau": 0.745454545455,
+          "max_shift": 2.0,
+          "mean_shift": 1.09090909091,
+          "pairs_comparable": 55,
+          "pairs_correct": 48,
+          "spearman": 0.918181818182,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "Qwen3.5-35B-MoE",
+          "top1_regret_pp": 0.0
+        },
+        "hellaswag": {
+          "exact_ranks": 2,
+          "kendall_tau": 0.709090909091,
+          "max_shift": 5.0,
+          "mean_shift": 1.27272727273,
+          "pairs_comparable": 55,
+          "pairs_correct": 47,
+          "spearman": 0.836363636364,
+          "top1_oracle": "gemma-4-31B",
+          "top1_pick": "Qwen3.5-35B-MoE",
+          "top1_regret_pp": 2.36
+        },
+        "mmlu_pro": {
+          "exact_ranks": 5,
+          "kendall_tau": 0.818181818182,
+          "max_shift": 2.0,
+          "mean_shift": 0.727272727273,
+          "pairs_comparable": 55,
+          "pairs_correct": 50,
+          "spearman": 0.945454545455,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "Qwen3.5-35B-MoE",
+          "top1_regret_pp": 0.0
+        }
+      },
+      "bpb": {
+        "LFM2.5-1.2B": 0.842324718952,
+        "Llama-3.2-1B": 0.744477153628,
+        "Ministral-3-14B": 0.621439960094,
+        "Qwen2.5-0.5B": 0.77580893945,
+        "Qwen2.5-1.5B": 0.696768326793,
+        "Qwen2.5-7B": 0.637437202746,
+        "Qwen3.5-35B-MoE": 0.584205994508,
+        "Qwen3.5-4B": 0.639739520325,
+        "Qwen3.5-9B": 0.610366838841,
+        "gemma-4-12B": 0.703639474262,
+        "gemma-4-31B": 0.609516666676
+      },
+      "corpus": "math",
+      "tier": "document"
+    },
+    "math__document_adapted": {
+      "alignment": {
+        "gsm8k": {
+          "exact_ranks": 6,
+          "kendall_tau": 0.818181818182,
+          "max_shift": 2.0,
+          "mean_shift": 0.727272727273,
+          "pairs_comparable": 55,
+          "pairs_correct": 50,
+          "spearman": 0.936363636364,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "Qwen3.5-35B-MoE",
+          "top1_regret_pp": 0.0
+        },
+        "hellaswag": {
+          "exact_ranks": 3,
+          "kendall_tau": 0.709090909091,
+          "max_shift": 4.0,
+          "mean_shift": 1.27272727273,
+          "pairs_comparable": 55,
+          "pairs_correct": 47,
+          "spearman": 0.845454545455,
+          "top1_oracle": "gemma-4-31B",
+          "top1_pick": "Qwen3.5-35B-MoE",
+          "top1_regret_pp": 2.36
+        },
+        "mmlu_pro": {
+          "exact_ranks": 5,
+          "kendall_tau": 0.818181818182,
+          "max_shift": 2.0,
+          "mean_shift": 0.727272727273,
+          "pairs_comparable": 55,
+          "pairs_correct": 50,
+          "spearman": 0.945454545455,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "Qwen3.5-35B-MoE",
+          "top1_regret_pp": 0.0
+        }
+      },
+      "bpb": {
+        "LFM2.5-1.2B": 0.782147096256,
+        "Llama-3.2-1B": 0.714331364346,
+        "Ministral-3-14B": 0.588445848573,
+        "Qwen2.5-0.5B": 0.743177076424,
+        "Qwen2.5-1.5B": 0.663607550452,
+        "Qwen2.5-7B": 0.597250284814,
+        "Qwen3.5-35B-MoE": 0.551256398684,
+        "Qwen3.5-4B": 0.604141367513,
+        "Qwen3.5-9B": 0.575918992752,
+        "gemma-4-12B": 0.624662243593,
+        "gemma-4-31B": 0.583693549732
+      },
+      "corpus": "math",
+      "tier": "document-adapted"
     },
     "math__zero_shot": {
       "alignment": {
@@ -299,6 +519,116 @@
       "corpus": "news",
       "tier": "adapted"
     },
+    "news__document": {
+      "alignment": {
+        "gsm8k": {
+          "exact_ranks": 0,
+          "kendall_tau": 0.563636363636,
+          "max_shift": 4.0,
+          "mean_shift": 2.0,
+          "pairs_comparable": 55,
+          "pairs_correct": 43,
+          "spearman": 0.754545454545,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 1.59
+        },
+        "hellaswag": {
+          "exact_ranks": 9,
+          "kendall_tau": 0.963636363636,
+          "max_shift": 1.0,
+          "mean_shift": 0.181818181818,
+          "pairs_comparable": 55,
+          "pairs_correct": 54,
+          "spearman": 0.990909090909,
+          "top1_oracle": "gemma-4-31B",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 0.0
+        },
+        "mmlu_pro": {
+          "exact_ranks": 2,
+          "kendall_tau": 0.636363636364,
+          "max_shift": 4.0,
+          "mean_shift": 1.45454545455,
+          "pairs_comparable": 55,
+          "pairs_correct": 45,
+          "spearman": 0.827272727273,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 4.3
+        }
+      },
+      "bpb": {
+        "LFM2.5-1.2B": 0.825471765992,
+        "Llama-3.2-1B": 0.733482592711,
+        "Ministral-3-14B": 0.640752298772,
+        "Qwen2.5-0.5B": 0.851477271296,
+        "Qwen2.5-1.5B": 0.7506795963,
+        "Qwen2.5-7B": 0.677723927279,
+        "Qwen3.5-35B-MoE": 0.626335811002,
+        "Qwen3.5-4B": 0.69605708738,
+        "Qwen3.5-9B": 0.657092351157,
+        "gemma-4-12B": 0.636808363785,
+        "gemma-4-31B": 0.569798516433
+      },
+      "corpus": "news",
+      "tier": "document"
+    },
+    "news__document_adapted": {
+      "alignment": {
+        "gsm8k": {
+          "exact_ranks": 0,
+          "kendall_tau": 0.527272727273,
+          "max_shift": 5.0,
+          "mean_shift": 2.18181818182,
+          "pairs_comparable": 55,
+          "pairs_correct": 42,
+          "spearman": 0.7,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 1.59
+        },
+        "hellaswag": {
+          "exact_ranks": 7,
+          "kendall_tau": 0.927272727273,
+          "max_shift": 1.0,
+          "mean_shift": 0.363636363636,
+          "pairs_comparable": 55,
+          "pairs_correct": 53,
+          "spearman": 0.981818181818,
+          "top1_oracle": "gemma-4-31B",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 0.0
+        },
+        "mmlu_pro": {
+          "exact_ranks": 2,
+          "kendall_tau": 0.6,
+          "max_shift": 5.0,
+          "mean_shift": 1.63636363636,
+          "pairs_comparable": 55,
+          "pairs_correct": 44,
+          "spearman": 0.772727272727,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 4.3
+        }
+      },
+      "bpb": {
+        "LFM2.5-1.2B": 0.789511158586,
+        "Llama-3.2-1B": 0.713008231574,
+        "Ministral-3-14B": 0.616696818388,
+        "Qwen2.5-0.5B": 0.834564912662,
+        "Qwen2.5-1.5B": 0.731259209139,
+        "Qwen2.5-7B": 0.653558382498,
+        "Qwen3.5-35B-MoE": 0.611731347188,
+        "Qwen3.5-4B": 0.679419958571,
+        "Qwen3.5-9B": 0.640391463058,
+        "gemma-4-12B": 0.58652360977,
+        "gemma-4-31B": 0.550506323655
+      },
+      "corpus": "news",
+      "tier": "document-adapted"
+    },
     "news__zero_shot": {
       "alignment": {
         "gsm8k": {
@@ -408,6 +738,116 @@
       },
       "corpus": "reddit",
       "tier": "adapted"
+    },
+    "reddit__document": {
+      "alignment": {
+        "gsm8k": {
+          "exact_ranks": 1,
+          "kendall_tau": 0.490909090909,
+          "max_shift": 5.0,
+          "mean_shift": 2.18181818182,
+          "pairs_comparable": 55,
+          "pairs_correct": 41,
+          "spearman": 0.690909090909,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 1.59
+        },
+        "hellaswag": {
+          "exact_ranks": 5,
+          "kendall_tau": 0.890909090909,
+          "max_shift": 1.0,
+          "mean_shift": 0.545454545455,
+          "pairs_comparable": 55,
+          "pairs_correct": 52,
+          "spearman": 0.972727272727,
+          "top1_oracle": "gemma-4-31B",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 0.0
+        },
+        "mmlu_pro": {
+          "exact_ranks": 3,
+          "kendall_tau": 0.563636363636,
+          "max_shift": 5.0,
+          "mean_shift": 1.63636363636,
+          "pairs_comparable": 55,
+          "pairs_correct": 43,
+          "spearman": 0.763636363636,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 4.3
+        }
+      },
+      "bpb": {
+        "LFM2.5-1.2B": 1.18303553925,
+        "Llama-3.2-1B": 1.06451428771,
+        "Ministral-3-14B": 0.963947983813,
+        "Qwen2.5-0.5B": 1.1773526883,
+        "Qwen2.5-1.5B": 1.08208041115,
+        "Qwen2.5-7B": 1.00387208064,
+        "Qwen3.5-35B-MoE": 0.960040018341,
+        "Qwen3.5-4B": 1.0313152563,
+        "Qwen3.5-9B": 0.991007290406,
+        "gemma-4-12B": 0.948420032364,
+        "gemma-4-31B": 0.892712157883
+      },
+      "corpus": "reddit",
+      "tier": "document"
+    },
+    "reddit__document_adapted": {
+      "alignment": {
+        "gsm8k": {
+          "exact_ranks": 0,
+          "kendall_tau": 0.490909090909,
+          "max_shift": 5.0,
+          "mean_shift": 2.36363636364,
+          "pairs_comparable": 55,
+          "pairs_correct": 41,
+          "spearman": 0.654545454545,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 1.59
+        },
+        "hellaswag": {
+          "exact_ranks": 6,
+          "kendall_tau": 0.890909090909,
+          "max_shift": 2.0,
+          "mean_shift": 0.545454545455,
+          "pairs_comparable": 55,
+          "pairs_correct": 52,
+          "spearman": 0.963636363636,
+          "top1_oracle": "gemma-4-31B",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 0.0
+        },
+        "mmlu_pro": {
+          "exact_ranks": 1,
+          "kendall_tau": 0.563636363636,
+          "max_shift": 5.0,
+          "mean_shift": 1.81818181818,
+          "pairs_comparable": 55,
+          "pairs_correct": 43,
+          "spearman": 0.745454545455,
+          "top1_oracle": "Qwen3.5-35B-MoE",
+          "top1_pick": "gemma-4-31B",
+          "top1_regret_pp": 4.3
+        }
+      },
+      "bpb": {
+        "LFM2.5-1.2B": 1.12087055883,
+        "Llama-3.2-1B": 1.02459941781,
+        "Ministral-3-14B": 0.92067768958,
+        "Qwen2.5-0.5B": 1.13273936039,
+        "Qwen2.5-1.5B": 1.03950582228,
+        "Qwen2.5-7B": 0.96045296153,
+        "Qwen3.5-35B-MoE": 0.929488045545,
+        "Qwen3.5-4B": 0.987539414795,
+        "Qwen3.5-9B": 0.949359791856,
+        "gemma-4-12B": 0.902795136094,
+        "gemma-4-31B": 0.866699286392
+      },
+      "corpus": "reddit",
+      "tier": "document-adapted"
     },
     "reddit__zero_shot": {
       "alignment": {
@@ -553,6 +993,75 @@
       "mmlu_pro": {
         "ci_high": 0.673076923077,
         "ci_low": -0.140845070423,
+        "delta_spearman": 0.181818181818,
+        "excludes_zero": false,
+        "resamples_used": 19999
+      }
+    },
+    "math_doc_vs_hackernews_doc": {
+      "gsm8k": {
+        "ci_high": 0.514018691589,
+        "ci_low": -0.0279069767442,
+        "delta_spearman": 0.136363636364,
+        "excludes_zero": false,
+        "resamples_used": 19999
+      },
+      "hellaswag": {
+        "ci_high": 0.0,
+        "ci_low": -0.575471698113,
+        "delta_spearman": -0.145454545455,
+        "excludes_zero": false,
+        "resamples_used": 19999
+      },
+      "mmlu_pro": {
+        "ci_high": 0.38679245283,
+        "ci_low": -0.036866359447,
+        "delta_spearman": 0.0727272727273,
+        "excludes_zero": false,
+        "resamples_used": 19999
+      }
+    },
+    "math_doc_vs_news_doc": {
+      "gsm8k": {
+        "ci_high": 0.570093457944,
+        "ci_low": -0.075117370892,
+        "delta_spearman": 0.163636363636,
+        "excludes_zero": false,
+        "resamples_used": 19999
+      },
+      "hellaswag": {
+        "ci_high": 0.0568720379147,
+        "ci_low": -0.613953488372,
+        "delta_spearman": -0.154545454545,
+        "excludes_zero": false,
+        "resamples_used": 19999
+      },
+      "mmlu_pro": {
+        "ci_high": 0.479262672811,
+        "ci_low": -0.0837209302326,
+        "delta_spearman": 0.118181818182,
+        "excludes_zero": false,
+        "resamples_used": 19999
+      }
+    },
+    "math_doc_vs_reddit_doc": {
+      "gsm8k": {
+        "ci_high": 0.704225352113,
+        "ci_low": 0.0,
+        "delta_spearman": 0.227272727273,
+        "excludes_zero": false,
+        "resamples_used": 19999
+      },
+      "hellaswag": {
+        "ci_high": 0.0673076923077,
+        "ci_low": -0.597156398104,
+        "delta_spearman": -0.136363636364,
+        "excludes_zero": false,
+        "resamples_used": 19999
+      },
+      "mmlu_pro": {
+        "ci_high": 0.617511520737,
+        "ci_low": 0.0,
         "delta_spearman": 0.181818181818,
         "excludes_zero": false,
         "resamples_used": 19999

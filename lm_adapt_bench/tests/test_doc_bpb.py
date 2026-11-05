@@ -52,3 +52,11 @@ def test_doc_bpb_uniform_model(bos):
     assert r["tokens"] == (n_chars if bos else n_chars - len(texts))
     assert r["bytes"] == sum(len(t.encode("utf-8")) for t in texts)
     assert r["bpb"] == pytest.approx(r["tokens"] * math.log(VOCAB) / math.log(2) / r["bytes"])
+
+
+def test_first_documents_keeps_the_crossing_document_and_stops():
+    from lm_adapt_bench.evaluate import first_documents
+    texts = ["aaaa", "bbbb", "cccc"]
+    assert first_documents(texts, 5) == ["aaaa", "bbbb"]
+    assert first_documents(texts, 4) == ["aaaa"]
+    assert first_documents(texts, 100) == texts

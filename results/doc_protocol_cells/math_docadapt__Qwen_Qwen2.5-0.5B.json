@@ -1,0 +1,46 @@
+{
+  "model_id": "Qwen/Qwen2.5-0.5B",
+  "dataset": "corpora/math.jsonl",
+  "corpus": "math",
+  "dataset_sha256": "78e19669d0a569a5f16905509ca058da199480ef7b98a8f3f5c3af4e12ac9bf0",
+  "avg_bytes_per_token": 4.615243753062225,
+  "n_train_blocks": 5204,
+  "n_test_blocks_scored": 637,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.828559539486817,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 320,
+    "zero_shot": {
+      "bpb": 0.7758089394500909,
+      "nats": 810471.73046875,
+      "bytes": 1507154,
+      "tokens": 326240,
+      "windows": 320
+    },
+    "adapted": {
+      "bpb": 0.7431770764239654,
+      "nats": 776381.890625,
+      "bytes": 1507154,
+      "tokens": 326240,
+      "windows": 320
+    }
+  },
+  "trainable_params": 8798208,
+  "total_params": 502830976,
+  "trainable_pct": 1.7497346861940344,
+  "adapted_bpb": 0.7800828539204726,
+  "reduction_pct": 5.85071841624916,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 158.13641667366028
+}

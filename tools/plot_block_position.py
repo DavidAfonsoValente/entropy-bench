@@ -96,7 +96,7 @@ def main():
                                          connectionstyle="arc3,rad=-0.25"))
 
     unit = "bits/byte" if a.units == "bpb" else "nats/token"
-    panels = [(ax1, f"Base-model loss ({unit})", "Before adaptation")]
+    panels = [(ax1, f"Base-model loss ({unit})", "Block reading, no adaptation")]
     if ax2 is not None:
         panels.append((ax2, f"Gain from adaptation ({unit})", "Loss reduction from adaptation"))
     for ax, ylab, title in panels:

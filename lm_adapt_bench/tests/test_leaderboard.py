@@ -94,3 +94,55 @@ def test_submission_rejected_by_the_other_track(tmp_path, monkeypatch):
     news = json.loads((ROOT / "results" / "leaderboard.json").read_text())
     with pytest.raises(LeaderboardError, match="but board uses"):
         add_submission(news, submission)
+
+
+MATH_DOCS = "arxiv-math-2026-08-documents-v1"
+
+
+def _doc_result(**doc_overrides):
+    """A result as tools/domain_transfer_eval.py --zero-shot-only --doc-context 2048 writes it."""
+    cell = json.loads((ROOT / "results" / "doc_protocol_cells" /
+                       "math_doc__Qwen_Qwen2.5-0.5B.json").read_text())
+    cell["model_id"] = "example/model-1b"
+    cell["doc_protocol"].update(doc_overrides)
+    return cell
+
+
+def _prepare_doc(tmp_path, result, monkeypatch):
+    monkeypatch.chdir(ROOT)
+    path = tmp_path / "result.json"
+    path.write_text(json.dumps(result))
+    args = argparse.Namespace(result=str(path), benchmark_id=MATH_DOCS, model_name="Example-1B",
+                              model_revision="abc123", tokenizer_revision="def456", parameters="1B")
+    return prepare_submission(args)
+
+
+def test_document_boards_are_valid_and_complete():
+    for name in ("leaderboard_news_documents.json", "leaderboard_math_documents.json"):
+        board = json.loads((ROOT / "results" / name).read_text())
+        validate_board(board)
+        assert len(board["entries"]) == 17
+        assert render_table(board).startswith("| Rank | Model | Parameters | Document BPB |")
+
+
+def test_prepare_and_add_document_submission(tmp_path, monkeypatch):
+    submission = _prepare_doc(tmp_path, _doc_result(), monkeypatch)
+    assert submission["metric"] == "document_bits_per_byte" and "adapted_bpb" not in submission
+    board = json.loads((ROOT / "results" / "leaderboard_math_documents.json").read_text())
+    add_submission(board, submission)
+    assert [e["doc_bpb"] for e in board["entries"]] == sorted(e["doc_bpb"] for e in board["entries"])
+
+
+@pytest.mark.parametrize("override", [{"context": 512}, {"stride": 2048},
+                                      {"zero_shot": {"bpb": 0.7, "bytes": 1000}}])
+def test_document_submission_must_match_the_track(tmp_path, monkeypatch, override):
+    with pytest.raises(LeaderboardError, match="scores whole documents"):
+        _prepare_doc(tmp_path, _doc_result(**override), monkeypatch)
+
+
+def test_document_submission_rejected_by_an_adapted_board(tmp_path, monkeypatch):
+    submission = _prepare_doc(tmp_path, _doc_result(), monkeypatch)
+    board = json.loads((ROOT / "results" / "leaderboard_math.json").read_text())
+    board["dataset"]["benchmark_id"] = MATH_DOCS
+    with pytest.raises(LeaderboardError, match="scored by"):
+        add_submission(board, submission)

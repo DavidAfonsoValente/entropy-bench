@@ -1,0 +1,46 @@
+{
+  "model_id": "Qwen/Qwen3.5-9B-Base",
+  "dataset": "corpora/reddit.jsonl",
+  "corpus": "reddit",
+  "dataset_sha256": "1ac8b70f3ae5f21fda98f38b15c050b89d2e837f35b1465fc2f85c71761c2e56",
+  "avg_bytes_per_token": 4.261089691163298,
+  "n_train_blocks": 55350,
+  "n_test_blocks_scored": 2500,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.0392907263103774,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1606,
+    "zero_shot": {
+      "bpb": 0.9910072904058402,
+      "nats": 4123402.0061035156,
+      "bytes": 6002793,
+      "tokens": 1409573,
+      "windows": 1612
+    },
+    "adapted": {
+      "bpb": 0.9493597918558753,
+      "nats": 3950114.3010253906,
+      "bytes": 6002793,
+      "tokens": 1409573,
+      "windows": 1612
+    }
+  },
+  "trainable_params": 43278336,
+  "total_params": 8997081600,
+  "trainable_pct": 0.48102638082108756,
+  "adapted_bpb": 0.9820234554434822,
+  "reduction_pct": 5.510226293483995,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 2930.569564819336
+}

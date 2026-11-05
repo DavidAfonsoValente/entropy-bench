@@ -1,0 +1,46 @@
+{
+  "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+  "dataset": "corpora/hackernews.jsonl",
+  "corpus": "hackernews",
+  "dataset_sha256": "869af808717d6cb82fe6e6fab09434039ac417f77a6090d15af998e898263803",
+  "avg_bytes_per_token": 4.3648081092026585,
+  "n_train_blocks": 16666,
+  "n_test_blocks_scored": 1994,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 1.6867346496904407,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 608,
+    "zero_shot": {
+      "bpb": 1.0723617700518853,
+      "nats": 3298707.490234375,
+      "bytes": 4437895,
+      "tokens": 1020635,
+      "windows": 942
+    },
+    "adapted": {
+      "bpb": 0.9833071892178106,
+      "nats": 3024765.4111328125,
+      "bytes": 4437895,
+      "tokens": 1020635,
+      "windows": 942
+    }
+  },
+  "trainable_params": 11108352,
+  "total_params": 1181448960,
+  "trainable_pct": 0.9402312225151055,
+  "adapted_bpb": 1.0502340418749632,
+  "reduction_pct": 37.73566920750053,
+  "train_steps": 250,
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0001,
+    "effective_batch": 32
+  },
+  "wall_seconds": 266.0390512943268
+}

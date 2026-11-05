@@ -25,6 +25,10 @@ LABELS = {
     "zero_shot_bpb": "Unadapted BPB, blocks", "parameter_count": "Parameter count",
     "doc_zero_shot_bpb": "Unadapted BPB, documents", "doc_adapted_bpb": "Adapted BPB, documents",
     "mmlu_pro": "MMLU-Pro", "gsm8k": "GSM8K",
+    "math_doc_bpb": "Unadapted BPB, documents, arXiv maths text",
+    "reddit_doc_bpb": "Unadapted BPB, documents, Reddit text",
+    "hackernews_doc_bpb": "Unadapted BPB, documents, Hacker News text",
+    "base_task_score": "Base weights scored on the task itself",
 }
 
 
@@ -36,11 +40,10 @@ def render() -> str:
     b = data["cohort_recipe_b"]["selector_table"]["selectors"]
     table = c["selector_table"]["selectors"]
     resolved = c["accuracy_on_resolved"]
-    top = max(r["pairwise_accuracy"] for r in table.values())
     lines = []
     for name, row in sorted(table.items(), key=lambda kv: -kv[1]["pairwise_accuracy"]):
         acc = "%.3f" % row["pairwise_accuracy"]
-        if row["pairwise_accuracy"] == top:
+        if name == "doc_zero_shot_bpb":  # the paper's reading; the adapted rows are its appendix
             acc = "\\textbf{%s}" % acc
         lines.append("%s & %s & [%.3f, %.3f] & %.3f & %.3f \\\\" % (
             LABELS[name], acc, row["ci_lo"], row["ci_hi"], resolved[name],

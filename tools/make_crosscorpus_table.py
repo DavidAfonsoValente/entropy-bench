@@ -7,7 +7,9 @@ property of the models rather than of one corpus. The mathematics corpus is the 
 adaptation makes it agree *less* with the general corpora, because adapted on mathematics the
 ranking follows a different capability (Section 3.2).
 
-Reads results/domain_transfer/<corpus>__*.json. Nothing else.
+The last Spearman column is the unadapted whole-document reading, the paper's main one.
+
+Reads results/domain_transfer/<corpus>__*.json and results/doc_protocol_cells. Nothing else.
 
 Usage:
     python tools/make_crosscorpus_table.py            # -> crosscorpus_table.tex
@@ -38,6 +40,11 @@ def load() -> dict[str, dict[str, tuple[float, float]]]:
 
 
 def render() -> str:
+    sys.path.insert(0, str(ROOT / "tools"))
+    from analyze_alignment_matrix import MODEL_IDS
+    from analyze_downstream import doc_bpb
+    from analyze_doc_protocol import short_name
+    docs = {c: {mid: doc_bpb(c)[short_name(mid)] for mid in MODEL_IDS.values()} for c, _ in CORPORA}
     cells = load()
     label = dict(CORPORA)
     lines = []
@@ -50,7 +57,9 @@ def render() -> str:
             y = [cells[b][m][reading] for m in models]
             stats.append((spearmanr(x, y)[0], pearsonr(x, y)[0]))
         (rs_z, rp_z), (rs_a, rp_a) = stats
-        lines.append("%s--%s & %.3f & %.3f & %.3f & %.3f \\\\" % (label[a], label[b], rs_z, rs_a, rp_z, rp_a))
+        rs_d = spearmanr([docs[a][m] for m in models], [docs[b][m] for m in models])[0]
+        lines.append("%s--%s & %.3f & %.3f & %.3f & %.3f & %.3f \\\\" % (
+            label[a], label[b], rs_d, rs_z, rs_a, rp_z, rp_a))
     return "\n".join(lines) + "\n"
 
 

@@ -15,60 +15,40 @@ results/my-corpus/
 
 | Field | Meaning | Use |
 |---|---|---|
-| `zero_shot_bpb` | Predictive cross-entropy before adaptation, normalized by UTF-8 bytes | Initial fit, and a free **screen** — it agrees well with the public benchmarks but reaches chance against an in-domain criterion among candidates within 2x in size (`results/cloze_validity.json`). Do not select on it |
-| `adapted_bpb` / `best_bpb` | Held-out BPB after controlled adaptation | Primary model-selection score; lower is better |
-| `reduction_pct` | Relative BPB change from zero-shot to adapted | Diagnose how much corpus calibration was needed |
+| `doc_bpb` | Cross-entropy per UTF-8 byte over whole test documents, each read from its own beginning-of-document token (2,048-token context, 1,024 stride), on the same bytes for every model | **The score to rank candidates by**; lower is better. On the paper's news task it orders 37 of 39 size-matched pairs as the fine-tuned systems do |
+| `zero_shot_bpb` | The same loss on fixed 512-token blocks cut from the concatenated test text, before adaptation | Diagnostic only: most blocks start mid-document, which misranks models that expect a document start (30 of 39) |
+| `adapted_bpb` / `best_bpb` | The block reading after LoRA adaptation to the domain | Repairs the block reading; on whole documents adaptation barely changes the order, so it is not needed to rank |
+| `reduction_pct` | Relative BPB change from zero-shot to adapted | How much a model's block loss depended on the cut; do not rank by it |
 
-Do not rank models by reduction percentage. A weak starting model can improve greatly and still end
-with worse adapted BPB than a strong model. This is empirically justified, not just a caution:
-across all four corpora the reduction correlates with every benchmark at `|rho| < 0.5`, and with
-GSM8K on news at `-0.055`.
+Use text from the domain of the task you will fine-tune on. Scored on arXiv mathematics, the same
+fifteen models are ordered correctly on only 23 of the 39 news-task pairs.
 
-The current primary board uses one fixed LoRA configuration for every model: rank 16, alpha 32,
-dropout 0.05, learning rate `1e-4`, effective batch 32, and 250 update steps. That budget is equal
-by construction but it is 0.21 epochs of the news corpus, and the paper's own token-level diagnostic
-shows ~83% of the resulting gain lands on formatting and function words — so adapted BPB here is
-*fit after a stated budget*, not attainable fit; an adapt-to-convergence estimand would be the natural
-replacement. Injected
-document-start marker targets are excluded from both the loss numerator and scored-token count.
+Injected document-start marker targets are excluded from both the loss numerator and the
+scored-token count.
 
 ## What the benchmark comparison shows
 
-**Read both tiers, not just the adapted one.** The complete picture is
-`results/alignment_matrix.json` — four adaptation corpora × {zero-shot, adapted} × three
-benchmarks, 24 alignments in total. Regenerate it with:
+`results/alignment_matrix.json` holds every corpus × reading × benchmark alignment; regenerate it
+with:
 
 ```bash
 python tools/analyze_alignment_matrix.py
 ```
 
-Across the 11-model cohort, adapted news BPB nearly reproduces the HellaSwag order (Pearson
-`r = -0.975`, Spearman `rho = 0.982`, 7 of 11 exact ranks) — which is expected, because HellaSwag
-scores continuations by length-normalized conditional log-likelihood, the same object BPB measures.
-Against the two generative benchmarks it does *worse* than the zero-shot ranking it replaced:
+On whole documents, which benchmark the eleven-model ranking agrees with follows the text
+(`doc_alignment_table.tex`):
 
-| News BPB | GSM8K | MMLU-Pro | HellaSwag |
+| Text scored | GSM8K | MMLU-Pro | HellaSwag |
 |---|---:|---:|---:|
-| zero-shot | **0.836** | **0.855** | 0.718 |
-| adapted | 0.727 | 0.764 | **0.982** |
+| news | 0.755 | 0.827 | **0.991** |
+| Reddit | 0.691 | 0.764 | **0.973** |
+| Hacker News | 0.782 | 0.873 | **0.982** |
+| arXiv maths | 0.918 | **0.945** | 0.836 |
 
-Adaptation rotates the ranking toward continuation quality and away from generative task ability.
-The same pattern holds on Reddit and Hacker News. So the practical question is not "adapted or not"
-but "adapted **on what**": adapting on mathematical prose puts GSM8K agreement at `rho = 0.936`
-with 50 of 55 pairs ordered correctly, the best selector in the study.
-
-**Prefer selection regret to rank correlation when deciding.** `rho` over 11 models has very wide
-intervals. Regret — the accuracy you give up by taking the metric's top pick — is the number that
-maps onto the decision. Zero-shot news BPB picks the GSM8K and MMLU-Pro leader outright (0.0 pp
-regret); adapted news BPB picks the HellaSwag leader instead, at 2.3 and 4.2 pp regret on the other
-two.
-
-The disagreements are informative. Qwen models tend to move upward on MMLU-Pro and GSM8K, while the
-two Gemma models move downward, consistent with family-specific knowledge/math training and
-chain-of-thought behavior. At small scale the distinction is stark: Qwen-2.5-1.5B reaches 61.1% on
-GSM8K, while Llama-3.2-1B reaches 6.5%, despite adjacent BPB ranks. This is not evidence that one
-metric is wrong: BPB measures broad next-byte predictive fit after controlled adaptation, whereas
-GSM8K additionally depends on mathematical reasoning, prompting, generation, and answer extraction.
+HellaSwag tracks the news fine-tune closely (34 of 39 pairs), but it is not a substitute for the
+domain's own text; GSM8K and MMLU-Pro do not track it (18 of 38 and 20 of 39). At small scale:
+Qwen-2.5-1.5B reaches 61.1% on GSM8K and Llama-3.2-1B 6.5%, yet their fine-tuned news systems are
+not separated.
 
 Point-estimate leaders should not be over-sold. The 0.53 percentage-point GSM8K gap between
 Qwen-3.5-35B-MoE and Qwen-3.5-9B is small relative to test-set sampling uncertainty. The committed

@@ -1,0 +1,26 @@
+{
+  "model_id": "LiquidAI/LFM2.5-1.2B-Base",
+  "dataset": "corpora/reddit.jsonl",
+  "corpus": "reddit",
+  "dataset_sha256": "1ac8b70f3ae5f21fda98f38b15c050b89d2e837f35b1465fc2f85c71761c2e56",
+  "avg_bytes_per_token": 4.13418743387537,
+  "n_train_blocks": 57106,
+  "n_test_blocks_scored": 0,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": null,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1606,
+    "zero_shot": {
+      "bpb": 1.1830355392522793,
+      "nats": 4922396.80078125,
+      "bytes": 6002793,
+      "tokens": 1455384,
+      "windows": 1614
+    }
+  },
+  "wall_seconds": 116.04666566848755
+}

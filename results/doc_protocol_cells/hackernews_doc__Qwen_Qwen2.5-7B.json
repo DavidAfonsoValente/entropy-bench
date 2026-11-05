@@ -1,0 +1,26 @@
+{
+  "model_id": "Qwen/Qwen2.5-7B",
+  "dataset": "corpora/hackernews.jsonl",
+  "corpus": "hackernews",
+  "dataset_sha256": "869af808717d6cb82fe6e6fab09434039ac417f77a6090d15af998e898263803",
+  "avg_bytes_per_token": 4.5456452407209165,
+  "n_train_blocks": 16079,
+  "n_test_blocks_scored": 1914,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": 0.9219878411916648,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 608,
+    "zero_shot": {
+      "bpb": 0.8338267485733966,
+      "nats": 2564946.4741210938,
+      "bytes": 4437895,
+      "tokens": 979769,
+      "windows": 929
+    }
+  },
+  "wall_seconds": 205.6092245578766
+}

@@ -18,6 +18,8 @@ from typing import Any
 DEFAULT_BOARD = Path("results/leaderboard.json")
 DEFAULT_MARKDOWN = Path("LEADERBOARD.md")
 BENCHMARKS = Path("benchmarks")
+# Each board ranks by one metric; the entry field that carries it.
+METRICS = {"document_bits_per_byte": "doc_bpb", "adapted_bits_per_byte": "adapted_bpb"}
 
 
 def all_boards() -> list[Path]:
@@ -57,12 +59,29 @@ def _finite_number(value: Any, label: str, *, positive: bool = False) -> float:
     return number
 
 
+def _check_scores(record: dict[str, Any], metric: str, prefix: str, tol: float) -> float:
+    """Validate one entry's or submission's scores and return the value it is ranked by.
+
+    A document board carries ``doc_bpb``; an adapted board carries ``zero_shot_bpb``,
+    ``adapted_bpb`` and their consistent ``reduction_pct``."""
+    if metric == "document_bits_per_byte":
+        return _finite_number(record.get("doc_bpb"), f"{prefix}.doc_bpb", positive=True)
+    zero = _finite_number(record.get("zero_shot_bpb"), f"{prefix}.zero_shot_bpb", positive=True)
+    adapted = _finite_number(record.get("adapted_bpb"), f"{prefix}.adapted_bpb", positive=True)
+    reduction = _finite_number(record.get("reduction_pct"), f"{prefix}.reduction_pct")
+    expected_reduction = 100.0 * (zero - adapted) / zero
+    if abs(reduction - expected_reduction) > tol:
+        raise LeaderboardError(
+            f"{prefix}.reduction_pct is inconsistent: {reduction} vs {expected_reduction:.6f}")
+    return adapted
+
+
 def validate_board(board: dict[str, Any]) -> None:
     """Validate the canonical leaderboard and its rank invariants."""
     if board.get("schema_version") != 1:
         raise LeaderboardError("schema_version must be 1")
-    if board.get("metric") != "adapted_bits_per_byte":
-        raise LeaderboardError("metric must be adapted_bits_per_byte")
+    if board.get("metric") not in METRICS:
+        raise LeaderboardError(f"metric must be one of {sorted(METRICS)}")
     if board.get("direction") != "lower_is_better":
         raise LeaderboardError("direction must be lower_is_better")
 
@@ -91,17 +110,10 @@ def validate_board(board: dict[str, Any]) -> None:
         if not isinstance(entry.get("model_name"), str) or not entry["model_name"].strip():
             raise LeaderboardError(f"{prefix}.model_name is required")
 
-        zero = _finite_number(entry.get("zero_shot_bpb"), f"{prefix}.zero_shot_bpb", positive=True)
-        adapted = _finite_number(entry.get("adapted_bpb"), f"{prefix}.adapted_bpb", positive=True)
-        reduction = _finite_number(entry.get("reduction_pct"), f"{prefix}.reduction_pct")
-        expected_reduction = 100.0 * (zero - adapted) / zero
-        if abs(reduction - expected_reduction) > 0.05:
-            raise LeaderboardError(
-                f"{prefix}.reduction_pct is inconsistent: {reduction} vs {expected_reduction:.6f}"
-            )
-        if adapted < previous_bpb:
-            raise LeaderboardError("entries must be sorted by ascending adapted_bpb")
-        previous_bpb = adapted
+        score = _check_scores(entry, board["metric"], prefix, tol=0.05)
+        if score < previous_bpb:
+            raise LeaderboardError(f"entries must be sorted by ascending {METRICS[board['metric']]}")
+        previous_bpb = score
 
 
 def validate_submission(submission: dict[str, Any]) -> None:
@@ -124,16 +136,20 @@ def validate_submission(submission: dict[str, Any]) -> None:
     if len(digest) != 64 or any(ch not in "0123456789abcdef" for ch in digest.lower()):
         raise LeaderboardError("submission.source_result_sha256 must be a SHA-256 hex digest")
 
-    zero = _finite_number(submission.get("zero_shot_bpb"), "submission.zero_shot_bpb", positive=True)
-    adapted = _finite_number(submission.get("adapted_bpb"), "submission.adapted_bpb", positive=True)
-    reduction = _finite_number(submission.get("reduction_pct"), "submission.reduction_pct")
-    expected_reduction = 100.0 * (zero - adapted) / zero
-    if abs(reduction - expected_reduction) > 1e-6:
-        raise LeaderboardError("submission.reduction_pct is inconsistent with its BPB values")
+    metric = submission.get("metric", "adapted_bits_per_byte")
+    if metric not in METRICS:
+        raise LeaderboardError(f"submission.metric must be one of {sorted(METRICS)}")
+    _check_scores(submission, metric, "submission", tol=1e-6)
 
 
 def render_table(board: dict[str, Any]) -> str:
     validate_board(board)
+    if board["metric"] == "document_bits_per_byte":
+        rows = ["| Rank | Model | Parameters | Document BPB |", "|---:|---|---:|---:|"]
+        for entry in board["entries"]:
+            rows.append("| {} | {} | {} | **{:.3f}** |".format(
+                entry["rank"], entry["model_name"], entry["parameters"], entry["doc_bpb"]))
+        return "\n".join(rows)
     rows = [
         "| Rank | Model | Parameters | Zero-shot BPB | Adapted BPB | Reduction |",
         "|---:|---|---:|---:|---:|---:|",
@@ -184,6 +200,16 @@ def check_protocol(result: dict[str, Any], manifest: dict[str, Any]) -> None:
             f"result.dataset_sha256 does not match {track}'s corpus ({expected_sha[:12]}...); "
             "run on the exact benchmark file (tools/domain_transfer_eval.py records the hash)")
     evaluation = manifest.get("evaluation", {})
+    if evaluation.get("metric") == "document_bits_per_byte":
+        doc = result.get("doc_protocol") or {}
+        want = (evaluation["context"], evaluation["stride"], evaluation["bytes_scored"])
+        got = (doc.get("context"), doc.get("stride"), (doc.get("zero_shot") or {}).get("bytes"))
+        if got != want:
+            raise LeaderboardError(
+                f"{track} scores whole documents with context {want[0]}, stride {want[1]} over "
+                f"{want[2]:,} bytes; this result has {got} (run tools/domain_transfer_eval.py "
+                "--zero-shot-only --doc-context 2048)")
+        return
     if result.get("max_seq_len") != evaluation.get("max_sequence_length"):
         raise LeaderboardError(f"result.max_seq_len must be {evaluation.get('max_sequence_length')} for {track}")
     if result.get("mask_injected_special_tokens") is not evaluation.get("mask_injected_special_tokens"):
@@ -202,25 +228,31 @@ def prepare_submission(args: argparse.Namespace) -> dict[str, Any]:
     result_path = Path(args.result)
     result = _read_json(result_path)
     model_id = result.get("model_id")
-    zero = result.get("zero_shot_bpb")
-    adapted = result.get("adapted_bpb", result.get("best_bpb"))
     if not isinstance(model_id, str) or not model_id:
         raise LeaderboardError("result.model_id is required")
-    zero = _finite_number(zero, "result.zero_shot_bpb", positive=True)
-    adapted = _finite_number(adapted, "result.best_bpb", positive=True)
-    check_protocol(result, load_manifest(args.benchmark_id))
+    manifest = load_manifest(args.benchmark_id)
+    check_protocol(result, manifest)
+    metric = manifest["evaluation"]["metric"]
+    if metric == "document_bits_per_byte":
+        scores = {"doc_bpb": _finite_number(result["doc_protocol"]["zero_shot"]["bpb"],
+                                            "result.doc_protocol.zero_shot.bpb", positive=True)}
+    else:
+        zero = _finite_number(result.get("zero_shot_bpb"), "result.zero_shot_bpb", positive=True)
+        adapted = _finite_number(result.get("adapted_bpb", result.get("best_bpb")),
+                                 "result.best_bpb", positive=True)
+        scores = {"zero_shot_bpb": zero, "adapted_bpb": adapted,
+                  "reduction_pct": 100.0 * (zero - adapted) / zero}
     raw = result_path.read_bytes()
     submission = {
         "schema_version": 1,
         "benchmark_id": args.benchmark_id,
+        "metric": metric,
         "model_id": model_id,
         "model_name": args.model_name or model_id.rsplit("/", 1)[-1],
         "model_revision": args.model_revision,
         "tokenizer_revision": args.tokenizer_revision,
         "parameters": args.parameters,
-        "zero_shot_bpb": zero,
-        "adapted_bpb": adapted,
-        "reduction_pct": 100.0 * (zero - adapted) / zero,
+        **scores,
         "source_result_sha256": hashlib.sha256(raw).hexdigest(),
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -236,8 +268,12 @@ def add_submission(board: dict[str, Any], submission: dict[str, Any]) -> None:
         raise LeaderboardError(
             f"submission targets {submission['benchmark_id']}, but board uses {benchmark_id}"
         )
+    if submission.get("metric", "adapted_bits_per_byte") != board["metric"]:
+        raise LeaderboardError(f"submission is scored by {submission.get('metric')}, board by {board['metric']}")
     if any(entry["model_id"] == submission["model_id"] for entry in board["entries"]):
         raise LeaderboardError(f"model already exists: {submission['model_id']}")
+    scores = ("doc_bpb",) if board["metric"] == "document_bits_per_byte" else (
+        "zero_shot_bpb", "adapted_bpb", "reduction_pct")
     board["entries"].append(
         {
             "rank": 0,
@@ -246,13 +282,12 @@ def add_submission(board: dict[str, Any], submission: dict[str, Any]) -> None:
             "model_revision": submission["model_revision"],
             "tokenizer_revision": submission["tokenizer_revision"],
             "parameters": submission["parameters"],
-            "zero_shot_bpb": submission["zero_shot_bpb"],
-            "adapted_bpb": submission["adapted_bpb"],
-            "reduction_pct": submission["reduction_pct"],
+            **{k: submission[k] for k in scores},
             "source_result_sha256": submission["source_result_sha256"],
         }
     )
-    board["entries"].sort(key=lambda entry: entry["adapted_bpb"])
+    key = METRICS[board["metric"]]
+    board["entries"].sort(key=lambda entry: entry[key])
     for rank, entry in enumerate(board["entries"], start=1):
         entry["rank"] = rank
     validate_board(board)
@@ -274,8 +309,8 @@ def _parser() -> argparse.ArgumentParser:
     prepare.add_argument("result")
     prepare.add_argument("--output", required=True)
     prepare.add_argument("--benchmark-id", required=True,
-                         help="track to submit to, e.g. arxiv-math-2026-08-fixed-lora-v1 (public corpus) "
-                              "or primary-news-2026-06-08-fixed-lora-v1 (maintainer-run)")
+                         help="track to submit to, e.g. arxiv-math-2026-08-documents-v1 (public corpus) "
+                              "or primary-news-2026-06-08-documents-v1 (maintainer-run)")
     prepare.add_argument("--model-name")
     prepare.add_argument("--model-revision", required=True)
     prepare.add_argument("--tokenizer-revision", required=True)

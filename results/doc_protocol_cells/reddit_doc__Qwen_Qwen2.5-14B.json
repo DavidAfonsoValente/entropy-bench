@@ -1,0 +1,26 @@
+{
+  "model_id": "Qwen/Qwen2.5-14B",
+  "dataset": "corpora/reddit.jsonl",
+  "corpus": "reddit",
+  "dataset_sha256": "1ac8b70f3ae5f21fda98f38b15c050b89d2e837f35b1465fc2f85c71761c2e56",
+  "avg_bytes_per_token": 4.345692049970678,
+  "n_train_blocks": 54265,
+  "n_test_blocks_scored": 0,
+  "max_seq_len": 512,
+  "mask_injected_special_tokens": true,
+  "zero_shot_bpb": null,
+  "seed": null,
+  "doc_protocol": {
+    "context": 2048,
+    "stride": 1024,
+    "n_docs": 1606,
+    "zero_shot": {
+      "bpb": 0.9615405624322121,
+      "nats": 4000796.283203125,
+      "bytes": 6002793,
+      "tokens": 1382438,
+      "windows": 1613
+    }
+  },
+  "wall_seconds": 344.5309679508209
+}
